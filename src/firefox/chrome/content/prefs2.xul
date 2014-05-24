@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<dialog id="btnet_config_dialog"
+  title="BugTracker.NET Configuration"
+  buttons="accept,cancel"
+  onload="onLoad()"
+  ondialogaccept="return onAccept()"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+		<hbox align="center">
+			<label control="url" value="BugTracker.NET URL: "/>
+			<textbox id="url" maxlength="60"/>
+		</hbox>
+
+  		<hbox align="center">
+			<label control="username" value="BugTracker.NET Username: "/>
+			<textbox id="username" maxlength="60"/>
+		</hbox>
+		
+		<hbox align="center">
+			<label control="password" value="BugTracker.NET Password: "/>
+			<textbox type="password" id="password" maxlength="60"/>
+		</hbox>
+
+		<hbox align="center">
+			<label control="imageSize" value="Image Size: "/>
+			<textbox id="imageSize" maxlength="10"/>
+		</hbox>
+
+		<hbox align="center">
+			<label control="projectNumber" value="BugTracker.NET Project Number: "/>
+			<textbox id="projectNumber" maxlength="10"/>
+		</hbox>
+
+
+<script>
+var btnet = null
+
+function onAccept() 
+{
+
+	btnet.save_prefs(document)
+	return true
+}
+
+function onLoad() 
+{
+	btnet = window.arguments[0];
+	btnet.get_prefs(document)
+}
+</script>  
+</dialog>

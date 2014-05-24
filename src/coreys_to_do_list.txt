@@ -1,0 +1,246 @@
+I have a similar issue with the decoding of this function, which is used as follows :
+subject = SharpMimeTools.parserfc2047Header(mime_message.Header.Subject);
+
+Hereunder a some mail titles --> and the deconding given by the function :
+Normal test --> Normal test
+RE: TEST é hello --> RE: TEST é hello
+RE: TE[ST é hello --> =?iso-8859-1?Q?RE:TE[ST=E9_hello?=
+RE: [TEST é hello --> =?iso-8859-1?Q?RE:[TEST=E9_hello?=
+RE: TE{ST é hello --> RE: TE{ST é hello
+RE: TE[ST hello --> RE: TE[ST hello
+RE: TE+ST é hello --> RE: TE+ST é hello
+
+It seems like the combinaison of accent and braquet is causing the mess.
+I have tested with the lastest available SharpMime version 0.6.beta).
+
+
+
+
+Testing sourceforge ssn+ssh....
+
+An email was added via project POP3. Click "reply all" on email comment in bug. All entries from to or cc which contains the sending adress are skipped.
+
+Affected file: send_email.aspx
+Affected version: 3.6.1
+
+Old code:
+if (lines[i].StartsWith("To:") || lines[i].StartsWith("Cc:"))
+{
+string cc_addr = lines[i].Substring(3, lines[i].Length - 3).Trim();
+
+// don't cc yourself
+
+if (cc_addr.IndexOf(from.SelectedItem.Value) == -1)
+{
+    if (cc_addrs != "")
+    {
+        cc_addrs += ",";
+    }
+
+    cc_addrs += cc_addr;
+}
+
+}
+
+Possible solution, replacing above:
+if (lines[i].StartsWith("To:") || lines[i].StartsWith("Cc:"))
+{
+string[] cc_addr = lines[i].Substring(3, lines[i].Length - 3).Trim().Split(',');
+
+foreach (string a in cc_addr)
+{
+    // don't cc yourself
+    if (!a.Contains(from.SelectedItem.Value) && !a.Contains(to.Value))
+    {
+        if (cc_addrs != "")
+        {
+            cc_addrs += ",";
+        }
+
+        cc_addrs += a.Trim();
+    }
+}
+
+}
+
+***
+
+My bugtracker track the mail box of tartempion@xxxx.zz and someone send an email with - to recipient 
+: gilles@sss.cc - cc recipient : tartempion@xxxx.zz I check the bug_posts table and i see 
+tartempion@xxxx.zz in the field bp_email_cc but the field bp_email_to is empty... Is there a way 
+to have the field bp_email_to with the value gilles@sss.cc ? 
+
+***
+
+CreateUsersFromEmailTemplate - if this doesn't exist, you get an obscure dbnull error
+ 
+
+CREATE LOGIN user1 WITH PASSWORD = N'pass1', DEFAULT_DATABASE = btnet
+CREATE USER user1 FOR LOGIN user1
+EXEC sp_addrolemember N'db_ddladmin', N'user1'
+EXEC sp_addrolemember N'db_datawriter', N'user1'
+EXEC sp_addrolemember N'db_datareader', N'user1'
+EXEC sp_addrolemember N'db_backupoperator', N'user1'
+
+
+* public static void Main(string[] args) 
+{ bool runInCommandLine = Environment.UserInteractive; if (runInCommandLine) 
+{ /* the code used in console */ } 
+else { System.ServiceProcess.ServiceBase.Run(new service()); } } 
+
+
+* stupid "required" for custom fields
+https://sourceforge.net/projects/btnet/forums/forum/226938/topic/3688663
+
+* what if custom dropdown values are changed, but they are still in the db.
+
+* Hide SVN link by org?
+
+* <add key="ErrorEmailFrom" value="&quot;Joe Somebody&quot;&lt;issuetracker@somewhere.c0m&gt;"/>
+
+* add to docs about lucene, app data permission
+
+* 
+	My co-workers are not using the $SEEN flag because it does not reset when
+	the bug has changed.
+
+	Is it possible to reset all the $SEEN flags to NotSeen if a bug has
+	changed, and the flag is currently off?
+
+	My co-workers would rather see all the items that have changed since they
+	last viewed, than see what is newly entering the system.
+
+	There could be better solutions than what I have proposed.
+	Example:
+	One color would be for Never Seen
+	Second Color would be for Seen But Changed
+	Third color would be Seen and not changed
+
+	Also, having the $SEEN flag automatically change to "Seen and Not changed"
+	upon viewing of a bug would be a nice feature.
+
+* 
+Is there a way to default which email address is used when sending an email from a bug? Often when sending an email I forget to send it as from the project address and it's sent out from my own. The problem with this is that the reply doesn't go back into the bug, but into my personal email.
+
+
+*	This is what is happening, for us anyway. We have a small handful of people that are assisting with support calls. They are each on a different shift, answering bugs for users that are also on different shifts. Support person A (works 7a-3a), might respond via BTNet email to User C (works 11P-7a) request for assistance.
+
+	User C responds back with additional information to the email from Support A (who is now off for 3 days), but it is delivered to his personal email, so BTNet is not updated and it can sit in that email for a long period of time with being viewed.
+
+	Meanwhile Support Person B (works 3p-11p) sends another email because he doesn't see that the bug was updated yet. Again the reply from User C goes back to the Support B personal email and does not get updated in BTNet.
+
+	What I was thinking was to see if we could just have a global option for a 'send all emails from' that will force the sending email address to be the support one that is used by the end users who submit their bugs via email. That way, when the end user replies back, it will go to the support mailbox, not the personal mailbox of the support personnel. BTNet can then accurately track and update the bugs with responses from the support people and the end user responses.
+
+	Just a thought, but I think it would really make it a great tool for tracking the 24 hour support locations.
+	#
+	bamarchand
+
+	Sorry, the above working hours for Support person A should be 7a - 3p.
+	
+	
+* Can i turn a dataset into a view, update it with websvn links, then
+back into dataset?
+
+blog on bug tracker integration?
+blog on ldap integration?
+
+* how the hook scripts feed the data.  to web, not to db.
+--->  Ability to redo.
+--->  Ability to hook after the fact.
+* not a full repository browser.
+* parsing command line.
+* security on web pages? - you are browsing a list of files that were changed.
+* ignoring branches.
+* using magic words in the comments to change the status of the bug
+* dropped support for websvn
+
+
+****************************************
+* when deploying to demo
+1) don't copy install.aspx, Web.config
+2) copy RELEASE_NOTES.txt by hand to root
+****************************************
+* when creating release
+1) export to new folder btnetVRM, 
+2) diff Web.config with previous Web.config. Diff btnet312 and btnet311.
+****************************************
+* svnserve -d -r c:/cit
+********
+cd c:\cit\btnet\firefox
+"c:\program files\7-zip\7z.exe" x c:\temp\btnetfox(2).tar
+****************************************
+* cleaning up old bugs in demo
+
+select datepart(dy,bg_reported_date), count(1) from bugs
+group by datepart(dy,bg_reported_date)
+order by 2 desc
+
+select count(1) from bugs
+delete from bugs where bg_id < 1000 -- CHANGE THIS
+delete from bug_user_flags where fl_bug not in (select bg_id from bugs)
+delete from bug_user_seen where sn_bug not in (select bg_id from bugs)
+delete from bug_posts where bp_bug not in (select bg_id from bugs)
+delete from bug_subscriptions where bs_bug not in (select bg_id from bugs)
+delete from bug_relationships where re_bug1 not in (select bg_id from bugs)
+delete from bug_relationships where re_bug2 not in (select bg_id from bugs)
+delete from bug_tasks where tsk_bug not in (select bg_id from bugs)
+
+delete from bugs where bg_reported_user between 40 and 200
+
+delete from users where 
+us_id > 20 
+and us_id not in (select bg_reported_user from bugs)
+and us_id not in (select bg_last_updated_user from bugs) 
+and us_id not in (select bp_user from bug_posts)
+****************************************
+
+
+* When does SharpMime create folders? Just with Exchange?
+
+	public System.IO.FileInfo DumpBody ( System.String path, System.String name )
+	{
+		System.IO.FileInfo file = null;
+		if ( name!=null ) {
+		name = System.IO.Path.GetFileName(name);
+		// Dump file contents
+		try {
+			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo ( path );
+		dir.Create();
+
+* auto subscribe if you modified bug
+* default value for internal comments, other fields, by user
+* many to many, queries to organizations
+* excel export for reports
+* escalation/reminder, "Due Date"
+* some sort of contact management?
+* syscolumns, column order scheme - make less fragile
+* edit_bug.aspx and css - support for multiple columns
+* set fields to required?  By org.
+* configurable start page, like start on dashboard
+* relationships, tasks in print?
+* Documentation improvements:
+* POP3Main, multiple filters, ldap
+* links on posts don't respect permissions
+* tasks part of notification scheme?
+* tasks part of audit trail?
+* tasks part of full text search, other search?
+* http://www.microsoft.com/web/gallery/developer.aspx
+* Hide delete in mass edit if not allowed to delete.
+* cache category, etc dropdowns for edit_bug.aspx?
+* Does "copy bug" not copy bug posts?
+* More awareness of what's changed.  Don't send email if stuff changed that user doesn't have permission for.    Internal comments too.
+* Change reported by
+* custom bit fields as checkboxes.
+* Hide inactive orgs, projects, like we do with users
+* Custom datetime, Bugs item #2873177, when not entered, time should default to 00:00:00
+* setting so that user only sees his own tasks?  when used as timesheet
+* edit web.config from web.
+* update custom files from web.
+* checkin comments in full text search?
+* enhance the query.aspx page
+* tasks (or related?) as indented items in list.
+* Control over the formatting of emails, what fields, disclaimer, etc.
+* sample query - bugs by closed date. - sotiris
+* automatically la  bel a bug according to a tag in the project. - sotiris
+* set up permissions for multiple external orgs and document it.
+

@@ -1,0 +1,20 @@
+<script language="C#" runat="server">
+	Response.Redirect("default.aspx?msg=authentication+error");
+</script>
+<script language="javascript">
+	window.location.replace('default.aspx?msg=authentication+error');
+</script>
+<html>
+<head>
+	<title>Error with Windows Authentication</title>
+	<meta http-equiv="refresh" content="5;default.aspx?msg=authentication+error">
+</head>
+<body onload="window.location.replace('default.aspx?msg=authentication+error');">
+<h1>An error occured with Integrated Authentication</h1>
+
+<p>An error occured while attempting to authenticate using integrated security.
+You will be redirected to the manual login screen in 10 seconds.</p>
+
+<p><a href="default.aspx?msg=authentication+error">Go to logon page.</a></p>
+</body>
+</html>

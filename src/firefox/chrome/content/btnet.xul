@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+
+<overlay id="sample" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script src="btnet.js" />
+
+<!--	
+	<statusbar id="status-bar">
+		<statusbarpanel id="btnet_panel" label="capture" onclick="btnet.capture()" />
+	</statusbar>
+-->
+	<menupopup id="menu_ToolsPopup">
+		<menuitem id="btnet_menu_item1" label="BugTracker.NET - Capture" oncommand="btnet.inject()"/>
+		<menuitem id="btnet_menu_item2" label="BugTracker.NET - Configure" oncommand="btnet.configure()"/>
+<!--
+		<menuitem id="btnet_menu_item" label="btnet post" oncommand="btnet.post()"/>
+		<menuitem id="btnet_menu_item" label="btnet tab" oncommand="btnet.tab()"/>
+		<menuitem id="btnet_menu_item" label="btnet inject" oncommand="btnet.inject()"/>
+-->		
+	</menupopup>
+</overlay>

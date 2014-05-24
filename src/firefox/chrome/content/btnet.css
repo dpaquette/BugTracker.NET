@@ -1,0 +1,40 @@
+#btnet_div {
+	background: #cccccc; 
+	border: 2px solid black; display: none;
+	position: absolute; 
+	top:4px; left:4px; 
+	z-index: 9999;
+	font-family: verdana, arial, sans-serif;
+}
+
+#btnet_canvas {border: 1px blue dotted; margin: 4px;}
+#btnet_ul {list-style:none; margin:0; padding:0;}
+#btnet_ul li {float: left; margin-left: 2px; margin-right: 10px;}
+
+#btnet_div span, input, div, select, option {
+	font-size: 9pt;
+	font-family: verdana, arial, sans-serif;
+}
+
+#btnet_link {float: left;}
+
+#btnet_div_header {margin-top: 3px;  margin-left: 3px;}
+#btnet_div_middle {clear: both;}
+#btnet_span_tool {margin-left: 50px; margin-right: 10px; }
+
+#btnet_div a         {color:#0000ff; font-size: 10pt; text-decoration: none; }
+#btnet_div a:visited {color:#0000ff; font-size: 10pt; text-decoration: none; }
+#btnet_div a:hover   {color:#ff6633; font-size: 10pt; text-decoration: none; }
+#btnet_send {font-weight: bold; width: 100px;}
+#btnet_configure, #btnet_close {margin-top: 30px; }
+#btnet_donate  {font-size: 10pt; color: blue;background:orange;}
+#btnet_donate_form {margin:0; display:inline;}
+#btnet_select_tool {color:blue;}
+
+#btnet_clear {font-size: 9pt; color: blue;}
+
+#btnet_div  input[type=submit] {color:blue; font-size: 10pt;}
+
+#btnet_version1  {margin-top: 30px;}
+#btnet_version1, #btnet_version2, #btnet_version3 {font-size: 8pt;}
+
