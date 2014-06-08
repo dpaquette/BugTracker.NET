@@ -28,3 +28,8 @@
  - Finding code issues before they find you
  - Look for long methods (hello btnet.MyPop3.fetch_messages() at ~250 lines)
  - Detecting duplicate code
+1. Changing up the data access layer
+ - Why move to EF
+ - Defining models
+ - Abstract and replace the data layers
+ - Making use of dynamic queries (you should see some of the stuff my project does to avoid writing dynamic SQL)
