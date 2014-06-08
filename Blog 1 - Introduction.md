@@ -28,6 +28,26 @@ For BugTracker.NET we decided to simply do an import of the current development 
 
 For projects with a small team or, especially, those with a single team member this is the sort of thing you frequently see. People get lazy and don't keep up the discipline of working with code as if they were part of a larger team. Keeping disciplined is difficult but it will pay off in the end with a more stable code base which is more easily adopted by others. Chances are you're not goign to work on the project until you die so it is a professional courtesy to maintain a code base which can be quickly adopted by others.
 
-The initial import into git and then into github was easy. The first step is to find a .gitignore file which is suitable for the project. This file lists which fiels to ignore when checking into git. Built binaires are generally not desirable artifacts to check into source control. The same is true for object files, the intermediaries between .cs and .exe. I personally use the example file from http://stackoverflow.com/questions/2143956/gitignore-for-visual-studio-projects-and-solutions although others swear by the github version https://github.com/github/gitignore/blob/master/VisualStudio.gitignore. Either of them is an excelent choice.
+If your project would benefit from importing from subversion then there are some excelent tools in place to help. It can be as simple as
 
-Place this file into a new directory and then copy the old source control folders from subversion ignore any .svn directories. Check the files in at once. You may be tempted to rearrange files before the first commit. You should avoid doing this as it breaks the history. 
+    git svn clone http://url.to.svn
+
+The initial BugTracker.net import into git and then into github was easy. The first step is to find a .gitignore file which is suitable for the project. This file lists which fiels to ignore when checking into git. Built binaires are generally not desirable artifacts to check into source control. The same is true for object files, the intermediaries between .cs and .exe. I personally use the example file from http://stackoverflow.com/questions/2143956/gitignore-for-visual-studio-projects-and-solutions although others swear by the github version https://github.com/github/gitignore/blob/master/VisualStudio.gitignore. Either of them is an excelent choice.
+
+Place this file into a new directory and then copy the old source control folders from subversion ignore any .svn directories.
+
+In our case this looks like
+
+    gci -Recuse -include *.svn | ri
+    git init
+    notepad .gitignore (copy in the .gitignore from above)
+    git add .
+    git commit -m "Initial import from subversion"
+
+Check the files in at once. You may be tempted to rearrange files before the first commit. You should avoid doing this as it breaks the history.
+
+Next we just added github as a remote and pushed to it. We now have a great starting point for the rest of our project.
+
+You can see the results of the import at https://github.com/dpaquette/BugTracker.NET/tree/MoveFromSourceForge.
+
+In our next article we'll start looking at what the issues are with this project and we'll come up with a plan to update the project.
