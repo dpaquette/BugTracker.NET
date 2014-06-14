@@ -33,3 +33,8 @@
  - Defining models
  - Abstract and replace the data layers
  - Making use of dynamic queries (you should see some of the stuff my project does to avoid writing dynamic SQL)
+1. Giving the UI a facelift
+ - Introducing LESS or SASS
+ - Improving layout
+ - Including Bootstrap 
+ - Responsive desing?
