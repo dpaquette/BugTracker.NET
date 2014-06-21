@@ -1,0 +1,4 @@
+changeset = '<changeset node="{node}" rev="{rev}">\n\t<date>{date|isodatesec}</date>\n\t<auth>{author|escape}</auth>\n\t<desc>{desc|escape}</desc>\n\t<files>\n{files}\t</files>\n</changeset>\n'
+file = '\t\t<file>{file}</file>\n'
+
+

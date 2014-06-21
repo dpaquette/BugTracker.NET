@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<prefwindow
+     title="btnet prefs"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<prefpane label="btnet preferences">
+		<preferences>
+			<preference id="url_pref" name="extensions.btnet.url" type="string"/>
+			<preference id="imageSize_pref" name="extensions.btnet.imageSize" type="int"/>
+			<preference id="projectNumber_pref" name="extensions.btnet.projectNumber" type="int"/>
+		</preferences>
+
+		<hbox align="center">
+			<label control="url" value="BugTracker.NET URL: "/>
+			<textbox preference="url_pref" id="url" maxlength="60"/>
+		</hbox>
+
+		<hbox align="center">
+			<label control="imageSize" value="Image Size: "/>
+			<textbox preference="imageSize_pref" id="imageSize" maxlength="10"/>
+		</hbox>
+
+		<hbox align="center">
+			<label control="projectNumber" value="BugTracker.NET Project Number: "/>
+			<textbox preference="projectNumber_pref" id="projectNumber" maxlength="10"/>
+		</hbox>
+
+	</prefpane>
+
+</prefwindow>

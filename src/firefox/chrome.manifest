@@ -1,0 +1,7 @@
+content   btnet                 chrome/content/  contentaccessible=yes
+locale    btnet   en-US         chrome/locale/en-US/
+
+overlay		chrome://browser/content/browser.xul	chrome://btnet/content/btnet.xul
+
+
+

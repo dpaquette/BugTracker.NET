@@ -1,0 +1,26 @@
+/*
+
+Use this, btnet_edit_bug.css and btnet_search.css to customize your look.
+For the overall look, use this file to override what btnet_base.css says.
+
+For position, use btnet_edit_bug.css and btnet_search.css are seperate so that if you want to change 
+the positioning of elements, you can do so on those two pages independently, 
+without changes in one breaking the other.
+
+*/
+
+ 
+
+/* 
+You can use css to display different priorities and statuses in different fonts, etc.
+See the "demo use of css classes" query.
+*/
+ 
+.pr1_st1 {color: green;}
+.pr1_st2 {background: yellow;}
+.pr2_st1 {font-weight: bold; color: purple;}
+.pr2_st2 {font-style: italic; background: orange;}
+
+
+
+
