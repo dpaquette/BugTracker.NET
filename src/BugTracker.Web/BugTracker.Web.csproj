@@ -523,8 +523,6 @@
     <Content Include="hg_view.aspx" />
     <Content Include="hg_view_revisions.aspx" />
     <Content Include="inc.aspx" />
-    <Content Include="inc_bugs.inc" />
-    <Content Include="inc_bugs2.inc" />
     <Content Include="inc_diff.inc" />
     <Content Include="insert_bug.aspx" />
     <Content Include="install.aspx" />
@@ -646,6 +644,13 @@
     <Compile Include="btnet\version_control.cs" />
     <Compile Include="btnet\whatsnew.cs" />
     <Compile Include="btnet\workflow.cs" />
+    <Compile Include="bugs.aspx.cs">
+      <DependentUpon>bugs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="bugs.aspx.designer.cs">
+      <DependentUpon>bugs.aspx</DependentUpon>
+    </Compile>
     <Compile Include="default.aspx.cs">
       <DependentUpon>default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -654,6 +659,13 @@
       <DependentUpon>default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="search.aspx.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="search.aspx.designer.cs">
+      <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
