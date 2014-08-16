@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="ajax2.aspx.cs" Inherits="btnet.ajax2" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 
 <script runat="server">

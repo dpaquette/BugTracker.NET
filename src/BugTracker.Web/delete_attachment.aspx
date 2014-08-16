@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="delete_attachment.aspx.cs" Inherits="btnet.delete_attachment" AutoEventWireup="True" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License

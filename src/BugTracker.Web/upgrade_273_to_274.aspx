@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="upgrade_273_to_274.aspx.cs" Inherits="btnet.upgrade_273_to_274" AutoEventWireup="True" %>
 <!--
 
 Copyright 2002-2011 Corey Trager

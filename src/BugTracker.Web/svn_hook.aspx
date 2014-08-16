@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false"%>
+<%@ Page language="C#" CodeBehind="svn_hook.aspx.cs" Inherits="btnet.svn_hook" validateRequest="false" AutoEventWireup="True" %>
 <%@ Import Namespace="System.IO" %>
 <%@ Import Namespace="System.Text.RegularExpressions" %>
 <%@ Import Namespace="System.Xml" %>

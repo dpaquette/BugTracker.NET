@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="tasks_all_excel.aspx.cs" Inherits="btnet.tasks_all_excel" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 
 <script language="C#" runat="server">

@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="mbugs.aspx.cs" Inherits="btnet.mbugs" AutoEventWireup="True" %>
 <!--
 Copyright 2002-2013 Corey Trager
 Distributed under the terms of the GNU General Public License

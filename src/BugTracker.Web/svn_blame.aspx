@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="svn_blame.aspx.cs" Inherits="btnet.svn_blame" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Xml" %>
 <!--
 Copyright 2002-2011 Corey Trager

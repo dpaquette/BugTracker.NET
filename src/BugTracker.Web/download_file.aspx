@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="download_file.aspx.cs" Inherits="btnet.download_file" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Data.SqlClient" %>
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">

@@ -1,4 +1,4 @@
-<%@ Page language="C#"  validateRequest="false"%>
+<%@ Page language="C#" CodeBehind="tropo_recording.aspx.cs" Inherits="btnet.tropo_recording"  validateRequest="false" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 

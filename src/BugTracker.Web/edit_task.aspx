@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="edit_task.aspx.cs" Inherits="btnet.edit_task" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Text.RegularExpressions" %>
 <!--
 Copyright 2002-2011 Corey Trager

@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false" enableEventValidation="false" %>
+<%@ Page language="C#" CodeBehind="manage_logs.aspx.cs" Inherits="btnet.manage_logs" validateRequest="false" enableEventValidation="false" AutoEventWireup="True" %>
 
 <!--
 Copyright 2002-2011 Corey Trager

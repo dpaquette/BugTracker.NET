@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="generate_btnetsc_reg.aspx.cs" Inherits="btnet.generate_btnetsc_reg" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 

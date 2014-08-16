@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="hg_view.aspx.cs" Inherits="btnet.hg_view" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 

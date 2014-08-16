@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="edit_styles.aspx.cs" Inherits="btnet.edit_styles" AutoEventWireup="True" %>
 <%@ Import Namespace="System.IO" %>
 
 <!--

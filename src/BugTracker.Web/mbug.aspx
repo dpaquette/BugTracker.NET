@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false"%>
+<%@ Page language="C#" CodeBehind="mbug.aspx.cs" Inherits="btnet.mbug" validateRequest="false" AutoEventWireup="True" %>
 
 <!--
 Copyright 2002-2013 Corey Trager

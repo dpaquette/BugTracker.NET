@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="write_posts.aspx.cs" Inherits="btnet.write_posts" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 
 <script language="C#" runat="server">

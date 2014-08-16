@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false" %>
+<%@ Page language="C#" CodeBehind="edit_web_config.aspx.cs" Inherits="btnet.edit_web_config" validateRequest="false" AutoEventWireup="True" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License

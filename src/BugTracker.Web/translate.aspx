@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false"%>
+<%@ Page language="C#" CodeBehind="translate.aspx.cs" Inherits="btnet.translate" validateRequest="false" AutoEventWireup="True" %>
 
 <!--
 

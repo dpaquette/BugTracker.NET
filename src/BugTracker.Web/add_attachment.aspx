@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="add_attachment.aspx.cs" Inherits="btnet.add_attachment" AutoEventWireup="True" %>
 <%@ Import Namespace="System.IO" %>
 <!--
 Copyright 2002-2011 Corey Trager

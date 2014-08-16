@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false"%>
+<%@ Page language="C#" CodeBehind="edit_bug.aspx.cs" Inherits="btnet.edit_bug" validateRequest="false" AutoEventWireup="True" %>
 
 <!--
 Copyright 2002-2011 Corey Trager

@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false" enableEventValidation="false" %>
+<%@ Page language="C#" CodeBehind="backup_db.aspx.cs" Inherits="btnet.backup_db" validateRequest="false" enableEventValidation="false" AutoEventWireup="True" %>
 
 <!--
 Copyright 2002-2011 Corey Trager

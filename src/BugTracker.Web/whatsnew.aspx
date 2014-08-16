@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="whatsnew.aspx.cs" Inherits="btnet.whatsnew" AutoEventWireup="True" %>
 
 <!-- #include file = "inc.aspx" -->
 

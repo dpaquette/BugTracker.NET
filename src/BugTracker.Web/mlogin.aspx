@@ -1,4 +1,4 @@
-<%@ Page language="C#" validateRequest="false"%>
+<%@ Page language="C#" CodeBehind="mlogin.aspx.cs" Inherits="btnet.mlogin" validateRequest="false" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Data.SqlClient" %>
 <!--
 Copyright 2002-2013 Corey Trager

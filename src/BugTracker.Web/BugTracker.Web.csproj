@@ -625,6 +625,829 @@
     <Content Include="write_posts.aspx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="add_attachment.aspx.cs">
+      <DependentUpon>add_attachment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="add_attachment.aspx.designer.cs">
+      <DependentUpon>add_attachment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="add_customfield.aspx.cs">
+      <DependentUpon>add_customfield.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="add_customfield.aspx.designer.cs">
+      <DependentUpon>add_customfield.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="admin.aspx.cs">
+      <DependentUpon>admin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="admin.aspx.designer.cs">
+      <DependentUpon>admin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ajax.aspx.cs">
+      <DependentUpon>ajax.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ajax.aspx.designer.cs">
+      <DependentUpon>ajax.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ajax2.aspx.cs">
+      <DependentUpon>ajax2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ajax2.aspx.designer.cs">
+      <DependentUpon>ajax2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="backup_db.aspx.cs">
+      <DependentUpon>backup_db.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="backup_db.aspx.designer.cs">
+      <DependentUpon>backup_db.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="categories.aspx.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="categories.aspx.designer.cs">
+      <DependentUpon>categories.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="change_password.aspx.cs">
+      <DependentUpon>change_password.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="change_password.aspx.designer.cs">
+      <DependentUpon>change_password.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="complete_registration.aspx.cs">
+      <DependentUpon>complete_registration.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="complete_registration.aspx.designer.cs">
+      <DependentUpon>complete_registration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="customfields.aspx.cs">
+      <DependentUpon>customfields.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="customfields.aspx.designer.cs">
+      <DependentUpon>customfields.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="dashboard.aspx.cs">
+      <DependentUpon>dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_attachment.aspx.cs">
+      <DependentUpon>delete_attachment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_attachment.aspx.designer.cs">
+      <DependentUpon>delete_attachment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_bug.aspx.cs">
+      <DependentUpon>delete_bug.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_bug.aspx.designer.cs">
+      <DependentUpon>delete_bug.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_category.aspx.cs">
+      <DependentUpon>delete_category.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_category.aspx.designer.cs">
+      <DependentUpon>delete_category.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_comment.aspx.cs">
+      <DependentUpon>delete_comment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_comment.aspx.designer.cs">
+      <DependentUpon>delete_comment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_customfield.aspx.cs">
+      <DependentUpon>delete_customfield.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_customfield.aspx.designer.cs">
+      <DependentUpon>delete_customfield.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_org.aspx.cs">
+      <DependentUpon>delete_org.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_org.aspx.designer.cs">
+      <DependentUpon>delete_org.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_priority.aspx.cs">
+      <DependentUpon>delete_priority.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_priority.aspx.designer.cs">
+      <DependentUpon>delete_priority.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_project.aspx.cs">
+      <DependentUpon>delete_project.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_project.aspx.designer.cs">
+      <DependentUpon>delete_project.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_query.aspx.cs">
+      <DependentUpon>delete_query.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_query.aspx.designer.cs">
+      <DependentUpon>delete_query.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_report.aspx.cs">
+      <DependentUpon>delete_report.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_report.aspx.designer.cs">
+      <DependentUpon>delete_report.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_status.aspx.cs">
+      <DependentUpon>delete_status.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_status.aspx.designer.cs">
+      <DependentUpon>delete_status.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_subscriber.aspx.cs">
+      <DependentUpon>delete_subscriber.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_subscriber.aspx.designer.cs">
+      <DependentUpon>delete_subscriber.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_task.aspx.cs">
+      <DependentUpon>delete_task.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_task.aspx.designer.cs">
+      <DependentUpon>delete_task.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_udf.aspx.cs">
+      <DependentUpon>delete_udf.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_udf.aspx.designer.cs">
+      <DependentUpon>delete_udf.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="delete_user.aspx.cs">
+      <DependentUpon>delete_user.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete_user.aspx.designer.cs">
+      <DependentUpon>delete_user.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="download_file.aspx.cs">
+      <DependentUpon>download_file.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="download_file.aspx.designer.cs">
+      <DependentUpon>download_file.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_attachment.aspx.cs">
+      <DependentUpon>edit_attachment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_attachment.aspx.designer.cs">
+      <DependentUpon>edit_attachment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_bug.aspx.cs">
+      <DependentUpon>edit_bug.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_bug.aspx.designer.cs">
+      <DependentUpon>edit_bug.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_category.aspx.cs">
+      <DependentUpon>edit_category.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_category.aspx.designer.cs">
+      <DependentUpon>edit_category.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_comment.aspx.cs">
+      <DependentUpon>edit_comment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_comment.aspx.designer.cs">
+      <DependentUpon>edit_comment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_customfield.aspx.cs">
+      <DependentUpon>edit_customfield.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_customfield.aspx.designer.cs">
+      <DependentUpon>edit_customfield.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_custom_html.aspx.cs">
+      <DependentUpon>edit_custom_html.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_custom_html.aspx.designer.cs">
+      <DependentUpon>edit_custom_html.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_dashboard.aspx.cs">
+      <DependentUpon>edit_dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_org.aspx.cs">
+      <DependentUpon>edit_org.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_org.aspx.designer.cs">
+      <DependentUpon>edit_org.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_priority.aspx.cs">
+      <DependentUpon>edit_priority.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_priority.aspx.designer.cs">
+      <DependentUpon>edit_priority.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_project.aspx.cs">
+      <DependentUpon>edit_project.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_project.aspx.designer.cs">
+      <DependentUpon>edit_project.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_query.aspx.cs">
+      <DependentUpon>edit_query.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_query.aspx.designer.cs">
+      <DependentUpon>edit_query.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_queued_notifications.aspx.cs">
+      <DependentUpon>edit_queued_notifications.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_queued_notifications.aspx.designer.cs">
+      <DependentUpon>edit_queued_notifications.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_report.aspx.cs">
+      <DependentUpon>edit_report.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_report.aspx.designer.cs">
+      <DependentUpon>edit_report.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_self.aspx.cs">
+      <DependentUpon>edit_self.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_self.aspx.designer.cs">
+      <DependentUpon>edit_self.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_status.aspx.cs">
+      <DependentUpon>edit_status.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_status.aspx.designer.cs">
+      <DependentUpon>edit_status.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_styles.aspx.cs">
+      <DependentUpon>edit_styles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_styles.aspx.designer.cs">
+      <DependentUpon>edit_styles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_task.aspx.cs">
+      <DependentUpon>edit_task.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_task.aspx.designer.cs">
+      <DependentUpon>edit_task.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_udf.aspx.cs">
+      <DependentUpon>edit_udf.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_udf.aspx.designer.cs">
+      <DependentUpon>edit_udf.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_user.aspx.cs">
+      <DependentUpon>edit_user.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_user.aspx.designer.cs">
+      <DependentUpon>edit_user.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_user_permissions2.aspx.cs">
+      <DependentUpon>edit_user_permissions2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_user_permissions2.aspx.designer.cs">
+      <DependentUpon>edit_user_permissions2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="edit_web_config.aspx.cs">
+      <DependentUpon>edit_web_config.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="edit_web_config.aspx.designer.cs">
+      <DependentUpon>edit_web_config.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="flag.aspx.cs">
+      <DependentUpon>flag.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="flag.aspx.designer.cs">
+      <DependentUpon>flag.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="forgot.aspx.cs">
+      <DependentUpon>forgot.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="forgot.aspx.designer.cs">
+      <DependentUpon>forgot.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="generate_btnetsc_reg.aspx.cs">
+      <DependentUpon>generate_btnetsc_reg.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="generate_btnetsc_reg.aspx.designer.cs">
+      <DependentUpon>generate_btnetsc_reg.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="get_db_datetime.aspx.cs">
+      <DependentUpon>get_db_datetime.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="get_db_datetime.aspx.designer.cs">
+      <DependentUpon>get_db_datetime.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="git_blame.aspx.cs">
+      <DependentUpon>git_blame.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="git_blame.aspx.designer.cs">
+      <DependentUpon>git_blame.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="git_diff.aspx.cs">
+      <DependentUpon>git_diff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="git_diff.aspx.designer.cs">
+      <DependentUpon>git_diff.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="git_hook.aspx.cs">
+      <DependentUpon>git_hook.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="git_hook.aspx.designer.cs">
+      <DependentUpon>git_hook.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="git_log.aspx.cs">
+      <DependentUpon>git_log.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="git_log.aspx.designer.cs">
+      <DependentUpon>git_log.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="git_view.aspx.cs">
+      <DependentUpon>git_view.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="git_view.aspx.designer.cs">
+      <DependentUpon>git_view.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="git_view_revisions.aspx.cs">
+      <DependentUpon>git_view_revisions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="git_view_revisions.aspx.designer.cs">
+      <DependentUpon>git_view_revisions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hello.aspx.cs">
+      <DependentUpon>hello.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hello.aspx.designer.cs">
+      <DependentUpon>hello.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hg_blame.aspx.cs">
+      <DependentUpon>hg_blame.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hg_blame.aspx.designer.cs">
+      <DependentUpon>hg_blame.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hg_diff.aspx.cs">
+      <DependentUpon>hg_diff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hg_diff.aspx.designer.cs">
+      <DependentUpon>hg_diff.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hg_hook.aspx.cs">
+      <DependentUpon>hg_hook.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hg_hook.aspx.designer.cs">
+      <DependentUpon>hg_hook.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hg_log.aspx.cs">
+      <DependentUpon>hg_log.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hg_log.aspx.designer.cs">
+      <DependentUpon>hg_log.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hg_view.aspx.cs">
+      <DependentUpon>hg_view.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hg_view.aspx.designer.cs">
+      <DependentUpon>hg_view.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="hg_view_revisions.aspx.cs">
+      <DependentUpon>hg_view_revisions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="hg_view_revisions.aspx.designer.cs">
+      <DependentUpon>hg_view_revisions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="inc.aspx.cs">
+      <DependentUpon>inc.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="insert_bug.aspx.cs">
+      <DependentUpon>insert_bug.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="insert_bug.aspx.designer.cs">
+      <DependentUpon>insert_bug.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="install.aspx.cs">
+      <DependentUpon>install.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="install.aspx.designer.cs">
+      <DependentUpon>install.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="loginnt.aspx.cs">
+      <DependentUpon>loginnt.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="loginnt.aspx.designer.cs">
+      <DependentUpon>loginnt.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="logoff.aspx.cs">
+      <DependentUpon>logoff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="logoff.aspx.designer.cs">
+      <DependentUpon>logoff.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="manage_logs.aspx.cs">
+      <DependentUpon>manage_logs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="manage_logs.aspx.designer.cs">
+      <DependentUpon>manage_logs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="massedit.aspx.cs">
+      <DependentUpon>massedit.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="massedit.aspx.designer.cs">
+      <DependentUpon>massedit.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="mbug.aspx.cs">
+      <DependentUpon>mbug.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="mbug.aspx.designer.cs">
+      <DependentUpon>mbug.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="mbugs.aspx.cs">
+      <DependentUpon>mbugs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="mbugs.aspx.designer.cs">
+      <DependentUpon>mbugs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="merge_bug.aspx.cs">
+      <DependentUpon>merge_bug.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="merge_bug.aspx.designer.cs">
+      <DependentUpon>merge_bug.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="mlogin.aspx.cs">
+      <DependentUpon>mlogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="mlogin.aspx.designer.cs">
+      <DependentUpon>mlogin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="notifications.aspx.cs">
+      <DependentUpon>notifications.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="notifications.aspx.designer.cs">
+      <DependentUpon>notifications.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="orgs.aspx.cs">
+      <DependentUpon>orgs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="orgs.aspx.designer.cs">
+      <DependentUpon>orgs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="print_bug.aspx.cs">
+      <DependentUpon>print_bug.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="print_bug.aspx.designer.cs">
+      <DependentUpon>print_bug.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="print_bugs.aspx.cs">
+      <DependentUpon>print_bugs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="print_bugs.aspx.designer.cs">
+      <DependentUpon>print_bugs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="print_bugs2.aspx.cs">
+      <DependentUpon>print_bugs2.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="print_bugs2.aspx.designer.cs">
+      <DependentUpon>print_bugs2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="priorities.aspx.cs">
+      <DependentUpon>priorities.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="priorities.aspx.designer.cs">
+      <DependentUpon>priorities.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="projects.aspx.cs">
+      <DependentUpon>projects.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="projects.aspx.designer.cs">
+      <DependentUpon>projects.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="queries.aspx.cs">
+      <DependentUpon>queries.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="queries.aspx.designer.cs">
+      <DependentUpon>queries.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="query.aspx.cs">
+      <DependentUpon>query.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="query.aspx.designer.cs">
+      <DependentUpon>query.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="register.aspx.cs">
+      <DependentUpon>register.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="register.aspx.designer.cs">
+      <DependentUpon>register.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="relationships.aspx.cs">
+      <DependentUpon>relationships.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="relationships.aspx.designer.cs">
+      <DependentUpon>relationships.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="reports.aspx.cs">
+      <DependentUpon>reports.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="reports.aspx.designer.cs">
+      <DependentUpon>reports.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="search_text.aspx.cs">
+      <DependentUpon>search_text.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="search_text.aspx.designer.cs">
+      <DependentUpon>search_text.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="seen.aspx.cs">
+      <DependentUpon>seen.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="seen.aspx.designer.cs">
+      <DependentUpon>seen.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="select_report.aspx.cs">
+      <DependentUpon>select_report.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="select_report.aspx.designer.cs">
+      <DependentUpon>select_report.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="send_email.aspx.cs">
+      <DependentUpon>send_email.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="send_email.aspx.designer.cs">
+      <DependentUpon>send_email.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="server_variables.aspx.cs">
+      <DependentUpon>server_variables.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="server_variables.aspx.designer.cs">
+      <DependentUpon>server_variables.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="statuses.aspx.cs">
+      <DependentUpon>statuses.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="statuses.aspx.designer.cs">
+      <DependentUpon>statuses.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="subscribe.aspx.cs">
+      <DependentUpon>subscribe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="subscribe.aspx.designer.cs">
+      <DependentUpon>subscribe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="svn_blame.aspx.cs">
+      <DependentUpon>svn_blame.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="svn_blame.aspx.designer.cs">
+      <DependentUpon>svn_blame.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="svn_diff.aspx.cs">
+      <DependentUpon>svn_diff.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="svn_diff.aspx.designer.cs">
+      <DependentUpon>svn_diff.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="svn_hook.aspx.cs">
+      <DependentUpon>svn_hook.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="svn_hook.aspx.designer.cs">
+      <DependentUpon>svn_hook.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="svn_log.aspx.cs">
+      <DependentUpon>svn_log.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="svn_log.aspx.designer.cs">
+      <DependentUpon>svn_log.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="svn_view.aspx.cs">
+      <DependentUpon>svn_view.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="svn_view.aspx.designer.cs">
+      <DependentUpon>svn_view.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="svn_view_revisions.aspx.cs">
+      <DependentUpon>svn_view_revisions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="svn_view_revisions.aspx.designer.cs">
+      <DependentUpon>svn_view_revisions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tags.aspx.cs">
+      <DependentUpon>tags.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tags.aspx.designer.cs">
+      <DependentUpon>tags.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tasks.aspx.cs">
+      <DependentUpon>tasks.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tasks.aspx.designer.cs">
+      <DependentUpon>tasks.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tasks_all.aspx.cs">
+      <DependentUpon>tasks_all.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tasks_all.aspx.designer.cs">
+      <DependentUpon>tasks_all.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tasks_all_excel.aspx.cs">
+      <DependentUpon>tasks_all_excel.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tasks_all_excel.aspx.designer.cs">
+      <DependentUpon>tasks_all_excel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tasks_frame.aspx.cs">
+      <DependentUpon>tasks_frame.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tasks_frame.aspx.designer.cs">
+      <DependentUpon>tasks_frame.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="translate.aspx.cs">
+      <DependentUpon>translate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="translate.aspx.designer.cs">
+      <DependentUpon>translate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="tropo_recording.aspx.cs">
+      <DependentUpon>tropo_recording.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="tropo_recording.aspx.designer.cs">
+      <DependentUpon>tropo_recording.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="udfs.aspx.cs">
+      <DependentUpon>udfs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="udfs.aspx.designer.cs">
+      <DependentUpon>udfs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="update_dashboard.aspx.cs">
+      <DependentUpon>update_dashboard.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="upgrade_273_to_274.aspx.cs">
+      <DependentUpon>upgrade_273_to_274.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="upgrade_273_to_274.aspx.designer.cs">
+      <DependentUpon>upgrade_273_to_274.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="users.aspx.cs">
+      <DependentUpon>users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="users.aspx.designer.cs">
+      <DependentUpon>users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="view_attachment.aspx.cs">
+      <DependentUpon>view_attachment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="view_attachment.aspx.designer.cs">
+      <DependentUpon>view_attachment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="view_memory_log.aspx.cs">
+      <DependentUpon>view_memory_log.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="view_report.aspx.cs">
+      <DependentUpon>view_report.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="view_subscribers.aspx.cs">
+      <DependentUpon>view_subscribers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="view_subscribers.aspx.designer.cs">
+      <DependentUpon>view_subscribers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="view_web_config.aspx.cs">
+      <DependentUpon>view_web_config.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="view_web_config.aspx.designer.cs">
+      <DependentUpon>view_web_config.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="view_whatsnew.aspx.cs">
+      <DependentUpon>view_whatsnew.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="vote.aspx.cs">
+      <DependentUpon>vote.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="vote.aspx.designer.cs">
+      <DependentUpon>vote.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="whatsnew.aspx.cs">
+      <DependentUpon>whatsnew.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="whatsnew.aspx.designer.cs">
+      <DependentUpon>whatsnew.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="write_posts.aspx.cs">
+      <DependentUpon>write_posts.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="btnet\authenticate.cs" />
     <Compile Include="btnet\bug.cs" />
     <Compile Include="btnet\bug_list.cs" />
@@ -665,6 +1488,9 @@
     </Compile>
     <Compile Include="search.aspx.designer.cs">
       <DependentUpon>search.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="write_posts.aspx.designer.cs">
+      <DependentUpon>write_posts.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <PropertyGroup>

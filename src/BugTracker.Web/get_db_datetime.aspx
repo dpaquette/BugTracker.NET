@@ -1,4 +1,4 @@
-<%@ Page language="C#"%>
+<%@ Page language="C#" CodeBehind="get_db_datetime.aspx.cs" Inherits="btnet.get_db_datetime" AutoEventWireup="True" %>
 <!-- #include file = "inc.aspx" -->
 
 <script language="C#" runat="server">
