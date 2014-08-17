@@ -1025,6 +1025,9 @@
     <Compile Include="git_view_revisions.aspx.designer.cs">
       <DependentUpon>git_view_revisions.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
     <Compile Include="hello.aspx.cs">
       <DependentUpon>hello.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
