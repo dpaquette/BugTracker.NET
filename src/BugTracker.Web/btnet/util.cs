@@ -636,33 +636,30 @@ namespace btnet
 			}
 		}
 
-		///////////////////////////////////////////////////////////////////////
-		protected static string get_absolute_or_relative_folder(string folder)
-		{
-
-			if (folder.IndexOf(":") == 1
-			|| folder.StartsWith("\\\\"))
-			{
-				// leave as is
-				return folder;
-			}
-			else
-			{
-                string map_path = (string)HttpRuntime.Cache["MapPath"];
-                return map_path + "\\" + folder;
-			}
-
-		}
+	    public static string GetAbsolutePath(string path)
+	    {
+	        string result;
+	        if (Path.IsPathRooted(path))
+	        {
+	            result = path;
+	        }
+	        else
+	        {
+	            string appRootPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+	            result = Path.Combine(appRootPath, path);
+	        }
+	        return result;
+	    }
 
         ///////////////////////////////////////////////////////////////////////
         public static string get_folder(string name, string dflt)
         {
             String folder = Util.get_setting(name, "");
-            if (folder == "")
+            if (folder == String.Empty)
                 return dflt;
 
-            folder = get_absolute_or_relative_folder(folder);
-            if (!System.IO.Directory.Exists(folder))
+            folder = GetAbsolutePath(folder);
+            if (!Directory.Exists(folder))
             {
                 throw (new Exception(name + " specified in Web.config, \""
                 + folder
@@ -670,29 +667,25 @@ namespace btnet
             }
 
             return folder;
-
         }
 
 
    		///////////////////////////////////////////////////////////////////////
         public static string get_lucene_index_folder()
         {
-            string map_path = (string)HttpRuntime.Cache["MapPath"];
-            return get_folder("LuceneIndexFolder", map_path + "\\App_Data\\lucene_index");
+            return get_folder("LuceneIndexFolder", GetAbsolutePath("App_Data\\lucene_index"));
         }
 
 		///////////////////////////////////////////////////////////////////////
 		public static string get_upload_folder()
 		{
-            string map_path = (string)HttpRuntime.Cache["MapPath"];
-            return get_folder("UploadFolder", map_path + "\\App_Data\\uploads");
+            return get_folder("UploadFolder", GetAbsolutePath("App_Data\\uploads"));
 		}
 
 		///////////////////////////////////////////////////////////////////////
 		public static string get_log_folder()
 		{
-            string map_path = (string)HttpRuntime.Cache["MapPath"];
-            return get_folder("LogFileFolder", map_path + "\\App_Data\\logs");
+            return get_folder("LogFileFolder", GetAbsolutePath("App_Data\\logs"));
         }
 
 		///////////////////////////////////////////////////////////////////////

@@ -48,9 +48,7 @@ namespace btnet
 
                 // If this file exists, use it.
 
-                string map_path = (string) HttpRuntime.Cache["MapPath"];
-
-                string css_for_email_file = map_path + "\\custom\\btnet_css_for_email.css";
+                string css_for_email_file = Util.GetAbsolutePath("custom\\btnet_css_for_email.css");
 
                 try
                 {
@@ -61,10 +59,10 @@ namespace btnet
                     }
                     else
                     {
-                        css_for_email_file = map_path + "\\btnet_base.css";
+                        css_for_email_file = Util.GetAbsolutePath("btnet_base.css");
                         Response.WriteFile(css_for_email_file);
 					    Response.Write("\n");
-                        css_for_email_file = map_path + "\\custom\\" + "btnet_custom.css";
+                        css_for_email_file = Util.GetAbsolutePath("custom\\btnet_custom.css");
                         if (System.IO.File.Exists(css_for_email_file))
                         {
                             Response.WriteFile(css_for_email_file);

@@ -98,31 +98,28 @@ namespace btnet
 
         public void Application_OnStart(Object sender, EventArgs e)
         {
-            string path = HttpContext.Current.Server.MapPath(null);
-            HttpRuntime.Cache.Add("MapPath", path, null, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
-                CacheItemPriority.NotRemovable, null);
             HttpRuntime.Cache.Add("Application", Application, null, Cache.NoAbsoluteExpiration,
                 Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, null);
 
-            string dir = path + "\\App_Data";
+            string dir = Util.GetAbsolutePath("App_Data");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
 
-            dir = path + "\\App_Data\\logs";
+            dir = Util.GetAbsolutePath("App_Data\\logs");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
 
-            dir = path + "\\App_Data\\uploads";
+            dir = Util.GetAbsolutePath("App_Data\\uploads");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
 
-            dir = path + "\\App_Data\\lucene_index";
+            dir = Util.GetAbsolutePath("App_Data\\lucene_index");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -130,19 +127,19 @@ namespace btnet
 
             Util.set_context(HttpContext.Current); // required for map path calls to work in util.cs
 
-            StreamReader sr = File.OpenText(path + "\\custom\\custom_header.html");
+            StreamReader sr = File.OpenText(Util.GetAbsolutePath("custom\\custom_header.html"));
             Application["custom_header"] = sr.ReadToEnd();
             sr.Close();
 
-            sr = File.OpenText(path + "\\custom\\custom_footer.html");
+            sr = File.OpenText(Util.GetAbsolutePath("custom\\custom_footer.html"));
             Application["custom_footer"] = sr.ReadToEnd();
             sr.Close();
 
-            sr = File.OpenText(path + "\\custom\\custom_logo.html");
+            sr = File.OpenText(Util.GetAbsolutePath("custom\\custom_logo.html"));
             Application["custom_logo"] = sr.ReadToEnd();
             sr.Close();
 
-            sr = File.OpenText(path + "\\custom\\custom_welcome.html");
+            sr = File.OpenText(Util.GetAbsolutePath("custom\\custom_welcome.html"));
             Application["custom_welcome"] = sr.ReadToEnd();
             sr.Close();
 
