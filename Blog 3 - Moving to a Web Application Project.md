@@ -32,7 +32,7 @@ Now that we have verified the class files compile cleanly, we should also confir
 
 You might find more missing references at this point, but in our case there are no compile errors. We are safe to commit changes and move to the next step.
 
-[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/4a0bb85d9b9670bdd791a454a3e438eb1c32e515)
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/3c64d84de9af96763713eae862d2b2eeeb1cf665)
 
 #Generating code-behind files
 One of the big advantages of a Web application project is that we can have a cleaner separation between the page or user control (aspx / ascx) and the C# code that is associated with that page or user control. In a web application, each aspx and ascx file should have a corresponding aspx.designer.cs. This designer class contains strongly typed fields that can be used in C# code to reference the elements in the aspx file. For example, if you have a text input element with id="user" then the designer.cs file will contain a field of type HtmlInputText called user:
