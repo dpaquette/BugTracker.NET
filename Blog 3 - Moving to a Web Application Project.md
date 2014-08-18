@@ -135,6 +135,8 @@ My first instinct here was to introduce a base class that contained the shared c
 
 Many of these steps above are extremely tedious and do not vary at all from file to file. This is a good candidate for automation. By automating some of these steps, we can reduce the chances of human error and hopefully complete the bulk of the work in a lot less time that would otherwise be required. This is a technique sometimes referred to as Automated Software Engineering.
 
+We created a PowerShell script to automate these tasks. A better choice might have been [T4](http://msdn.microsoft.com/en-us/library/bb126445.aspx). T4 (Text Template Transformation Toolkit) is a set of tools from Microsoft that is suited specifically to [code generation tasks](http://msdn.microsoft.com/en-us/magazine/hh882448.aspx).
+
 We created a script that will take care of the following steps for each aspx file:
 
 1. Add a new class named _PageName_.aspx.cs where _PageName_.aspx is the name of the page you are converting
@@ -160,6 +162,10 @@ Now that the application compiles in Visual Studio, run aspnet_compiler.exe to e
 Finally, run the application to ensure the application behaves as expected.
 
 [View the commit](https://github.com/dpaquette/BugTracker.NET/commit/b928ab9acef266d7f1f97b107338fa5a9ac249e8)
+
+After completing a code-review of these changes, Simon suggested that it might be a good idea to introduce a common base Page class that all our pages would inherit from. This will give us a place to add common logic in future refactorings. We modified the script to have all pages inherit BasePage and added an empty BasePage class that inherits from Page.
+
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/727972b6d92d011041adba58068dd746dc5e69e8)
 
 Note that the C# code is still inlined in to most of the aspx pages in BugTracker.NET and most of the code-behind files are simply empty classes. We have decided to tackle moving the C# code in to the code-behind files as we go. Basically, anytime we need to make a change to a page, we will move the C# code to the code-behind file at that time. At least now, we have the structure needed to move forward.
 
