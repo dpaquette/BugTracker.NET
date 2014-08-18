@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using NLog;
 
 namespace btnet
 {
@@ -61,78 +62,16 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static string get_log_file_path()
-		{
-
-			// determine log file name
-			string log_file_folder = Util.get_log_folder();
-
-			DateTime now = DateTime.Now;
-			string now_string =
-				(now.Year).ToString()
-				+ "_" +
-				(now.Month).ToString("0#")
-				+ "_" +
-				(now.Day).ToString("0#");
-
-			string path = log_file_folder
-				+ "\\"
-				+ "btnet_log_"
-				+ now_string
-				+ ".txt";
-
-			return path;
-
-		}
-
-		///////////////////////////////////////////////////////////////////////
 		public static void write_to_log(string s)
 		{
-
-			if (Util.get_setting("LogEnabled","1") == "0")
-			{
-				return;
-			}
-
-			string path = get_log_file_path();
-
-			lock(dummy)
-			{
-				System.IO.StreamWriter w = System.IO.File.AppendText(path);
-
-				// write to it
-
-
-				string url = "";
-				
-				try // To workaround problem with IIS integrated mode
-				{
-					if (HttpContext.Current != null)
-					{
-						if (HttpContext.Current.Request != null)
-						{
-							url = HttpContext.Current.Request.Url.ToString();
-						}
-					}
-				}
-				catch 
-				{
-					// do nothing
-				}
-
-				w.WriteLine(DateTime.Now.ToString("yyy-MM-dd HH:mm:ss")
-					+ " "
-					+ url
-					+ " "
-					+ s);
-
-				w.Close();
-			}
+		    Logger log = LogManager.GetCurrentClassLogger();
+            log.Debug(s);
 		}
 
 		///////////////////////////////////////////////////////////////////////
 		public static void write_to_memory_log(string s)
 		{
+            //TODO: This can probably be handled in a better way using NLog or Glimpse 
 
 			if (HttpContext.Current == null)
 			{

@@ -4,6 +4,8 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using btnet.App_Start;
+using NLog;
 
 namespace btnet
 {
@@ -50,22 +52,10 @@ namespace btnet
 
             Exception exc = Server.GetLastError().GetBaseException();
 
-            bool log_enabled = (Util.get_setting("LogEnabled", "1") == "1");
-            if (log_enabled)
-            {
-                string path = Util.get_log_file_path();
+            Logger logger = LogManager.GetCurrentClassLogger();
+            logger.Fatal(exc);
 
-                // open file
-                StreamWriter w = File.AppendText(path);
-
-                w.WriteLine("\nTIME: " + DateTime.Now.ToLongTimeString());
-                w.WriteLine("MSG: " + exc.Message);
-                w.WriteLine("URL: " + Request.Url);
-                w.WriteLine("EXCEPTION: " + exc);
-                w.WriteLine(server_vars_string.ToString());
-                w.Close();
-            }
-
+            //TODO: This can probably be replaced with a new NLog target or maybe Elmah
             bool error_email_enabled = (Util.get_setting("ErrorEmailEnabled", "1") == "1");
             if (error_email_enabled)
             {
@@ -98,6 +88,7 @@ namespace btnet
 
         public void Application_OnStart(Object sender, EventArgs e)
         {
+            LoggingConfig.Configure();
             HttpRuntime.Cache.Add("Application", Application, null, Cache.NoAbsoluteExpiration,
                 Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, null);
 

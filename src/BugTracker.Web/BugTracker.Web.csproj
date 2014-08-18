@@ -41,13 +41,13 @@
     <Reference Include="Highlighter.Net">
       <HintPath>..\references\Highlighter.Net.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\references\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Lucene.Net">
       <HintPath>..\references\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="SharpMimeTools">
       <HintPath>..\references\SharpMimeTools.dll</HintPath>
     </Reference>
@@ -74,6 +74,7 @@
     <Content Include="ckeditor\.htaccess" />
     <Content Include="ckeditor\ckeditor.pack" />
     <Content Include="edit_area\edit_area_full.gz" />
+    <Content Include="packages.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -660,6 +661,7 @@
     <Compile Include="ajax2.aspx.designer.cs">
       <DependentUpon>ajax2.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\LoggingConfig.cs" />
     <Compile Include="backup_db.aspx.cs">
       <DependentUpon>backup_db.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
