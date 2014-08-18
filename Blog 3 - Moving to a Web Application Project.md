@@ -116,10 +116,10 @@ My first instinct here was to introduce a base class that contained the shared c
 - Make the Page_Load method public
 - Compile the application. We receive some compile errors due missing using statements. Add the following using statements to bugs.aspx.cs and search.aspx.cs to fix those errors.
 
-
+```
      using System.Web.UI.WebControls;
      using System.Data;
-
+```
 
 
 - Run aspnet_compiler.exe to ensure the aspx files compile correctly. We receive a number of errors indicating fields and methods that cannot be accessed from bugs.aspx and search.aspx. This is because the code was moved to the code-behind files. In order for these fields and methods to be visible to the aspx code, we need to  change the visibility of those fields and methods to protected:
