@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class select_report : Page
+    public partial class select_report : BasePage
     {
     }
 }

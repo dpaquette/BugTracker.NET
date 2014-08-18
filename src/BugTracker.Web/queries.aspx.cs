@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class queries : Page
+    public partial class queries : BasePage
     {
     }
 }

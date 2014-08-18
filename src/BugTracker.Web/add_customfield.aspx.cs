@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class add_customfield : Page
+    public partial class add_customfield : BasePage
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class send_email : Page
+    public partial class send_email : BasePage
     {
     }
 }

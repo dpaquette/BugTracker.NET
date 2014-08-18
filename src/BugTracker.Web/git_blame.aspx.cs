@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class git_blame : Page
+    public partial class git_blame : BasePage
     {
     }
 }

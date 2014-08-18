@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 
 namespace btnet
 {
-    public partial class search : Page
+    public partial class search : BasePage
     {
 
 

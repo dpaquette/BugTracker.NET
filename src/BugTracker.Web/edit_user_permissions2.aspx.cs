@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class edit_user_permissions2 : Page
+    public partial class edit_user_permissions2 : BasePage
     {
     }
 }

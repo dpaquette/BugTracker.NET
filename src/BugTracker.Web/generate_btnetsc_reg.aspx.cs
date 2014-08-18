@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class generate_btnetsc_reg : Page
+    public partial class generate_btnetsc_reg : BasePage
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class install : Page
+    public partial class install : BasePage
     {
     }
 }

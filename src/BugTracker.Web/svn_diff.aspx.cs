@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class svn_diff : Page
+    public partial class svn_diff : BasePage
     {
     }
 }

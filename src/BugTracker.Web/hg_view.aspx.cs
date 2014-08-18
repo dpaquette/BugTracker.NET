@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class hg_view : Page
+    public partial class hg_view : BasePage
     {
     }
 }

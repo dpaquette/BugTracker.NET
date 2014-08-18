@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class delete_priority : Page
+    public partial class delete_priority : BasePage
     {
     }
 }

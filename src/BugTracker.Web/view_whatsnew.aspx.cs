@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class view_whatsnew : Page
+    public partial class view_whatsnew : BasePage
     {
     }
 }

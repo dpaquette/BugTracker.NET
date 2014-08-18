@@ -8,7 +8,7 @@ using System.Web.UI.WebControls;
 
 namespace btnet
 {
-    public partial class bugs : Page
+    public partial class bugs : BasePage
     {
 
         protected string sql;

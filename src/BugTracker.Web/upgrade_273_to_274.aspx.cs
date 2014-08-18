@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class upgrade_273_to_274 : Page
+    public partial class upgrade_273_to_274 : BasePage
     {
     }
 }

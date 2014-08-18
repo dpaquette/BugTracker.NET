@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class search_text : Page
+    public partial class search_text : BasePage
     {
     }
 }

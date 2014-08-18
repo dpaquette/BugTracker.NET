@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class delete_bug : Page
+    public partial class delete_bug : BasePage
     {
     }
 }

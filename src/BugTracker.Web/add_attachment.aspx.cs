@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class add_attachment : Page
+    public partial class add_attachment : BasePage
     {
     }
 }

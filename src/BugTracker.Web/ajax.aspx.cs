@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class ajax : Page
+    public partial class ajax : BasePage
     {
     }
 }

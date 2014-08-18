@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class change_password : Page
+    public partial class change_password : BasePage
     {
     }
 }

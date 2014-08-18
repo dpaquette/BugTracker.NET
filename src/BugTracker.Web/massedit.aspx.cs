@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class massedit : Page
+    public partial class massedit : BasePage
     {
     }
 }

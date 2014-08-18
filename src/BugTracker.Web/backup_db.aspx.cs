@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class backup_db : Page
+    public partial class backup_db : BasePage
     {
     }
 }

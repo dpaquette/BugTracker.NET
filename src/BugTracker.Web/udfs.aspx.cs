@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class udfs : Page
+    public partial class udfs : BasePage
     {
     }
 }

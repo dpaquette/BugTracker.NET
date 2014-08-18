@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class tropo_recording : Page
+    public partial class tropo_recording : BasePage
     {
     }
 }

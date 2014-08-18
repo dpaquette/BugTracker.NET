@@ -23,7 +23,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class " + $PageName + " : Page
+    public partial class " + $PageName + " : BasePage
     {
     }
 }"

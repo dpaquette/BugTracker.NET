@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class git_view_revisions : Page
+    public partial class git_view_revisions : BasePage
     {
     }
 }

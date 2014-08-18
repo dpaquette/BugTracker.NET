@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class notifications : Page
+    public partial class notifications : BasePage
     {
     }
 }

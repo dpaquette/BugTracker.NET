@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class edit_udf : Page
+    public partial class edit_udf : BasePage
     {
     }
 }

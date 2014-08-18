@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class edit_dashboard : Page
+    public partial class edit_dashboard : BasePage
     {
     }
 }

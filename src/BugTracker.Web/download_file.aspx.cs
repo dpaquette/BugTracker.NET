@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class download_file : Page
+    public partial class download_file : BasePage
     {
     }
 }

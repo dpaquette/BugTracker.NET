@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class priorities : Page
+    public partial class priorities : BasePage
     {
     }
 }

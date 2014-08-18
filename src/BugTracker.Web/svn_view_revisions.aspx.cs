@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class svn_view_revisions : Page
+    public partial class svn_view_revisions : BasePage
     {
     }
 }

@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class logoff : Page
+    public partial class logoff : BasePage
     {
     }
 }

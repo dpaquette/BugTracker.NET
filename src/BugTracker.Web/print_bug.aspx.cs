@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class print_bug : Page
+    public partial class print_bug : BasePage
     {
     }
 }

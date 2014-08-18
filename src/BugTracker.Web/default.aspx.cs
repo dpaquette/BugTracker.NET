@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class @default : Page
+    public partial class @default : BasePage
     {
         private string sql;
 

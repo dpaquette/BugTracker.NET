@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class hello : Page
+    public partial class hello : BasePage
     {
     }
 }

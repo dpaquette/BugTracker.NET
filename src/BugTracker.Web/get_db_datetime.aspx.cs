@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class get_db_datetime : Page
+    public partial class get_db_datetime : BasePage
     {
     }
 }

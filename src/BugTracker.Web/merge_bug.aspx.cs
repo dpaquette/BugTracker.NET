@@ -6,7 +6,7 @@ using System.Web.UI;
 
 namespace btnet
 {
-    public partial class merge_bug : Page
+    public partial class merge_bug : BasePage
     {
     }
 }
