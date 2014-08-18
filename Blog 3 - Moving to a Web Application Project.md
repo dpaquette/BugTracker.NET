@@ -52,6 +52,7 @@ Before we get started, this step will go much easier if we match the namespaces 
 **Warning**: This step can be very time consuming and will very significantly from file to file. Patterns will emerge as you progress through your application and it will become easier as you go.
 
 The basic steps for each file are as follows:
+
 1. Add a new class named _PageName_.aspx.cs where _PageName_.aspx is the name of the page you are converting
 2. Make the new class partial and make it inherit from Page
 3. Add the Inherits and CodeBehind directives to the Page element in the aspx file
