@@ -1,0 +1,1 @@
+<%@ Application  CodeBehind="Global.asax.cs" Inherits="btnet.Global" %>
