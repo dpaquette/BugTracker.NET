@@ -10,6 +10,8 @@ using System.IO;
 using System.Text;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+using btnet.Search;
+using Nest;
 
 namespace btnet
 {
@@ -1080,9 +1082,10 @@ select scope_identity();";
 			// probably something worth updating the index about.
 			// Really, though, we wouldn't want to update the index if it were
 			// just the status that were changing...
-			if (btnet.Util.get_setting("EnableLucene", "1") == "1")
+			if (btnet.Util.get_setting("EnableSearch", "1") == "1")
 			{
-				MyLucene.update_lucene_index(bugid);
+			    IBugSearch search = BugSearchFactory.CreateBugSearch();
+				search.IndexBug(bugid);
 			}
 
 			bool notification_email_enabled = (btnet.Util.get_setting("NotificationEmailEnabled", "1") == "1");

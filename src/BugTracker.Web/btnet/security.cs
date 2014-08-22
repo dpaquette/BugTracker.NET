@@ -332,7 +332,7 @@ function on_submit_search()
             Response.Write (goto_form);
 
             // search
-            if (Util.get_setting("EnableLucene", "1") == "1" && user.can_search)
+            if (Util.get_setting("EnableSearch", "1") == "1" && user.can_search)
             {
                 string query = (string) HttpContext.Current.Session["query"];
                 if (query == null)

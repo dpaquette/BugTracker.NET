@@ -5,6 +5,8 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using btnet.App_Start;
+using btnet.Search;
+using Nest;
 using NLog;
 
 namespace btnet
@@ -110,12 +112,6 @@ namespace btnet
                 Directory.CreateDirectory(dir);
             }
 
-            dir = Util.GetAbsolutePath("App_Data\\lucene_index");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
             Util.set_context(HttpContext.Current); // required for map path calls to work in util.cs
 
             StreamReader sr = File.OpenText(Util.GetAbsolutePath("custom\\custom_header.html"));
@@ -142,11 +138,6 @@ namespace btnet
             if (Util.get_setting("EnableTags", "0") == "1")
             {
                 Tags.build_tag_index(Application);
-            }
-
-            if (Util.get_setting("EnableLucene", "1") == "1")
-            {
-                MyLucene.build_lucene_index(Application);
             }
 
             if (Util.get_setting("EnablePop3", "0") == "1")

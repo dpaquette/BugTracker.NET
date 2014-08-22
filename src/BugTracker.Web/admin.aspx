@@ -5,42 +5,6 @@ Distributed under the terms of the GNU General Public License
 -->
 <!-- #include file = "inc.aspx" -->
 
-
-<script language="C#" runat="server">
-
-
-Security security;
-bool nag = false;
-
-///////////////////////////////////////////////////////////////////////
-void Page_Load(Object sender, EventArgs e)
-{
-
-	Util.do_not_cache(Response);
-	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
-	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-		+ "admin";
-		
-	if (false) // change this to if(true) to make the donation nag message go away
-	{
-	
-	}
-	else
-	{
-		int bugs = Convert.ToInt32(btnet.DbUtil.execute_scalar("select count(1) from bugs"));
-		if (bugs > 100)
-		{
-			nag = true;
-		}
-	}
-}
-
-
-</script>
-
 <html>
 <head>
 <title id="titl" runat="server">btnet admin</title>
@@ -115,44 +79,42 @@ Is BugTracker.NET helping you or your company?  Please consider <a href=javascri
 
 <div class=align><table border=0><tr><td>
 <ul>
-<p>
-<li class=listitem><a href=users.aspx>Users</a>
-<p>
-<li class=listitem><a href=orgs.aspx>Organizations</a>
-<p>
-<li class=listitem><a href=projects.aspx>Projects</a>
-<p>
-<li class=listitem><a href=categories.aspx>Categories</a>
-<p>
-<li class=listitem><a href=priorities.aspx>Priorities</a>
-<p>
-<li class=listitem><a href=statuses.aspx>Statuses</a>
-<p>
+
+<li class=listitem><a href=users.aspx>Users</a></li>
+<li class=listitem><a href=orgs.aspx>Organizations</a></li>
+<li class=listitem><a href=projects.aspx>Projects</a></li>
+<li class=listitem><a href=categories.aspx>Categories</a></li>
+
+<li class=listitem><a href=priorities.aspx>Priorities</a></li>
+
+<li class=listitem><a href=statuses.aspx>Statuses</a></li>
+
 <li class=listitem><a href=udfs.aspx>User Defined Attribute</a>
-&nbsp;&nbsp;<span class=smallnote>(see "ShowUserDefinedBugAttribute" and "UserDefinedBugAttributeName" in Web.config)</span>
-<p>
+&nbsp;&nbsp;<span class=smallnote>(see "ShowUserDefinedBugAttribute" and "UserDefinedBugAttributeName" in Web.config)</span></li>
 <li class=listitem><a href=customfields.aspx>Custom Fields</a>
-&nbsp;&nbsp;<span class=smallnote>(add custom fields to the bug page)</span>
-<p>
+&nbsp;&nbsp;<span class=smallnote>(add custom fields to the bug page)</span></li>
+
 <li class=listitem><a target=_blank href=query.aspx>Run Ad-hoc Query</a>
     &nbsp;&nbsp;
     <span style="border: solid red 1px; padding: 2px; margin: 3px; color: red; font-size: 9px;">
     This links to query.aspx.&nbsp;&nbsp;Query.aspx is potentially unsafe.&nbsp;&nbsp;Delete it if you are deploying on a public web server.
-    </span><br>
-<p>
-<li class=listitem><a href=notifications.aspx>Queued Email Notifications</a>
-<p>
-<li class=listitem><a href=edit_custom_html.aspx>Edit Custom Html</a>
-<p>
-<li class=listitem><a href=edit_web_config.aspx>Edit Web.Config</a>
+    </span><br></li>
+
+<li class=listitem><a href=notifications.aspx>Queued Email Notifications</a></li>
+
+<li class=listitem><a href=edit_custom_html.aspx>Edit Custom Html</a></li>
+
+<li class=listitem><a href=edit_web_config.aspx>Edit Web.Config</a></li>
     &nbsp;&nbsp;
     <span style="border: solid red 1px; padding: 2px; margin: 3px; color: red; font-size: 9px;">
     Many BugTracker.NET features are configurable by editing Web.config, but please be careful!  Web.config is easy to break!
-    </span><br>
-<p>
-<li class=listitem><a href=backup_db.aspx>Backup Database</a>
-<p>
-<li class=listitem><a href=manage_logs.aspx>Manage Logs</a>
+    </span><br></li>
+
+<li class=listitem><a href=backup_db.aspx>Backup Database</a></li>
+<li class=listitem><a href=manage_logs.aspx>Manage Logs</a></li>
+    <li>
+        <form runat="server" ID="SearchSettingsForm"><asp:Button ID="reindexLink" runat="server" OnClick="ReindexAllBugs" Text="Recreate Search Index"></asp:Button></form>
+    </li>
 </ul>
 </td></tr></table>
 <p>&nbsp;<p>

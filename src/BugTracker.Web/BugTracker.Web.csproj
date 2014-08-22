@@ -38,13 +38,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Highlighter.Net">
-      <HintPath>..\references\Highlighter.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="Lucene.Net">
-      <HintPath>..\references\Lucene.Net.dll</HintPath>
+    <Reference Include="Elasticsearch.Net">
+      <HintPath>..\packages\Elasticsearch.Net.1.0.2\lib\Elasticsearch.Net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Nest">
+      <HintPath>..\packages\NEST.1.0.2\lib\Nest.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -1240,6 +1244,8 @@
     <Compile Include="reports.aspx.designer.cs">
       <DependentUpon>reports.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Search\BugSearchFactory.cs" />
+    <Compile Include="Search\IBugSearch.cs" />
     <Compile Include="search_text.aspx.cs">
       <DependentUpon>search_text.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1461,7 +1467,7 @@
     <Compile Include="btnet\bug_list.cs" />
     <Compile Include="btnet\dbutil.cs" />
     <Compile Include="btnet\email.cs" />
-    <Compile Include="btnet\my_lucene.cs" />
+    <Compile Include="Search\BugSearch.cs" />
     <Compile Include="btnet\my_mime.cs" />
     <Compile Include="btnet\pop3.cs" />
     <Compile Include="btnet\POP3Client.cs" />

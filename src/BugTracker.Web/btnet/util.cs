@@ -608,13 +608,6 @@ namespace btnet
             return folder;
         }
 
-
-   		///////////////////////////////////////////////////////////////////////
-        public static string get_lucene_index_folder()
-        {
-            return get_folder("LuceneIndexFolder", GetAbsolutePath("App_Data\\lucene_index"));
-        }
-
 		///////////////////////////////////////////////////////////////////////
 		public static string get_upload_folder()
 		{
