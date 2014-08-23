@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using btnet.App_Start;
+using btnet.Mail;
 using btnet.Search;
 using Nest;
 using NLog;
@@ -142,7 +143,7 @@ namespace btnet
 
             if (Util.get_setting("EnablePop3", "0") == "1")
             {
-                MyPop3.start_pop3(Application);
+                Pop3.start_pop3(Application);
             }
         }
 

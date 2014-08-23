@@ -41,6 +41,9 @@
     <Reference Include="Elasticsearch.Net">
       <HintPath>..\packages\Elasticsearch.Net.1.0.2\lib\Elasticsearch.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Mail">
+      <HintPath>..\packages\Mail.dll.3.0.14228.1107\lib\Mail.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Nest">
       <HintPath>..\packages\NEST.1.0.2\lib\Nest.dll</HintPath>
@@ -1118,6 +1121,8 @@
     <Compile Include="logoff.aspx.designer.cs">
       <DependentUpon>logoff.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Mail\MailFormat.cs" />
+    <Compile Include="Mail\MailPriority.cs" />
     <Compile Include="manage_logs.aspx.cs">
       <DependentUpon>manage_logs.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1466,11 +1471,11 @@
     <Compile Include="btnet\bug.cs" />
     <Compile Include="btnet\bug_list.cs" />
     <Compile Include="btnet\dbutil.cs" />
-    <Compile Include="btnet\email.cs" />
+    <Compile Include="Mail\email.cs" />
     <Compile Include="Search\BugSearch.cs" />
-    <Compile Include="btnet\my_mime.cs" />
-    <Compile Include="btnet\pop3.cs" />
-    <Compile Include="btnet\POP3Client.cs" />
+    <Compile Include="Mail\my_mime.cs" />
+    <Compile Include="Mail\pop3.cs" />
+    <Compile Include="Mail\POP3Client.cs" />
     <Compile Include="btnet\print_bug.cs" />
     <Compile Include="btnet\security.cs" />
     <Compile Include="btnet\sortable_html_table.cs" />

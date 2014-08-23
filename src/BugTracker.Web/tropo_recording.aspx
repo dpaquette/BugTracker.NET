@@ -11,7 +11,7 @@ void Page_Load(Object sender, EventArgs e)
     {
 
         string username = btnet.Util.get_setting("TropoUsername", "admin");
-        Security security = MyMime.get_synthesized_security(null, null, username);
+        Security security = Mime.get_synthesized_security(null, null, username);
         
         // new or existing bug?
         string key = Request.QueryString["time"];

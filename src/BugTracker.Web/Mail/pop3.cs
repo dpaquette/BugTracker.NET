@@ -4,17 +4,13 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using anmar.SharpMimeTools;
 using System.Data;
+using anmar.SharpMimeTools;
 
-namespace btnet
+namespace btnet.Mail
 {
 
-    public class MyPop3
+    public class Pop3
     {
         public static int error_count = 0;
         public static string Pop3Server = btnet.Util.get_setting("Pop3Server", "pop.gmail.com");
@@ -97,10 +93,10 @@ namespace btnet
                         btnet.Util.write_to_log(message_raw_string);
                     }
 
-                    SharpMimeMessage mime_message = MyMime.get_sharp_mime_message(message_raw_string);
+                    SharpMimeMessage mime_message = Mime.get_sharp_mime_message(message_raw_string);
 
-                    string from_addr = MyMime.get_from_addr(mime_message);
-                    string subject = MyMime.get_subject(mime_message);
+                    string from_addr = Mime.get_from_addr(mime_message);
+                    string subject = Mime.get_subject(mime_message);
 
 
                     if (Pop3SubjectMustContain != "" && subject.IndexOf(Pop3SubjectMustContain) < 0)
@@ -154,16 +150,16 @@ namespace btnet
                     }
 
 
-                    int bugid = MyMime.get_bugid_from_subject(ref subject);
-                    string cc = MyMime.get_cc(mime_message);
-                    string comment = MyMime.get_comment(mime_message);
-                    string headers = MyMime.get_headers_for_comment(mime_message);
+                    int bugid = Mime.get_bugid_from_subject(ref subject);
+                    string cc = Mime.get_cc(mime_message);
+                    string comment = Mime.get_comment(mime_message);
+                    string headers = Mime.get_headers_for_comment(mime_message);
                     if (headers != "")
                     {
                         comment = headers + "\n" + comment;
                     }
 
-                    Security security = MyMime.get_synthesized_security(mime_message, from_addr, Pop3ServiceUsername);
+                    Security security = Mime.get_synthesized_security(mime_message, from_addr, Pop3ServiceUsername);
                     int orgid = security.user.org;
 
                     if (bugid == 0)
@@ -199,7 +195,7 @@ namespace btnet
                             null, // custom columns
                             false);
 
-                        MyMime.add_attachments(mime_message, new_ids.bugid, new_ids.postid, security);
+                        Mime.add_attachments(mime_message, new_ids.bugid, new_ids.postid, security);
 
                         // your customizations
                         Bug.apply_post_insert_rules(new_ids.bugid);
@@ -207,7 +203,7 @@ namespace btnet
                         btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, security);
                         btnet.WhatsNew.add_news(new_ids.bugid, subject, "added", security);
 
-                        MyPop3.auto_reply(new_ids.bugid, from_addr, subject, projectid);
+                        Pop3.auto_reply(new_ids.bugid, from_addr, subject, projectid);
 
                     }
                     else // update existing
@@ -243,7 +239,7 @@ namespace btnet
                             "text/plain",
                             false); // internal only
 
-                        MyMime.add_attachments(mime_message, bugid, postid, security);
+                        Mime.add_attachments(mime_message, bugid, postid, security);
                         btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
                         btnet.WhatsNew.add_news(bugid, (string)dr2["bg_short_desc"], "updated", security);
                     }
@@ -367,13 +363,13 @@ namespace btnet
             // commas cause trouble
             string cleaner_from_addr = from_addr.Replace(",", " ");
 
-            btnet.Email.send_email(// 4 args
+            Email.send_email(// 4 args
                 cleaner_from_addr, // we are responding TO the address we just received email FROM
                 project_email_string,
                 "", // cc
                 outgoing_subject,
                 auto_reply_text,
-                use_html_format ? BtnetMailFormat.Html : BtnetMailFormat.Text);
+                use_html_format ? MailFormat.Html : MailFormat.Text);
 
         }
     }

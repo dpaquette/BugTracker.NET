@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using System.Data.SqlClient;
 using System.Collections.Generic;
+using btnet.Mail;
 using btnet.Search;
 using Nest;
 
@@ -1347,13 +1348,13 @@ values (getdate(), $bug, $user, N'not sent', 0, N'$to', N'$from', N'$subject', N
                     btnet.Util.write_to_log("sending email to " + to);
 
                     // try to send it
-                    err = btnet.Email.send_email(
+                    err = Email.send_email(
                         (string)dr["qn_to"],
                         (string)dr["qn_from"],
                         "", // cc
                         (string)dr["qn_subject"],
                         (string)dr["qn_body"],
-                        BtnetMailFormat.Html);
+                        MailFormat.Html);
 
                     if (err == "")
                     {

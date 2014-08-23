@@ -42,17 +42,17 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (message != null && message.Length > 0)
 	{
-        mime_message = MyMime.get_sharp_mime_message(message);
+        mime_message = Mime.get_sharp_mime_message(message);
      
-        comment = MyMime.get_comment(mime_message);
+        comment = Mime.get_comment(mime_message);
 
-        string headers = MyMime.get_headers_for_comment(mime_message);
+        string headers = Mime.get_headers_for_comment(mime_message);
         if (headers != "")
         {
             comment = headers + "\n" + comment;
         }
                
-        from_addr = MyMime.get_from_addr(mime_message);
+        from_addr = Mime.get_from_addr(mime_message);
 
     }
 	else
@@ -91,7 +91,7 @@ void Page_Load(Object sender, EventArgs e)
 		Response.End();
     }
 
-    Security security = MyMime.get_synthesized_security(mime_message, from_addr, username);
+    Security security = Mime.get_synthesized_security(mime_message, from_addr, username);
     
 	int projectid = 0;
 	if (Util.is_int(projectid_string))
@@ -113,14 +113,14 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (mime_message != null)
 	{
-        subject = MyMime.get_subject(mime_message);
+        subject = Mime.get_subject(mime_message);
 
         if (subject != "[No Subject]")
         {
-            bugid = MyMime.get_bugid_from_subject(ref subject);
+            bugid = Mime.get_bugid_from_subject(ref subject);
         }
 
-        cc = MyMime.get_cc(mime_message);
+        cc = Mime.get_cc(mime_message);
 	}
     
     string sql = "";
@@ -219,9 +219,9 @@ void Page_Load(Object sender, EventArgs e)
 
 		if (mime_message != null)
 		{
-			MyMime.add_attachments(mime_message, new_ids.bugid, new_ids.postid, security);
+			Mime.add_attachments(mime_message, new_ids.bugid, new_ids.postid, security);
 
-            MyPop3.auto_reply(new_ids.bugid, from_addr, short_desc, projectid);
+            Pop3.auto_reply(new_ids.bugid, from_addr, short_desc, projectid);
             
 		}
 		else if (attachment_as_base64 != null && attachment_as_base64.Length > 0)
@@ -296,7 +296,7 @@ void Page_Load(Object sender, EventArgs e)
 
 		if (mime_message != null)
 		{
-            MyMime.add_attachments(mime_message, bugid, postid, security);
+            Mime.add_attachments(mime_message, bugid, postid, security);
 		}
 		else if (attachment_as_base64 != null && attachment_as_base64.Length > 0)
 		{

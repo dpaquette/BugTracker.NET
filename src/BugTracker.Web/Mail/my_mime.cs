@@ -4,16 +4,14 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Text;
-using System.Data;
 using anmar.SharpMimeTools;
 
-namespace btnet
+namespace btnet.Mail
 {
-    public class MyMime
+    public class Mime
     {
 
         ///////////////////////////////////////////////////////////////////////    
@@ -135,10 +133,10 @@ namespace btnet
 
         public static string get_comment(SharpMimeMessage mime_message)
         {
-            string comment = MyMime.extract_comment_text_from_email(mime_message, "text/plain");
+            string comment = Mime.extract_comment_text_from_email(mime_message, "text/plain");
             if (comment == null)
             {
-                comment = MyMime.extract_comment_text_from_email(mime_message, "text/html");
+                comment = Mime.extract_comment_text_from_email(mime_message, "text/html");
             }
 
             if (comment == null)
@@ -443,17 +441,17 @@ where us_username = N'$us'";
 
             if (mime_message.Header.Subject != null && mime_message.Header.Subject != "")
             {
-                headers = "Subject: " + MyMime.get_subject(mime_message) + "\n";
+                headers = "Subject: " + Mime.get_subject(mime_message) + "\n";
             }
 
             if (mime_message.Header.To != null && mime_message.Header.To != "")
             {
-                headers += "To: " + MyMime.get_to(mime_message) + "\n";
+                headers += "To: " + Mime.get_to(mime_message) + "\n";
             }
 
             if (mime_message.Header.Cc != null && mime_message.Header.Cc != "")
             {
-                headers += "Cc: " + MyMime.get_cc(mime_message) + "\n";
+                headers += "Cc: " + Mime.get_cc(mime_message) + "\n";
             }
 
             return headers;
@@ -462,7 +460,7 @@ where us_username = N'$us'";
         public static Security get_synthesized_security(SharpMimeMessage mime_message, string from_addr, string username)
         {
             // Get the btnet user, which might actually be a user that corresonds with the email sender, not the username above
-            DataRow dr = MyMime.get_user_datarow_maybe_using_from_addr(mime_message, from_addr, username);
+            DataRow dr = Mime.get_user_datarow_maybe_using_from_addr(mime_message, from_addr, username);
 
             // simulate a user having logged in, for downstream code
             Security security = new Security();

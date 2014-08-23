@@ -3,38 +3,21 @@ Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
 */
 
+// disable System.Net.Mail warnings
+//#pragma warning disable 618
+//#warning System.Web.Mail is deprecated, but it doesn't work yet with "explicit" SSL, so keeping it for now - corey
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
 using System.Net;
-using System.Net.Security;
-
-// disable System.Net.Mail warnings
-//#pragma warning disable 618
-//#warning System.Web.Mail is deprecated, but it doesn't work yet with "explicit" SSL, so keeping it for now - corey
-
 using System.Net.Mail;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
-namespace btnet
+namespace btnet.Mail
 {
-
-    public enum BtnetMailFormat
-    {
-        Text,
-        Html
-    };
-
-    public enum BtnetMailPriority
-    {
-        Normal,
-        Low,
-        High
-    };
-
-
     public class Email
     {
         ///////////////////////////////////////////////////////////////////////
@@ -52,8 +35,8 @@ namespace btnet
                 cc,
                 subject,
                 body,
-                BtnetMailFormat.Text,
-                BtnetMailPriority.Normal,
+                MailFormat.Text,
+                MailPriority.Normal,
                 null,
                 false);
         }
@@ -65,7 +48,7 @@ namespace btnet
             string cc,
             string subject,
             string body,
-            BtnetMailFormat body_format)
+            MailFormat body_format)
         {
             return send_email(
                 to,
@@ -74,7 +57,7 @@ namespace btnet
                 subject,
                 body,
                 body_format,
-                BtnetMailPriority.Normal,
+                MailPriority.Normal,
                 null,
                 false);
         }
@@ -137,8 +120,8 @@ namespace btnet
             string cc,
             string subject,
             string body,
-            BtnetMailFormat body_format,
-            BtnetMailPriority priority,
+            MailFormat body_format,
+            MailPriority priority,
             int[] attachment_bpids,
             bool return_receipt)
         {
@@ -156,12 +139,12 @@ namespace btnet
 
             msg.Subject = subject;
 
-            if (priority == BtnetMailPriority.Normal)
+            if (priority == MailPriority.Normal)
                 msg.Priority = System.Net.Mail.MailPriority.Normal;
-            else if (priority == BtnetMailPriority.High)
+            else if (priority == MailPriority.High)
                 msg.Priority = System.Net.Mail.MailPriority.High;
             else
-                priority = BtnetMailPriority.Low;
+                priority = MailPriority.Low;
 
             // This fixes a bug for a couple people, but make it configurable, just in case.
             if (Util.get_setting("BodyEncodingUTF8", "1") == "1")
@@ -182,7 +165,7 @@ namespace btnet
             }
 
             msg.Body = body;
-            msg.IsBodyHtml = body_format == BtnetMailFormat.Html;
+            msg.IsBodyHtml = body_format == MailFormat.Html;
 
             StuffToDelete stuff_to_delete = null;
 
@@ -377,7 +360,7 @@ namespace btnet
             }
         }
 
-    }; // end Email
+    }
 
 
-} // end namespace
+} 
