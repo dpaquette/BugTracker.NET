@@ -41,9 +41,6 @@
     <Reference Include="Elasticsearch.Net">
       <HintPath>..\packages\Elasticsearch.Net.1.0.2\lib\Elasticsearch.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Mail">
-      <HintPath>..\packages\Mail.dll.3.0.14228.1107\lib\Mail.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Nest">
       <HintPath>..\packages\NEST.1.0.2\lib\Nest.dll</HintPath>
