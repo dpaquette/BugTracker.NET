@@ -127,7 +127,7 @@ namespace btnet.Mail
         {
 
             System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
-            
+
             msg.From = new MailAddress(from);
 
             Email.add_addresses_to_email(msg, to, AddrType.to);
@@ -235,13 +235,13 @@ namespace btnet.Mail
                         smtpClient.EnableSsl = false;
                     }
                 }
-                
+
                 // Ignore certificate errors
-				if (smtpClient.EnableSsl) 
-				{
-					ServicePointManager.ServerCertificateValidationCallback = delegate(object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
-				}
-				
+                if (smtpClient.EnableSsl)
+                {
+                    ServicePointManager.ServerCertificateValidationCallback = delegate(object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
+                }
+
                 smtpClient.Send(msg);
 
                 if (stuff_to_delete != null)
@@ -277,9 +277,9 @@ namespace btnet.Mail
         protected static void actually_delete_stuff(StuffToDelete stuff_to_delete)
         {
             if (stuff_to_delete == null) // not sure how this could happen, but it fixed a bug for one guy
-				return;
-			
-			stuff_to_delete.msg.Dispose();  // if we don't do this, the delete tends not to work.
+                return;
+
+            stuff_to_delete.msg.Dispose();  // if we don't do this, the delete tends not to work.
 
             foreach (string file in stuff_to_delete.files_to_delete.Keys)
             {
@@ -317,7 +317,7 @@ namespace btnet.Mail
 
 
         ///////////////////////////////////////////////////////////////////////
-        public enum AddrType {to, cc}
+        public enum AddrType { to, cc }
         public static void add_addresses_to_email(MailMessage msg, string addrs, AddrType addr_type)
         {
             btnet.Util.write_to_log("to email addr: " + addrs);
@@ -360,7 +360,66 @@ namespace btnet.Mail
             }
         }
 
+        public static void auto_reply(int bugid, string from_addr, string short_desc, int projectid)
+        {
+            string auto_reply_text = Util.get_setting("AutoReplyText", "");
+            if (auto_reply_text == "")
+                return;
+
+            auto_reply_text = auto_reply_text.Replace("$BUGID$", Convert.ToString(bugid));
+
+
+            string sql = @"select
+						pj_pop3_email_from
+						from projects
+						where pj_id = $pj";
+
+            sql = sql.Replace("$pj", Convert.ToString(projectid));
+
+            object project_email = btnet.DbUtil.execute_scalar(sql);
+
+            if (project_email == null)
+            {
+                btnet.Util.write_to_log("skipping auto reply because project email is blank");
+                return;
+            }
+
+            string project_email_string = Convert.ToString(project_email);
+
+            if (project_email_string == "")
+            {
+                btnet.Util.write_to_log("skipping auto reply because project email is blank");
+                return;
+            }
+
+            // To avoid an infinite loop of replying to emails and then having to reply to the replies!
+            if (project_email_string.ToLower() == from_addr.ToLower())
+            {
+                btnet.Util.write_to_log("skipping auto reply because from address is same as project email:" + project_email_string);
+                return;
+            }
+
+            string outgoing_subject = short_desc + "  ("
+                + Util.get_setting("TrackingIdString", "DO NOT EDIT THIS:")
+                + Convert.ToString(bugid) + ")";
+
+            bool use_html_format = (btnet.Util.get_setting("AutoReplyUseHtmlEmailFormat", "0") == "1");
+
+            // commas cause trouble
+            string cleaner_from_addr = from_addr.Replace(",", " ");
+
+            Email.send_email(// 4 args
+                cleaner_from_addr, // we are responding TO the address we just received email FROM
+                project_email_string,
+                "", // cc
+                outgoing_subject,
+                auto_reply_text,
+                use_html_format ? MailFormat.Html : MailFormat.Text);
+
+        }
+
+
     }
 
 
-} 
+}

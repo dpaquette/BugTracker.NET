@@ -1474,8 +1474,6 @@
     <Compile Include="Mail\email.cs" />
     <Compile Include="Search\BugSearch.cs" />
     <Compile Include="Mail\my_mime.cs" />
-    <Compile Include="Mail\pop3.cs" />
-    <Compile Include="Mail\POP3Client.cs" />
     <Compile Include="btnet\print_bug.cs" />
     <Compile Include="btnet\security.cs" />
     <Compile Include="btnet\sortable_html_table.cs" />

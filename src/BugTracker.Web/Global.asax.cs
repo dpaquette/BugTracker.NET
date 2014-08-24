@@ -140,11 +140,6 @@ namespace btnet
             {
                 Tags.build_tag_index(Application);
             }
-
-            if (Util.get_setting("EnablePop3", "0") == "1")
-            {
-                Pop3.start_pop3(Application);
-            }
         }
 
     }
