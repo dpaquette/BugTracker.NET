@@ -2,10 +2,11 @@
 title: Evolving Legacy ASP.net Applications
 email:
 description: > # this means to ignore newlines until "baseurl:"
-  ASP.net has been around for more than a decade. Applications built with WebForms are showing their age. This site will walk you through how to evolve your legacy ASP.net site to modernize it and make it more maintainable. 
+  ASP.net has been around for more than a decade. Applications built with WebForms are showing their age. This site will walk you through how to evolve your legacy ASP.net site to modernize it and make it more maintainable.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://evolvingasp.com" # the base hostname & protocol for your site
 twitter_username: evolvingasp
 
 # Build settings
 markdown: kramdown
+permalink: /:title.html 
