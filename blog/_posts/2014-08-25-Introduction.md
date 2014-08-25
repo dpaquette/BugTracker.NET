@@ -1,9 +1,10 @@
 ---
 layout: post
 title:  "Introduction"
-date:   2014-08-24 21:28:09
-categories: jekyll update
+date:   2014-08-25
+categories: asp.net
 ---
+
 I'm always surprised when I think about how long ago it was that ASP.NET came out. Although I had a pretty big break in the middle there I started working with ASP.NET a dozen years ago. When I started .NET was pre version 1.0 and all the cool kids hung out on some website created by a couple of guys from Harvard. I think it was called devhood (I'm having trouble remembering that far back).
 
 The point here is that .NET isn't the young development environment it once was. The original release was in February of 2002 and this means that there has been a decade of applications developed on the platform which now need maintaining. It has been a pretty busy decade with a great number of changes and advances in what is considered to be best practice.
@@ -54,6 +55,6 @@ Check the files in at once. You may be tempted to rearrange files before the fir
 
 Next we just added github as a remote and pushed to it. We now have a great starting point for the rest of our project.
 
-You can see the results of the import at [https://github.com/dpaquette/BugTracker.NET/tree/MoveFromSourceForge](https://github.com/dpaquette/BugTracker.NET/tree/MoveFromSourceForge).
+You can see the results of the import at https://github.com/dpaquette/BugTracker.NET/tree/MoveFromSourceForge.
 
 In our next article we'll start looking at what the issues are with this project and we'll come up with a plan to update the project.

@@ -9,3 +9,4 @@ twitter_username: evolvingasp
 
 # Build settings
 markdown: kramdown
+permalinks: ":title.html"
