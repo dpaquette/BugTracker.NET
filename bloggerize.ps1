@@ -11,6 +11,7 @@ Get-ChildItem "Blog *md" | ForEach-Object {
 	$header += "title:  ""$($blogName)""`n"
 	$header += "date:   $($startingDate.AddDays($counter).ToString("yyyy-MM-dd"))`n"
 	$header += "categories: asp.net`n"
+	$header += "author: David Paquette and Simon Timms`n"
 	$header += "---`n"
 	del "blog/_posts/$($startingDate.ToString("yyyy-MM-dd"))-$($blogName).md"
 	Add-Content -path "blog/_posts/$($startingDate.ToString("yyyy-MM-dd"))-$($blogName).md" -value $header

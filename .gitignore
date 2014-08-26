@@ -175,3 +175,6 @@ FakesAssemblies/
 
 #BugTracker Specific
 src/BugTracker.Web/App_Data/
+
+#Jekyll posts (we copy these over as part of the bloggerize)
+blog/_posts/*
