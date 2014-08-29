@@ -47,7 +47,6 @@
     <Compile Include="btnet_service.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="POP3Client.cs" />
     <Compile Include="POP3Main.cs" />
   </ItemGroup>
   <ItemGroup>

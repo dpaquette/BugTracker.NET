@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
@@ -10,7 +11,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Timers;
 using System.Web;
-//using anmar.SharpMimeTools;
+using OpenPop.Mime;
+using OpenPop.Pop3;
 
 
 public class POP3Main
@@ -200,7 +202,7 @@ public class POP3Main
         while (true)
         {
             System.Threading.Thread.Sleep(2000);
-    
+
             if (state == service_state.STOPPED)
             {
                 break;
@@ -504,18 +506,12 @@ public class POP3Main
     protected void fetch_messages(string user, string password, int projectid)
     {
 
-        string[] messages = null;
+        List<string> messages = null;
         Regex regex = new Regex("\r\n");
-        string[] test_message_text = new string[100];
-        POP3Client.POP3client client = null;
-
-        if (MessageInputFile == "")
+        using (Pop3Client client = new Pop3Client())
         {
-
             try
             {
-                client = new POP3Client.POP3client(ReadInputStreamCharByChar);
-
                 write_line("****connecting to server:");
                 int port = 110;
                 if (Pop3Port != "")
@@ -529,350 +525,243 @@ public class POP3Main
                     use_ssl = Pop3UseSSL == "1" ? true : false;
                 }
 
-                write_line(client.connect(Pop3Server, port, use_ssl));
+                write_line("Connecting to pop3 server");
+                client.Connect(Pop3Server, port, use_ssl);
+                write_line("Autenticating");
+                client.Authenticate(user, password);
 
-                write_line("sending POP3 command USER");
-                write_line(client.USER(user));
 
-                write_line("sending POP3 command PASS");
-                write_line(client.PASS(password));
-
-                write_line("sending POP3 command STAT");
-                write_line(client.STAT());
-
-                write_line("sending POP3 command LIST");
-                string list;
-                list = client.LIST();
-                write_line("list follows:");
-                write_line(list);
-                messages = regex.Split(list);
+                write_line("Getting list of documents");
+                messages = client.GetMessageUids();
             }
             catch (Exception e)
             {
-                write_line("Exception trying to talk to pop3server");
+                write_line("Exception trying to talk to pop3 server");
                 write_line(e);
                 return;
             }
 
-        }
-        else
-        {
-            StringBuilder builder = new StringBuilder(4096);
-            write_line("opening test input file " + MessageInputFile);
-            using (FileStream fs = File.OpenRead(MessageInputFile))
+
+            int message_number = 0;
+
+
+            // loop through the messages
+            for (int i = 0; i < messages.Count - 1; i++)
             {
-                byte[] b = new byte[4096];
-                //UTF8Encoding encoding = new UTF8Encoding(true);  // Does not work...
-
-                int bytes_read = fs.Read(b, 0, b.Length);
-
-                while (bytes_read > 0)
-                {
-                    //test_messages += encoding.GetString(b); // Does not work....
-
-                    for (int i = 0; i < bytes_read; i++)
-                    {
-                        builder.Append(Convert.ToChar(b[i])); // Does work
-                    }
-
-                    bytes_read = fs.Read(b, 0, b.Length);
-
-                }
-
-            }
-
-            string test_messages = builder.ToString();
-            Regex test_regex = new Regex("Q6Q6\r\n");
-            test_message_text = test_regex.Split(test_messages);
-        }
-
-
-        string message;
-        int message_number = 0;
-        int start;
-        int end;
-
-        if (MessageInputFile == "")
-        {
-            start = 1;
-            end = messages.Length - 1;
-        }
-        else
-        {
-            start = 0;
-            end = test_message_text.Length;
-            if (end > 99) end = 99;
-        }
-
-        // loop through the messages
-        for (int i = start; i < end; i++)
-        {
-            heartbeat_datetime = DateTime.Now; // because the watchdog is watching
-
-            if (state != service_state.STARTED)
-            {
-                break;
-            }
-
-            // fetch the message
-
-            write_line("i:" + Convert.ToString(i));
-            if (MessageInputFile == "")
-            {
-                int space_pos = messages[i].IndexOf(" ");
-                message_number = Convert.ToInt32(messages[i].Substring(0, space_pos));
-                message = client.RETR(message_number);
-            }
-            else
-            {
-                message = test_message_text[message_number++];
-            }
-
-            // for diagnosing problems
-            if (MessageOutputFile != "")
-            {
-                System.IO.StreamWriter w = System.IO.File.AppendText(MessageOutputFile);
-                w.WriteLine(message);
-                w.Flush();
-                w.Close();
-            }
-
-            // break the message up into lines
-            string[] lines = regex.Split(message);
-
-            string from = "";
-            string subject = "";
-
-            bool encountered_subject = false;
-            bool encountered_from = false;
-
-
-            // Loop through the lines of a message.
-            // Pick out the subject and body
-            for (int j = 0; j < lines.Length; j++)
-            {
+                heartbeat_datetime = DateTime.Now; // because the watchdog is watching
 
                 if (state != service_state.STARTED)
                 {
                     break;
                 }
 
-                // We know from
-                // http://www.devnewsgroups.net/group/microsoft.public.dotnet.framework/topic62515.aspx
-                // that headers can be lowercase too.
+                // fetch the message
 
-                if ((lines[j].IndexOf("Subject: ") == 0 || lines[j].IndexOf("subject: ") == 0)
-                && !encountered_subject)
-                {
-                    subject = lines[j].Replace("Subject: ", "");
-                    subject = subject.Replace("subject: ", ""); // try lowercase too
-                    subject += maybe_append_next_line(lines, j);
+                write_line("Getting Message:" + messages[i]);
+                message_number = Convert.ToInt32(messages[i]);
+                Message mimeMessage = client.GetMessage(message_number);
 
-                    encountered_subject = true;
-                }
-                else if (lines[j].IndexOf("From: ") == 0 && !encountered_from)
+                // for diagnosing problems
+                if (MessageOutputFile != "")
                 {
-                    from = lines[j].Replace("From: ", "");
-                    encountered_from = true;
-                    from += maybe_append_next_line(lines, j);
-
-                }
-                else if (lines[j].IndexOf("from: ") == 0 && !encountered_from)
-                {
-                    from = lines[j].Replace("from: ", "");
-                    encountered_from = true;
-                    from += maybe_append_next_line(lines, j);
+                    File.WriteAllBytes(MessageOutputFile, mimeMessage.RawMessage);
                 }
 
-            } // end for each line
+                // break the message up into lines
 
-            write_line("\nFrom: " + from);
+                string from = mimeMessage.Headers.From.Address;
+                string subject = mimeMessage.Headers.Subject;
 
-            write_line("Subject: " + subject);
 
-            if (SubjectMustContain != "" && subject.IndexOf(SubjectMustContain) < 0)
-            {
-                write_line("skipping because subject does not contain: " + SubjectMustContain);
-                continue;
-            }
 
-            bool bSkip = false;
-            for (int k = 0; k < SubjectCannotContainStrings.Length; k++)
-            {
-                if (SubjectCannotContainStrings[k] != "")
+
+                write_line("\nFrom: " + from);
+
+                write_line("Subject: " + subject);
+
+                if (!string.IsNullOrEmpty(SubjectMustContain) && subject.IndexOf(SubjectMustContain, StringComparison.OrdinalIgnoreCase) < 0)
                 {
-                    if (subject.IndexOf(SubjectCannotContainStrings[k]) >= 0)
+                    write_line("skipping because subject does not contain: " + SubjectMustContain);
+                    continue;
+                }
+
+                bool bSkip = false;
+                foreach (string subjectCannotContainString in SubjectCannotContainStrings)
+                {
+                    if (!string.IsNullOrEmpty(subjectCannotContainString))
                     {
-                        write_line("skipping because subject cannot contain: " + SubjectCannotContainStrings[k]);
-                        bSkip = true;
-                        break;  // done checking, skip this message
+                        if (subject.IndexOf(subjectCannotContainString, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            write_line("skipping because subject cannot contain: " + subjectCannotContainString);
+                            bSkip = true;
+                            break;  // done checking, skip this message
+                        }
                     }
                 }
-            }
 
-            if (bSkip)
-            {
-                continue;
-            }
-
-            if (FromMustContain != "" && from.IndexOf(FromMustContain) < 0)
-            {
-                write_line("skipping because from does not contain: " + FromMustContain);
-                continue; // that is, skip to next message
-            }
-
-            for (int k = 0; k < FromCannotContainStrings.Length; k++)
-            {
-                if (FromCannotContainStrings[k] != "")
+                if (bSkip)
                 {
-                    if (from.IndexOf(FromCannotContainStrings[k]) >= 0)
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(FromMustContain) && from.IndexOf(FromMustContain, StringComparison.OrdinalIgnoreCase) < 0)
+                {
+                    write_line("skipping because from does not contain: " + FromMustContain);
+                    continue; // that is, skip to next message
+                }
+
+                foreach (string fromCannotContainStrings in FromCannotContainStrings)
+                {
+                    if (!string.IsNullOrEmpty(fromCannotContainStrings))
                     {
-                        write_line("skipping because from cannot contain: " + FromCannotContainStrings[k]);
-                        bSkip = true;
-                        break; // done checking, skip this message
+                        if (from.IndexOf(fromCannotContainStrings, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            write_line("skipping because from cannot contain: " + fromCannotContainStrings);
+                            bSkip = true;
+                            break; // done checking, skip this message
+                        }
                     }
                 }
-            }
 
-            if (bSkip)
-            {
-                continue;
-            }
-
-            write_line("calling insert_bug.aspx");
-            string Url = InsertBugUrl;
-
-            // Try to parse out the bugid from the subject line
-            string bugidString = TrackingIdString;
-            if (TrackingIdString == "")
-            {
-                bugidString = "DO NOT EDIT THIS:";
-            }
-
-            int pos = subject.IndexOf(bugidString);
-
-            if (pos >= 0)
-            {
-                // position of colon
-                pos = subject.IndexOf(":", pos);
-                pos++;
-                // position of close paren
-                int pos2 = subject.IndexOf(")", pos);
-                if (pos2 > pos)
+                if (bSkip)
                 {
-                    string bugid_string = subject.Substring(pos, pos2 - pos);
-                    write_line("BUGID=" + bugid_string);
-                    try
+                    continue;
+                }
+
+                write_line("calling insert_bug.aspx");
+                string Url = InsertBugUrl;
+
+                // Try to parse out the bugid from the subject line
+                string bugidString = TrackingIdString;
+                if (string.IsNullOrEmpty(TrackingIdString))
+                {
+                    bugidString = "DO NOT EDIT THIS:";
+                }
+
+                int pos = subject.IndexOf(bugidString, StringComparison.OrdinalIgnoreCase);
+
+                if (pos >= 0)
+                {
+                    // position of colon
+                    pos = subject.IndexOf(":", pos);
+                    pos++;
+                    // position of close paren
+                    int pos2 = subject.IndexOf(")", pos);
+                    if (pos2 > pos)
                     {
-                        int bugid = Int32.Parse(bugid_string);
-                        Url += "?bugid=" + Convert.ToString(bugid);
-                        write_line("updating existing bug " + Convert.ToString(bugid));
-                    }
-                    catch (Exception e)
-                    {
-                        write_line("bugid not numeric " + e.Message);
+                        string bugid_string = subject.Substring(pos, pos2 - pos);
+                        write_line("BUGID=" + bugid_string);
+                        try
+                        {
+                            int bugid = Int32.Parse(bugid_string);
+                            Url += "?bugid=" + Convert.ToString(bugid);
+                            write_line("updating existing bug " + Convert.ToString(bugid));
+                        }
+                        catch (Exception e)
+                        {
+                            write_line("bugid not numeric " + e.Message);
+                        }
                     }
                 }
-            }
+
+                string rawMessage = Encoding.Default.GetString(mimeMessage.RawMessage);
+                string post_data = "username=" + HttpUtility.UrlEncode(ServiceUsername)
+                                   + "&password=" + HttpUtility.UrlEncode(ServicePassword)
+                                   + "&projectid=" + Convert.ToString(projectid)
+                                   + "&from=" + HttpUtility.UrlEncode(from)
+                                   + "&short_desc=" + HttpUtility.UrlEncode(subject)
+                                   + "&message=" + HttpUtility.UrlEncode(rawMessage);
+
+                byte[] bytes = Encoding.UTF8.GetBytes(post_data);
 
 
-            string post_data = "username=" + HttpUtility.UrlEncode(ServiceUsername)
-                + "&password=" + HttpUtility.UrlEncode(ServicePassword)
-                + "&projectid=" + Convert.ToString(projectid)
-                + "&from=" + HttpUtility.UrlEncode(from)
-                + "&short_desc=" + HttpUtility.UrlEncode(subject)
-                + "&message=" + HttpUtility.UrlEncode(message);
-
-            byte[] bytes = Encoding.UTF8.GetBytes(post_data);
-
-
-            // send request to web server
-            HttpWebResponse res = null;
-            try
-            {
-                HttpWebRequest req = (HttpWebRequest)System.Net.WebRequest.Create(Url);
-
-
-                req.Credentials = CredentialCache.DefaultCredentials;
-                req.PreAuthenticate = true;
-
-                //req.Timeout = 200; // maybe?
-                //req.KeepAlive = false; // maybe?
-
-                req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";
-                req.ContentLength = bytes.Length;
-                Stream request_stream = req.GetRequestStream();
-                request_stream.Write(bytes, 0, bytes.Length);
-                request_stream.Close();
-                res = (HttpWebResponse)req.GetResponse();
-            }
-            catch (Exception e)
-            {
-                write_line("HttpWebRequest error url=" + Url);
-                write_line(e);
-            }
-
-            // examine response
-
-            if (res != null)
-            {
-
-                int http_status = (int)res.StatusCode;
-                write_line(Convert.ToString(http_status));
-
-                string http_response_header = res.Headers["BTNET"];
-                res.Close();
-
-                if (http_response_header != null)
+                // send request to web server
+                HttpWebResponse res = null;
+                try
                 {
-                    write_line(http_response_header);
+                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
 
-                    // only delete message from pop3 server if we
-                    // know we stored in on the web server ok
-                    if (MessageInputFile == ""
-                    && http_status == 200
-                    && DeleteMessagesOnServer == "1"
-                    && http_response_header.IndexOf("OK") == 0)
+
+                    req.Credentials = CredentialCache.DefaultCredentials;
+                    req.PreAuthenticate = true;
+
+                    //req.Timeout = 200; // maybe?
+                    //req.KeepAlive = false; // maybe?
+
+                    req.Method = "POST";
+                    req.ContentType = "application/x-www-form-urlencoded";
+                    req.ContentLength = bytes.Length;
+                    Stream request_stream = req.GetRequestStream();
+                    request_stream.Write(bytes, 0, bytes.Length);
+                    request_stream.Close();
+                    res = (HttpWebResponse)req.GetResponse();
+                }
+                catch (Exception e)
+                {
+                    write_line("HttpWebRequest error url=" + Url);
+                    write_line(e);
+                }
+
+                // examine response
+
+                if (res != null)
+                {
+
+                    int http_status = (int)res.StatusCode;
+                    write_line(Convert.ToString(http_status));
+
+                    string http_response_header = res.Headers["BTNET"];
+                    res.Close();
+
+                    if (http_response_header != null)
                     {
-                        write_line("sending POP3 command DELE");
-                        write_line(client.DELE(message_number));
+                        write_line(http_response_header);
+
+                        // only delete message from pop3 server if we
+                        // know we stored in on the web server ok
+                        if (MessageInputFile == ""
+                            && http_status == 200
+                            && DeleteMessagesOnServer == "1"
+                            && http_response_header.IndexOf("OK") == 0)
+                        {
+                            write_line("sending POP3 command DELE");
+                            client.DeleteMessage(message_number);
+                        }
+                    }
+                    else
+                    {
+                        write_line("BTNET HTTP header not found.  Skipping the delete of the email from the server.");
+                        write_line("Incrementing total error count");
+                        total_error_count++;
                     }
                 }
                 else
                 {
-                    write_line("BTNET HTTP header not found.  Skipping the delete of the email from the server.");
+                    write_line("No response from web server.  Skipping the delete of the email from the server.");
                     write_line("Incrementing total error count");
                     total_error_count++;
                 }
+
+                if (total_error_count > TotalErrorsAllowed)
+                {
+                    write_line("Stopping because total error count > TotalErrorsAllowed");
+                    stop();
+                }
+
+
+            }  // end for each message
+
+
+            if (MessageInputFile == "")
+            {
+                write_line("\nsending POP3 command QUIT");
+                client.Disconnect();
             }
             else
             {
-                write_line("No response from web server.  Skipping the delete of the email from the server.");
-                write_line("Incrementing total error count");
-                total_error_count++;
+                write_line("\nclosing input file " + MessageInputFile);
             }
-
-            if (total_error_count > TotalErrorsAllowed)
-            {
-                write_line("Stopping because total error count > TotalErrorsAllowed");
-                stop();
-            }
-
-
-        }  // end for each message
-
-
-        if (MessageInputFile == "")
-        {
-            write_line("\nsending POP3 command QUIT");
-            write_line(client.QUIT());
         }
-        else
-        {
-            write_line("\nclosing input file " + MessageInputFile);
-        }
-
     }
 
     ///////////////////////////////////////////////////////////////////////

@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="btnet_console.cs">
     </Compile>
-    <Compile Include="POP3Client.cs" />
     <Compile Include="POP3Main.cs" />
   </ItemGroup>
   <ItemGroup>
