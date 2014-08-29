@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
-using anmar.SharpMimeTools;
 using btnet.Mail;
+using OpenPop.Mime;
 
 namespace btnet
 {
@@ -43,11 +40,11 @@ namespace btnet
                 short_desc = short_desc.Substring(0, 200);
             }
 
-            SharpMimeMessage mime_message = null;
+            Message mime_message = null;
 
-            if (message != null && message.Length > 0)
+            if (!string.IsNullOrEmpty(message))
             {
-                mime_message = Mime.get_sharp_mime_message(message);
+                mime_message = Mime.GetMimeMessage(message);
 
                 comment = Mime.get_comment(mime_message);
 

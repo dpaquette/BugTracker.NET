@@ -52,8 +52,8 @@
     <Reference Include="NLog">
       <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="SharpMimeTools">
-      <HintPath>..\references\SharpMimeTools.dll</HintPath>
+    <Reference Include="OpenPop">
+      <HintPath>..\packages\OpenPop.NET.2.0.6.1071\lib\net40\OpenPop.dll</HintPath>
     </Reference>
     <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Web.DynamicData" />
@@ -1470,7 +1470,7 @@
     <Compile Include="btnet\dbutil.cs" />
     <Compile Include="Mail\email.cs" />
     <Compile Include="Search\BugSearch.cs" />
-    <Compile Include="Mail\my_mime.cs" />
+    <Compile Include="Mail\Mime.cs" />
     <Compile Include="btnet\print_bug.cs" />
     <Compile Include="btnet\security.cs" />
     <Compile Include="btnet\sortable_html_table.cs" />

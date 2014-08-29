@@ -546,7 +546,7 @@ public class POP3Main
 
 
             // loop through the messages
-            for (int i = 0; i < messages.Count - 1; i++)
+            for (int i = 0; i < messages.Count; i++)
             {
                 heartbeat_datetime = DateTime.Now; // because the watchdog is watching
 
@@ -559,7 +559,19 @@ public class POP3Main
 
                 write_line("Getting Message:" + messages[i]);
                 message_number = Convert.ToInt32(messages[i]);
-                Message mimeMessage = client.GetMessage(message_number);
+                Message mimeMessage = null;
+
+                try
+                {
+                    mimeMessage = client.GetMessage(message_number);
+                }
+                catch (Exception exception)
+                {
+                    write_to_log("Error getting message" );
+                    write_to_log(exception.ToString());
+                    continue;
+                }
+                    
 
                 // for diagnosing problems
                 if (MessageOutputFile != "")
