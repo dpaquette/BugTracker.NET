@@ -60,7 +60,7 @@ In Global.asax.cs, call the logging configuration method in the Application_OnSt
 
 Now that NLog is configured, we can start replacing the old custom logging code.
 
-Starting with the code in Globa.asax.cs, replace the logging code with the new NLog logging code:
+Starting with the code in Global.asax.cs, replace the logging code with the new NLog logging code:
 
     Logger logger = LogManager.GetCurrentClassLogger();
     logger.Fatal(exc);
@@ -77,6 +77,29 @@ Now that the error logging is working as expected, let's replace the code in Uti
     Logger log = LogManager.GetCurrentClassLogger();
     log.Debug(s);
 
-Finally, we can delete the method Util.get_log_file_path since it is no longer used.
+We can delete the method Util.get_log_file_path since it is no longer used.
 
 [View the commit](https://github.com/dpaquette/BugTracker.NET/commit/dd2ea87538c3c48f6a3a44220a14d51e38124fe6)
+
+###Email Notifications
+There is a large block of code in Global.asax.cs that deals with sending out email notifications where unhandled exceptions occur. This logic is easily replaced using the Mail Target in NLog. By adding the following code to the LoggingConfig.Configure() method, we can delete all the custom email logic.
+
+        var mailTarget = new MailTarget
+        {
+            UseSystemNetMailSettings = true,
+            To = Util.get_setting("ErrorEmailTo", ""),
+            From = Util.get_setting("ErrorEmailFrom", ""),
+            Subject = "BTNET Error Notification",
+            Layout = "${machinename}${newline} ${date} ${newline} ${message} ${newline}  ${exception} ${newline}"
+        };
+        config.AddTarget("Mail", mailTarget);
+
+        //Turn email notification on/off based on the LogEnabled setting
+        var emailLogLevel = Util.get_setting("ErrorEmailEnabled", "1") == "1" ? LogLevel.Fatal : LogLevel.Off;
+        config.LoggingRules.Add(new LoggingRule("*", emailLogLevel, mailTarget));
+
+  Again, we were able to reuse the existing settings in Web.config to configure NLog.
+
+  [View the commit](https://github.com/dpaquette/BugTracker.NET/commit/2a597fda3960aa6a893819f9ce861694c3f29003)
+
+  We have now replaced all the custom logging code in BugTracker with a very popular and well supported open source logging framework.
