@@ -98,4 +98,22 @@ I once worked on a project which had a lot of problems. It was old code and diff
 
 This story isn't unique, there is a similarly [great story](http://thedailywtf.com/Articles/The-Cool-Cam.aspx) about saving a game through the use of UI tweak. UI might not seem like it is important but it changes people's perception of the application.
 
-There are some other minor things that jumped otu at me as I was going thgouth the application. Inconsistent naming was one of the things that bugged me. By convention C# variables and methods don't use underscores but there lots of places that is done and even some places where variables are named with the "my" prefix: My_Lucene, My_Mime. These aren't a big deal but it will make lives easier for future developers if we fix them. 
+There are some other minor things that jumped out at me as I was going through the application. Inconsistent naming was one of the things that bugged me. By convention C# variables and methods don't use underscores but there lots of places that is done and even some places where variables are named with the "my" prefix: My_Lucene, My_Mime. These aren't a big deal but it will make lives easier for future developers if we fix them.
+
+#Priorities
+
+We've got quite a list of tasks to address now. However some of them are more important than others. We need to make sure that we're addressing the issues that are most important first. This is a discussion that needs to be had with the business. Fixing things like the code organization will save time later on.
+
+As we're writing a blog and not running a business we'll just pretend we've had a good discussion with the business. The priority list we've established looks like
+- Code organization
+- Third party libraries
+- Database access
+- Styling
+
+As we move through the application we'll be making code style and structure improvements. The code we're living by is
+
+    Leave things better than we found them
+
+Small incremental fixes start adding up over time. It is like paying down a mortgage: the more you manage to pay down the more money you have to roll into the principle. We'll outline these changes as we make them.
+
+We've now got a series of tasks on our todo list to improve BugTracker.Net. The rest of the posts in this series will outline our solutions to the issues. By the time the series is over it is our hope that BugTracker.Net will be much improved and easier to maintain.
