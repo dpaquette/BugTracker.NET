@@ -2,7 +2,7 @@ In the previous blog post in this series we blindly imported the entire project 
 
 Now that we have the source control set up we can start figuring out what our next steps are going to be. I won't worry too much about outlining what the solutions are in this post but I will attempt to identify problems. The remaining posts in this series will cover what actions we can take to improve our situation.
 
-Opening the project up in Visual Studio the first thing I note is that this is an old school website project. This sort of project tends to encourage higitypigilty coding with source files just thrown anywhere. Indeed there are image files mixed in with .html files mixed in with JavaScript and CSS files. This could use a real good organization. So we would like to move to a web project and add some organiztion.
+Opening the project up in Visual Studio the first thing I note is that this is an old school website project. This sort of project tends to encourage higitypigilty coding with source files just thrown anywhere. Indeed there are image files mixed in with .html files mixed in with JavaScript and CSS files. This could use a real good organization. So we would like to move to a web project and add some organization.
 
 #Third Party Components
 
@@ -92,7 +92,7 @@ I left the most important thing for last: sql string replacements. The parameter
 
 #Styling and Various Other Things
 
-The style of the website is a big outdated and could use a face lift. It may seem odd that we would put a styling change on the list but sometimes a slight improvment in a visual area of the program makes people forget about the problems elsewhere.
+The style of the website is a big outdated and could use a face lift. It may seem odd that we would put a styling change on the list but sometimes a slight improvement in a visual area of the program makes people forget about the problems elsewhere.
 
 I once worked on a project which had a lot of problems. It was old code and difficult to maintain. People hated using it because it didn't match their needs and was slow. In the first new release of it I changed the background color from beige to blue. Nothing else. However for the next week I had a series of complements about how much faster and better the new version was. I had literally changed nothing but the color but people were so delighted to see a style change that they thought other improvements had been made.
 
