@@ -29,7 +29,7 @@ void Page_Load(Object sender, EventArgs e)
 <html>
 <title id="titl" runat="server">btnet news</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
-<script type="text/javascript" language="JavaScript" src="jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 
 <script>
 

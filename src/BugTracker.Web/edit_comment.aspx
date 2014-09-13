@@ -188,7 +188,7 @@ void on_update()
 <head>
 <title id="titl" runat="server">btnet edit comment</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
-<script type="text/javascript" language="JavaScript" src="jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="jquery/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="jquery/jquery.textarearesizer.compressed.js"></script>
 <%  if (security.user.use_fckeditor) { %>

@@ -14,7 +14,7 @@ Distributed under the terms of the GNU General Public License
 <link rel="StyleSheet" href="jquery/jquery-ui-1.7.2.custom.css" type="text/css">
 <!-- use btnet_edit_bug.css to control positioning on edit_bug.asp.  use btnet_search.css to control position on search.aspx  -->
 <link rel="StyleSheet" href="custom/btnet_search.css" type="text/css">
-<script type="text/javascript" language="JavaScript" src="jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="jquery/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="bug_list.js"></script>
 <script type="text/javascript" language="JavaScript" src="suggest.js"></script>

@@ -75,7 +75,7 @@ void on_logon()
 <meta name="viewport" content="width=device-width, initial-scale=1"> 
 <link rel="stylesheet" href="jquery/jquery.mobile-1.2.0.min.css" />
 <link rel="stylesheet" href="mbtnet_base.css" />
-<script src="jquery/jquery-1.8.2.min.js"></script>
+<script src="scripts/jquery-1.11.1.min.js"></script>
 <script src="jquery/jquery.mobile-1.2.0.min.js"></script>
 </head> 
 <body> 
