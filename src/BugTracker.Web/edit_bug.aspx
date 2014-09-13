@@ -2903,11 +2903,11 @@ void display_bug_relationships()
 <head>
 <title id=titl runat="server">add new</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
-<link rel="StyleSheet" href="jquery/jquery-ui-1.7.2.custom.css" type="text/css">
+<link rel="StyleSheet" href="Content/style/jquery-ui.min.css" type="text/css">
 <!-- use btnet_edit_bug.css to control positioning on edit_bug.asp.  use btnet_search.css to control position on search.aspx  -->
 <link rel="StyleSheet" href="custom/btnet_edit_bug.css" type="text/css">
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" language="JavaScript" src="jquery/jquery-ui-1.7.2.custom.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="jquery/jquery.textarearesizer.compressed.js"></script>
 <script type="text/javascript" language="JavaScript" src="edit_bug.js"></script>
 <%  if (security.user.use_fckeditor) { %>
