@@ -76,8 +76,21 @@ Again we need to do a pass through the application and update all the jQuery UI 
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/dd3e1e858f82111f9b997b94f13a8e78132eb48d)
 
-Because we've put the images in a different directory from the CSS
+Because we've put the images in a different directory from the CSS we'll need to update the CSS to reference the new path.
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/aacf56e7806ee40149b61f0dcf285cda83b8b5de)
 
- -replace text area resize with jquery ui
+Now we can jump to some of the pages that use jQuery UI as well as jQuery and check if they work. search.aspx is a prime candidate. Indeed as we click around that page the data picker works as does everything else. I couldn't actually find anywhere that uses either the dialog or the tabs. Perhaps these were intended for future use. I'll leave the jQuery UI we added with those additional widgets for now, but we'll keep it in mind and review it again in a little while.
+
+You don't have to make all the changes to a project at once. As I mentioned some time ago updating an application is like paying down a mortgage: chip away at it. It is, however, worth keeping around some notes.
+
+##Updating jQuery UI
+
+The latest of jQuery mobile is 1.4.4. Again this is a package that contains a number of components and we can pick and choose them. Let's poke about inside BugTracker.NET and see if we can figure out which components are being used.
+
+It seems that jQuery mobile is only referenced in three places
+ - mbug.aspx
+ - mbugs.aspx
+ - mlogin.aspx
+
+ Looking at all of these files I cannot see any way in which jQuery mobile is actually being used. To be honest the 
