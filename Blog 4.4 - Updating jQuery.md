@@ -84,7 +84,7 @@ Now we can jump to some of the pages that use jQuery UI as well as jQuery and ch
 
 You don't have to make all the changes to a project at once. As I mentioned some time ago updating an application is like paying down a mortgage: chip away at it. It is, however, worth keeping around some notes.
 
-##Updating jQuery UI
+##Updating jQuery Mobile
 
 The latest of jQuery mobile is 1.4.4. Again this is a package that contains a number of components and we can pick and choose them. Let's poke about inside BugTracker.NET and see if we can figure out which components are being used.
 
@@ -93,4 +93,12 @@ It seems that jQuery mobile is only referenced in three places
  - mbugs.aspx
  - mlogin.aspx
 
- Looking at all of these files I cannot see any way in which jQuery mobile is actually being used. To be honest the 
+ Looking at all of these files I see that the library relies on the use of data-* attributes. Looking through the list of components in jQuery mobile I'm not sure which ones are needed.  I tried a few combinations but was unable to find one that actually worked.  I wasn't willing to expend any more effort on it so I included the entire library.
+
+[View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/1755a9b396e2788055dac0714e02e626f361e192)
+
+ This actually brings up a good point: if you're expending more effort on an update task that you're getting back, abandon it. The goal here is not to make the project perfect but to remove pain points, security risks or code that is preventing rapid evolution of the project.
+
+##Updating jQuery TextAreaResizer
+
+The final component we need to update is the TextAreaResizer. Unfortunatly I was unable to find any updated package, or in fact any page that mentioned the original page. However there may actually be no need to use this plugin. jQuery UI includes a resizable behaviour. 
