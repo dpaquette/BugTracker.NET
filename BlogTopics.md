@@ -29,6 +29,7 @@
  - Look for long methods (hello btnet.MyPop3.fetch_messages() at ~250 lines)
  - Detecting duplicate code
 1. Changing up the data access layer
+ - Should we initially deploy with a database project and then, slowly move tables under EF?
  - Why move to EF
  - Defining models
  - Abstract and replace the data layers
@@ -38,3 +39,7 @@
  - Improving layout
  - Including Bootstrap 
  - Responsive desing?
+1. Setting it up for deploy
+ - Packaging
+ - Deploying to azure
+ - Building a Web Platform Install package(http://www.microsoft.com/web/gallery/)
