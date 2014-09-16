@@ -93,10 +93,11 @@
     <Content Include="Content\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Content\style\jquery-ui.css" />
     <Content Include="Content\style\jquery-ui.min.css" />
-    <Content Include="Content\style\jquery-ui.structure.css" />
-    <Content Include="Content\style\jquery-ui.structure.min.css" />
-    <Content Include="Content\style\jquery-ui.theme.css" />
-    <Content Include="Content\style\jquery-ui.theme.min.css" />
+    <Content Include="Content\style\jquery.mobile-1.4.4.min.css" />
+    <Content Include="Content\style\jquery.mobile.custom.structure.css" />
+    <Content Include="Content\style\jquery.mobile.custom.structure.min.css" />
+    <Content Include="Content\style\jquery.mobile.custom.theme.css" />
+    <Content Include="Content\style\jquery.mobile.custom.theme.min.css" />
     <Content Include="edit_area\edit_area_full.gz" />
     <Content Include="packages.config" />
     <Content Include="Scripts\jquery-1.11.1.js" />
@@ -608,6 +609,9 @@
     <None Include="Scripts\jquery-1.11.1-vsdoc.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.mobile-1.4.4.min.js" />
+    <Content Include="Scripts\jquery.mobile.custom.js" />
+    <Content Include="Scripts\jquery.mobile.custom.min.js" />
     <Content Include="search.aspx" />
     <Content Include="search_text.aspx" />
     <Content Include="seen.aspx" />
