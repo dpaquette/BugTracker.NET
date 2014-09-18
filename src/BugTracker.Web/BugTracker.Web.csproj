@@ -579,7 +579,6 @@
     <Content Include="jquery\jquery-ui-1.7.2.custom.min.js" />
     <Content Include="jquery\jquery.mobile-1.2.0.min.css" />
     <Content Include="jquery\jquery.mobile-1.2.0.min.js" />
-    <Content Include="jquery\jquery.textarearesizer.compressed.js" />
     <Content Include="log4net-LICENSE.txt" />
     <Content Include="login.htm" />
     <Content Include="loginnt.aspx" />
