@@ -28,9 +28,9 @@ The plugins are
  - jQuery Mobile 1.2.0
  - jQuery TextAreaResizer
 
- The first two are fairly well known jQuery plugins. As expected the versions in BugTracker.NET are pretty old ones. The latest jQuery UI is 1.11 and jQuery Mobile is at 1.4.3 at the time of writing. TextAreaResizer is a more difficult prospect.
+The first two are fairly well known jQuery plugins. As expected the versions in BugTracker.NET are pretty old ones. The latest jQuery UI is 1.11 and jQuery Mobile is at 1.4.3 at the time of writing. TextAreaResizer is a more difficult prospect.
 
- The version of the plugin included in BugTracker.NET is compressed and has comments stripped out. This means that there is no real way to figure out a source for the plugin. Googling around it seems like the plugin might be used to add resize handles to text areas. I was surprised by this as it was my understanding that this functionality was built into browsers. It seems that back in the IE8 days this didn't exist. A lone [demo page](http://itsavesyou.com/TextArea_Resizer_example.htm) was all I could find of the plugin. As we've decided to support browsers that old then we are going to need to keep this functionality.
+The version of the plugin included in BugTracker.NET is compressed and has comments stripped out. This means that there is no real way to figure out a source for the plugin. Googling around it seems like the plugin might be used to add resize handles to text areas. I was surprised by this as it was my understanding that this functionality was built into browsers. It seems that back in the IE8 days this didn't exist. A lone [demo page](http://itsavesyou.com/TextArea_Resizer_example.htm) was all I could find of the plugin. As we've decided to support browsers that old then we are going to need to keep this functionality.
 
  It is likely that we'll be able to replace the TextAreaResizer with a newer and better documented project.
 
@@ -93,12 +93,26 @@ It seems that jQuery mobile is only referenced in three places
  - mbugs.aspx
  - mlogin.aspx
 
- Looking at all of these files I see that the library relies on the use of data-* attributes. Looking through the list of components in jQuery mobile I'm not sure which ones are needed.  I tried a few combinations but was unable to find one that actually worked.  I wasn't willing to expend any more effort on it so I included the entire library.
+Looking at all of these files I see that the library relies on the use of data-* attributes. Looking through the list of components in jQuery mobile I'm not sure which ones are needed.  I tried a few combinations but was unable to find one that actually worked.  I wasn't willing to expend any more effort on it so I included the entire library.
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/1755a9b396e2788055dac0714e02e626f361e192)
 
- This actually brings up a good point: if you're expending more effort on an update task that you're getting back, abandon it. The goal here is not to make the project perfect but to remove pain points, security risks or code that is preventing rapid evolution of the project.
+This actually brings up a good point: if you're expending more effort on an update task that you're getting back, abandon it. The goal here is not to make the project perfect but to remove pain points, security risks or code that is preventing rapid evolution of the project.
 
 ##Updating jQuery TextAreaResizer
 
-The final component we need to update is the TextAreaResizer. Unfortunatly I was unable to find any updated package, or in fact any page that mentioned the original page. However there may actually be no need to use this plugin. jQuery UI includes a resizable behaviour. 
+The final component we need to update is the TextAreaResizer. Unfortunatly I was unable to find any updated package, or in fact any page that mentioned the original page. This is actually worrying as the code is likely unmaintained. While the situation is not as dire as the library is inherently open source due to it being JavaScript it is still worrying. However there may actually be no need to use this plugin. jQuery UI includes a resizable behaviour that can be applied to the text areas.
+
+Thus all we need to is delete any existing references to TextAreaResizer and in its place add
+
+```
+$('textarea').resizable()
+```
+
+[View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/e31092d47d7d9d8f5cd55e83185e2de25ea29f19)
+
+##All Done.
+
+We've successfully upgraded jQuery and all of its dependencies to the latest version and actually trimmed out an entire library. The JavaScript organization in the project could use some real love. JavaScript is included haphazardly in a jumble of JavaScript and C#. There is no structure to the JavaScript code, no namespaces or even a directory structure. There are even some places where the C# code emits JavaScript.
+
+While we've improved the jQuery it is really only a foundation for a future effort in which we clean up the JavaScript. Stay tunned!
