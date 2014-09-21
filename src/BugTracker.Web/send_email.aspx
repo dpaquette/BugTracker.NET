@@ -11,7 +11,7 @@ Distributed under the terms of the GNU General Public License
 <title id="titl" runat="server">btnet send email</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 <%  if (security.user.use_fckeditor) { %>
-<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 
 

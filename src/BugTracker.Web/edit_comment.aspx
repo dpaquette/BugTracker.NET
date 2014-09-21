@@ -191,7 +191,7 @@ void on_update()
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
 <%  if (security.user.use_fckeditor) { %>
-<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 
 <script>

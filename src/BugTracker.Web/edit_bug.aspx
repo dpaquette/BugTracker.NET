@@ -2910,7 +2910,7 @@ void display_bug_relationships()
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="edit_bug.js"></script>
 <%  if (security.user.use_fckeditor) { %>
-<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 <script>
 var this_bugid = <% Response.Write(Convert.ToString(id)); %>
