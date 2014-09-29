@@ -36,5 +36,10 @@
 1. Giving the UI a facelift
  - Introducing LESS or SASS
  - Improving layout
- - Including Bootstrap 
+ - Including Bootstrap
  - Responsive desing?
+ 1. Going forward
+ - gathering usage statistics
+ - removing underused or unused code
+ - creating a plugin infrastructure
+ - create a configuration checking tool or, better yet, an online setup wizard like umbraco or gallery (is gallery still a thing?)
