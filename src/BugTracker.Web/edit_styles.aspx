@@ -47,8 +47,7 @@ void Page_Load(Object sender, EventArgs e)
 	}
 
 	// create path
-    string map_path = (string)HttpRuntime.Cache["MapPath"];
-	string path = map_path + "\\custom\\btnet_custom.css";
+	string path = Util.GetAbsolutePath("custom\\btnet_custom.css");
 
 	StringBuilder relevant_css_lines = new StringBuilder();
 

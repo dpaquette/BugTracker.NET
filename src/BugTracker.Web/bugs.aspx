@@ -12,22 +12,22 @@ Distributed under the terms of the GNU General Public License
 <head>
 <title id="titl" runat="server">btnet bugs</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
-<script type="text/javascript" language="JavaScript" src="jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="bug_list.js"></script>
 
 <script>
 
 $(document).ready(function() {
-	$('.filter').click(on_invert_filter)
-	$('.filter_selected').click(on_invert_filter)
+    $('.filter').click(on_invert_filter)
+    $('.filter_selected').click(on_invert_filter)
 })
 
 
 function on_query_changed()
 {
-	var frm = document.getElementById(asp_form_id);
-	frm.actn.value = "query";
-	frm.submit();
+    var frm = document.getElementById(asp_form_id);
+    frm.actn.value = "query";
+    frm.submit();
 }
 
 </script>
@@ -41,47 +41,47 @@ function on_query_changed()
 <div class=align>
 
 <table border=0><tr>
-	<td  nowrap>
-	<% if (!security.user.adds_not_allowed) { %>
-	<a href=edit_bug.aspx><img src=add.png border=0 align=top>&nbsp;add new <% Response.Write(Util.get_setting("SingularBugLabel","bug")); %></a>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<% } %>
+    <td  nowrap>
+    <% if (!security.user.adds_not_allowed) { %>
+    <a href=edit_bug.aspx><img src=add.png border=0 align=top>&nbsp;add new <% Response.Write(Util.get_setting("SingularBugLabel","bug")); %></a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <% } %>
 
-	<td  nowrap>
-	<asp:DropDownList id="query" runat="server" onchange="on_query_changed()">
-	</asp:DropDownList>
+    <td  nowrap>
+    <asp:DropDownList id="query" runat="server" onchange="on_query_changed()">
+    </asp:DropDownList>
 
-	<td nowrap>
-	&nbsp;&nbsp;&nbsp;&nbsp;<a target=_blank href=print_bugs.aspx>print list</a>
-	<td  nowrap>
-	&nbsp;&nbsp;&nbsp;&nbsp;<a target=_blank href=print_bugs2.aspx>print detail</a>
-	<td  nowrap>
-	&nbsp;&nbsp;&nbsp;&nbsp;<a target=_blank href=print_bugs.aspx?format=excel>export to excel</a>
-	<td  nowrap align=right width=100%>
-	<a target=_blank href=btnet_screen_capture.exe><img src=camera.png border=0 align=top>&nbsp;download screen capture utility</a>
+    <td nowrap>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a target=_blank href=print_bugs.aspx>print list</a>
+    <td  nowrap>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a target=_blank href=print_bugs2.aspx>print detail</a>
+    <td  nowrap>
+    &nbsp;&nbsp;&nbsp;&nbsp;<a target=_blank href=print_bugs.aspx?format=excel>export to excel</a>
+    <td  nowrap align=right width=100%>
+    <a target=_blank href=btnet_screen_capture.exe><img src=camera.png border=0 align=top>&nbsp;download screen capture utility</a>
 </table>
 <br>
 <%
 if (dv != null)
 {
-	if (dv.Table.Rows.Count > 0)
-	{
-		if (btnet.Util.get_setting("EnableTags","0") == "1")
-		{
-			btnet.BugList.display_buglist_tags_line(Response, security);
-		}
-		display_bugs(false);
-	}
-	else
-	{
-		Response.Write ("<p>No ");
-		Response.Write (Util.get_setting("PluralBugLabel","bugs"));
-		Response.Write (" yet.<p>");
-	}
+    if (dv.Table.Rows.Count > 0)
+    {
+        if (btnet.Util.get_setting("EnableTags","0") == "1")
+        {
+            btnet.BugList.display_buglist_tags_line(Response, security);
+        }
+        display_bugs(false);
+    }
+    else
+    {
+        Response.Write ("<p>No ");
+        Response.Write (Util.get_setting("PluralBugLabel","bugs"));
+        Response.Write (" yet.<p>");
+    }
 }
 else
 {
-	Response.Write ("<div class=err>Error in query SQL: " + sql_error + "</div>");
+    Response.Write ("<div class=err>Error in query SQL: " + sql_error + "</div>");
 }
 %>
 <input type=hidden name="new_page" id="new_page" runat="server" value="0"> 

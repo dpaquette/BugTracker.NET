@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using NLog;
 
 namespace btnet
 {
@@ -61,78 +62,16 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static string get_log_file_path()
-		{
-
-			// determine log file name
-			string log_file_folder = Util.get_log_folder();
-
-			DateTime now = DateTime.Now;
-			string now_string =
-				(now.Year).ToString()
-				+ "_" +
-				(now.Month).ToString("0#")
-				+ "_" +
-				(now.Day).ToString("0#");
-
-			string path = log_file_folder
-				+ "\\"
-				+ "btnet_log_"
-				+ now_string
-				+ ".txt";
-
-			return path;
-
-		}
-
-		///////////////////////////////////////////////////////////////////////
 		public static void write_to_log(string s)
 		{
-
-			if (Util.get_setting("LogEnabled","1") == "0")
-			{
-				return;
-			}
-
-			string path = get_log_file_path();
-
-			lock(dummy)
-			{
-				System.IO.StreamWriter w = System.IO.File.AppendText(path);
-
-				// write to it
-
-
-				string url = "";
-				
-				try // To workaround problem with IIS integrated mode
-				{
-					if (HttpContext.Current != null)
-					{
-						if (HttpContext.Current.Request != null)
-						{
-							url = HttpContext.Current.Request.Url.ToString();
-						}
-					}
-				}
-				catch 
-				{
-					// do nothing
-				}
-
-				w.WriteLine(DateTime.Now.ToString("yyy-MM-dd HH:mm:ss")
-					+ " "
-					+ url
-					+ " "
-					+ s);
-
-				w.Close();
-			}
+		    Logger log = LogManager.GetCurrentClassLogger();
+            log.Debug(s);
 		}
 
 		///////////////////////////////////////////////////////////////////////
 		public static void write_to_memory_log(string s)
 		{
+            //TODO: This can probably be handled in a better way using NLog or Glimpse 
 
 			if (HttpContext.Current == null)
 			{
@@ -636,33 +575,30 @@ namespace btnet
 			}
 		}
 
-		///////////////////////////////////////////////////////////////////////
-		protected static string get_absolute_or_relative_folder(string folder)
-		{
-
-			if (folder.IndexOf(":") == 1
-			|| folder.StartsWith("\\\\"))
-			{
-				// leave as is
-				return folder;
-			}
-			else
-			{
-                string map_path = (string)HttpRuntime.Cache["MapPath"];
-                return map_path + "\\" + folder;
-			}
-
-		}
+	    public static string GetAbsolutePath(string path)
+	    {
+	        string result;
+	        if (Path.IsPathRooted(path))
+	        {
+	            result = path;
+	        }
+	        else
+	        {
+	            string appRootPath = Path.GetDirectoryName(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+	            result = Path.Combine(appRootPath, path);
+	        }
+	        return result;
+	    }
 
         ///////////////////////////////////////////////////////////////////////
         public static string get_folder(string name, string dflt)
         {
             String folder = Util.get_setting(name, "");
-            if (folder == "")
+            if (folder == String.Empty)
                 return dflt;
 
-            folder = get_absolute_or_relative_folder(folder);
-            if (!System.IO.Directory.Exists(folder))
+            folder = GetAbsolutePath(folder);
+            if (!Directory.Exists(folder))
             {
                 throw (new Exception(name + " specified in Web.config, \""
                 + folder
@@ -670,29 +606,18 @@ namespace btnet
             }
 
             return folder;
-
-        }
-
-
-   		///////////////////////////////////////////////////////////////////////
-        public static string get_lucene_index_folder()
-        {
-            string map_path = (string)HttpRuntime.Cache["MapPath"];
-            return get_folder("LuceneIndexFolder", map_path + "\\App_Data\\lucene_index");
         }
 
 		///////////////////////////////////////////////////////////////////////
 		public static string get_upload_folder()
 		{
-            string map_path = (string)HttpRuntime.Cache["MapPath"];
-            return get_folder("UploadFolder", map_path + "\\App_Data\\uploads");
+            return get_folder("UploadFolder", GetAbsolutePath("App_Data\\uploads"));
 		}
 
 		///////////////////////////////////////////////////////////////////////
 		public static string get_log_folder()
 		{
-            string map_path = (string)HttpRuntime.Cache["MapPath"];
-            return get_folder("LogFileFolder", map_path + "\\App_Data\\logs");
+            return get_folder("LogFileFolder", GetAbsolutePath("App_Data\\logs"));
         }
 
 		///////////////////////////////////////////////////////////////////////
