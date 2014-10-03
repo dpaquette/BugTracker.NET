@@ -5,7 +5,6 @@ Distributed under the terms of the GNU General Public License
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.DirectoryServices.Protocols;
 using System.Web;
 using System.Collections.Generic;
@@ -18,12 +17,12 @@ namespace btnet
         public static bool check_password(string username, string password)
         {
 
-            string sql = @"
+            var sql = new SQLString(@"
 select us_username, us_id, us_password, isnull(us_salt,0) us_salt, us_active
 from users
-where us_username = N'$username'";
+where us_username = $username");
 
-            sql = sql.Replace("$username", username.Replace("'", "''"));
+            sql = sql.Replace("$username", username);
 
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 

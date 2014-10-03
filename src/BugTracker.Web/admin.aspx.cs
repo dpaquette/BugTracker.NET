@@ -28,7 +28,7 @@ namespace btnet
             }
             else
             {
-                int bugs = Convert.ToInt32(btnet.DbUtil.execute_scalar("select count(1) from bugs"));
+                int bugs = Convert.ToInt32(btnet.DbUtil.execute_scalar(new SQLString("select count(1) from bugs")));
                 if (bugs > 100)
                 {
                     nag = true;

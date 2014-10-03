@@ -17,7 +17,7 @@ string sql;
 void Page_Load(Object sender, EventArgs e)
 {
 	
-	btnet.DbUtil.get_sqlconnection();
+	btnet.DbUtil.GetConnection();
 
 	Util.do_not_cache(Response);
 

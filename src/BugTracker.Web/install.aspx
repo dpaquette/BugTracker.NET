@@ -34,7 +34,7 @@ void Page_Load(Object sender, EventArgs e)
 			
 			Application["dbs"] = ++dbs;
 			
-			btnet.DbUtil.get_sqlconnection();
+			btnet.DbUtil.GetConnection();
 			string sql = @"use master
 				create database [$db]";
 

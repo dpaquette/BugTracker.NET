@@ -27,7 +27,7 @@ namespace btnet
             try
             {
                 // Intentionally getting an extra connection here so that we fall into the right "catch"
-                SqlConnection conn = btnet.DbUtil.get_sqlconnection();
+                SqlConnection conn = btnet.DbUtil.GetConnection();
                 conn.Close();
 
                 try

@@ -20,7 +20,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.set_context(HttpContext.Current);
 
 	
-	btnet.DbUtil.get_sqlconnection();
+	btnet.DbUtil.GetConnection();
 
 	// delete the session row
 
