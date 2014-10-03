@@ -12,7 +12,7 @@ A more modern and active project appears to be [ElasticSearch / NEST](https://gi
 By decoupling the web application from the search server, we are able to independently scale the web server and the search server. We could add web server nodes without effecting the search. Likewise, we could add search nodes without effecting our web server nodes.
 
 Also, using Lucene.NET and storing the search index in the App_Data folder does not made the application very 'cloud-ready'.
-In modern application deployment scenarios, such as deploying to the cloud, we want to maintain a separation between application and the infrastructure serving this data out. This allows us to scale them independently and reduces the chance of a catastrophic failure: if the web server gees down we can quickly start up another to replace it. In fact on Azure it is highly inadvisable to store anything more than transient cache data on the web tier. The Azure infrastructure will, from time to time, remove your web server node and replace it with an equivalent one in order to apply patches. While your code will be automatically redeployed any data it may have written to the local machine will be lost.
+In modern application deployment scenarios, such as deploying to the cloud, we want to maintain a separation between application and the infrastructure serving this data out. This allows us to scale them independently and reduces the chance of a catastrophic failure: if the web server goes down we can quickly start up another to replace it. In fact on Azure it is highly inadvisable to store anything more than transient cache data on the web tier. The Azure infrastructure will, from time to time, remove your web server node and replace it with an equivalent one in order to apply patches. While your code will be automatically redeployed any data it may have written to the local machine will be lost.
 
 Giving the scalability concerns and some bad patterns identified in the BugTracker search code, it will be best to move the implementation to use ElasticSearch / NEST instead.
 
@@ -68,7 +68,7 @@ Next, we will rename the 2 existing application settings related to search. Enab
     <add key="EnableSearch" value="1"/>
     <add key="SearchServerURI" value="http://localhost:9200"/>
 
-Finally, we need to move review some code in the application startup. Currently, BugTracker re-indexes all bugs every time the application starts. This is a very costly operation that will be executed every single time the application pool restarts. This could be dozens of times per day depending on the IIS settings. Really, the index should only need to be completely re-created once when an ElasticSearch server is initially configured. Let's move the re-indexing code to make it an explicit action that is triggered by clicking a button on the admin.aspx page:
+Finally, we need to review some code in the application startup. Currently, BugTracker re-indexes all bugs every time the application starts. This is a very costly operation that will be executed every single time the application pool restarts. This could be dozens of times per day depending on the IIS settings. Really, the index should only need to be completely re-created once when an ElasticSearch server is initially configured. Let's move the re-indexing code to make it an explicit action that is triggered by clicking a button on the admin.aspx page:
 
         public void ReindexAllBugs(object sender, EventArgs e)
         {
@@ -82,6 +82,9 @@ Finally, we need to move review some code in the application startup. Currently,
 
         }
 
-Our new search implementation is now complete. We can delete my_lucene.cs and remove the refernces to Lucene.NET and Highligther.NET.
+Our new search implementation is now complete. We can delete my_lucene.cs and remove the references to Lucene.NET and Highligther.NET.
 
 [View the commit](https://github.com/dpaquette/BugTracker.NET/commit/fdc471e0ce4900573d61e8873e2c662f94a62dce)
+
+###Going Further
+A big advantage of work we did to introduce an IBugSearch interface is that it is now much easier to swap our ElasticSearch implementation for an alternate search technology. The day after completing the work on this blog post, [Azure Search Public Preview](http://blogs.technet.com/b/dataplatforminsider/archive/2014/08/21/azure-previews-fully-managed-nosql-database-and-search-services.aspx) was released.  We didn’t get a chance to write an Azure Search version of Bug Search. We decided instead to leave that as an exercise for the reader. If anyone is brave enough to give it a try, feel free to submit your implementation as a pull request to the [GitHub repo](https://github.com/dpaquette/BugTracker.NET).

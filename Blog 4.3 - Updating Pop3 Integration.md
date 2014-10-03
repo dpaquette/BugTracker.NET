@@ -1,11 +1,11 @@
 ###SharpMimeTools and Pop3
-SharpMimeTools is an open-source MIME parser / decoder. BugTracker usies this library to parse information from incoming emails and to format email messages when sending bug notifications.
+SharpMimeTools is an open-source MIME parser / decoder. BugTracker uses this library to parse information from incoming emails and to format email messages when sending bug notifications.
 
 It is unclear if BugTracker is referencing the latest version of ShareMimeTools because assembly is version 0.0.0.0. SharpMimeTools is not available in NuGet and according the the [SharpMimeTools website](http://anmar.eu.org/projects/sharpmimetools/), the latest news was in 2006. This is probably a good time to start looking for an alternative, more actively supported library.
 
 After a quick search on NuGet, we found that [OpenPop.NET](https://www.nuget.org/packages/OpenPop.NET/) seems to be a popular option. In fact, we can also use OpenPop.NET to replace a large block of [Pop3 code](https://github.com/dpaquette/BugTracker.NET/blob/3c64d84de9af96763713eae862d2b2eeeb1cf665/src/BugTracker.Web/btnet/POP3Client.cs) that was downloaded from CodeProject in 2003.
 
-After further review of the usage of POP3Client and SharpMimeTools has revealed a serious design problem. BugTracker is attempting to run a recurring background task in the web application that pools for email in a pop3 account. This type of polling code would be better suited as a Windows Service, Scheduled Task or Azure Web Job. It is the type of work that should run out-of-process as it is dangerous and difficult to consistently run [background tasks in a web application](http://haacked.com/archive/2011/10/16/the-dangers-of-implementing-recurring-background-tasks-in-asp-net.aspx/).
+After further review of the usage of POP3Client and SharpMimeTools has revealed a serious design problem. BugTracker is attempting to run a recurring background task in the web application that polls for email in a pop3 account. This type of polling code would be better suited as a Windows Service, Scheduled Task or Azure Web Job. It is the type of work that should run out-of-process as it is dangerous and difficult to consistently run [background tasks in a web application](http://haacked.com/archive/2011/10/16/the-dangers-of-implementing-recurring-background-tasks-in-asp-net.aspx/).
 
 Luckily, there is already a Windows Service and Console Application that also implements this email polling logic. Let's include these existing projects in the BugTracker.NET solution.
 
