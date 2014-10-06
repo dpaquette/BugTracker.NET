@@ -77,12 +77,12 @@ namespace btnet
 
                 // are there any project dropdowns?
 
-                string sql = @"
+                var sql = new SQLString(@"
 select count(1)
 from projects
 where isnull(pj_enable_custom_dropdown1,0) = 1
 or isnull(pj_enable_custom_dropdown2,0) = 1
-or isnull(pj_enable_custom_dropdown3,0) = 1";
+or isnull(pj_enable_custom_dropdown3,0) = 1");
 
                 int projects_with_custom_dropdowns = (int)btnet.DbUtil.execute_scalar(sql);
 
@@ -97,7 +97,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1";
 
                 // get the project dropdowns
 
-                string sql = @"
+                var sql = new SQLString(@"
 select
 pj_id,
 isnull(pj_enable_custom_dropdown1,0) pj_enable_custom_dropdown1,
@@ -112,7 +112,7 @@ isnull(pj_custom_dropdown_values3,'') pj_custom_dropdown_values3
 from projects
 where isnull(pj_enable_custom_dropdown1,0) = 1
 or isnull(pj_enable_custom_dropdown2,0) = 1
-or isnull(pj_enable_custom_dropdown3,0) = 1";
+or isnull(pj_enable_custom_dropdown3,0) = 1");
 
                 DataSet ds_projects = btnet.DbUtil.get_dataset(sql);
 

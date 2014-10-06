@@ -65,18 +65,18 @@ namespace btnet
             this.email = (string)dr["us_email"];
 
             this.bugs_per_page = Convert.ToInt32(dr["us_bugs_per_page"]);
-			if (Util.get_setting("DisableFCKEditor","0") == "1")
-			{
-				this.use_fckeditor = false;
-			}
-			else
-			{
-            	this.use_fckeditor = Convert.ToBoolean(dr["us_use_fckeditor"]);
-			}
+            if (Util.get_setting("DisableFCKEditor", "0") == "1")
+            {
+                this.use_fckeditor = false;
+            }
+            else
+            {
+                this.use_fckeditor = Convert.ToBoolean(dr["us_use_fckeditor"]);
+            }
             this.enable_popups = Convert.ToBoolean(dr["us_enable_bug_list_popups"]);
 
             this.external_user = Convert.ToBoolean(dr["og_external_user"]);
-            this.can_only_see_own_reported  = Convert.ToBoolean(dr["og_can_only_see_own_reported"]);
+            this.can_only_see_own_reported = Convert.ToBoolean(dr["og_can_only_see_own_reported"]);
             this.can_edit_sql = Convert.ToBoolean(dr["og_can_edit_sql"]);
             this.can_delete_bug = Convert.ToBoolean(dr["og_can_delete_bug"]);
             this.can_edit_and_delete_posts = Convert.ToBoolean(dr["og_can_edit_and_delete_posts"]);
@@ -91,19 +91,19 @@ namespace btnet
             this.can_assign_to_internal_users = Convert.ToBoolean(dr["og_can_assign_to_internal_users"]);
             this.other_orgs_permission_level = (int)dr["og_other_orgs_permission_level"];
             this.org = (int)dr["og_id"];
-            this.org_name = (string) dr["og_name"];
+            this.org_name = (string)dr["og_name"];
             this.forced_project = (int)dr["us_forced_project"];
 
             this.category_field_permission_level = (int)dr["og_category_field_permission_level"];
 
-            if (Util.get_setting("EnableTags","0") == "1")
+            if (Util.get_setting("EnableTags", "0") == "1")
             {
-            	this.tags_field_permission_level = (int)dr["og_tags_field_permission_level"];
-			}
-			else
-			{
-				this.tags_field_permission_level = Security.PERMISSION_NONE;
-			}
+                this.tags_field_permission_level = (int)dr["og_tags_field_permission_level"];
+            }
+            else
+            {
+                this.tags_field_permission_level = Security.PERMISSION_NONE;
+            }
             this.priority_field_permission_level = (int)dr["og_priority_field_permission_level"];
             this.assigned_to_field_permission_level = (int)dr["og_assigned_to_field_permission_level"];
             this.status_field_permission_level = (int)dr["og_status_field_permission_level"];
@@ -111,40 +111,40 @@ namespace btnet
             this.org_field_permission_level = (int)dr["og_org_field_permission_level"];
             this.udf_field_permission_level = (int)dr["og_udf_field_permission_level"];
 
-			// field permission for custom fields
-			DataSet ds_custom = Util.get_custom_columns();
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-				string og_name = "og_" 
-					+ (string)dr_custom["name"]
-					+ "_field_permission_level";
-				
-				try
-				{
-					object obj = dr[og_name];
-					if (Convert.IsDBNull(obj))
-					{
-						dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
-					}
-					else
-					{
-						dict_custom_field_permission_level[bg_name] = (int) dr[og_name];
-					}
-				}
-				
-				catch(Exception ex)
-				{
-					btnet.Util.write_to_log("exception looking for " + og_name + ":" + ex.Message);
-					
-					// automatically add it if it's missing
-					btnet.DbUtil.execute_nonquery("alter table orgs add [" 
-						+ og_name
-						+ "] int null");
-					dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
-				}
-				
-			}
+            // field permission for custom fields
+            DataSet ds_custom = Util.get_custom_columns();
+            foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
+            {
+                string bg_name = (string)dr_custom["name"];
+                string og_name = "og_"
+                    + (string)dr_custom["name"]
+                    + "_field_permission_level";
+
+                try
+                {
+                    object obj = dr[og_name];
+                    if (Convert.IsDBNull(obj))
+                    {
+                        dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
+                    }
+                    else
+                    {
+                        dict_custom_field_permission_level[bg_name] = (int)dr[og_name];
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    btnet.Util.write_to_log("exception looking for " + og_name + ":" + ex.Message);
+
+                    // automatically add it if it's missing
+                    SQLString sql = new SQLString("alter table orgs add [@name] int null");
+                    sql.Replace("name", og_name);
+                    btnet.DbUtil.execute_nonquery(sql);
+                    dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
+                }
+
+            }
 
             if (((string)dr["us_firstname"]).Trim().Length == 0)
             {

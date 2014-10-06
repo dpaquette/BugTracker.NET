@@ -203,8 +203,8 @@ namespace btnet
 							int userid = Convert.ToInt32(obj);
 							if (userid != 0)
 							{
-								string sql_get_username = "select us_username from users where us_id = $1";
-								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.Replace("$1", Convert.ToString(userid)));
+								var sql_get_username = new SQLString("select us_username from users where us_id = @userId");
+								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.Replace("userId", Convert.ToString(userid)));
 							}
 						}
 					}
@@ -227,16 +227,16 @@ namespace btnet
 			if ((int)dr["project"] != 0)
 			{
 
-				string sql = @"select
+				var sql = new SQLString(@"select
 					isnull(pj_enable_custom_dropdown1,0) [pj_enable_custom_dropdown1],
 					isnull(pj_enable_custom_dropdown2,0) [pj_enable_custom_dropdown2],
 					isnull(pj_enable_custom_dropdown3,0) [pj_enable_custom_dropdown3],
 					isnull(pj_custom_dropdown_label1,'') [pj_custom_dropdown_label1],
 					isnull(pj_custom_dropdown_label2,'') [pj_custom_dropdown_label2],
 					isnull(pj_custom_dropdown_label3,'') [pj_custom_dropdown_label3]
-					from projects where pj_id = $pj";
+					from projects where pj_id = @pj");
 
-				sql = sql.Replace("$pj", Convert.ToString((int)dr["project"]));
+				sql = sql.Replace("pj", Convert.ToString((int)dr["project"]));
 
 				DataRow project_dr = btnet.DbUtil.get_datarow(sql);
 
@@ -311,19 +311,21 @@ namespace btnet
 		protected static void write_relationships(HttpResponse Response, int bugid)
 		{
 		
-			string sql = @"select bg_id [id],
+			var sql = new SQLString(@"select bg_id [id],
 				bg_short_desc [desc],
 				re_type [comment],
 				case
 					when re_direction = 0 then ''
-					when re_direction = 2 then 'child of $bg'
-					else 'parent of $bg' end [parent/child]
+					when re_direction = 2 then @child
+					else @parent end [parent/child]
 				from bug_relationships
 				inner join bugs on re_bug2 = bg_id
-				where re_bug1 = $bg
-				order by 1";
+				where re_bug1 = @bg
+				order by 1");
 
-			sql = sql.Replace("$bg", Convert.ToString(bugid));
+			sql = sql.Replace("bg", Convert.ToString(bugid));
+            sql = sql.Replace("parent", "parent of " + Convert.ToString(bugid));
+            sql = sql.Replace("child", "child of " + Convert.ToString(bugid));
 			DataSet ds_relationships = btnet.DbUtil.get_dataset(sql);
 
 			if (ds_relationships.Tables[0].Rows.Count > 0)

@@ -8,7 +8,7 @@ namespace btnet
 {
     public partial class @default : BasePage
     {
-        private string sql;
+        private SQLString sql;
 
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
@@ -32,7 +32,7 @@ namespace btnet
 
                 try
                 {
-                    btnet.DbUtil.execute_nonquery("select count(1) from users");
+                    btnet.DbUtil.execute_nonquery(new SQLString("select count(1) from users"));
 
                 }
                 catch (SqlException e1)
@@ -140,8 +140,8 @@ namespace btnet
 
             if (authenticated)
             {
-                sql = "select us_id from users where us_username = N'$us'";
-                sql = sql.Replace("$us", user.Value.Replace("'", "''"));
+                sql = new SQLString("select us_id from users where us_username = @us");
+                sql = sql.Replace("us", user.Value);
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {

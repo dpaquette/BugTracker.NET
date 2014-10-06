@@ -52,20 +52,20 @@ namespace btnet
                     string encrypted = Util.encrypt_string_using_MD5(password.Value + Convert.ToString(salt));
 
 
-                    string sql = @"
+                    var sql = new SQLString(@"
 insert into emailed_links
 	(el_id, el_date, el_email, el_action,
 		el_username, el_salt, el_password, el_firstname, el_lastname)
-	values ('$guid', getdate(), N'$email', N'register',
-		N'$username', $salt, N'$password', N'$firstname', N'$lastname')";
+	values (@guid, getdate(), @email, @register,
+		@username, @salt, @password, @firstname, @lastname)");
 
-                    sql = sql.Replace("$guid", guid);
-                    sql = sql.Replace("$password", encrypted);
-                    sql = sql.Replace("$salt", Convert.ToString(salt));
-                    sql = sql.Replace("$username", username.Value.Replace("'", "''"));
-                    sql = sql.Replace("$email", email.Value.Replace("'", "''"));
-                    sql = sql.Replace("$firstname", firstname.Value.Replace("'", "''"));
-                    sql = sql.Replace("$lastname", lastname.Value.Replace("'", "''"));
+                    sql = sql.Replace("guid", guid);
+                    sql = sql.Replace("password", encrypted);
+                    sql = sql.Replace("salt", Convert.ToString(salt));
+                    sql = sql.Replace("username", username.Value);
+                    sql = sql.Replace("email", email.Value);
+                    sql = sql.Replace("firstname", firstname.Value);
+                    sql = sql.Replace("lastname", lastname.Value.Replace("'", "''"));
 
                     btnet.DbUtil.execute_nonquery(sql);
 
@@ -158,18 +158,18 @@ insert into emailed_links
 
 
 
-            string sql = @"
+            var sql = new SQLString(@"
 declare @user_cnt int
 declare @email_cnt int
 declare @pending_user_cnt int
 declare @pending_email_cnt int
-select @user_cnt = count(1) from users where us_username = N'$us'
-select @email_cnt = count(1) from users where us_email = N'$em'
-select @pending_user_cnt = count(1) from emailed_links where el_username = N'$us'
-select @pending_email_cnt = count(1) from emailed_links where el_email = N'$em'
-select @user_cnt, @email_cnt, @pending_user_cnt, @pending_email_cnt";
-            sql = sql.Replace("$us", username.Value.Replace("'", "''"));
-            sql = sql.Replace("$em", email.Value.Replace("'", "''"));
+select @user_cnt = count(1) from users where us_username = @us
+select @email_cnt = count(1) from users where us_email = @em
+select @pending_user_cnt = count(1) from emailed_links where el_username = @us
+select @pending_email_cnt = count(1) from emailed_links where el_email = @em
+select @user_cnt, @email_cnt, @pending_user_cnt, @pending_email_cnt");
+            sql = sql.Replace("us", username.Value);
+            sql = sql.Replace("em", email.Value);
 
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 

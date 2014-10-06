@@ -84,14 +84,14 @@ namespace btnet
 				}
 
 				// check for existing session for active user
-				string sql = @"
+				var sql = new SQLString(@"
 /* check session */
 declare @project_admin int
 select @project_admin = count(1)
 	from sessions
 	inner join project_user_xref on pu_user = se_user
 	and pu_admin = 1
-	where se_id = '$se';
+	where se_id = @se;
 
 select us_id, us_admin,
 us_username, us_firstname, us_lastname,
@@ -102,7 +102,7 @@ us_use_fckeditor,
 us_enable_bug_list_popups,
 og.*,
 isnull(us_forced_project, 0 ) us_forced_project,
-isnull(pu_permission_level, $dpl) pu_permission_level,
+isnull(pu_permission_level, @dpl) pu_permission_level,
 @project_admin [project_admin]
 from sessions
 inner join users on se_user = us_id
@@ -110,11 +110,11 @@ inner join orgs og on us_org = og_id
 left outer join project_user_xref
 	on pu_project = us_forced_project
 	and pu_user = us_id
-where se_id = '$se'
-and us_active = 1";
+where se_id = @se
+and us_active = 1");
 
-				sql = sql.Replace("$se", se_id);
-				sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel","2"));
+				sql = sql.Replace("se", se_id);
+				sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 				dr = btnet.DbUtil.get_datarow(sql);
 
 			}
@@ -125,7 +125,7 @@ and us_active = 1";
 				{
 					// allow users in, even without logging on.
 					// The user will have the permissions of the "guest" user.
-					string sql = @"
+					var sql = new SQLString(@"
 /* get guest  */
 select us_id, us_admin,
 us_username, us_firstname, us_lastname,
@@ -136,7 +136,7 @@ us_use_fckeditor,
 us_enable_bug_list_popups,
 og.*,
 isnull(us_forced_project, 0 ) us_forced_project,
-isnull(pu_permission_level, $dpl) pu_permission_level,
+isnull(pu_permission_level, @dpl) pu_permission_level,
 0 [project_admin]
 from users
 inner join orgs og on us_org = og_id
@@ -144,9 +144,9 @@ left outer join project_user_xref
 	on pu_project = us_forced_project
 	and pu_user = us_id
 where us_username = 'guest'
-and us_active = 1";
+and us_active = 1");
 
-					sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel","2"));
+					sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 					dr = btnet.DbUtil.get_datarow(sql);
 				}
 			}
@@ -210,9 +210,9 @@ and us_active = 1";
 
 			btnet.Util.write_to_log("guid=" + guid);
 			
-			string sql = @"insert into sessions (se_id, se_user) values('$gu', $us)";
-			sql = sql.Replace("$gu", guid);
-			sql = sql.Replace("$us", Convert.ToString(userid));
+			var sql = new SQLString(@"insert into sessions (se_id, se_user) values(@gu, @us)");
+			sql = sql.Replace("gu", guid);
+			sql = sql.Replace("us", Convert.ToString(userid));
 
 			btnet.DbUtil.execute_nonquery(sql);			
 
