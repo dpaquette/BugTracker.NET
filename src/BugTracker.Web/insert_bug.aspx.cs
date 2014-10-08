@@ -125,7 +125,7 @@ namespace btnet
                 cc = Mime.get_cc(mime_message);
             }
 
-            string sql = "";
+            SQLString sql;
 
             if (bugid != 0)
             {
@@ -133,11 +133,11 @@ namespace btnet
                 // No comment can be added to merged or deleted bugids
                 // In this case a new bug is created, this to prevent possible loss of information
 
-                sql = @"select count(bg_id)
+                sql = new SQLString(@"select count(bg_id)
 			from bugs
-			where bg_id = $id";
+			where bg_id = @id");
 
-                sql = sql.Replace("$id", Convert.ToString(bugid));
+                sql = sql.Replace("id", Convert.ToString(bugid));
 
                 if (Convert.ToInt32(btnet.DbUtil.execute_scalar(sql)) == 0)
                 {
@@ -265,23 +265,24 @@ namespace btnet
 
                 string StatusResultingFromIncomingEmail = Util.get_setting("StatusResultingFromIncomingEmail", "0");
 
-                sql = "";
 
                 if (StatusResultingFromIncomingEmail != "0")
                 {
 
                     sql = @"update bugs
-				set bg_status = $st
-				where bg_id = $bg
+				set bg_status = @st
+				where bg_id = @bg
 				";
 
-                    sql = sql.Replace("$st", StatusResultingFromIncomingEmail);
+                    sql = sql.Replace("st", StatusResultingFromIncomingEmail);
+                    sql = sql.Replace("bg", Convert.ToString(bugid));
+                    DbUtil.execute_nonquery(sql);
 
                 }
 
-                sql += "select bg_short_desc from bugs where bg_id = $bg";
+                sql = new SQLString("select bg_short_desc from bugs where bg_id = @bg");
 
-                sql = sql.Replace("$bg", Convert.ToString(bugid));
+                sql = sql.Replace("bg", Convert.ToString(bugid));
                 DataRow dr2 = btnet.DbUtil.get_datarow(sql);
 
 

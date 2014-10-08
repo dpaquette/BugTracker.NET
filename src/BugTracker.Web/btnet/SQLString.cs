@@ -29,6 +29,12 @@ namespace btnet
             return this;
         }
 
+        public SQLString Append(string toAppend)
+        {
+            _value += toAppend;
+            return this;
+        }
+
         public SqlParameter[] GetParameters()
         {
             return _parameters.ToArray();

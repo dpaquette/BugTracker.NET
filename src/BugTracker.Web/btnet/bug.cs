@@ -33,33 +33,33 @@ namespace btnet
 			// subscribe project's default user
 			// subscribe per-project auto_subscribers
 			// subscribe per auto_subscribe_own_bugs
-			string sql = @"
+			var sql = new SQLString(@"
 declare @pj int
-select @pj = bg_project from bugs where bg_id = $id
+select @pj = bg_project from bugs where bg_id = @id
 
 delete from bug_subscriptions
-where bs_bug = $id
+where bs_bug = @id
 and bs_user in
 (select x.pu_user
 from projects
 left outer join project_user_xref x on pu_project = pj_id
 where pu_project = @pj
-and isnull(pu_permission_level,$dpl) = 0)
+and isnull(pu_permission_level,@dpl) = 0)
 
 delete from bug_subscriptions
-where bs_bug = $id
+where bs_bug = @id
 and bs_user in
 (select us_id from users
  inner join orgs on us_org = og_id
- inner join bugs on bg_id = $id
+ inner join bugs on bg_id = @id
  where og_other_orgs_permission_level = 0
  and bg_org <> og_id)
 
 insert into bug_subscriptions (bs_bug, bs_user)
-select $id, us_id
+select @id, us_id
 from users
 inner join orgs on us_org = og_id
-inner join bugs on bg_id = $id
+inner join bugs on bg_id = @id
 left outer join project_user_xref on pu_project = @pj and pu_user = us_id
 where us_auto_subscribe = 1
 and
@@ -67,18 +67,18 @@ case
 	when
 		us_org <> bg_org
 		and og_other_orgs_permission_level < 2
-		and og_other_orgs_permission_level < isnull(pu_permission_level,$dpl)
+		and og_other_orgs_permission_level < isnull(pu_permission_level,@dpl)
 			then og_other_orgs_permission_level
 	else
-		isnull(pu_permission_level,$dpl)
+		isnull(pu_permission_level,@dpl)
 end <> 0
 and us_active = 1
 and us_id not in
 (select bs_user from bug_subscriptions
-where bs_bug = $id)
+where bs_bug = @id)
 
 insert into bug_subscriptions (bs_bug, bs_user)
-select $id, pj_default_user
+select @id, pj_default_user
 from projects
 inner join users on pj_default_user = us_id
 where pj_id = @pj
@@ -87,34 +87,34 @@ and pj_auto_subscribe_default_user = 1
 and us_active = 1
 and pj_default_user not in
 (select bs_user from bug_subscriptions
-where bs_bug = $id)
+where bs_bug = @id)
 
 insert into bug_subscriptions (bs_bug, bs_user)
-select $id, pu_user from project_user_xref
+select @id, pu_user from project_user_xref
 inner join users on pu_user = us_id
 inner join orgs on us_org = og_id
-inner join bugs on bg_id = $id
+inner join bugs on bg_id = @id
 where pu_auto_subscribe = 1
 and
 case
 	when
 		us_org <> bg_org
 		and og_other_orgs_permission_level < 2
-		and og_other_orgs_permission_level < isnull(pu_permission_level,$dpl)
+		and og_other_orgs_permission_level < isnull(pu_permission_level,@dpl)
 			then og_other_orgs_permission_level
 	else
-		isnull(pu_permission_level,$dpl)
+		isnull(pu_permission_level,@dpl)
 end <> 0
 and us_active = 1
 and pu_project = @pj
 and pu_user not in
 (select bs_user from bug_subscriptions
-where bs_bug = $id)
+where bs_bug = @id)
 
 insert into bug_subscriptions (bs_bug, bs_user)
-select $id, us_id
+select @id, us_id
 from users
-inner join bugs on bg_id = $id
+inner join bugs on bg_id = @id
 inner join orgs on us_org = og_id
 left outer join project_user_xref on pu_project = @pj and pu_user = us_id
 where ((us_auto_subscribe_own_bugs = 1 and bg_assigned_to_user = us_id)
@@ -125,18 +125,18 @@ case
 	when
 		us_org <> bg_org
 		and og_other_orgs_permission_level < 2
-		and og_other_orgs_permission_level < isnull(pu_permission_level,$dpl)
+		and og_other_orgs_permission_level < isnull(pu_permission_level,@dpl)
 			then og_other_orgs_permission_level
 	else
-		isnull(pu_permission_level,$dpl)
+		isnull(pu_permission_level,@dpl)
 end <> 0
 and us_active = 1
 and us_id not in
 (select bs_user from bug_subscriptions
-where bs_bug = $id)";
+where bs_bug = @id)");
 
-			sql = sql.Replace("$id", Convert.ToString(bugid));
-			sql = sql.Replace("$dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.Replace("id", Convert.ToString(bugid));
+			sql = sql.Replace("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
 			
 			btnet.DbUtil.execute_nonquery(sql);
@@ -153,8 +153,8 @@ where bs_bug = $id)";
 			string id = Convert.ToString(bugid);
 
 			string upload_folder = Util.get_upload_folder();
-			string sql = @"select bp_id, bp_file from bug_posts where bp_type = 'file' and bp_bug = $bg";
-			sql = sql.Replace("$bg", id);
+			var sql = new SQLString(@"select bp_id, bp_file from bug_posts where bp_type = 'file' and bp_bug = @bg");
+			sql = sql.Replace("bg", id);
 
 			
 			DataSet ds = btnet.DbUtil.get_dataset(sql);
@@ -181,17 +181,17 @@ where bs_bug = $id)";
 
 			// delete the database entries
 
-			sql = @"
-delete bug_post_attachments from bug_post_attachments inner join bug_posts on bug_post_attachments.bpa_post = bug_posts.bp_id where bug_posts.bp_bug = $bg
-delete from bug_posts where bp_bug = $bg
-delete from bug_subscriptions where bs_bug = $bg
-delete from bug_relationships where re_bug1 = $bg
-delete from bug_relationships where re_bug2 = $bg
-delete from bug_user where bu_bug = $bg
-delete from bug_tasks where tsk_bug = $bg
-delete from bugs where bg_id = $bg";
+			sql = new SQLString(@"
+delete bug_post_attachments from bug_post_attachments inner join bug_posts on bug_post_attachments.bpa_post = bug_posts.bp_id where bug_posts.bp_bug = @bg
+delete from bug_posts where bp_bug = @bg
+delete from bug_subscriptions where bs_bug = @bg
+delete from bug_relationships where re_bug1 = @bg
+delete from bug_relationships where re_bug2 = @bg
+delete from bug_user where bu_bug = @bg
+delete from bug_tasks where tsk_bug = @bg
+delete from bugs where bg_id = @bg");
 
-			sql = sql.Replace("$bg", id);
+			sql = sql.Replace("bg", id);
 			btnet.DbUtil.execute_nonquery(sql);
 
 
@@ -268,7 +268,7 @@ delete from bugs where bg_id = $bg";
 
 			
 			string upload_folder = Util.get_upload_folder();
-			string sql;
+            SQLString sql;
 			bool store_attachments_in_database = (Util.get_setting("StoreAttachmentsInDatabase", "0") == "1");
 			string effective_file = file;
 			int effective_content_length = content_length;
@@ -299,40 +299,40 @@ delete from bugs where bg_id = $bg";
 
 				// Insert a new post into bug_posts.
 
-				sql = @"
+				sql = new SQLString(@"
 declare @now datetime
 
 set @now = getdate()
 
 update bugs
 	set bg_last_updated_date = @now,
-	bg_last_updated_user = $us
-	where bg_id = $bg
+	bg_last_updated_user = @us
+	where bg_id = @bg
 
 insert into bug_posts
 	(bp_type, bp_bug, bp_file, bp_comment, bp_size, bp_date, bp_user, bp_content_type, bp_parent, bp_hidden_from_external_users)
-	values ('file', $bg, N'$fi', N'$de', $si, @now, $us, N'$ct', $pa, $internal)
-	select scope_identity()";
+	values ('file', @bg, @fi, @de, @si, @now, @us, @ct, @pa, @internal)
+	select scope_identity()");
 
-				sql = sql.Replace("$bg", Convert.ToString(bugid));
-				sql = sql.Replace("$fi", effective_file.Replace("'", "''"));
-				sql = sql.Replace("$de", comment.Replace("'", "''"));
-				sql = sql.Replace("$si", Convert.ToString(effective_content_length));
-				sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+				sql = sql.Replace("bg", Convert.ToString(bugid));
+				sql = sql.Replace("fi", effective_file);
+				sql = sql.Replace("de", comment);
+				sql = sql.Replace("si", Convert.ToString(effective_content_length));
+				sql = sql.Replace("us", Convert.ToString(security.user.usid));
 
 				// Sometimes, somehow, content type is null.  Not sure how.
-				sql = sql.Replace("$ct",
+				sql = sql.Replace("ct",
 					effective_content_type != null
 						? effective_content_type.Replace("'", "''")
 						: string.Empty);
 
 				if (parent == -1)
 				{
-					sql = sql.Replace("$pa", "null");
+					sql = sql.Replace("pa", "null");
 				}
 				else
 				{
-					sql = sql.Replace("$pa", Convert.ToString(parent));
+					sql = sql.Replace("pa", Convert.ToString(parent));
 				}
 				sql = sql.Replace("$internal", btnet.Util.bool_to_string(hidden_from_external_users));
 
@@ -357,10 +357,10 @@ insert into bug_posts
 							bytes_read += bytes_read_this_iteration;
 						}
 
-						sql = @"insert into bug_post_attachments
+						var inseImageSQL = @"insert into bug_post_attachments
 								(bpa_post, bpa_content)
 								values (@bp, @bc)";
-						using (SqlCommand cmd = new SqlCommand(sql))
+						using (SqlCommand cmd = new SqlCommand(inseImageSQL))
 						{
 							cmd.Parameters.AddWithValue("@bp", bp_id);
 							cmd.Parameters.Add("@bc", SqlDbType.Image).Value = data;
@@ -398,9 +398,9 @@ insert into bug_posts
 				catch
 				{
 					// clean up
-					sql = @"delete from bug_posts where bp_id = $bp";
+					sql = new SQLString(@"delete from bug_posts where bp_id = @bp");
 
-					sql = sql.Replace("$bp", Convert.ToString(bp_id));
+					sql = sql.Replace("bp", Convert.ToString(bp_id));
 
 					btnet.DbUtil.execute_nonquery(sql);
 
@@ -448,7 +448,7 @@ insert into bug_posts
 
 			
 			string upload_folder = Util.get_upload_folder();
-			string sql;
+			SQLString sql;
 			bool store_attachments_in_database = (Util.get_setting("StoreAttachmentsInDatabase", "0") == "1");
 			int bugid;
 			string file;
@@ -458,11 +458,11 @@ insert into bug_posts
 
 			try
 			{
-				sql = @"select bp_bug, bp_file, bp_size, bp_content_type
+				sql = new SQLString(@"select bp_bug, bp_file, bp_size, bp_content_type
 						from bug_posts
-						where bp_id = $bp";
+						where bp_id = @bp");
 						
-				sql = sql.Replace("$bp", Convert.ToString(bp_id));
+				sql = sql.Replace("bp", Convert.ToString(bp_id));
 				using (SqlDataReader reader = btnet.DbUtil.execute_reader(sql, CommandBehavior.CloseConnection))
 				{
 					if (reader.Read())
@@ -478,11 +478,11 @@ insert into bug_posts
 					}
 				}
 
-				sql = @"select bpa_content
+				sql = new SQLString(@"select bpa_content
 							from bug_post_attachments
-							where bpa_post = $bp";
+							where bpa_post = @bp");
 							
-				sql = sql.Replace("$bp", Convert.ToString(bp_id));
+				sql = sql.Replace("bp", Convert.ToString(bp_id));
 
 				object content_object;
 				content_object = btnet.DbUtil.execute_scalar(sql);
@@ -539,18 +539,18 @@ insert into bug_posts
 			Security security,
 			DataSet ds_custom_cols)
 		{
-			string sql = @" /* get_bug_datarow */";
+			var sql = new SQLString(@" /* get_bug_datarow */");
 
 			if (btnet.Util.get_setting("EnableSeen", "0") == "1")
 			{
-				sql += @"
-if not exists (select bu_bug from bug_user where bu_bug = $id and bu_user = $this_usid)
-	insert into bug_user (bu_bug, bu_user, bu_flag, bu_seen, bu_vote) values($id, $this_usid, 0, 1, 0) 
-update bug_user set bu_seen = 1, bu_seen_datetime = getdate() where bu_bug = $id and bu_user = $this_usid and bu_seen <> 1";
+				sql.Append(@"
+if not exists (select bu_bug from bug_user where bu_bug = @id and bu_user = @this_usid)
+	insert into bug_user (bu_bug, bu_user, bu_flag, bu_seen, bu_vote) values(@id, @this_usid, 0, 1, 0) 
+update bug_user set bu_seen = 1, bu_seen_datetime = getdate() where bu_bug = @id and bu_user = @this_usid and bu_seen <> 1");
 
 			}
 
-			sql += @"
+			sql.Append( @"
 declare @svn_revisions int
 declare @git_commits int
 declare @hg_revisions int
@@ -560,52 +560,52 @@ set @svn_revisions = 0
 set @git_commits = 0
 set @hg_revisions = 0
 set @tasks = 0
-set @related = 0";
+set @related = 0");
 
 			if (btnet.Util.get_setting("EnableSubversionIntegration", "0") == "1")
 			{
-				sql += @"
+				sql.Append(@"
 select @svn_revisions = count(1)
 from svn_affected_paths
 inner join svn_revisions on svnap_svnrev_id = svnrev_id
-where svnrev_bug = $id;";
+where svnrev_bug = @id;");
 			}
 
 			if (btnet.Util.get_setting("EnableGitIntegration", "0") == "1")
 			{
-				sql += @"
+				sql.Append(@"
 select @git_commits = count(1)
 from git_affected_paths
 inner join git_commits on gitap_gitcom_id = gitcom_id
-where gitcom_bug = $id;";
+where gitcom_bug = @id;");
 			}
 
 			if (btnet.Util.get_setting("EnableMercurialIntegration", "0") == "1")
 			{
-				sql += @"
+				sql.Append(@"
 select @hg_revisions = count(1)
 from hg_affected_paths
 inner join hg_revisions on hgap_hgrev_id = hgrev_id
-where hgrev_bug = $id;";
+where hgrev_bug = @id;");
 			}
 
 			if (btnet.Util.get_setting("EnableTasks", "0") == "1")
 			{
-				sql += @"
+				sql.Append(@"
 select @tasks = count(1)
 from bug_tasks
-where tsk_bug = $id;";
+where tsk_bug = @id;");
 			}
 
 			if (btnet.Util.get_setting("EnableRelationships", "0") == "1")
 			{
-                sql += @"
+                sql.Append(@"
 select @related = count(1)
 from bug_relationships
-where re_bug1 = $id;";
+where re_bug1 = @id;");
             }
     
-            sql += @"
+            sql.Append(@"
 
 select bg_id [id],
 bg_short_desc [short_desc],
@@ -658,12 +658,12 @@ isnull(bs_user,0) [subscribed],
 
 case
 when
-	$this_org <> bg_org
+	@this_org <> bg_org
 	and userorg.og_other_orgs_permission_level < 2
-	and userorg.og_other_orgs_permission_level < isnull(pu_permission_level,$dpl)
+	and userorg.og_other_orgs_permission_level < isnull(pu_permission_level,@dpl)
 		then userorg.og_other_orgs_permission_level
 else
-	isnull(pu_permission_level,$dpl)
+	isnull(pu_permission_level,@dpl)
 end [pu_permission_level],
 
 isnull(bg_project_custom_dropdown_value1,'') [bg_project_custom_dropdown_value1],
@@ -675,9 +675,9 @@ isnull(bg_project_custom_dropdown_value3,'') [bg_project_custom_dropdown_value3]
 @hg_revisions [hg_commit_cnt],
 @tasks [task_cnt],
 getdate() [snapshot_timestamp]
-$custom_cols_placeholder
+@custom_cols_placeholder
 from bugs
-inner join users this_user on us_id = $this_usid
+inner join users this_user on us_id = @this_usid
 inner join orgs userorg on this_user.us_org = userorg.og_id
 left outer join user_defined_attribute on bg_user_defined_attribute = udf_id
 left outer join projects on bg_project = pj_id
@@ -688,14 +688,14 @@ left outer join statuses on bg_status = st_id
 left outer join users asg on bg_assigned_to_user = asg.us_id
 left outer join users ru on bg_reported_user = ru.us_id
 left outer join users lu on bg_last_updated_user = lu.us_id
-left outer join bug_subscriptions on bs_bug = bg_id and bs_user = $this_usid
+left outer join bug_subscriptions on bs_bug = bg_id and bs_user = @this_usid
 left outer join project_user_xref on pj_id = pu_project
-and pu_user = $this_usid
-where bg_id = $id";
+and pu_user = @this_usid
+where bg_id = @id");
 
 			if (ds_custom_cols.Tables[0].Rows.Count == 0)
 			{
-				sql = sql.Replace("$custom_cols_placeholder", "");
+				sql = sql.Replace("@custom_cols_placeholder", "");
 			}
 			else
 			{
@@ -706,13 +706,13 @@ where bg_id = $id";
 					custom_cols_sql += ",[" + drcc["name"].ToString() + "]";
 
 				}
-				sql = sql.Replace("$custom_cols_placeholder", custom_cols_sql);
+				sql = sql.Replace("@custom_cols_placeholder", custom_cols_sql);
 			}
 
-			sql = sql.Replace("$id", Convert.ToString(bugid));
-			sql = sql.Replace("$this_usid", Convert.ToString(security.user.usid));
-			sql = sql.Replace("$this_org", Convert.ToString(security.user.org));
-			sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.Replace("@id", Convert.ToString(bugid));
+			sql = sql.Replace("@this_usid", Convert.ToString(security.user.usid));
+			sql = sql.Replace("@this_org", Convert.ToString(security.user.org));
+			sql = sql.Replace("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
 
 			
 			return btnet.DbUtil.get_datarow(sql);
@@ -723,20 +723,19 @@ where bg_id = $id";
         ///////////////////////////////////////////////////////////////////////
         public static void apply_post_insert_rules(int bugid)
         {
-            string sql = Util.get_setting("UpdateBugAfterInsertBugAspxSql", "");
+            var sql = new SQLString(Util.get_setting("UpdateBugAfterInsertBugAspxSql", ""));
 
-            if (sql != "")
-            {
-                sql = sql.Replace("$BUGID$", Convert.ToString(bugid));
+            
+                sql = sql.Replace("@BUGID", Convert.ToString(bugid));
                 btnet.DbUtil.execute_nonquery(sql);
-            }
+            
         }
 
         ///////////////////////////////////////////////////////////////////////
         public static System.Data.DataRow get_bug_defaults()
         {
 
-            string sql = @"/*fetch defaults*/
+            var sql = new SQLString(@"/*fetch defaults*/
 declare @pj int
 declare @ct int
 declare @pr int
@@ -752,7 +751,7 @@ select @ct = ct_id from categories where ct_default = 1 order by ct_name
 select @pr = pr_id from priorities where pr_default = 1 order by pr_name
 select @st = st_id from statuses where st_default = 1 order by st_name
 select @udf = udf_id from user_defined_attribute where udf_default = 1 order by udf_name
-select @pj pj, @ct ct, @pr pr, @st st, @udf udf";
+select @pj pj, @ct ct, @pr pr, @st st, @udf udf");
 
             return btnet.DbUtil.get_datarow(sql);
         }
@@ -768,21 +767,21 @@ select @pj pj, @ct ct, @pr pr, @st st, @udf udf";
 			*/
 
 			// fetch the revised permission level
-			string sql = @"
+			var sql = new SQLString(@"
 declare @bg_org int
 
-select isnull(pu_permission_level,$dpl),
+select isnull(pu_permission_level,@dpl),
 bg_org
 from bugs
 left outer join project_user_xref
 on pu_project = bg_project
-and pu_user = $us
-where bg_id = $bg";
+and pu_user = @us
+where bg_id = @bg");
 			;
 
-			sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel", "2"));
-			sql = sql.Replace("$bg", Convert.ToString(bugid));
-			sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+			sql = sql.Replace("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.Replace("@bg", Convert.ToString(bugid));
+			sql = sql.Replace("@us", Convert.ToString(security.user.usid));
 			
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 			
@@ -860,7 +859,7 @@ where bg_id = $bg";
 				assigned_to_userid = btnet.Util.get_default_user(projectid);
 			}
 
-			string sql = @"insert into bugs
+			var sql = new SQLString(@"insert into bugs
 					(bg_short_desc,
 					bg_tags,
 					bg_reported_user,
@@ -877,30 +876,30 @@ where bg_id = $bg";
 					bg_project_custom_dropdown_value1,
 					bg_project_custom_dropdown_value2,
 					bg_project_custom_dropdown_value3
-					$custom_cols_placeholder1)
-					values (N'$short_desc', N'$tags', $reported_user,  $reported_user, getdate(), getdate(),
-					$project, $org,
-					$category, $priority, $status, $assigned_user, $udf,
-					N'$pcd1',N'$pcd2',N'$pcd3' $custom_cols_placeholder2)";
+					@custom_cols_placeholder1)
+					values (@short_desc, @tags, @reported_user,  @reported_user, getdate(), getdate(),
+					@project, @org,
+					@category, @priority, @status, @assigned_user, @udf,
+					@pcd1, @pcd2, @pcd3, @custom_cols_placeholder2)");
 
-			sql = sql.Replace("$short_desc", short_desc.Replace("'", "''"));
-			sql = sql.Replace("$tags", tags.Replace("'", "''"));
-			sql = sql.Replace("$reported_user", Convert.ToString(security.user.usid));
-			sql = sql.Replace("$project", Convert.ToString(projectid));
-			sql = sql.Replace("$org", Convert.ToString(orgid));
-			sql = sql.Replace("$category", Convert.ToString(categoryid));
-			sql = sql.Replace("$priority", Convert.ToString(priorityid));
-			sql = sql.Replace("$status", Convert.ToString(statusid));
-			sql = sql.Replace("$assigned_user", Convert.ToString(assigned_to_userid));
-			sql = sql.Replace("$udf", Convert.ToString(udfid));
-			sql = sql.Replace("$pcd1", project_custom_dropdown_value1);
-			sql = sql.Replace("$pcd2", project_custom_dropdown_value2);
-			sql = sql.Replace("$pcd3", project_custom_dropdown_value3);
+			sql = sql.Replace("@short_desc", short_desc);
+			sql = sql.Replace("@tags", tags);
+			sql = sql.Replace("@reported_user", Convert.ToString(security.user.usid));
+			sql = sql.Replace("@project", Convert.ToString(projectid));
+			sql = sql.Replace("@org", Convert.ToString(orgid));
+			sql = sql.Replace("@category", Convert.ToString(categoryid));
+			sql = sql.Replace("@priority", Convert.ToString(priorityid));
+			sql = sql.Replace("@status", Convert.ToString(statusid));
+			sql = sql.Replace("@assigned_user", Convert.ToString(assigned_to_userid));
+			sql = sql.Replace("@udf", Convert.ToString(udfid));
+			sql = sql.Replace("@pcd1", project_custom_dropdown_value1);
+			sql = sql.Replace("@pcd2", project_custom_dropdown_value2);
+			sql = sql.Replace("@pcd3", project_custom_dropdown_value3);
 
 			if (hash_custom_cols == null)
 			{
-				sql = sql.Replace("$custom_cols_placeholder1", "");
-				sql = sql.Replace("$custom_cols_placeholder2", "");
+				sql = sql.Replace("@custom_cols_placeholder1", "");
+				sql = sql.Replace("@custom_cols_placeholder2", "");
 			}
 			else
 			{
@@ -932,13 +931,13 @@ where bg_id = $bg";
 					custom_cols_sql2 += "," + custom_col_val;
 					
 				}
-				sql = sql.Replace("$custom_cols_placeholder1", custom_cols_sql1);
-				sql = sql.Replace("$custom_cols_placeholder2", custom_cols_sql2);
+				sql = sql.Replace("@custom_cols_placeholder1", custom_cols_sql1);
+				sql = sql.Replace("@custom_cols_placeholder2", custom_cols_sql2);
 			}
 
 
 
-			sql += "\nselect scope_identity()";
+			sql.Append("\nselect scope_identity()");
 
 
 			int bugid = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
@@ -978,7 +977,7 @@ where bg_id = $bg";
 
 			if (comment_formated != "")
 			{
-				string sql = @"
+                var sql = new SQLString(@"
 declare @now datetime
 set @now = getdate()
 
@@ -986,17 +985,17 @@ insert into bug_posts
 (bp_bug, bp_user, bp_date, bp_comment, bp_comment_search, bp_email_from, bp_email_cc, bp_type, bp_content_type,
 bp_hidden_from_external_users)
 values(
-$id,
-$us,
+@id,
+@us,
 @now,
-N'$comment_formatted',
-N'$comment_search',
-N'$from',
-N'$cc',
-N'$type',
-N'$content_type',
-$internal)
-select scope_identity();";
+@comment_formatted,
+@comment_search,
+@from,
+@cc,
+@type,
+@content_type,
+@internal)
+select scope_identity();");
 
 				if (from != null)
 				{
@@ -1006,29 +1005,29 @@ select scope_identity();";
 					// row, not the comment row, so updating the bug again would confuse it.
 					sql += @"update bugs
 						set bg_last_updated_date = @now,
-						bg_last_updated_user = $us
-						where bg_id = $id";
+						bg_last_updated_user = @us
+						where bg_id = @id";
 
-					sql = sql.Replace("$from", from.Replace("'", "''"));
-					sql = sql.Replace("$type", "received"); // received email
+					sql = sql.Replace("@from", from.Replace("'", "''"));
+					sql = sql.Replace("@type", "received"); // received email
 				}
 				else
 				{
-					sql = sql.Replace("N'$from'", "null");
-					sql = sql.Replace("$type", "comment"); // bug comment
+					sql = sql.Replace("@from'", "null");
+					sql = sql.Replace("@type", "comment"); // bug comment
 				}
 
-				sql = sql.Replace("$id", Convert.ToString(bugid));
-				sql = sql.Replace("$us", Convert.ToString(this_usid));
-				sql = sql.Replace("$comment_formatted", comment_formated.Replace("'", "''"));
-				sql = sql.Replace("$comment_search", comment_search.Replace("'", "''"));
-				sql = sql.Replace("$content_type", content_type);
+				sql = sql.Replace("@id", Convert.ToString(bugid));
+				sql = sql.Replace("@us", Convert.ToString(this_usid));
+				sql = sql.Replace("@comment_formatted", comment_formated.Replace("'", "''"));
+				sql = sql.Replace("@comment_search", comment_search.Replace("'", "''"));
+				sql = sql.Replace("@content_type", content_type);
 				if (cc == null)
 				{
 					cc = "";
 				}
-				sql = sql.Replace("$cc", cc.Replace("'", "''"));
-				sql = sql.Replace("$internal", btnet.Util.bool_to_string(internal_only));
+				sql = sql.Replace("@cc", cc.Replace("'", "''"));
+				sql = sql.Replace("@internal", btnet.Util.bool_to_string(internal_only));
 
 
 				
@@ -1114,11 +1113,11 @@ select scope_identity();";
 				changeLevel = 4;
 			}
 
-			string sql;
+			SQLString sql;
 
 			if (just_to_this_userid > 0)
 			{
-				sql = @"
+				sql = new SQLString(@"
 /* get notification email for just one user  */
 select us_email, us_id, us_admin, og.*
 from bug_subscriptions
@@ -1128,7 +1127,7 @@ inner join bugs on bg_id = bs_bug
 left outer join project_user_xref on pu_user = us_id and pu_project = bg_project
 where us_email is not null
 and us_enable_notifications = 1
--- $status_change
+-- @status_change
 and us_active = 1
 and us_email <> ''
 and
@@ -1136,21 +1135,21 @@ case
 when
 	us_org <> bg_org
 	and og_other_orgs_permission_level < 2
-	and og_other_orgs_permission_level < isnull(pu_permission_level,$dpl)
+	and og_other_orgs_permission_level < isnull(pu_permission_level,@dpl)
 		then og_other_orgs_permission_level
 else
-	isnull(pu_permission_level,$dpl)
+	isnull(pu_permission_level,@dpl)
 end <> 0
-and bs_bug = $id
-and us_id = $just_this_usid";
+and bs_bug = @id
+and us_id = @just_this_usid");
 
-				sql = sql.Replace("$just_this_usid", Convert.ToString(just_to_this_userid));
+				sql = sql.Replace("just_this_usid", Convert.ToString(just_to_this_userid));
 			}
 			else
 			{
 
 				// MAW -- 2006/01/27 -- Added different notifications if reported or assigned-to
-				sql = @"
+				sql = new SQLString(@"
 /* get notification emails for all subscribers */
 select us_email, us_id, us_admin, og.*
 from bug_subscriptions
@@ -1160,32 +1159,32 @@ inner join bugs on bg_id = bs_bug
 left outer join project_user_xref on pu_user = us_id and pu_project = bg_project
 where us_email is not null
 and us_enable_notifications = 1
--- $status_change
+-- @status_change
 and us_active = 1
 and us_email <> ''
-and (   ($cl <= us_reported_notifications and bg_reported_user = bs_user)
-or ($cl <= us_assigned_notifications and bg_assigned_to_user = bs_user)
-or ($cl <= us_assigned_notifications and $pau = bs_user)
-or ($cl <= us_subscribed_notifications))
+and (   (@cl <= us_reported_notifications and bg_reported_user = bs_user)
+or (@cl <= us_assigned_notifications and bg_assigned_to_user = bs_user)
+or (@cl <= us_assigned_notifications and @pau = bs_user)
+or (@cl <= us_subscribed_notifications))
 and
 case
 when
 us_org <> bg_org
 and og_other_orgs_permission_level < 2
-and og_other_orgs_permission_level < isnull(pu_permission_level,$dpl)
+and og_other_orgs_permission_level < isnull(pu_permission_level,@dpl)
 	then og_other_orgs_permission_level
 else
-isnull(pu_permission_level,$dpl)
+isnull(pu_permission_level,@dpl)
 end <> 0
-and bs_bug = $id
-and (us_id <> $us or isnull(us_send_notifications_to_self,0) = 1)";
+and bs_bug = @id
+and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
 			}
 
-			sql = sql.Replace("$cl", changeLevel.ToString());
-			sql = sql.Replace("$pau", prev_assigned_to_user.ToString());
-			sql = sql.Replace("$id", Convert.ToString(bugid));
-			sql = sql.Replace("$dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
-			sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+			sql = sql.Replace("@cl", changeLevel.ToString());
+			sql = sql.Replace("@pau", prev_assigned_to_user.ToString());
+			sql = sql.Replace("@id", Convert.ToString(bugid));
+			sql = sql.Replace("@dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.Replace("@us", Convert.ToString(security.user.usid));
 
 
 			DataSet ds_subscribers = btnet.DbUtil.get_dataset(sql);
@@ -1294,18 +1293,18 @@ and (us_id <> $us or isnull(us_send_notifications_to_self,0) = 1)";
 					// at this point "writer" has the bug html
 
 					sql = @"
-delete from queued_notifications where qn_bug = $bug and qn_to = N'$to'
+delete from queued_notifications where qn_bug = @bug and qn_to = @to
 
 insert into queued_notifications
 (qn_date_created, qn_bug, qn_user, qn_status, qn_retries, qn_to, qn_from, qn_subject, qn_body, qn_last_exception)
-values (getdate(), $bug, $user, N'not sent', 0, N'$to', N'$from', N'$subject', N'$body', N'')";
+values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'')";
 
-					sql = sql.Replace("$bug",Convert.ToString(bugid));
-					sql = sql.Replace("$user",Convert.ToString(dr["us_id"]));
-					sql = sql.Replace("$to", to.Replace("'","''"));
-					sql = sql.Replace("$from", from.Replace("'","''"));
-					sql = sql.Replace("$subject", subject.Replace("'","''"));
-					sql = sql.Replace("$body", writer.ToString().Replace("'","''"));
+					sql = sql.Replace("@bug",Convert.ToString(bugid));
+					sql = sql.Replace("@user",Convert.ToString(dr["us_id"]));
+					sql = sql.Replace("@to", to);
+					sql = sql.Replace("@from", from);
+					sql = sql.Replace("@subject", subject);
+					sql = sql.Replace("@body", writer.ToString());
 
 					btnet.DbUtil.execute_nonquery_without_logging(sql);
 
@@ -1331,7 +1330,7 @@ values (getdate(), $bug, $user, N'not sent', 0, N'$to', N'$from', N'$subject', N
         {
             btnet.Util.write_to_log("actually_send_the_emails");
             
-            string sql = @"select * from queued_notifications where qn_status = N'not sent' and qn_retries < 3";
+            var sql = new SQLString(@"select * from queued_notifications where qn_status = N'not sent' and qn_retries < 3");
             // create a new one, just in case there would be multithreading issues...
 
             // get the pending notifications
@@ -1358,7 +1357,7 @@ values (getdate(), $bug, $user, N'not sent', 0, N'$to', N'$from', N'$subject', N
 
                     if (err == "")
                     {
-                        sql = "delete from queued_notifications where qn_id = $qn_id";
+                        sql = new SQLString("delete from queued_notifications where qn_id = @qn_id");
                     }
                 }
                 catch (Exception e)
@@ -1374,11 +1373,11 @@ values (getdate(), $bug, $user, N'not sent', 0, N'$to', N'$from', N'$subject', N
 
                 if (err != "")
                 {
-                    sql = "update queued_notifications  set qn_retries = qn_retries + 1, qn_last_exception = N'$ex' where qn_id = $qn_id";
-                    sql = sql.Replace("$ex", err.Replace("'", "''"));
+                    sql = new SQLString("update queued_notifications  set qn_retries = qn_retries + 1, qn_last_exception = @ex where qn_id = @qn_id");
+                    sql = sql.Replace("@ex", err.Replace("'", "''"));
                 }
 
-                sql = sql.Replace("$qn_id", Convert.ToString(dr["qn_id"]));
+                sql = sql.Replace("qn_id", Convert.ToString(dr["qn_id"]));
 
                 // update the row or delete the row
                 btnet.DbUtil.execute_nonquery(sql);

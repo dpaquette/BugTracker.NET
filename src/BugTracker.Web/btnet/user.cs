@@ -205,16 +205,16 @@ namespace btnet
             btnet.Util.write_to_log("copy_user creating " + username + " from template user " + template_username);
             StringBuilder org_columns = new StringBuilder();
 
-            string sql = "";
+            SQLString sql = new SQLString("");
 
             if (use_domain_as_org_name)
             {
-                sql = @" /* get org cols */
+                sql.Append(@" /* get org cols */
 select sc.name
 from syscolumns sc
 inner join sysobjects so on sc.id = so.id
 where so.name = 'orgs'
-and sc.name not in ('og_id', 'og_name', 'og_domain')";
+and sc.name not in ('og_id', 'og_name', 'og_domain')");
 
                 DataSet ds = btnet.DbUtil.get_dataset(sql);
                 foreach (DataRow dr in ds.Tables[0].Rows)
@@ -228,32 +228,32 @@ and sc.name not in ('og_id', 'og_name', 'og_domain')";
             }
 
 
-			sql = @"
+			sql = new SQLString(@"
 /* copy user */
 declare @template_user_id int
 declare @template_org_id int
 select @template_user_id = us_id,
 @template_org_id = us_org 
-from users where us_username = N'$template_user'
+from users where us_username = @template_user
 
 declare @org_id int
 set @org_id = -1
 
-IF $use_domain_as_org_name = 1
+IF @use_domain_as_org_name = 1
 BEGIN
-    select @org_id = og_id from orgs where og_domain = N'$domain'
+    select @org_id = og_id from orgs where og_domain = @domain
     IF @org_id = -1
     BEGIN
         insert into orgs
         (
             og_name,
             og_domain       
-            $ORG_COLUMNS        
+            @ORG_COLUMNS        
         )
         select 
-        N'$domain',
-        N'$domain'
-        $ORG_COLUMNS
+        @domain,
+        @domain
+        @ORG_COLUMNS
         from orgs where og_id = @template_org_id
         select @org_id = scope_identity()
     END
@@ -262,7 +262,7 @@ END
 declare @new_user_id int
 set @new_user_id = -1
 
-IF NOT EXISTS (SELECT us_id FROM users WHERE us_username = '$username')
+IF NOT EXISTS (SELECT us_id FROM users WHERE us_username = @username)
 BEGIN
 
 insert into users
@@ -284,7 +284,7 @@ insert into users
 	us_org)
 
 select
-	N'$username', N'$email', N'$firstname', N'$lastname', N'$signature', $salt, N'$password',
+	@username, @email, @firstname, @lastname, @signature, @salt, @password,
 	us_default_query,
 	us_enable_notifications,
 	us_auto_subscribe,
@@ -314,29 +314,29 @@ select pu_project, @new_user_id, pu_auto_subscribe, pu_permission_level, pu_admi
 select @new_user_id
 
 END
-";
-            sql = sql.Replace("$username", username.Replace("'","''"));
-			sql = sql.Replace("$email", email.Replace("'","''"));
-			sql = sql.Replace("$firstname", firstname.Replace("'","''"));
-			sql = sql.Replace("$lastname", lastname.Replace("'","''"));
-            sql = sql.Replace("$signature", signature.Replace("'", "''"));
-			sql = sql.Replace("$salt", Convert.ToString(salt));
-			sql = sql.Replace("$password", password);
-            sql = sql.Replace("$template_user", template_username.Replace("'", "''"));
+");
+            sql = sql.Replace("username", username);
+			sql = sql.Replace("email", email);
+			sql = sql.Replace("firstname", firstname);
+			sql = sql.Replace("lastname", lastname);
+            sql = sql.Replace("signature", signature);
+			sql = sql.Replace("salt", Convert.ToString(salt));
+			sql = sql.Replace("password", password);
+            sql = sql.Replace("template_user", template_username);
 
-            sql = sql.Replace("$use_domain_as_org_name", Convert.ToString(use_domain_as_org_name ? "1" : "0"));
+            sql = sql.Replace("use_domain_as_org_name", Convert.ToString(use_domain_as_org_name ? "1" : "0"));
 
             string[] email_parts = email.Split('@');
             if (email_parts.Length == 2)
             {
-                sql = sql.Replace("$domain", email_parts[1].Replace("'", "''"));
+                sql = sql.Replace("domain", email_parts[1]);
             }
             else
             {
-                sql = sql.Replace("$domain", email.Replace("'", "''"));
+                sql = sql.Replace("domain", email);
             }
             
-            sql = sql.Replace("$ORG_COLUMNS", org_columns.ToString());
+            sql = sql.Replace("ORG_COLUMNS", org_columns.ToString());
             return Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
         
         }

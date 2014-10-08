@@ -1111,7 +1111,7 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public static DataSet get_bug_posts(int bugid, bool external_user, bool history_inline)
         {
-            string sql = @"
+            SQLString sql = new SQLString(@"
 /* get_bug_posts */
 select
 a.bp_bug,
@@ -1141,25 +1141,25 @@ isnull(ba.bp_content_type,'') ba_content_type -- intentionally ba
 from bug_posts a
 left outer join users on us_id = a.bp_user
 left outer join bug_posts ba on ba.bp_parent = a.bp_id and ba.bp_bug = a.bp_bug
-where a.bp_bug = $id
-and a.bp_parent is null";
+where a.bp_bug = @id
+and a.bp_parent is null");
 
 
 			if (!history_inline)
 			{
-				sql += "\n and a.bp_type <> 'update'";
+				sql.Append("\n and a.bp_type <> 'update'");
 			}
 			
 			if (external_user)
 			{
-				sql += "\n and a.bp_hidden_from_external_users = 0";
+				sql.Append("\n and a.bp_hidden_from_external_users = 0");
 			}
 			
-			sql += "\n order by a.bp_id "; 
-			sql += btnet.Util.get_setting("CommentSortOrder","desc");
-			sql += ", ba.bp_parent, ba.bp_id";
+			sql.Append( "\n order by a.bp_id "); 
+			sql.Append( btnet.Util.get_setting("CommentSortOrder","desc"));
+			sql.Append( ", ba.bp_parent, ba.bp_id");
 
-            sql = sql.Replace("$id", Convert.ToString(bugid));
+            sql = sql.Replace("id", Convert.ToString(bugid));
             
             return btnet.DbUtil.get_dataset(sql);
 
