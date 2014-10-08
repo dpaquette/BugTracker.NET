@@ -8,12 +8,18 @@ namespace btnet
     public class SQLString
     {
         private string _value;
-        private List<SqlParameter> _parameters;
+        private IList<SqlParameter> _parameters;
 
         public SQLString(string value)
         {
             _value = value;
             _parameters = new List<SqlParameter>();
+        }
+
+        public SQLString(string value, IList<SqlParameter> parameters)
+        {
+            _value = value;
+            _parameters = parameters;
         }
 
         public override string ToString()
@@ -23,9 +29,9 @@ namespace btnet
 
         public SQLString Replace(string parameter, string value)
         {
-            var cleanParameter = parameter.Replace("$","");
+            var cleanParameter = parameter.Replace("$", "");
             _parameters.Add(new SqlParameter { ParameterName = cleanParameter, Value = value });
-            _value =  _value.Replace(parameter, "@" + cleanParameter);
+            _value = _value.Replace(parameter, "@" + cleanParameter);
             return this;
         }
 
@@ -35,9 +41,17 @@ namespace btnet
             return this;
         }
 
-        public SqlParameter[] GetParameters()
+        public SQLString Append(SQLString toAppend)
         {
-            return _parameters.ToArray();
+            _value += toAppend.ToString();
+            foreach (var param in toAppend.GetParameters())
+                _parameters.Add(param);
+            return this;
+
+        }
+        public IList<SqlParameter> GetParameters()
+        {
+            return _parameters;
         }
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Linq;
 
 namespace btnet
 {
@@ -24,7 +25,7 @@ namespace btnet
             {
                 object returnValue;
                 SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
-                cmd.Parameters.AddRange(sql.GetParameters());
+                cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                 returnValue = cmd.ExecuteScalar();
                 conn.Close(); // redundant, but just to be clear
                 return returnValue;
@@ -37,7 +38,7 @@ namespace btnet
             using (SqlConnection conn = GetConnection())
             {
                 SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
-                cmd.Parameters.AddRange(sql.GetParameters());
+                cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                 cmd.ExecuteNonQuery();
                 conn.Close(); // redundant, but just to be clear
             }
@@ -56,7 +57,7 @@ namespace btnet
             using (SqlConnection conn = GetConnection())
             {
                 SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
-                cmd.Parameters.AddRange(sql.GetParameters());
+                cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                 cmd.ExecuteNonQuery();
                 conn.Close(); // redundant, but just to be clear
             } 
@@ -96,7 +97,7 @@ namespace btnet
             {
                 using (SqlCommand cmd = new SqlCommand(sql.ToString(), conn))
                 {
-                    cmd.Parameters.AddRange(sql.GetParameters());
+                    cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                     return cmd.ExecuteReader(behavior | CommandBehavior.CloseConnection);
                 }
             }
@@ -144,7 +145,7 @@ namespace btnet
                 using (SqlDataAdapter da = new SqlDataAdapter( sql.ToString(), conn))
                	{
                     da.SelectCommand = new SqlCommand(sql.ToString());
-                    da.SelectCommand.Parameters.AddRange(sql.GetParameters());
+                    da.SelectCommand.Parameters.AddRange(sql.GetParameters().ToArray());
                     System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
                     stopwatch.Start();
                     da.Fill(ds);

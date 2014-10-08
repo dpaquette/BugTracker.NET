@@ -11,7 +11,7 @@ namespace btnet
     public partial class bugs : BasePage
     {
 
-        protected string sql;
+        protected SQLString sql;
         protected System.Data.DataView dv;
         protected System.Data.DataSet ds_custom_cols = null;
 
@@ -160,7 +160,7 @@ namespace btnet
         {
             // figure out what SQL to run and run it.
 
-            string bug_sql = null;
+            SQLString bug_sql = null;
 
 
             // From the URL
@@ -183,36 +183,36 @@ namespace btnet
             {
                 // Use sql specified in query string.
                 // This is the normal path from the queries page.
-                sql = @"select qu_sql from queries where qu_id = $quid";
-                sql = sql.Replace("$quid", qu_id_string);
-                bug_sql = (string)btnet.DbUtil.execute_scalar(sql);
+                sql = new SQLString(@"select qu_sql from queries where qu_id = @quid");
+                sql = sql.Replace("quid", qu_id_string);
+                bug_sql = new SQLString((string)btnet.DbUtil.execute_scalar(sql));
             }
 
             if (bug_sql == null)
             {
                 // This is the normal path after logging in.
                 // Use sql associated with user
-                sql = @"select qu_id, qu_sql from queries where qu_id in
-			(select us_default_query from users where us_id = $us)";
-                sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+                sql = new SQLString(@"select qu_id, qu_sql from queries where qu_id in
+			(select us_default_query from users where us_id = @us)");
+                sql = sql.Replace("us", Convert.ToString(security.user.usid));
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {
                     qu_id_string = Convert.ToString(dr["qu_id"]);
-                    bug_sql = (string)dr["qu_sql"];
+                    bug_sql = new SQLString((string)dr["qu_sql"]);
                 }
             }
 
             // As a last resort, grab some query.
             if (bug_sql == null)
             {
-                sql = @"select top 1 qu_id, qu_sql from queries order by case when qu_default = 1 then 1 else 0 end desc";
+                sql = new SQLString(@"select top 1 qu_id, qu_sql from queries order by case when qu_default = 1 then 1 else 0 end desc");
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
-                bug_sql = (string)dr["qu_sql"];
+                bug_sql = new SQLString((string)dr["qu_sql"]);
                 if (dr != null)
                 {
                     qu_id_string = Convert.ToString(dr["qu_id"]);
-                    bug_sql = (string)dr["qu_sql"];
+                    bug_sql = new SQLString((string)dr["qu_sql"]);
                 }
             }
 
@@ -241,19 +241,19 @@ namespace btnet
 
 
             // replace magic variables
-            bug_sql = bug_sql.Replace("$ME", Convert.ToString(security.user.usid));
+            bug_sql = bug_sql.Replace("ME", Convert.ToString(security.user.usid));
 
             bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
 
             if (Util.get_setting("UseFullNames", "0") == "0")
             {
                 // false condition
-                bug_sql = bug_sql.Replace("$fullnames", "0 = 1");
+                bug_sql = bug_sql.Replace("fullnames", "0 = 1");
             }
             else
             {
                 // true condition
-                bug_sql = bug_sql.Replace("$fullnames", "1 = 1");
+                bug_sql = bug_sql.Replace("fullnames", "1 = 1");
             }
 
             // run the query
@@ -292,16 +292,16 @@ namespace btnet
         {
 
             // populate query drop down
-            sql = @"/* query dropdown */
+            sql = new SQLString(@"/* query dropdown */
 select qu_id, qu_desc
 from queries
 where (isnull(qu_user,0) = 0 and isnull(qu_org,0) = 0)
-or isnull(qu_user,0) = $us
-or isnull(qu_org,0) = $org
-order by qu_desc";
+or isnull(qu_user,0) = @us
+or isnull(qu_org,0) = @org
+order by qu_desc");
 
-            sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-            sql = sql.Replace("$org", Convert.ToString(security.user.org));
+            sql = sql.Replace("us", Convert.ToString(security.user.usid));
+            sql = sql.Replace("org", Convert.ToString(security.user.org));
 
             query.DataSource = btnet.DbUtil.get_dataview(sql);
 

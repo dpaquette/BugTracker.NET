@@ -147,7 +147,7 @@ and sc.length > 30"));
             //      This is not an optimal solution but was considered the best approach given the current security filtering approach in bug tracker
             //TODO: Change this once the security approach has been redesigned.
             var sql = new SQLString(@"SELECT bg_id FROM bugs WHERE $ALTER_HERE");
-            sql = Util.alter_sql_per_project_permissions(sql.ToString(), security);
+            sql = Util.alter_sql_per_project_permissions(sql, security);
 
             DataSet ds = DbUtil.get_dataset(sql);
             HashSet<int> visibleBugIds = new HashSet<int>(

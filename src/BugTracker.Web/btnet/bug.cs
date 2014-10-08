@@ -1003,10 +1003,10 @@ select scope_identity();");
 					// We don't do it unconditionally because it would mess up the locking.
 					// The edit_bug.aspx page gets its snapshot timestamp from the update of the bug
 					// row, not the comment row, so updating the bug again would confuse it.
-					sql += @"update bugs
+					sql.Append( @"update bugs
 						set bg_last_updated_date = @now,
 						bg_last_updated_user = @us
-						where bg_id = @id";
+						where bg_id = @id");
 
 					sql = sql.Replace("@from", from.Replace("'", "''"));
 					sql = sql.Replace("@type", "received"); // received email
@@ -1292,12 +1292,12 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
 
 					// at this point "writer" has the bug html
 
-					sql = @"
+					sql = new SQLString(@"
 delete from queued_notifications where qn_bug = @bug and qn_to = @to
 
 insert into queued_notifications
 (qn_date_created, qn_bug, qn_user, qn_status, qn_retries, qn_to, qn_from, qn_subject, qn_body, qn_last_exception)
-values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'')";
+values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'')");
 
 					sql = sql.Replace("@bug",Convert.ToString(bugid));
 					sql = sql.Replace("@user",Convert.ToString(dr["us_id"]));

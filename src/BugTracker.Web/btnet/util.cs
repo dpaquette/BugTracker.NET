@@ -371,7 +371,7 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static string alter_sql_per_project_permissions(string sql, Security security)
+		public static SQLString alter_sql_per_project_permissions(SQLString sql, Security security)
 		{
 
 			string project_permissions_sql;
@@ -421,23 +421,23 @@ namespace btnet
 			// Figure out where to alter sql for project permissions
             // I've tried lots of different schemes over the years....
 
-            int alter_here_pos = sql.IndexOf("$ALTER_HERE"); // places - can be multiple - are explicitly marked
+            int alter_here_pos = sql.ToString().IndexOf("$ALTER_HERE"); // places - can be multiple - are explicitly marked
             if (alter_here_pos != -1)
             {
-                return sql.Replace("$ALTER_HERE", "/* ALTER_HERE */ " + project_permissions_sql);
+                return new SQLString(sql.ToString().Replace("$ALTER_HERE", "/* ALTER_HERE */ " + project_permissions_sql), sql.GetParameters());
             }
             else
             {
                 string bug_sql;
-
-                int where_pos = sql.IndexOf("WhErE"); // first look for a "special" where, case sensitive, in case there are multiple where's to choose from
+                var rawSQL = sql.ToString();
+                int where_pos = rawSQL.IndexOf("WhErE"); // first look for a "special" where, case sensitive, in case there are multiple where's to choose from
                 if (where_pos == -1)
-                    where_pos = sql.ToUpper().IndexOf("WHERE");
+                    where_pos = rawSQL.ToUpper().IndexOf("WHERE");
 
-                int order_pos = sql.IndexOf("/*ENDWHR*/"); // marker for end of the where statement
+                int order_pos = rawSQL.IndexOf("/*ENDWHR*/"); // marker for end of the where statement
 
                 if (order_pos == -1)
-                    order_pos = sql.ToUpper().LastIndexOf("ORDER BY");
+                    order_pos = rawSQL.ToUpper().LastIndexOf("ORDER BY");
 
                 if (order_pos < where_pos)
                     order_pos = -1; // ignore an order by that occurs in a subquery, for example
@@ -445,38 +445,38 @@ namespace btnet
                 if (where_pos != -1 && order_pos != -1)
                 {
                     // both WHERE and ORDER BY clauses
-                    bug_sql = sql.Substring(0, where_pos + 5)
+                    bug_sql = rawSQL.Substring(0, where_pos + 5)
                         + " /* altered - both  */ ( "
-                        + sql.Substring(where_pos + 5, order_pos - (where_pos + 5))
+                        + rawSQL.Substring(where_pos + 5, order_pos - (where_pos + 5))
                         + " ) AND ( "
                         + project_permissions_sql
                         + " ) "
-                        + sql.Substring(order_pos);
+                        + rawSQL.Substring(order_pos);
                 }
                 else if (order_pos == -1 && where_pos == -1)
                 {
                     // Neither
-                    bug_sql = sql + " /* altered - neither */ WHERE " + project_permissions_sql;
+                    bug_sql = rawSQL + " /* altered - neither */ WHERE " + project_permissions_sql;
                 }
                 else if (order_pos == -1)
                 {
                     // WHERE, without order
-                    bug_sql = sql.Substring(0, where_pos + 5)
+                    bug_sql = rawSQL.Substring(0, where_pos + 5)
                         + " /* altered - just where */ ( "
-                        + sql.Substring(where_pos + 5)
+                        + rawSQL.Substring(where_pos + 5)
                         + " ) AND ( "
                         + project_permissions_sql + " )";
                 }
                 else
                 {
                     // ORDER BY, without WHERE
-                    bug_sql = sql.Substring(0, order_pos)
+                    bug_sql = rawSQL.Substring(0, order_pos)
                         + " /* altered - just order by  */ WHERE "
                         + project_permissions_sql
-                        + sql.Substring(order_pos);
+                        + rawSQL.Substring(order_pos);
                 }
 
-                return bug_sql;
+                return new SQLString(bug_sql, sql.GetParameters());
             }
 
 		}
@@ -1364,7 +1364,7 @@ where tsk_bug in
 
 			if (bugid == 0)
 			{
-				sql.Append(btnet.Util.alter_sql_per_project_permissions("select bg_id from bugs", security));
+				sql.Append(btnet.Util.alter_sql_per_project_permissions(new SQLString("select bg_id from bugs"), security));
 			}
 			else
 			{

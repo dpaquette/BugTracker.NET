@@ -369,12 +369,12 @@ namespace btnet.Mail
             auto_reply_text = auto_reply_text.Replace("$BUGID$", Convert.ToString(bugid));
 
 
-            string sql = @"select
+            var sql = new SQLString(@"select
 						pj_pop3_email_from
 						from projects
-						where pj_id = $pj";
+						where pj_id = @pj");
 
-            sql = sql.Replace("$pj", Convert.ToString(projectid));
+            sql = sql.Replace("pj", Convert.ToString(projectid));
 
             object project_email = btnet.DbUtil.execute_scalar(sql);
 

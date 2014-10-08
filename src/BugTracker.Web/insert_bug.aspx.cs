@@ -269,10 +269,10 @@ namespace btnet
                 if (StatusResultingFromIncomingEmail != "0")
                 {
 
-                    sql = @"update bugs
+                    sql =new SQLString(@"update bugs
 				set bg_status = @st
 				where bg_id = @bg
-				";
+				");
 
                     sql = sql.Replace("st", StatusResultingFromIncomingEmail);
                     sql = sql.Replace("bg", Convert.ToString(bugid));
