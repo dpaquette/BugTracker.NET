@@ -29,9 +29,7 @@ namespace btnet
 
         public SQLString Replace(string parameter, string value)
         {
-            var cleanParameter = parameter.Replace("$", "");
-            _parameters.Add(new SqlParameter { ParameterName = cleanParameter, Value = value });
-            _value = _value.Replace(parameter, "@" + cleanParameter);
+            _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
         }
 
