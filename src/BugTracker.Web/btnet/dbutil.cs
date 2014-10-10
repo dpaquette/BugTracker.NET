@@ -144,7 +144,7 @@ namespace btnet
             {
                 using (SqlDataAdapter da = new SqlDataAdapter( sql.ToString(), conn))
                	{
-                    da.SelectCommand = new SqlCommand(sql.ToString());
+                   
                     da.SelectCommand.Parameters.AddRange(sql.GetParameters().ToArray());
                     System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
                     stopwatch.Start();
