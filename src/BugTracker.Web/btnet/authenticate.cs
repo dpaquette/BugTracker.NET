@@ -20,9 +20,9 @@ namespace btnet
             var sql = new SQLString(@"
 select us_username, us_id, us_password, isnull(us_salt,0) us_salt, us_active
 from users
-where us_username = $username");
+where us_username = @username");
 
-            sql = sql.Replace("$username", username);
+            sql = sql.Replace("username", username);
 
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 
