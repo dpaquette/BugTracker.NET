@@ -30,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <MvcBuildViews>true</MvcBuildViews>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -1551,4 +1552,14 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="PrecompileWeb" AfterTargets="build" Condition="'$(MvcBuildViews)'=='true'">
+    <Message Text="Starting AspNetCompiler for $(ProjectDir)" Importance="high" />
+    <AspNetCompiler
+      VirtualPath="temp"
+      TargetPath="$(ProjectDir)/obj/precompiled"
+      Force="true"
+      PhysicalPath="$(WebProjectOutputDir)"
+        Debug="true"
+    />
+  </Target>
 </Project>
