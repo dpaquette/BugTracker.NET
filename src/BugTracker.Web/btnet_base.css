@@ -17,6 +17,15 @@ a:visited {color:#0000ff; font-size: 10pt; text-decoration: none; }
 a:hover   {color:#ff6633; font-size: 10pt; text-decoration: none; }
 
 
+a.external-link {
+    background-image: url('Content/images/ExternalLink.png');
+    background-image: url('Content/images/ExternalLink.svg'), none;
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right:13px; 
+    display:inline-block !important;
+}
+
 /* bug tables */
 
 .bugt {

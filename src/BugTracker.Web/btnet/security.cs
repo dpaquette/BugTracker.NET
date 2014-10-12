@@ -281,6 +281,11 @@ function on_submit_search()
 }
 
 </script>
+<script type='text/javascript'>
+    $(function(){
+        $('a').filter(function() { return this.hostname && this.hostname !== location.hostname; }).addClass('external-link');
+    });
+</script>
 <table border=0 width=100% cellpadding=0 cellspacing=0 class=menubar><tr>");
 
             // logo
