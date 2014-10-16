@@ -30,7 +30,7 @@ void Page_Load(Object sender, EventArgs e)
 			+ "relationships";
 	
 	
-	string sql;
+	SQLString sql;
 	add_err.InnerText = "";
 
 	bugid = Convert.ToInt32(Util.sanitize_integer(Request["bgid"]));
@@ -81,15 +81,15 @@ void Page_Load(Object sender, EventArgs e)
 
 			bugid2 = Convert.ToInt32(Util.sanitize_integer(Request["bugid2"]));
 
-			sql = @"
-				delete from bug_relationships where re_bug2 = $bg2 and re_bug1 = $bg;
-				delete from bug_relationships where re_bug1 = $bg2 and re_bug2 = $bg;
+			sql = new SQLString(@"
+				delete from bug_relationships where re_bug2 = @bg2 and re_bug1 = @bg;
+				delete from bug_relationships where re_bug1 = @bg2 and re_bug2 = @bg;
 				insert into bug_posts
 						(bp_bug, bp_user, bp_date, bp_comment, bp_type)
-						values($bg, $us, getdate(), N'deleted relationship to $bg2', 'update')";
-			sql = sql.Replace("$bg2",Convert.ToString(bugid2));
-			sql = sql.Replace("$bg",Convert.ToString(bugid));
-			sql = sql.Replace("$us",Convert.ToString(security.user.usid));
+						values(@bg, @us, getdate(), N'deleted relationship to @bg2', 'update')");
+			sql = sql.Replace("bg2",Convert.ToString(bugid2));
+			sql = sql.Replace("bg",Convert.ToString(bugid));
+			sql = sql.Replace("us",Convert.ToString(security.user.usid));
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 		else
@@ -116,8 +116,8 @@ void Page_Load(Object sender, EventArgs e)
 						int rows = 0;
 
 						// check if bug exists
-						sql = @"select count(1) from bugs where bg_id = $bg2";
-						sql = sql.Replace("$bg2",Convert.ToString(bugid2));
+						sql = new SQLString(@"select count(1) from bugs where bg_id = @bg2");
+						sql = sql.Replace("bg2",Convert.ToString(bugid2));
 						rows = (int) btnet.DbUtil.execute_scalar(sql);
 
 						if (rows == 0)
@@ -127,9 +127,9 @@ void Page_Load(Object sender, EventArgs e)
 						else
 						{
 							// check if relationship exists
-							sql = @"select count(1) from bug_relationships where re_bug1 = $bg and re_bug2 = $bg2";
-							sql = sql.Replace("$bg2",Convert.ToString(bugid2));
-							sql = sql.Replace("$bg",Convert.ToString(bugid));
+							sql = new SQLString(@"select count(1) from bug_relationships where re_bug1 = @bg and re_bug2 = @bg2");
+							sql = sql.Replace("bg2",Convert.ToString(bugid2));
+							sql = sql.Replace("bg",Convert.ToString(bugid));
 							rows = (int) btnet.DbUtil.execute_scalar(sql);
 
 							if (rows > 0)
@@ -148,33 +148,33 @@ void Page_Load(Object sender, EventArgs e)
 								{
 
 									// insert the relationship both ways
-									sql = @"
-insert into bug_relationships (re_bug1, re_bug2, re_type, re_direction) values($bg, $bg2, N'$ty', $dir1);
-insert into bug_relationships (re_bug2, re_bug1, re_type, re_direction) values($bg, $bg2, N'$ty', $dir2);
+									sql = new SQLString(@"
+insert into bug_relationships (re_bug1, re_bug2, re_type, re_direction) values(@bg, @bg2, @ty, @dir1);
+insert into bug_relationships (re_bug2, re_bug1, re_type, re_direction) values(@bg, @bg2, @ty, @dir2);
 insert into bug_posts
 	(bp_bug, bp_user, bp_date, bp_comment, bp_type)
-	values($bg, $us, getdate(), N'added relationship to $bg2', 'update');";
+	values(@bg, @us, getdate(), N'added relationship to ' + @bg2, 'update');");
 
-									sql = sql.Replace("$bg2",Convert.ToString(bugid2));
-									sql = sql.Replace("$bg",Convert.ToString(bugid));
-									sql = sql.Replace("$us",Convert.ToString(security.user.usid));
-									sql = sql.Replace("$ty",Request["type"].Replace("'","''"));
+									sql = sql.Replace("bg2",Convert.ToString(bugid2));
+									sql = sql.Replace("bg",Convert.ToString(bugid));
+									sql = sql.Replace("us",Convert.ToString(security.user.usid));
+									sql = sql.Replace("ty",Request["type"].Replace("'","''"));
 
 
 									if (siblings.Checked )
 									{
-										sql = sql.Replace("$dir2","0");
-										sql = sql.Replace("$dir1","0");
+										sql = sql.Replace("dir2","0");
+										sql = sql.Replace("dir1","0");
 									}
 									else if (child_to_parent.Checked)
 									{
-										sql = sql.Replace("$dir2","1");
-										sql = sql.Replace("$dir1","2");
+										sql = sql.Replace("dir2","1");
+										sql = sql.Replace("dir1","2");
 									}
 									else
 									{
-										sql = sql.Replace("$dir2","2");
-										sql = sql.Replace("$dir1","1");
+										sql = sql.Replace("dir2","2");
+										sql = sql.Replace("dir1","1");
 									}
 
 									btnet.DbUtil.execute_nonquery(sql);
@@ -189,34 +189,34 @@ insert into bug_posts
 
 	}
 
-	sql = @"
+	sql = new SQLString(@"
 select bg_id [id],
 	bg_short_desc [desc],
 	re_type [comment],
 	st_name [status],
 	case
 		when re_direction = 0 then ''
-		when re_direction = 2 then 'child of $bg'
-		else                       'parent of $bg' 
+		when re_direction = 2 then 'child of @bg'
+		else                       'parent of @bg' 
 	end as [parent or child],
-	'<a target=_blank href=edit_bug.aspx?id=' + convert(varchar,bg_id) + '>view</a>' [view]";
+	'<a target=_blank href=edit_bug.aspx?id=' + convert(varchar,bg_id) + '>view</a>' [view]");
 
 		if (!security.user.is_guest && permission_level == Security.PERMISSION_ALL)
 		{
 
-			sql += @"
-,'<a href=''javascript:remove(' + convert(varchar,re_bug2) + ')''>detach</a>' [detach]"; 
+			sql.Append( @"
+,'<a href=''javascript:remove(' + convert(varchar,re_bug2) + ')''>detach</a>' [detach]"); 
 		}
 
-		sql += @"
+		sql.Append(@"
 from bugs
 inner join bug_relationships on bg_id = re_bug2
 left outer join statuses on st_id = bg_status
-where re_bug1 = $bg
-order by bg_id desc";
+where re_bug1 = @bg
+order by bg_id desc");
 
 
-	sql = sql.Replace("$bg", Convert.ToString(bugid));
+	sql = sql.Replace("bg", Convert.ToString(bugid));
 	sql = Util.alter_sql_per_project_permissions(sql, security);
 
 	ds = btnet.DbUtil.get_dataset(sql);

@@ -9,7 +9,7 @@ Distributed under the terms of the GNU General Public License
 
 
 Security security;
-string sql;
+SQLString sql;
 int bugid;
 DataSet ds;
 
@@ -52,10 +52,10 @@ void Page_Load(Object sender, EventArgs e)
 		{
             int new_subscriber_userid = Convert.ToInt32(Request["userid"]);
 
-            sql = @"delete from bug_subscriptions where bs_bug = $bg and bs_user = $us;
-			insert into bug_subscriptions (bs_bug, bs_user) values($bg, $us)";					;
-			sql = sql.Replace("$bg",Convert.ToString(bugid));
-			sql = sql.Replace("$us",Convert.ToString(new_subscriber_userid));
+            sql = new SQLString(@"delete from bug_subscriptions where bs_bug = @bg and bs_user = @us;
+			insert into bug_subscriptions (bs_bug, bs_user) values(@bg, @us)");					;
+			sql = sql.Replace("bg",Convert.ToString(bugid));
+			sql = sql.Replace("us",Convert.ToString(new_subscriber_userid));
 			btnet.DbUtil.execute_nonquery(sql);
 
 			// send a notification to this user only
@@ -72,26 +72,26 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (security.user.is_admin)
 	{
-		sql = @"
+		sql = new SQLString(@"
 select
-'<a href=delete_subscriber.aspx?ses=$ses&bg_id=$bg&us_id=' + convert(varchar,us_id) + '>unsubscribe</a>'	[$no_sort_unsubscriber],
+'<a href=delete_subscriber.aspx?ses=' + @ses + '&bg_id=$bg&us_id=' + convert(varchar,us_id) + '>unsubscribe</a>'	[$no_sort_unsubscriber],
 us_username [user],
 us_lastname + ', ' + us_firstname [name],
 us_email [email],
 case when us_reported_notifications < 4 or us_assigned_notifications < 4 or us_subscribed_notifications < 4 then 'Y' else 'N' end [user is<br>filtering<br>notifications]
 from bug_subscriptions
 inner join users on bs_user = us_id
-where bs_bug = $bg
+where bs_bug = @bg
 and us_enable_notifications = 1
 and us_active = 1
-order by 1";
+order by 1");
 
-		sql = sql.Replace("$ses", Convert.ToString(Session["session_cookie"]));
+		sql = sql.Replace("ses", Convert.ToString(Session["session_cookie"]));
 
 	}
 	else
 	{
-		sql = @"
+		sql = new SQLString(@"
 select
 us_username [user],
 us_lastname + ', ' + us_firstname [name],
@@ -99,26 +99,26 @@ us_email [email],
 case when us_reported_notifications < 4 or us_assigned_notifications < 4 or us_subscribed_notifications < 4 then 'Y' else 'N' end [user is<br>filtering<br>notifications]
 from bug_subscriptions
 inner join users on bs_user = us_id
-where bs_bug = $bg
+where bs_bug = @bg
 and us_enable_notifications = 1
 and us_active = 1
-order by 1";
+order by 1");
 	}
 
-	sql = sql.Replace("$bg", Convert.ToString(bugid));
+	sql = sql.Replace("bg", Convert.ToString(bugid));
 	ds = btnet.DbUtil.get_dataset(sql);
 
 	// Get list of users who could be subscribed to this bug.
 
-	sql = @"
+	sql = new SQLString(@"
 declare @project int;
 declare @org int;
-select @project = bg_project, @org = bg_org from bugs where bg_id = $bg;";
+select @project = bg_project, @org = bg_org from bugs where bg_id = @bg;");
 
 	// Only users explicitly allowed will be listed
 	if (Util.get_setting("DefaultPermissionLevel","2") == "0")
 	{
-		sql += @"select us_id, case when $fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
+		sql.Append(@"select us_id, case when @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
 			from users
 			where us_active = 1
 			and us_enable_notifications = 1
@@ -130,7 +130,7 @@ select @project = bg_project, @org = bg_org from bugs where bg_id = $bg;";
 				select us_id
 				from bug_subscriptions
 				inner join users on bs_user = us_id
-				where bs_bug = $bg
+				where bs_bug = @bg
 				and us_enable_notifications = 1
 				and us_active = 1)
 			and us_id not in (
@@ -139,12 +139,12 @@ select @project = bg_project, @org = bg_org from bugs where bg_id = $bg;";
 				where us_org <> @org
 				and og_other_orgs_permission_level = 0)
 
-			order by us_username; ";
+			order by us_username; ");
 	}
 	// Only users explictly DISallowed will be omitted
 	else
 	{
-		sql += @"select us_id, case when $fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
+		sql.Append(@"select us_id, case when @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
 			from users
 			where us_active = 1
 			and us_enable_notifications = 1
@@ -156,7 +156,7 @@ select @project = bg_project, @org = bg_org from bugs where bg_id = $bg;";
 				select us_id
 				from bug_subscriptions
 				inner join users on bs_user = us_id
-				where bs_bug = $bg
+				where bs_bug = @bg
 				and us_enable_notifications = 1
 				and us_active = 1)
 			and us_id not in (
@@ -164,21 +164,21 @@ select @project = bg_project, @org = bg_org from bugs where bg_id = $bg;";
 				inner join orgs on us_org = og_id
 				where us_org <> @org
 				and og_other_orgs_permission_level = 0)
-			order by us_username; ";
+			order by us_username; ");
 	}
 
 	if (Util.get_setting("UseFullNames","0") == "0")
 	{
 		// false condition
-		sql = sql.Replace("$fullnames","0 = 1");
+		sql = sql.Replace("fullnames","0 = 1");
 	}
 	else
 	{
 		// true condition
-		sql = sql.Replace("$fullnames","1 = 1");
+		sql = sql.Replace("fullnames","1 = 1");
 	}
 
-	sql = sql.Replace("$bg", Convert.ToString(bugid));
+	sql = sql.Replace("bg", Convert.ToString(bugid));
 
 	//DataSet ds_users =
 	userid.DataSource = btnet.DbUtil.get_dataview(sql);

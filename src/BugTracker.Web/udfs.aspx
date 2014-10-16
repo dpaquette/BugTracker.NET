@@ -23,13 +23,13 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "user defined attribute values";
 
-	ds = btnet.DbUtil.get_dataset(
+	ds = btnet.DbUtil.get_dataset(new SQLString(
 		@"select udf_id [id],
 		udf_name [user defined attribute value],
 		udf_sort_seq [sort seq],
 		case when udf_default = 1 then 'Y' else 'N' end [default],
 		udf_id [hidden]
-		from user_defined_attribute order by udf_name");
+		from user_defined_attribute order by udf_name"));
 
 }
 

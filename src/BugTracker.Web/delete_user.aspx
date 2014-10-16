@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -27,8 +27,8 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (!security.user.is_admin)
 	{
-		sql = @"select us_created_user, us_admin from users where us_id = $us";
-		sql = sql.Replace("$us", id);
+		sql = new SQLString(@"select us_created_user, us_admin from users where us_id = @us");
+		sql = sql.Replace("us", id);
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		if (security.user.usid != (int) dr["us_created_user"])
@@ -46,17 +46,17 @@ void Page_Load(Object sender, EventArgs e)
 	if (IsPostBack)
 	{
 		// do delete here
-		sql = @"
-delete from emailed_links where el_username in (select us_username from users where us_id = $us)
-delete users where us_id = $us
-delete project_user_xref where pu_user = $us
-delete bug_subscriptions where bs_user = $us
-delete bug_user where bu_user = $us
-delete queries where qu_user = $us
-delete queued_notifications where qn_user = $us
-delete dashboard_items where ds_user = $us";
+		sql = new SQLString(@"
+delete from emailed_links where el_username in (select us_username from users where us_id = @us)
+delete users where us_id = @us
+delete project_user_xref where pu_user = @us
+delete bug_subscriptions where bs_user = @us
+delete bug_user where bu_user = @us
+delete queries where qu_user = @us
+delete queued_notifications where qn_user = @us
+delete dashboard_items where ds_user = @us");
 
-        sql = sql.Replace("$us", Util.sanitize_integer(row_id.Value));
+        sql = sql.Replace("us", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("users.aspx");
 	}
@@ -65,16 +65,16 @@ delete dashboard_items where ds_user = $us";
 		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 			+ "delete user";
 
-		sql = @"declare @cnt int
-select @cnt = count(1) from bugs where bg_reported_user = $us or bg_assigned_to_user = $us
+		sql = new SQLString(@"declare @cnt int
+select @cnt = count(1) from bugs where bg_reported_user = @us or bg_assigned_to_user = @us
 if @cnt = 0
 begin
-	select @cnt = count(1) from bug_posts where bp_user = $us
+	select @cnt = count(1) from bug_posts where bp_user = @us
 end
-select us_username, @cnt [cnt] from users where us_id = $us";
+select us_username, @cnt [cnt] from users where us_id = @us");
 
 
-		sql = sql.Replace("$us", id);
+		sql = sql.Replace("us", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

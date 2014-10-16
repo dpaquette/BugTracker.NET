@@ -33,6 +33,12 @@ namespace btnet
             return this;
         }
 
+        public SQLString Replace(string parameter, int value)
+        {
+            _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
+            return this;
+        }
+
         public SQLString Append(string toAppend)
         {
             _value += toAppend;

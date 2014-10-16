@@ -45,8 +45,8 @@ Distributed under the terms of the GNU General Public License
 
         if (authenticated)
         {
-            sql = "select us_id from users where us_username = N'$us'";
-            sql = sql.Replace("$us", user.Value.Replace("'", "''"));
+            var sql = new SQLString("select us_id from users where us_username = @us");
+            sql = sql.Replace("us", user.Value);
             DataRow dr = btnet.DbUtil.get_datarow(sql);
             if (dr != null)
             {

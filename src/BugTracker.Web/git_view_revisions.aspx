@@ -33,7 +33,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "view git file commits";
 
 
-	string sql = @"
+	var sql = new SQLString(@"
 select 
 gitcom_commit [commit],
 gitcom_repository [repo],
@@ -57,10 +57,10 @@ end [view<br>history<br>(git log)]
 
 from git_commits
 inner join git_affected_paths on gitap_gitcom_id = gitcom_id
-where gitcom_bug = $bg
-order by gitcom_git_date desc, gitap_path";
+where gitcom_bug = @bg
+order by gitcom_git_date desc, gitap_path");
 
-	sql = sql.Replace("$bg", Convert.ToString(bugid));
+	sql = sql.Replace("bg", Convert.ToString(bugid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 }

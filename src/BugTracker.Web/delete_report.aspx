@@ -7,8 +7,6 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
-
 Security security;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
@@ -32,14 +30,14 @@ void Page_Load(Object sender, EventArgs e)
 		Response.Write ("You are not allowed to use this page.");
 		Response.End();
 	}
-
+    SQLString sql;
 	if (IsPostBack)
 	{
 		// do delete here
-		sql = @"
+		sql = new SQLString(@"
 delete reports where rp_id = $1;
-delete dashboard_items where ds_report = $1";
-        sql = sql.Replace("$1", Util.sanitize_integer(row_id.Value));
+delete dashboard_items where ds_report = @reportId");
+        sql = sql.Replace("reportId", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("reports.aspx");
 	}
@@ -50,8 +48,8 @@ delete dashboard_items where ds_report = $1";
 
 		string id = Util.sanitize_integer(Request["id"] );
 
-		sql = @"select rp_desc from reports where rp_id = $1";
-		sql = sql.Replace("$1", id);
+		sql = new SQLString(@"select rp_desc from reports where rp_id = @id");
+		sql = sql.Replace("id", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

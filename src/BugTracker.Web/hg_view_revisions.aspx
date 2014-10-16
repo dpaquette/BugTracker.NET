@@ -33,7 +33,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "view hg file revisions";
 
 
-	string sql = @"
+	var sql = new SQLString(@"
 select 
 hgrev_revision [revision],
 hgrev_repository [repo],
@@ -57,10 +57,10 @@ end [view<br>history<br>(hg log)]
 
 from hg_revisions
 inner join hg_affected_paths on hgap_hgrev_id = hgrev_id
-where hgrev_bug = $bg
-order by hgrev_hg_date desc, hgap_path";
+where hgrev_bug = @bg
+order by hgrev_hg_date desc, hgap_path");
 
-	sql = sql.Replace("$bg", Convert.ToString(bugid));
+	sql = sql.Replace("bg", Convert.ToString(bugid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 }

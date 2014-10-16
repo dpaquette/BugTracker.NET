@@ -531,7 +531,6 @@ update bugs set
             {
                 string adjusted_body = "Subject: " + subject.Value + "\n\n";
                 adjusted_body += HttpUtility.HtmlDecode(body.Value);
-                adjusted_body = adjusted_body;
 
                 sql = sql.Replace("cm", adjusted_body);
                 sql = sql.Replace("cs", adjusted_body);

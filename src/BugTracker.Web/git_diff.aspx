@@ -28,14 +28,14 @@ void Page_Load(Object sender, EventArgs e)
 
 	// get info about revision
 
-	string sql = @"
+	var sql = new SQLString(@"
 select gitcom_commit, gitcom_bug, gitcom_repository, gitap_path 
 from git_commits
 inner join git_affected_paths on gitap_gitcom_id = gitcom_id
-where gitap_id = $id";
+where gitap_id = @id");
 
     int gitap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("$id", Convert.ToString(gitap_id));
+	sql = sql.Replace("id", Convert.ToString(gitap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

@@ -79,9 +79,9 @@ void get_files()
 void on_backup(Object sender, EventArgs e)
 {
     string date = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-    string db = (string)btnet.DbUtil.execute_scalar("select db_name()");
+    string db = (string)btnet.DbUtil.execute_scalar(new SQLString("select db_name()"));
     string backup_file = app_data_folder + "db_backup_" + date + ".bak";
-    string sql = "backup database " + db + " to disk = '" + backup_file + "'";
+    var sql = new SQLString("backup database " + db + " to disk = '" + backup_file + "'");
     btnet.DbUtil.execute_nonquery(sql);
     get_files();
 }
