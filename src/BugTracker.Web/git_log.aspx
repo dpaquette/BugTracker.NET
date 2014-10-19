@@ -25,17 +25,17 @@ void Page_Load(Object sender, EventArgs e)
 
 	// get info about commit
 
-	string sql = @"
+	var sql = new SQLString(@"
 select gitcom_repository, gitcom_commit, gitap_path, gitcom_bug
 from git_commits
 inner join git_affected_paths on gitap_gitcom_id = gitcom_id
-where gitap_id = $id
-order by gitcom_commit desc, gitap_path";
+where gitap_id = @id
+order by gitcom_commit desc, gitap_path");
 
     int gitap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
 	
 	string_affected_path_id = Convert.ToString(gitap_id);
-	sql = sql.Replace("$id", string_affected_path_id);
+	sql = sql.Replace("id", string_affected_path_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

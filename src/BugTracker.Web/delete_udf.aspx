@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -25,8 +25,8 @@ void Page_Load(Object sender, EventArgs e)
 	if (IsPostBack)
 	{
 		// do delete here
-		sql = @"delete user_defined_attribute where udf_id = $1";
-        sql = sql.Replace("$1", Util.sanitize_integer(row_id.Value));
+		sql = new SQLString(@"delete user_defined_attribute where udf_id = @udfid");
+        sql = sql.Replace("udfid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("udfs.aspx");
 	}
@@ -37,10 +37,10 @@ void Page_Load(Object sender, EventArgs e)
 
 		string id = Util.sanitize_integer(Request["id"]);
 
-		sql = @"declare @cnt int
-			select @cnt = count(1) from bugs where bg_user_defined_attribute = $1
-			select udf_name, @cnt [cnt] from user_defined_attribute where udf_id = $1";
-		sql = sql.Replace("$1", id);
+		sql = new SQLString(@"declare @cnt int
+			select @cnt = count(1) from bugs where bg_user_defined_attribute = @udfid
+			select udf_name, @cnt [cnt] from user_defined_attribute where udf_id = @udfid");
+		sql = sql.Replace("udfid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

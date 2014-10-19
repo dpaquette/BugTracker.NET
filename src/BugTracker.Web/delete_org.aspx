@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -25,8 +25,8 @@ void Page_Load(Object sender, EventArgs e)
 	if (IsPostBack)
 	{
 		// do delete here
-		sql = @"delete orgs where og_id = $1";
-        sql = sql.Replace("$1", Util.sanitize_integer(row_id.Value));
+		sql = new SQLString(@"delete orgs where og_id = @orgid");
+        sql = sql.Replace("orgid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("orgs.aspx");
 	}
@@ -38,12 +38,12 @@ void Page_Load(Object sender, EventArgs e)
 
 		string id = Util.sanitize_integer(Request["id"]);
 
-		sql = @"declare @cnt int
-			select @cnt = count(1) from users where us_org = $1;
-			select @cnt = @cnt + count(1) from queries where qu_org = $1;
-			select @cnt = @cnt + count(1) from bugs where bg_org = $1;
-			select og_name, @cnt [cnt] from orgs where og_id = $1";
-		sql = sql.Replace("$1", id);
+		sql = new SQLString(@"declare @cnt int
+			select @cnt = count(1) from users where us_org = @orgid;
+			select @cnt = @cnt + count(1) from queries where qu_org = @orgid;
+			select @cnt = @cnt + count(1) from bugs where bg_org = @orgid;
+			select og_name, @cnt [cnt] from orgs where og_id = @orgid");
+		sql = sql.Replace("orgid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

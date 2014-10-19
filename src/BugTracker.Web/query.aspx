@@ -23,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 	// If there is a users table, then authenticate this page
 	try
 	{
-		btnet.DbUtil.execute_nonquery("select count(1) from users");
+		btnet.DbUtil.execute_nonquery(new SQLString("select count(1) from users"));
 		security = new Security();
 		security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
 	}
@@ -41,7 +41,7 @@ void Page_Load(Object sender, EventArgs e)
         {
             try
             {
-                ds = btnet.DbUtil.get_dataset(Server.HtmlDecode(query.Value));
+                ds = btnet.DbUtil.get_dataset(new SQLString(Server.HtmlDecode(query.Value)));
             }
             catch (Exception e2)
             {
@@ -52,7 +52,7 @@ void Page_Load(Object sender, EventArgs e)
     }
     else
     {
-        DataSet ds = btnet.DbUtil.get_dataset("select name from sysobjects where type = 'u' order by 1");
+        DataSet ds = btnet.DbUtil.get_dataset(new SQLString("select name from sysobjects where type = 'u' order by 1"));
         dbtables_select.Items.Add("Select Table");
         foreach (DataRow dr in ds.Tables[0].Rows)
         {

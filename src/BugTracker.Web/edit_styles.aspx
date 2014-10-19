@@ -26,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
 
 	ds = btnet.DbUtil.get_dataset(
-		@"select
+		new SQLString(@"select
 			'<a target=_blank href=edit_priority.aspx?id=' + convert(varchar,pr_id) + '>' + pr_name + '</a>' [priority],
 			'<a target=_blank href=edit_status.aspx?id=' + convert(varchar,st_id) + '>' + st_name + '</a>' [status],
 			isnull(pr_style,'') [priority CSS class],
@@ -37,7 +37,7 @@ void Page_Load(Object sender, EventArgs e)
 			order by pr_sort_seq, st_sort_seq;
 
 			select distinct isnull(pr_style + st_style,'datad')
-			from priorities, statuses;");
+			from priorities, statuses;"));
 
 	ArrayList classes_list = new ArrayList();
 	foreach (DataRow dr_styles in ds.Tables[1].Rows)

@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -24,8 +24,8 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (IsPostBack)
 	{
-		sql = @"delete categories where ct_id = $1";
-        sql = sql.Replace("$1", Util.sanitize_integer(row_id.Value));
+		sql = new SQLString(@"delete categories where ct_id = @catid");
+        sql = sql.Replace("catid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("categories.aspx");
 	}
@@ -36,10 +36,10 @@ void Page_Load(Object sender, EventArgs e)
 
 		string id = Util.sanitize_integer(Request["id"]);
 
-		sql = @"declare @cnt int
-			select @cnt = count(1) from bugs where bg_category = $1
-			select ct_name, @cnt [cnt] from categories where ct_id = $1";
-		sql = sql.Replace("$1", id);
+		sql = new SQLString(@"declare @cnt int
+			select @cnt = count(1) from bugs where bg_category = @ctid
+			select ct_name, @cnt [cnt] from categories where ct_id = @ctid");
+		sql = sql.Replace("ctid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

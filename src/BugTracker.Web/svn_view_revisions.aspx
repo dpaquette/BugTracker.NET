@@ -32,7 +32,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "view svn file revisions";
 
 
-	string sql = @"
+	var sql = new SQLString(@"
 select
 svnrev_revision [revision],
 svnrev_repository [repository],
@@ -52,7 +52,7 @@ case when svnap_action not like '%D%' then
 '<a target=_blank href=svn_log.aspx?revpathid=' + convert(varchar,svnap_id) + '>history</a>'
 	else
 	''
-end [view<br>history<br>(svn log)]";
+end [view<br>history<br>(svn log)]");
 
 //	if (websvn_url != "")
 //	{
@@ -61,13 +61,13 @@ end [view<br>history<br>(svn log)]";
 //		sql = sql.Replace("$REV", "' + convert(varchar,svnrev_revision) + '");
 //	}
 
-	sql += @"
+	sql.Append(@"
 		from svn_revisions
 		inner join svn_affected_paths on svnap_svnrev_id = svnrev_id
-		where svnrev_bug = $bg
-		order by svnrev_revision desc, svnap_path";
+		where svnrev_bug = @bg
+		order by svnrev_revision desc, svnap_path");
 
-	sql = sql.Replace("$bg", Convert.ToString(bugid));
+	sql = sql.Replace("bg", Convert.ToString(bugid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 }

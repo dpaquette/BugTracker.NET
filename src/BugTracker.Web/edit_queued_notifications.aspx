@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -28,12 +28,12 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (Request.QueryString["actn"] == "delete")
 	{
-		sql = @"delete from queued_notifications where qn_status = N'not sent'";
+		sql = new SQLString(@"delete from queued_notifications where qn_status = N'not sent'");
 		btnet.DbUtil.execute_nonquery(sql);
 	}
 	else if (Request.QueryString["actn"] == "reset")
 	{
-		sql = @"update queued_notifications set qn_retries = 0 where qn_status = N'not sent'";
+		sql = new SQLString(@"update queued_notifications set qn_retries = 0 where qn_status = N'not sent'");
 		btnet.DbUtil.execute_nonquery(sql);
 	}
 	else if (Request.QueryString["actn"] == "resend")

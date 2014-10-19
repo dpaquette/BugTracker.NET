@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -35,17 +35,17 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (Request.QueryString["actn"] == "1")
 	{
-		sql = @"insert into bug_subscriptions (bs_bug, bs_user)
-			values($bg, $us)";
+		sql = new SQLString(@"insert into bug_subscriptions (bs_bug, bs_user)
+			values(@bg, @us)");
 	}
 	else
 	{
-		sql = @"delete from bug_subscriptions
-			where bs_bug = $bg and bs_user = $us";
+		sql = new SQLString(@"delete from bug_subscriptions
+			where bs_bug = @bg and bs_user = @us");
 	}
 
-	sql = sql.Replace("$bg", Util.sanitize_integer(Request["id"]));
-	sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+	sql = sql.Replace("bg", Util.sanitize_integer(Request["id"]));
+	sql = sql.Replace("us", Convert.ToString(security.user.usid));
 	btnet.DbUtil.execute_nonquery(sql);
 
 }

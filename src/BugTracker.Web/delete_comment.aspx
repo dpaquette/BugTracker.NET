@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -38,8 +38,8 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 
-		sql = @"delete bug_posts where bp_id = $1";
-        sql = sql.Replace("$1", Util.sanitize_integer(row_id.Value));
+		sql = new SQLString(@"delete bug_posts where bp_id = @bpid");
+        sql = sql.Replace("bpid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Response.Redirect ("edit_bug.aspx?id=" + btnet.Util.sanitize_integer(redirect_bugid.Value));
 	}
@@ -63,8 +63,8 @@ void Page_Load(Object sender, EventArgs e)
 
 		back_href.HRef = "edit_bug.aspx?id=" + bug_id;
 
-		sql = @"select bp_comment from bug_posts where bp_id = $1";
-		sql = sql.Replace("$1", id);
+		sql = new SQLString(@"select bp_comment from bug_posts where bp_id = @bpid");
+		sql = sql.Replace("bpid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

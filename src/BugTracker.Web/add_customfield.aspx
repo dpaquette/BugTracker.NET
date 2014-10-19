@@ -255,7 +255,7 @@ alter table bugs add [$nm] $dt $ln $null $df";
 		bool alter_table_worked = false;
 		try
 		{
-			btnet.DbUtil.execute_nonquery(sql);
+			btnet.DbUtil.execute_nonquery(new SQLString(sql));
 			alter_table_worked = true;
 		}
 		catch (Exception e2)
@@ -284,7 +284,7 @@ alter table bugs add [$nm] $dt $ln $null $df";
 			sql = sql.Replace("$ss", sort_seq.Value);
 			sql = sql.Replace("$dt", dropdown_type.SelectedItem.Value.Replace("'", "''"));
 
-			btnet.DbUtil.execute_nonquery(sql);
+			btnet.DbUtil.execute_nonquery(new SQLString(sql));
 			Application["custom_columns_dataset"]  = null;
 			Server.Transfer ("customfields.aspx");
 		}

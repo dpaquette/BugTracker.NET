@@ -27,7 +27,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	Random random = new Random();
 
-	string sql = "select us_username, us_id, us_password from users where len(us_password) < 32";
+	var sql = new SQLString("select us_username, us_id, us_password from users where len(us_password) < 32");
 
 
 	DataSet ds = btnet.DbUtil.get_dataset(sql);

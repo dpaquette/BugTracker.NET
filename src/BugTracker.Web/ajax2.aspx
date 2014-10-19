@@ -21,15 +21,15 @@ void Page_Load(Object sender, EventArgs e)
 
 	try
 	{
-		string sql = @"select distinct top 10 bg_short_desc from bugs
-			where bg_short_desc like '%$str%'
-			order by 1";
+		var sql = new SQLString(@"select distinct top 10 bg_short_desc from bugs
+			where bg_short_desc like @str
+			order by 1");
 
 		// if you don't use permissions, comment out this line for speed?
 		sql = Util.alter_sql_per_project_permissions(sql, security);
 
 		string text = Request["q"];
-		sql = sql.Replace("$str",text.Replace("'","''"));
+		sql = sql.Replace("str","%" + text + "%");
 
 		DataSet ds = btnet.DbUtil.get_dataset(sql);
 

@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -49,9 +49,9 @@ void Page_Load(Object sender, EventArgs e)
 			// these guys can do everything
 			vis_everybody.Checked = true;
 
-			sql = @"/* populate org/user dropdowns */
+			sql = new SQLString(@"/* populate org/user dropdowns */
 select og_id, og_name from orgs order by og_name;
-select us_id, us_username from users order by us_username";
+select us_id, us_username from users order by us_username");
 
 			DataSet ds_orgs_and_users = btnet.DbUtil.get_dataset(sql);
 
@@ -107,9 +107,9 @@ select us_id, us_username from users order by us_username";
 
 			// Get this entry's data from the db and fill in the form
 
-			sql = @"select
+			sql = new SQLString(@"select
 				qu_desc, qu_sql, isnull(qu_user,0) [qu_user], isnull(qu_org,0) [qu_org]
-				from queries where qu_id = $1";
+				from queries where qu_id = @quid");
 
 
 			sql = sql.Replace("$1", Convert.ToString(id));
@@ -231,8 +231,8 @@ Boolean validate()
 	if (id == 0)
 	{
 		// See if name is already used?
-		sql = "select count(1) from queries where qu_desc = N'$de'";
-		sql = sql.Replace("$de", desc.Value.Replace("'","''"));
+		sql = new SQLString("select count(1) from queries where qu_desc = @de");
+		sql = sql.Replace("de", desc.Value);
 		int query_count = (int) btnet.DbUtil.execute_scalar(sql);
 
 		if (query_count == 1)
@@ -245,9 +245,9 @@ Boolean validate()
 	else
 	{
 		// See if name is already used?
-		sql = "select count(1) from queries where qu_desc = N'$de' and qu_id <> $id";
-		sql = sql.Replace("$de", desc.Value.Replace("'","''"));
-		sql = sql.Replace("$id", Convert.ToString(id));
+		sql = new SQLString("select count(1) from queries where qu_desc = @de and qu_id <> @de");
+		sql = sql.Replace("de", desc.Value);
+		sql = sql.Replace("id", Convert.ToString(id));
 		int query_count = (int) btnet.DbUtil.execute_scalar(sql);
 
 		if (query_count == 1)
@@ -271,55 +271,55 @@ void on_update()
 	{
 		if (id == 0)  // insert new
 		{
-			sql = @"insert into queries
+			sql = new SQLString(@"insert into queries
 				(qu_desc, qu_sql, qu_default, qu_user, qu_org)
-				values (N'$de', N'$sq', 0, $us, $rl)";
+				values (@de, @sq, 0, @us, @rl)");
 		}
 		else // edit existing
 		{
 
-			sql = @"update queries set
-				qu_desc = N'$de',
-				qu_sql = N'$sq',
-				qu_user = $us,
-				qu_org = $rl
-				where qu_id = $id";
+			sql = new SQLString(@"update queries set
+				qu_desc = @de,
+				qu_sql = @sq,
+				qu_user = @us,
+				qu_org = @rl
+				where qu_id = @id");
 
-			sql = sql.Replace("$id", Convert.ToString(id));
+			sql = sql.Replace("id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("$de", desc.Value.Replace("'","''"));
+		sql = sql.Replace("de", desc.Value);
 //		if (Util.get_setting("HtmlEncodeSql","0") == "1")
 //		{
 //			sql = sql.Replace("$sq", Server.HtmlDecode(sql_text.Value.Replace("'","''")));
 //		}
 //		else
 //		{
-			sql = sql.Replace("$sq", sql_text.Value.Replace("'","''"));
+			sql = sql.Replace("sq", sql_text.Value);
 //		}
 
 		if (security.user.is_admin || security.user.can_edit_sql)
 		{
 			if (vis_everybody.Checked)
 			{
-				sql = sql.Replace("$us", "0");
-				sql = sql.Replace("$rl", "0");
+				sql = sql.Replace("us", "0");
+				sql = sql.Replace("rl", "0");
 			}
 			else if (vis_user.Checked)
 			{
-				sql = sql.Replace("$us", Convert.ToString(user.SelectedItem.Value));
-				sql = sql.Replace("$rl", "0");
+				sql = sql.Replace("us", Convert.ToString(user.SelectedItem.Value));
+				sql = sql.Replace("rl", "0");
 			}
 			else
 			{
-				sql = sql.Replace("$rl", Convert.ToString(org.SelectedItem.Value));
-				sql = sql.Replace("$us", "0");
+				sql = sql.Replace("rl", Convert.ToString(org.SelectedItem.Value));
+				sql = sql.Replace("us", "0");
 			}
 		}
 		else
 		{
-			sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-			sql = sql.Replace("$rl", "0");
+			sql = sql.Replace("us", Convert.ToString(security.user.usid));
+			sql = sql.Replace("rl", "0");
 		}
 		
 		btnet.DbUtil.execute_nonquery(sql);

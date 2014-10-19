@@ -23,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "users";
 
 	string sql;
-
+    
 	if (security.user.is_admin)
 	{
 		sql = @"
@@ -95,7 +95,7 @@ void Page_Load(Object sender, EventArgs e)
 			left outer join queries on us_default_query = qu_id
 			left outer join projects on us_forced_project = pj_id
 			left outer join #t on us_id = pu_user
-			where us_created_user = $us
+			where us_created_user = @us
 			and us_active in (1 $inactive)
 			$filter_users
 			order by us_username;
@@ -145,9 +145,9 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		sql = sql.Replace("$filter_users", "");
 	}
-
-	sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-	ds = btnet.DbUtil.get_dataset(sql);
+    var filteredSQL = new SQLString(sql);
+    filteredSQL.Replace("us", Convert.ToString(security.user.usid));
+    ds = btnet.DbUtil.get_dataset(filteredSQL);
 
 	// cookies
 	if (hide_inactive_users.Checked)
