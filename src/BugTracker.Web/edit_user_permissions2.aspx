@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -44,15 +44,15 @@ void Page_Load(Object sender, EventArgs e)
 		}
 
 
-		sql = @"Select us_username, us_id, isnull(pu_permission_level,$dpl) [pu_permission_level]
+		sql = new SQLString(@"Select us_username, us_id, isnull(pu_permission_level,@dpl) [pu_permission_level]
 			from users
 			left outer join project_user_xref on pu_user = us_id
-			and pu_project = $pj
+			and pu_project = @pj
 			order by us_username;
-			select pj_name from projects where pj_id = $pj;";
+			select pj_name from projects where pj_id = @pj;");
 
-        sql = sql.Replace("$pj", project_id_string);
-		sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel","2"));
+        sql = sql.Replace("pj", project_id_string);
+		sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
         DataSet ds = btnet.DbUtil.get_dataset(sql);
 
@@ -74,23 +74,20 @@ void Page_Load(Object sender, EventArgs e)
 ///////////////////////////////////////////////////////////////////////
 void on_update()
 {
-
-	// now update all the recs
-	string sql_batch = "";
 	RadioButton rb;
 	string permission_level;
 
 	foreach (DataGridItem dgi in MyDataGrid.Items)
 	{
-		sql = @" if exists (select * from project_user_xref where pu_user = $us and pu_project = $pj)
-		            update project_user_xref set pu_permission_level = $pu
-		            where pu_user = $us and pu_project = $pj
+		sql = new SQLString(@" if exists (select * from project_user_xref where pu_user = @us and pu_project = @pj)
+		            update project_user_xref set pu_permission_level = @pu
+		            where pu_user = @us and pu_project = @pj
 		         else
 		            insert into project_user_xref (pu_user, pu_project, pu_permission_level)
-		            values ($us, $pj, $pu); ";
+		            values (@us, @pj, @pu); ");
 
-		sql = sql.Replace("$pj", Util.sanitize_integer(Request["id"]));
-		sql = sql.Replace("$us", Convert.ToString(dgi.Cells[1].Text));
+		sql = sql.Replace("pj", Util.sanitize_integer(Request["id"]));
+		sql = sql.Replace("us", Convert.ToString(dgi.Cells[1].Text));
 
 		rb = (RadioButton) dgi.FindControl("none");
 		if (rb.Checked)
@@ -120,15 +117,13 @@ void on_update()
 
 
 
-		sql = sql.Replace("$pu", permission_level);
+		sql = sql.Replace("pu", permission_level);
 
 
-		// add to the batch
-		sql_batch += sql;
+        btnet.DbUtil.execute_nonquery(sql);
 
 	}
 
-	btnet.DbUtil.execute_nonquery(sql_batch);
 	msg.InnerText = "Permissions have been updated.";
 
 }

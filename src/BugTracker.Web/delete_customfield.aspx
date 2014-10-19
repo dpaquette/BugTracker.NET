@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -29,38 +29,39 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 
-		sql = @"select sc.name [column_name], df.name [default_constraint_name]
+		sql = new SQLString(@"select sc.name [column_name], df.name [default_constraint_name]
 			from syscolumns sc
 			inner join sysobjects so on sc.id = so.id
 			left outer join sysobjects df on df.id = sc.cdefault
 			where so.name = 'bugs'
-			and sc.colorder = $id";
+			and sc.colorder = @id");
 
-        sql = sql.Replace("$id", Util.sanitize_integer(row_id.Value));
+        sql = sql.Replace("id", Util.sanitize_integer(row_id.Value));
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		// if there is a default, delete it
 		if (dr["default_constraint_name"].ToString() != "")
 		{
-			sql = @"alter table bugs drop constraint [$df]";
-			sql = sql.Replace("$df", (string) dr["default_constraint_name"]);
+			sql = new SQLString(@"alter table bugs drop constraint @df");
+			sql = sql.Replace("df", (string) dr["default_constraint_name"]);
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 
 
 		// delete column itself
-		sql = @"
-alter table orgs drop column [og_$nm_field_permission_level]
-alter table bugs drop column [$nm]";
-		
-		sql = sql.Replace("$nm", (string) dr["column_name"]);
+		sql = new SQLString(@"
+alter table orgs drop column @orgcolumn]
+alter table bugs drop column @nm");
+
+        sql.Replace("orgcolumn", "og_" + dr["column_name"] + "_field_permission_level");
+		sql = sql.Replace("nm", (string) dr["column_name"]);
 		btnet.DbUtil.execute_nonquery(sql);
 
 
 		//delete row from custom column table
-		sql = @"delete from custom_col_metadata
-		where ccm_colorder = $num";
-        sql = sql.Replace("$num", Util.sanitize_integer(row_id.Value));
+		sql = new SQLString(@"delete from custom_col_metadata
+		where ccm_colorder = @num");
+        sql = sql.Replace("num", Util.sanitize_integer(row_id.Value));
 		
 		Application["custom_columns_dataset"]  = null;
 		btnet.DbUtil.execute_nonquery(sql);
@@ -73,14 +74,14 @@ alter table bugs drop column [$nm]";
 	{
 		string id = Util.sanitize_integer(Request["id"]);
 
-		sql = @"select sc.name
+		sql = new SQLString(@"select sc.name
 			from syscolumns sc
 			inner join sysobjects so on sc.id = so.id
 			left outer join sysobjects df on df.id = sc.cdefault
 			where so.name = 'bugs'
-			and sc.colorder = $id";
+			and sc.colorder = @id");
 
-		sql = sql.Replace("$id",id);
+		sql = sql.Replace("id",id);
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		confirm_href.InnerText = "confirm delete of \""

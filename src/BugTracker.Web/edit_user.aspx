@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -32,11 +32,11 @@ void Page_Load(Object sender, EventArgs e)
 	if (!security.user.is_admin)
 	{
 		// Check if the current user is an admin for any project
-		sql = @"select pu_project
+		sql = new SQLString(@"select pu_project
 			from project_user_xref
-			where pu_user = $us
-			and pu_admin = 1";
-		sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+			where pu_user = us
+			and pu_admin = 1");
+		sql = sql.Replace("us", Convert.ToString(security.user.usid));
 		DataSet ds_projects = btnet.DbUtil.get_dataset(sql);
 
 		if (ds_projects.Tables[0].Rows.Count == 0)
@@ -87,21 +87,21 @@ void Page_Load(Object sender, EventArgs e)
 
 			// get values for permissions grid
 // Table 0
-			sql = @"
+			sql = new SQLString(@"
 				select pj_id, pj_name,
-				isnull(a.pu_permission_level,$dpl) [pu_permission_level],
+				isnull(a.pu_permission_level,@dpl) [pu_permission_level],
 				isnull(a.pu_auto_subscribe,0) [pu_auto_subscribe],
 				isnull(a.pu_admin,0) [pu_admin]
 				from projects
 				inner join project_user_xref project_admin on pj_id = project_admin.pu_project
-				and project_admin.pu_user = $this_usid
+				and project_admin.pu_user = @this_usid
 				and project_admin.pu_admin = 1
 				left outer join project_user_xref a on pj_id = a.pu_project
-				and a.pu_user = $us
-				order by pj_name;";
+				and a.pu_user = @us
+				order by pj_name;");
 
 
-			sql = sql.Replace("$this_usid",Convert.ToString(security.user.usid));
+			sql = sql.Replace("this_usid",Convert.ToString(security.user.usid));
 
 		}
 		else // user is a real admin
@@ -110,55 +110,55 @@ void Page_Load(Object sender, EventArgs e)
 // Table 0
 
 			// populate permissions grid
-			sql = @"
+			sql = new SQLString(@"
 				select pj_id, pj_name,
-				isnull(pu_permission_level,$dpl) [pu_permission_level],
+				isnull(pu_permission_level,@dpl) [pu_permission_level],
 				isnull(pu_auto_subscribe,0) [pu_auto_subscribe],
 				isnull(pu_admin,0) [pu_admin]
 				from projects
 				left outer join project_user_xref on pj_id = pu_project
-				and pu_user = $us
-				order by pj_name;";
+				and pu_user = @us
+				order by pj_name;");
 
 		}
 
 // Table 1
 
-		sql += @"/* populate query dropdown */
+		sql.Append( @"/* populate query dropdown */
 		    declare @org int
 		    set @org = null
-		    select @org = us_org from users where us_id = $us
+		    select @org = us_org from users where us_id = @us
 
 			select qu_id, qu_desc
 			from queries
 			where (isnull(qu_user,0) = 0 and isnull(qu_org,0) = 0)
-			or isnull(qu_user,0) = $us
+			or isnull(qu_user,0) = @us
 			or isnull(qu_org,0) = isnull(@org,-1)
-			order by qu_desc;";
+			order by qu_desc;");
 
 // Table 2
 
 		if (security.user.is_admin)
 		{
-			sql += @"/* populate org dropdown 1 */
+			sql.Append( @"/* populate org dropdown 1 */
 				select og_id, og_name
 				from orgs
-				order by og_name;";
+				order by og_name;");
 		}
 		else
 		{
 			if (security.user.other_orgs_permission_level == Security.PERMISSION_ALL)
 			{
-				sql += @"/* populate org dropdown 2 */
+				sql.Append( @"/* populate org dropdown 2 */
 					select og_id, og_name
 					from orgs
 					where og_non_admins_can_use = 1
-					order by og_name;";
+					order by og_name;");
 			}
 			else
 			{
-				sql += @"/* populate org dropdown 3 */
-					select 1; -- dummy";
+				sql.Append( @"/* populate org dropdown 3 */
+					select 1; -- dummy");
 			}
 		}
 
@@ -169,7 +169,7 @@ void Page_Load(Object sender, EventArgs e)
 
 			// get existing user values
 
-			sql += @"
+			sql.Append( @"
 			select
 				us_username,
 				isnull(us_firstname,'') [us_firstname],
@@ -194,13 +194,13 @@ void Page_Load(Object sender, EventArgs e)
 				isnull(us_forced_project,0) [us_forced_project],
 				us_created_user
 				from users
-				where us_id = $us";
+				where us_id = @us");
 
 		}
 
 
-		sql = sql.Replace("$us",Convert.ToString(id));
-		sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel","2"));
+		sql = sql.Replace("us",Convert.ToString(id));
+		sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
 		DataSet ds = btnet.DbUtil.get_dataset(sql);
 
@@ -486,39 +486,39 @@ class Project
 
 
 ///////////////////////////////////////////////////////////////////////
-string replace_vars_in_sql_statement(string sql)
+SQLString replace_vars_in_sql_statement(SQLString sql)
 {
-	sql = sql.Replace("$un", username.Value.Replace("'","''"));
-	sql = sql.Replace("$fn", firstname.Value.Replace("'","''"));
-	sql = sql.Replace("$ln", lastname.Value.Replace("'","''"));
-	sql = sql.Replace("$bp", bugs_per_page.Value.Replace("'","''"));
-	sql = sql.Replace("$fk", Util.bool_to_string(use_fckeditor.Checked));
-	sql = sql.Replace("$pp", Util.bool_to_string(enable_popups.Checked));
-	sql = sql.Replace("$em", email.Value.Replace("'","''"));
-	sql = sql.Replace("$ac", Util.bool_to_string(active.Checked));
-	sql = sql.Replace("$en", Util.bool_to_string(enable_notifications.Checked));
-	sql = sql.Replace("$ss", Util.bool_to_string(send_to_self.Checked));
-	sql = sql.Replace("$rn", reported_notifications.SelectedItem.Value);
-	sql = sql.Replace("$an", assigned_notifications.SelectedItem.Value);
-	sql = sql.Replace("$sn", subscribed_notifications.SelectedItem.Value);
-	sql = sql.Replace("$as", Util.bool_to_string(auto_subscribe.Checked));
-	sql = sql.Replace("$ao", Util.bool_to_string(auto_subscribe_own.Checked));
-	sql = sql.Replace("$ar", Util.bool_to_string(auto_subscribe_reported.Checked));
-	sql = sql.Replace("$dq", query.SelectedItem.Value);
-	sql = sql.Replace("$org", org.SelectedItem.Value);
-	sql = sql.Replace("$sg", signature.InnerText.Replace("'","''"));
-	sql = sql.Replace("$fp", forced_project.SelectedItem.Value);
-	sql = sql.Replace("$id", Convert.ToString(id));
+	sql = sql.Replace("un", username.Value);
+	sql = sql.Replace("fn", firstname.Value);
+	sql = sql.Replace("ln", lastname.Value);
+	sql = sql.Replace("bp", bugs_per_page.Value);
+	sql = sql.Replace("fk", Util.bool_to_string(use_fckeditor.Checked));
+	sql = sql.Replace("pp", Util.bool_to_string(enable_popups.Checked));
+	sql = sql.Replace("em", email.Value);
+	sql = sql.Replace("ac", Util.bool_to_string(active.Checked));
+	sql = sql.Replace("en", Util.bool_to_string(enable_notifications.Checked));
+	sql = sql.Replace("ss", Util.bool_to_string(send_to_self.Checked));
+	sql = sql.Replace("rn", reported_notifications.SelectedItem.Value);
+	sql = sql.Replace("an", assigned_notifications.SelectedItem.Value);
+	sql = sql.Replace("sn", subscribed_notifications.SelectedItem.Value);
+	sql = sql.Replace("as", Util.bool_to_string(auto_subscribe.Checked));
+	sql = sql.Replace("ao", Util.bool_to_string(auto_subscribe_own.Checked));
+	sql = sql.Replace("ar", Util.bool_to_string(auto_subscribe_reported.Checked));
+	sql = sql.Replace("dq", query.SelectedItem.Value);
+	sql = sql.Replace("org", org.SelectedItem.Value);
+	sql = sql.Replace("sg", signature.InnerText);
+	sql = sql.Replace("fp", forced_project.SelectedItem.Value);
+	sql = sql.Replace("id", Convert.ToString(id));
 
 
 	// only admins can create admins.
 	if (security.user.is_admin)
 	{
-		sql = sql.Replace("$ad", Util.bool_to_string(admin.Checked));
+		sql = sql.Replace("ad", Util.bool_to_string(admin.Checked));
 	}
 	else
 	{
-		sql = sql.Replace("$ad","0");
+		sql = sql.Replace("ad","0");
 	}
 
 	return sql;
@@ -536,15 +536,15 @@ void on_update()
 		if (id == 0 || copy)  // insert new
 		{
 			// See if the user already exists?
-			sql = "select count(1) from users where us_username = N'$1'";
-			sql = sql.Replace("$1", username.Value.Replace("'","''"));
+			sql = new SQLString("select count(1) from users where us_username = @id");
+			sql = sql.Replace("id", username.Value.Replace("'","''"));
 			int user_count = (int) btnet.DbUtil.execute_scalar(sql);
 
 			if (user_count == 0)
 			{
 
 				// MAW -- 2006/01/27 -- Converted to use new notification columns
-				sql = @"
+				sql = new SQLString(@"
 insert into users
 (us_username, us_password,
 us_firstname, us_lastname,
@@ -568,32 +568,32 @@ us_forced_project,
 us_created_user)
 
 values (
-N'$un', N'$pw', N'$fn', N'$ln',
-$bp, $fk, $pp, N'$em',
-$ac, $ad, $en,  $ss,
-$rn, $an, $sn, $as,
-$ao, $ar, $dq, $org, N'$sg',
-$fp,
-$createdby
+@un, @pw, @fn, @ln,
+@bp, @fk, @pp, @em,
+@ac, @ad, @en, @ss,
+@rn, @an, @sn, @as,
+@ao, @ar, @dq, @org, @sg,
+@fp,
+@createdby
 );
 
-select scope_identity()";
+select scope_identity()");
 
 				sql = replace_vars_in_sql_statement(sql);
-				sql = sql.Replace("$createdby", Convert.ToString(security.user.usid));
+				sql = sql.Replace("createdby", Convert.ToString(security.user.usid));
 
 				// only admins can create admins.
 				if (security.user.is_admin)
 				{
-					sql = sql.Replace("$ad", Util.bool_to_string(admin.Checked));
+					sql = sql.Replace("ad", Util.bool_to_string(admin.Checked));
 				}
 				else
 				{
-					sql = sql.Replace("$ad","0");
+					sql = sql.Replace("ad","0");
 				}
 
                 // fill the password field with some junk, just temporarily.
-                sql = sql.Replace("$pw", Convert.ToString(new Random().Next()));
+                sql = sql.Replace("pw", Convert.ToString(new Random().Next()));
 
                 // insert the user
                 id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
@@ -617,39 +617,39 @@ select scope_identity()";
 		{
 
 			// See if the user already exists?
-			sql = @"select count(1)
-				from users where us_username = N'$1' and us_id <> $2" ;
-			sql = sql.Replace("$1", username.Value.Replace("'","''"));
-			sql = sql.Replace("$2", Convert.ToString(id));
+			sql = new SQLString(@"select count(1)
+				from users where us_username = @usname and us_id <> @usid") ;
+			sql = sql.Replace("usname", username.Value.Replace("'","''"));
+			sql = sql.Replace("usid", Convert.ToString(id));
 			int user_count = (int) btnet.DbUtil.execute_scalar(sql);
 
 			if (user_count == 0)
 			{
 
-				sql = @"
+				sql = new SQLString(@"
 update users set
-us_username = N'$un',
-us_firstname = N'$fn',
-us_lastname = N'$ln',
-us_bugs_per_page = N'$bp',
-us_use_fckeditor = $fk,
-us_enable_bug_list_popups = $pp,
-us_email = N'$em',
-us_active = $ac,
-us_admin = $ad,
-us_enable_notifications = $en,
-us_send_notifications_to_self = $ss,
-us_reported_notifications = $rn,
-us_assigned_notifications = $an,
-us_subscribed_notifications = $sn,
-us_auto_subscribe = $as,
-us_auto_subscribe_own_bugs = $ao,
-us_auto_subscribe_reported_bugs = $ar,
-us_default_query = $dq,
-us_org = $org,
-us_signature = N'$sg',
-us_forced_project = $fp
-where us_id = $id";
+us_username = @un,
+us_firstname = @fn,
+us_lastname = @ln,
+us_bugs_per_page = @bp,
+us_use_fckeditor = @fk,
+us_enable_bug_list_popups = @pp,
+us_email = @em,
+us_active = @ac,
+us_admin = @ad,
+us_enable_notifications = @en,
+us_send_notifications_to_self = @ss,
+us_reported_notifications = @rn,
+us_assigned_notifications = @an,
+us_subscribed_notifications = @sn,
+us_auto_subscribe = @as,
+us_auto_subscribe_own_bugs = @ao,
+us_auto_subscribe_reported_bugs = @ar,
+us_default_query = @dq,
+us_org = @org,
+us_signature = @sg,
+us_forced_project = @fp
+where us_id = @id");
 
 
 				sql = replace_vars_in_sql_statement(sql);
@@ -784,28 +784,28 @@ void update_project_user_xref()
 		}
 	}
 
-	sql = "";
+    sql = new SQLString("");
 
 	// Insert new recs - we will update them later
 	// Downstream logic is now simpler in that it just deals with existing recs
 	if (projects != "")
 	{
-		sql += @"
+		sql.Append(@"
 			insert into project_user_xref (pu_project, pu_user, pu_auto_subscribe)
-			select pj_id, $us, 0
+			select pj_id, @us, 0
 			from projects
-			where pj_id in ($projects)
-			and pj_id not in (select pu_project from project_user_xref where pu_user = $us);";
-		sql = sql.Replace("$projects", projects);
+			where pj_id in (@projects)
+			and pj_id not in (select pu_project from project_user_xref where pu_user = @us);");
+		sql = sql.Replace("projects", projects);
 	}
 
 	// First turn everything off, then turn selected ones on.
-	sql += @"
+	sql.Append( @"
 		update project_user_xref
 		set pu_auto_subscribe = 0,
 		pu_admin = 0,
-		pu_permission_level = $dpl
-		where pu_user = $us;";
+		pu_permission_level = @dpl
+		where pu_user = @us;");
 
 	projects = "";
 	foreach (Project p in hash_projects.Values)
@@ -824,12 +824,12 @@ void update_project_user_xref()
 
 	if (projects != "")
 	{
-		sql += @"
+		sql.Append( @"
 			update project_user_xref
 			set pu_auto_subscribe = 1
-			where pu_user = $us
-			and pu_project in ($projects);";
-		sql = sql.Replace("$projects", projects);
+			where pu_user = @us
+			and pu_project in (@projects);");
+		sql = sql.Replace("projects", projects);
 	}
 
 	if (security.user.is_admin)
@@ -850,13 +850,13 @@ void update_project_user_xref()
 
 		if (projects != "")
 		{
-			sql += @"
+			sql .Append( @"
 				update project_user_xref
 				set pu_admin = 1
-				where pu_user = $us
-				and pu_project in ($projects);";
+				where pu_user = @us
+				and pu_project in (@projects);");
 
-			sql = sql.Replace("$projects", projects);
+			sql = sql.Replace("projects", projects);
 		}
 	}
 
@@ -877,13 +877,13 @@ void update_project_user_xref()
 	}
 	if (projects != "")
 	{
-		sql += @"
+		sql.Append( @"
 			update project_user_xref
 			set pu_permission_level = 0
-			where pu_user = $us
-			and pu_project in ($projects);";
+			where pu_user = @us
+			and pu_project in (@projects);");
 
-		sql = sql.Replace("$projects", projects);
+		sql = sql.Replace("projects", projects);
 	}
 
 // update permission levels to 1
@@ -903,13 +903,13 @@ void update_project_user_xref()
 	}
 	if (projects != "")
 	{
-		sql += @"
+		sql.Append( @"
 			update project_user_xref
 			set pu_permission_level = 1
-			where pu_user = $us
-			and pu_project in ($projects);";
+			where pu_user = @us
+			and pu_project in (@projects);");
 
-		sql = sql.Replace("$projects", projects);
+		sql = sql.Replace("projects", projects);
 	}
 
 
@@ -929,13 +929,13 @@ void update_project_user_xref()
 	}
 	if (projects != "")
 	{
-		sql += @"
+		sql.Append(@"
 			update project_user_xref
 			set pu_permission_level = 2
-			where pu_user = $us
-			and pu_project in ($projects);";
+			where pu_user = @us
+			and pu_project in (@projects);");
 
-		sql = sql.Replace("$projects", projects);
+		sql = sql.Replace("projects", projects);
 	}
 
 // update permission levels to 3
@@ -954,59 +954,59 @@ void update_project_user_xref()
 	}
 	if (projects != "")
 	{
-		sql += @"
+		sql.Append(@"
 			update project_user_xref
 			set pu_permission_level = 3
-			where pu_user = $us
-			and pu_project in ($projects);";
+			where pu_user = @us
+			and pu_project in (@projects);");
 
-		sql = sql.Replace("$projects", projects);
+		sql = sql.Replace("projects", projects);
 	}
 
 
 	// apply subscriptions retroactively
 	if (retroactive.Checked)
 	{
-		sql = @"
-			delete from bug_subscriptions where bs_user = $us;";
+		sql = new SQLString(@"
+			delete from bug_subscriptions where bs_user = @us;");
 
 		if (auto_subscribe.Checked)
 		{
-			sql += @"
+			sql.Append( @"
 			insert into bug_subscriptions (bs_bug, bs_user)
-				select bg_id, $us from bugs;";
+				select bg_id, @us from bugs;");
 		}
 		else
 		{
 			if (auto_subscribe_reported.Checked)
 			{
-				sql += @"
+				sql.Append( @"
 					insert into bug_subscriptions (bs_bug, bs_user)
-					select bg_id, $us from bugs where bg_reported_user = $us
-					and bg_id not in (select bs_bug from bug_subscriptions where bs_user = $us);";
+					select bg_id, @us from bugs where bg_reported_user = @us
+					and bg_id not in (select bs_bug from bug_subscriptions where bs_user = @us);");
 			}
 
 			if (auto_subscribe_own.Checked)
 			{
-				sql += @"
+				sql.Append( @"
 					insert into bug_subscriptions (bs_bug, bs_user)
-					select bg_id, $us from bugs where bg_assigned_to_user = $us
-					and bg_id not in (select bs_bug from bug_subscriptions where bs_user = $us);";
+					select bg_id, @us from bugs where bg_assigned_to_user = @us
+					and bg_id not in (select bs_bug from bug_subscriptions where bs_user = @us);");
 			}
 
 			if (auto_subscribe_projects != "")
 			{
-				sql += @"
+				sql.Append( @"
 					insert into bug_subscriptions (bs_bug, bs_user)
-					select bg_id, $us from bugs where bg_project in ($projects)
-					and bg_id not in (select bs_bug from bug_subscriptions where bs_user = $us);";
-				sql = sql.Replace("$projects", auto_subscribe_projects);
+					select bg_id, @us from bugs where bg_project in (@projects)
+					and bg_id not in (select bs_bug from bug_subscriptions where bs_user = us);");
+				sql = sql.Replace("projects", auto_subscribe_projects);
 			}
 		}
 	}
 
-	sql = sql.Replace("$us", Convert.ToString(id));
-	sql = sql.Replace("$dpl", Convert.ToString(default_permission_level));
+	sql = sql.Replace("us", Convert.ToString(id));
+	sql = sql.Replace("dpl", Convert.ToString(default_permission_level));
 	btnet.DbUtil.execute_nonquery(sql);
 
 }
