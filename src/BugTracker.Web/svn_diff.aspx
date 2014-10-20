@@ -71,14 +71,14 @@ void Page_Load(Object sender, EventArgs e)
 	security = new Security();
 	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
-	string sql = @"
+	var sql = new SQLString(@"
 select svnrev_revision, svnrev_repository, svnap_path, svnrev_bug
 from svn_revisions
 inner join svn_affected_paths on svnap_svnrev_id = svnrev_id
-where svnap_id = $id";
+where svnap_id = @id");
 
     int svnap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("$id", Convert.ToString(svnap_id));
+	sql = sql.Replace("id", Convert.ToString(svnap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

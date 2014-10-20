@@ -23,13 +23,13 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "queries";
 
-	string sql = "";
+	SQLString sql;
 
 	if (security.user.is_admin || security.user.can_edit_sql)
 	{
 		// allow admin to edit all queries
 
-		sql =  @"select
+		sql =  new SQLString(@"select
 			qu_desc [query],
 			case
 				when isnull(qu_user,0) = 0 and isnull(qu_org,0) is null then 'everybody'
@@ -47,18 +47,18 @@ void Page_Load(Object sender, EventArgs e)
 			from queries
 			left outer join users on qu_user = us_id
 			left outer join orgs on qu_org = og_id
-			where 1 = $all /* all */
-			or isnull(qu_user,0) = $us
+			where 1 = @all /* all */
+			or isnull(qu_user,0) = @us
 			or isnull(qu_user,0) = 0
-			order by qu_desc";
+			order by qu_desc");
 
-		sql = sql.Replace("$all", show_all.Checked ? "1" : "0");
+		sql = sql.Replace("all", show_all.Checked ? "1" : "0");
 	}
 	else
 	{
 		// allow editing for users' own queries
 
-		sql =  @"select
+		sql =  new SQLString(@"select
 			qu_desc [query],
 			'<a href=bugs.aspx?qu_id=' + convert(varchar,qu_id) + '>view list</a>' [view list],
 			'<a target=_blank href=print_bugs.aspx?qu_id=' + convert(varchar,qu_id) + '>print list</a>' [print list],
@@ -68,11 +68,11 @@ void Page_Load(Object sender, EventArgs e)
 			'<a href=delete_query.aspx?id=' + convert(varchar,qu_id) + '>delete</a>' [delete]
 			from queries
 			inner join users on qu_user = us_id
-			where isnull(qu_user,0) = $us
-			order by qu_desc";
+			where isnull(qu_user,0) = @us
+			order by qu_desc");
 	}
 
-	sql = sql.Replace("$us",Convert.ToString(security.user.usid));
+	sql = sql.Replace("us",Convert.ToString(security.user.usid));
 	ds = btnet.DbUtil.get_dataset(sql);
 
 }

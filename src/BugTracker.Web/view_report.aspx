@@ -4,7 +4,7 @@
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 int scale = 1;
@@ -45,11 +45,11 @@ void Page_Load(Object sender, EventArgs e)
 		scale = Convert.ToInt32(scale_string);
 	}
 
-	sql = @"select rp_desc, rp_sql, rp_chart_type
+	sql =new SQLString( @"select rp_desc, rp_sql, rp_chart_type
 		from reports
-		where rp_id = $id";
+		where rp_id = @id");
 
-	sql = sql.Replace("$id", string_id);
+	sql = sql.Replace("id", string_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow (sql);
 
@@ -60,7 +60,7 @@ void Page_Load(Object sender, EventArgs e)
 	// replace the magic pseudo variable
 	rp_sql = rp_sql.Replace("$ME", Convert.ToString(security.user.usid));
 
-	DataSet ds = btnet.DbUtil.get_dataset (rp_sql);
+	DataSet ds = btnet.DbUtil.get_dataset (new SQLString(rp_sql));
 
 	if (ds.Tables[0].Rows.Count > 0)
 	{

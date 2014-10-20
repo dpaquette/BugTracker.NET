@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -69,14 +69,14 @@ void Page_Load(Object sender, EventArgs e)
 		{
 			update_or_delete.Value = "delete";
 
-			sql += "delete bug_post_attachments from bug_post_attachments inner join bug_posts on bug_post_attachments.bpa_post = bug_posts.bp_id where bug_posts.bp_bug in (" + list + ")";
-			sql += "\ndelete from bug_posts where bp_bug in (" + list + ")";
-			sql += "\ndelete from bug_subscriptions where bs_bug in (" + list + ")";
-			sql += "\ndelete from bug_relationships where re_bug1 in (" + list + ")";
-			sql += "\ndelete from bug_relationships where re_bug2 in (" + list + ")";
-			sql += "\ndelete from bug_user where bu_bug in (" + list + ")";			
-			sql += "\ndelete from bug_tasks where tsk_bug in (" + list + ")";			
-			sql += "\ndelete from bugs where bg_id in (" + list + ")";			
+			sql = new SQLString( "delete bug_post_attachments from bug_post_attachments inner join bug_posts on bug_post_attachments.bpa_post = bug_posts.bp_id where bug_posts.bp_bug in (" + list + ")");
+			sql.Append("\ndelete from bug_posts where bp_bug in (" + list + ")");
+			sql.Append("\ndelete from bug_subscriptions where bs_bug in (" + list + ")");
+			sql.Append("\ndelete from bug_relationships where re_bug1 in (" + list + ")");
+			sql.Append("\ndelete from bug_relationships where re_bug2 in (" + list + ")");
+			sql.Append("\ndelete from bug_user where bu_bug in (" + list + ")");			
+			sql.Append("\ndelete from bug_tasks where tsk_bug in (" + list + ")");			
+			sql.Append("\ndelete from bugs where bg_id in (" + list + ")");			
 
 			confirm_href.InnerText = "Confirm Delete";
 
@@ -85,7 +85,7 @@ void Page_Load(Object sender, EventArgs e)
 		{
 			update_or_delete.Value = "update";
 
-			sql = "update bugs \nset ";
+			sql = new SQLString("update bugs \nset ");
 
 			string updates = "";
 
@@ -141,13 +141,13 @@ void Page_Load(Object sender, EventArgs e)
 			}
 
 
-			sql += updates + "\nwhere bg_id in (" + list + ")";
+			sql.Append(updates + "\nwhere bg_id in (" + list + ")");
 
 			confirm_href.InnerText = "Confirm Update";
 
 		}
 
-		sql_text.InnerText = sql;
+		sql_text.InnerText = sql.ToString();
 
 	}
 	else // postback
@@ -169,7 +169,7 @@ void Page_Load(Object sender, EventArgs e)
                     }
                 }
                 			
-                string sql2 = @"select bp_bug, bp_id, bp_file from bug_posts where bp_type = 'file' and bp_bug in (" + bug_list.Value + ")";
+                var sql2 = new SQLString(@"select bp_bug, bp_id, bp_file from bug_posts where bp_type = 'file' and bp_bug in (" + bug_list.Value + ")");
 				DataSet ds = btnet.DbUtil.get_dataset(sql2);
 				foreach (DataRow dr in ds.Tables[0].Rows)
 				{
@@ -190,7 +190,7 @@ void Page_Load(Object sender, EventArgs e)
 		}
 
 
-		btnet.DbUtil.execute_nonquery(sql_text.InnerText);
+		btnet.DbUtil.execute_nonquery(new SQLString(sql_text.InnerText));
 		Response.Redirect ("search.aspx");
 
 	}

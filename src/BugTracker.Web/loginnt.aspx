@@ -10,7 +10,7 @@ Distributed under the terms of the GNU General Public License
 
 
 
-string sql;
+SQLString sql;
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -50,11 +50,11 @@ void Page_Load(Object sender, EventArgs e)
 
 
 		// Fetch the user's information from the users table
-		sql = @"select us_id, us_username
+		sql = new SQLString(@"select us_id, us_username
 			from users
-			where us_username = N'$us'
-			and us_active = 1";
-		sql = sql.Replace("$us", windows_username.Replace("'","''"));
+			where us_username = @us
+			and us_active = 1");
+		sql = sql.Replace("us", windows_username);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 		if (dr != null)
@@ -171,10 +171,10 @@ void Page_Load(Object sender, EventArgs e)
 
 
 		// Try fetching the guest user.
-		sql = @"select us_id, us_username
+		sql = new SQLString(@"select us_id, us_username
 			from users
 			where us_username = 'guest'
-			and us_active = 1";
+			and us_active = 1");
 
 		dr = btnet.DbUtil.get_datarow(sql);
 		if (dr != null)
