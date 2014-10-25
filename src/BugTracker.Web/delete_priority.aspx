@@ -26,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 		sql = new SQLString(@"delete priorities where pr_id = @prid");
-        sql = sql.Replace("prid", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("prid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("priorities.aspx");
 	}
@@ -42,7 +42,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = new SQLString(@"declare @cnt int
 			select @cnt = count(1) from bugs where bg_priority = @id
 			select pr_name, @cnt [cnt] from priorities where pr_id = @id");
-		sql = sql.Replace("id", id);
+		sql = sql.AddParameterWithValue("id", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

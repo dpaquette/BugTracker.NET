@@ -60,7 +60,7 @@ inner join git_affected_paths on gitap_gitcom_id = gitcom_id
 where gitcom_bug = @bg
 order by gitcom_git_date desc, gitap_path");
 
-	sql = sql.Replace("bg", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 }

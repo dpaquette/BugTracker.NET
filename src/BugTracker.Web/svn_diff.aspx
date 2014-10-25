@@ -78,7 +78,7 @@ inner join svn_affected_paths on svnap_svnrev_id = svnrev_id
 where svnap_id = @id");
 
     int svnap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("id", Convert.ToString(svnap_id));
+	sql = sql.AddParameterWithValue("id", Convert.ToString(svnap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

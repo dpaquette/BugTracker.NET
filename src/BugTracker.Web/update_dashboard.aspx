@@ -56,18 +56,18 @@ insert into dashboard_items
 (ds_user, ds_report, ds_chart_type, ds_col, ds_row)
 values (@user, @report, @chart_type, @col, @last_row)");
 
-		sql = sql.Replace("user", Convert.ToString(security.user.usid));
-		sql = sql.Replace("report", Convert.ToString(rp_id));
-		sql = sql.Replace("chart_type", ((string)Request["rp_chart_type"]));
-		sql = sql.Replace("col", Convert.ToString(rp_col));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("report", Convert.ToString(rp_id));
+		sql = sql.AddParameterWithValue("chart_type", ((string)Request["rp_chart_type"]));
+		sql = sql.AddParameterWithValue("col", Convert.ToString(rp_col));
 
 	}
 	else if (action == "delete")
 	{
 		int ds_id = Convert.ToInt32(Util.sanitize_integer(Request["ds_id"]));
 		sql = new SQLString("delete from dashboard_items where ds_id = @ds_id and ds_user = @user");
-		sql = sql.Replace("ds_id", Convert.ToString(ds_id));
-		sql = sql.Replace("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("ds_id", Convert.ToString(ds_id));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
 	}
 	else if (action == "moveup" || action == "movedown")
 	{
@@ -99,14 +99,14 @@ and ds_id = @ds_id
 
 		if (action == "moveup")
 		{
-			sql = sql.Replace("delta", "-1");
+			sql = sql.AddParameterWithValue("delta", "-1");
 		}
 		else
 		{
-			sql = sql.Replace("delta", "1");
+			sql = sql.AddParameterWithValue("delta", "1");
 		}
-		sql = sql.Replace("ds_id", Convert.ToString(ds_id));
-		sql = sql.Replace("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("ds_id", Convert.ToString(ds_id));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
 	}
 
 	if (action != "")

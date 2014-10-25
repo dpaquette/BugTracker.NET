@@ -135,8 +135,8 @@ and us_id not in
 (select bs_user from bug_subscriptions
 where bs_bug = @id)");
 
-			sql = sql.Replace("id", Convert.ToString(bugid));
-			sql = sql.Replace("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
 			
 			btnet.DbUtil.execute_nonquery(sql);
@@ -154,7 +154,7 @@ where bs_bug = @id)");
 
 			string upload_folder = Util.get_upload_folder();
 			var sql = new SQLString(@"select bp_id, bp_file from bug_posts where bp_type = 'file' and bp_bug = @bg");
-			sql = sql.Replace("bg", id);
+			sql = sql.AddParameterWithValue("bg", id);
 
 			
 			DataSet ds = btnet.DbUtil.get_dataset(sql);
@@ -191,7 +191,7 @@ delete from bug_user where bu_bug = @bg
 delete from bug_tasks where tsk_bug = @bg
 delete from bugs where bg_id = @bg");
 
-			sql = sql.Replace("bg", id);
+			sql = sql.AddParameterWithValue("bg", id);
 			btnet.DbUtil.execute_nonquery(sql);
 
 
@@ -314,27 +314,27 @@ insert into bug_posts
 	values ('file', @bg, @fi, @de, @si, @now, @us, @ct, @pa, @internal)
 	select scope_identity()");
 
-				sql = sql.Replace("bg", Convert.ToString(bugid));
-				sql = sql.Replace("fi", effective_file);
-				sql = sql.Replace("de", comment);
-				sql = sql.Replace("si", Convert.ToString(effective_content_length));
-				sql = sql.Replace("us", Convert.ToString(security.user.usid));
+				sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
+				sql = sql.AddParameterWithValue("fi", effective_file);
+				sql = sql.AddParameterWithValue("de", comment);
+				sql = sql.AddParameterWithValue("si", Convert.ToString(effective_content_length));
+				sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
 
 				// Sometimes, somehow, content type is null.  Not sure how.
-				sql = sql.Replace("ct",
+				sql = sql.AddParameterWithValue("ct",
 					effective_content_type != null
 						? effective_content_type.Replace("'", "''")
 						: string.Empty);
 
 				if (parent == -1)
 				{
-					sql = sql.Replace("pa", "null");
+					sql = sql.AddParameterWithValue("pa", "null");
 				}
 				else
 				{
-					sql = sql.Replace("pa", Convert.ToString(parent));
+					sql = sql.AddParameterWithValue("pa", Convert.ToString(parent));
 				}
-				sql = sql.Replace("$internal", btnet.Util.bool_to_string(hidden_from_external_users));
+				sql = sql.AddParameterWithValue("$internal", btnet.Util.bool_to_string(hidden_from_external_users));
 
 				int bp_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -400,7 +400,7 @@ insert into bug_posts
 					// clean up
 					sql = new SQLString(@"delete from bug_posts where bp_id = @bp");
 
-					sql = sql.Replace("bp", Convert.ToString(bp_id));
+					sql = sql.AddParameterWithValue("bp", Convert.ToString(bp_id));
 
 					btnet.DbUtil.execute_nonquery(sql);
 
@@ -462,7 +462,7 @@ insert into bug_posts
 						from bug_posts
 						where bp_id = @bp");
 						
-				sql = sql.Replace("bp", Convert.ToString(bp_id));
+				sql = sql.AddParameterWithValue("bp", Convert.ToString(bp_id));
 				using (SqlDataReader reader = btnet.DbUtil.execute_reader(sql, CommandBehavior.CloseConnection))
 				{
 					if (reader.Read())
@@ -482,7 +482,7 @@ insert into bug_posts
 							from bug_post_attachments
 							where bpa_post = @bp");
 							
-				sql = sql.Replace("bp", Convert.ToString(bp_id));
+				sql = sql.AddParameterWithValue("bp", Convert.ToString(bp_id));
 
 				object content_object;
 				content_object = btnet.DbUtil.execute_scalar(sql);
@@ -694,7 +694,7 @@ where bg_id = @id");
 
 			if (ds_custom_cols.Tables[0].Rows.Count == 0)
 			{
-				sql = sql.Replace("@custom_cols_placeholder", "");
+				sql = sql.AddParameterWithValue("@custom_cols_placeholder", "");
 			}
 			else
 			{
@@ -705,13 +705,13 @@ where bg_id = @id");
 					custom_cols_sql += ",[" + drcc["name"] + "]";
 
 				}
-				sql = sql.Replace("custom_cols_placeholder", custom_cols_sql);
+				sql = sql.AddParameterWithValue("custom_cols_placeholder", custom_cols_sql);
 			}
 
-			sql = sql.Replace("id", Convert.ToString(bugid));
-			sql = sql.Replace("this_usid", Convert.ToString(security.user.usid));
-			sql = sql.Replace("this_org", Convert.ToString(security.user.org));
-			sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("this_usid", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("this_org", Convert.ToString(security.user.org));
+			sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
 
 			
 			return btnet.DbUtil.get_datarow(sql);
@@ -725,7 +725,7 @@ where bg_id = @id");
             var sql = new SQLString(Util.get_setting("UpdateBugAfterInsertBugAspxSql", ""));
 
             
-                sql = sql.Replace("@BUGID", Convert.ToString(bugid));
+                sql = sql.AddParameterWithValue("@BUGID", Convert.ToString(bugid));
                 btnet.DbUtil.execute_nonquery(sql);
             
         }
@@ -778,9 +778,9 @@ and pu_user = @us
 where bg_id = @bg");
 			;
 
-			sql = sql.Replace("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
-			sql = sql.Replace("@bg", Convert.ToString(bugid));
-			sql = sql.Replace("@us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.AddParameterWithValue("@bg", Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("@us", Convert.ToString(security.user.usid));
 			
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 			
@@ -881,24 +881,24 @@ where bg_id = @bg");
 					@category, @priority, @status, @assigned_user, @udf,
 					@pcd1, @pcd2, @pcd3, @custom_cols_placeholder2)");
 
-			sql = sql.Replace("@short_desc", short_desc);
-			sql = sql.Replace("@tags", tags);
-			sql = sql.Replace("@reported_user", Convert.ToString(security.user.usid));
-			sql = sql.Replace("@project", Convert.ToString(projectid));
-			sql = sql.Replace("@org", Convert.ToString(orgid));
-			sql = sql.Replace("@category", Convert.ToString(categoryid));
-			sql = sql.Replace("@priority", Convert.ToString(priorityid));
-			sql = sql.Replace("@status", Convert.ToString(statusid));
-			sql = sql.Replace("@assigned_user", Convert.ToString(assigned_to_userid));
-			sql = sql.Replace("@udf", Convert.ToString(udfid));
-			sql = sql.Replace("@pcd1", project_custom_dropdown_value1);
-			sql = sql.Replace("@pcd2", project_custom_dropdown_value2);
-			sql = sql.Replace("@pcd3", project_custom_dropdown_value3);
+			sql = sql.AddParameterWithValue("@short_desc", short_desc);
+			sql = sql.AddParameterWithValue("@tags", tags);
+			sql = sql.AddParameterWithValue("@reported_user", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("@project", Convert.ToString(projectid));
+			sql = sql.AddParameterWithValue("@org", Convert.ToString(orgid));
+			sql = sql.AddParameterWithValue("@category", Convert.ToString(categoryid));
+			sql = sql.AddParameterWithValue("@priority", Convert.ToString(priorityid));
+			sql = sql.AddParameterWithValue("@status", Convert.ToString(statusid));
+			sql = sql.AddParameterWithValue("@assigned_user", Convert.ToString(assigned_to_userid));
+			sql = sql.AddParameterWithValue("@udf", Convert.ToString(udfid));
+			sql = sql.AddParameterWithValue("@pcd1", project_custom_dropdown_value1);
+			sql = sql.AddParameterWithValue("@pcd2", project_custom_dropdown_value2);
+			sql = sql.AddParameterWithValue("@pcd3", project_custom_dropdown_value3);
 
 			if (hash_custom_cols == null)
 			{
-				sql = sql.Replace("@custom_cols_placeholder1", "");
-				sql = sql.Replace("@custom_cols_placeholder2", "");
+				sql = sql.AddParameterWithValue("@custom_cols_placeholder1", "");
+				sql = sql.AddParameterWithValue("@custom_cols_placeholder2", "");
 			}
 			else
 			{
@@ -930,8 +930,8 @@ where bg_id = @bg");
 					custom_cols_sql2 += "," + custom_col_val;
 					
 				}
-				sql = sql.Replace("@custom_cols_placeholder1", custom_cols_sql1);
-				sql = sql.Replace("@custom_cols_placeholder2", custom_cols_sql2);
+				sql = sql.AddParameterWithValue("@custom_cols_placeholder1", custom_cols_sql1);
+				sql = sql.AddParameterWithValue("@custom_cols_placeholder2", custom_cols_sql2);
 			}
 
 
@@ -1007,26 +1007,26 @@ select scope_identity();");
 						bg_last_updated_user = @us
 						where bg_id = @id");
 
-					sql = sql.Replace("@from", from.Replace("'", "''"));
-					sql = sql.Replace("@type", "received"); // received email
+					sql = sql.AddParameterWithValue("@from", from.Replace("'", "''"));
+					sql = sql.AddParameterWithValue("@type", "received"); // received email
 				}
 				else
 				{
-					sql = sql.Replace("@from'", "null");
-					sql = sql.Replace("@type", "comment"); // bug comment
+					sql = sql.AddParameterWithValue("@from'", "null");
+					sql = sql.AddParameterWithValue("@type", "comment"); // bug comment
 				}
 
-				sql = sql.Replace("@id", Convert.ToString(bugid));
-				sql = sql.Replace("@us", Convert.ToString(this_usid));
-				sql = sql.Replace("@comment_formatted", comment_formated.Replace("'", "''"));
-				sql = sql.Replace("@comment_search", comment_search.Replace("'", "''"));
-				sql = sql.Replace("@content_type", content_type);
+				sql = sql.AddParameterWithValue("@id", Convert.ToString(bugid));
+				sql = sql.AddParameterWithValue("@us", Convert.ToString(this_usid));
+				sql = sql.AddParameterWithValue("@comment_formatted", comment_formated.Replace("'", "''"));
+				sql = sql.AddParameterWithValue("@comment_search", comment_search.Replace("'", "''"));
+				sql = sql.AddParameterWithValue("@content_type", content_type);
 				if (cc == null)
 				{
 					cc = "";
 				}
-				sql = sql.Replace("@cc", cc.Replace("'", "''"));
-				sql = sql.Replace("@internal", btnet.Util.bool_to_string(internal_only));
+				sql = sql.AddParameterWithValue("@cc", cc.Replace("'", "''"));
+				sql = sql.AddParameterWithValue("@internal", btnet.Util.bool_to_string(internal_only));
 
 
 				
@@ -1142,7 +1142,7 @@ end <> 0
 and bs_bug = @id
 and us_id = @just_this_usid");
 
-				sql = sql.Replace("just_this_usid", Convert.ToString(just_to_this_userid));
+				sql = sql.AddParameterWithValue("just_this_usid", Convert.ToString(just_to_this_userid));
 			}
 			else
 			{
@@ -1179,11 +1179,11 @@ and bs_bug = @id
 and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
 			}
 
-			sql = sql.Replace("@cl", changeLevel.ToString());
-			sql = sql.Replace("@pau", prev_assigned_to_user.ToString());
-			sql = sql.Replace("@id", Convert.ToString(bugid));
-			sql = sql.Replace("@dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
-			sql = sql.Replace("@us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("@cl", changeLevel.ToString());
+			sql = sql.AddParameterWithValue("@pau", prev_assigned_to_user.ToString());
+			sql = sql.AddParameterWithValue("@id", Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("@dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.AddParameterWithValue("@us", Convert.ToString(security.user.usid));
 
 
 			DataSet ds_subscribers = btnet.DbUtil.get_dataset(sql);
@@ -1298,12 +1298,12 @@ insert into queued_notifications
 (qn_date_created, qn_bug, qn_user, qn_status, qn_retries, qn_to, qn_from, qn_subject, qn_body, qn_last_exception)
 values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'')");
 
-					sql = sql.Replace("@bug",Convert.ToString(bugid));
-					sql = sql.Replace("@user",Convert.ToString(dr["us_id"]));
-					sql = sql.Replace("@to", to);
-					sql = sql.Replace("@from", from);
-					sql = sql.Replace("@subject", subject);
-					sql = sql.Replace("@body", writer.ToString());
+					sql = sql.AddParameterWithValue("@bug",Convert.ToString(bugid));
+					sql = sql.AddParameterWithValue("@user",Convert.ToString(dr["us_id"]));
+					sql = sql.AddParameterWithValue("@to", to);
+					sql = sql.AddParameterWithValue("@from", from);
+					sql = sql.AddParameterWithValue("@subject", subject);
+					sql = sql.AddParameterWithValue("@body", writer.ToString());
 
 					btnet.DbUtil.execute_nonquery_without_logging(sql);
 
@@ -1373,10 +1373,10 @@ values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'
                 if (err != "")
                 {
                     sql = new SQLString("update queued_notifications  set qn_retries = qn_retries + 1, qn_last_exception = @ex where qn_id = @qn_id");
-                    sql = sql.Replace("@ex", err.Replace("'", "''"));
+                    sql = sql.AddParameterWithValue("@ex", err.Replace("'", "''"));
                 }
 
-                sql = sql.Replace("qn_id", Convert.ToString(dr["qn_id"]));
+                sql = sql.AddParameterWithValue("qn_id", Convert.ToString(dr["qn_id"]));
 
                 // update the row or delete the row
                 btnet.DbUtil.execute_nonquery(sql);

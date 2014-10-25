@@ -204,7 +204,7 @@ namespace btnet
 							if (userid != 0)
 							{
 								var sql_get_username = new SQLString("select us_username from users where us_id = @userId");
-								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.Replace("userId", Convert.ToString(userid)));
+								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", Convert.ToString(userid)));
 							}
 						}
 					}
@@ -236,7 +236,7 @@ namespace btnet
 					isnull(pj_custom_dropdown_label3,'') [pj_custom_dropdown_label3]
 					from projects where pj_id = @pj");
 
-				sql = sql.Replace("pj", Convert.ToString((int)dr["project"]));
+				sql = sql.AddParameterWithValue("pj", Convert.ToString((int)dr["project"]));
 
 				DataRow project_dr = btnet.DbUtil.get_datarow(sql);
 
@@ -323,9 +323,9 @@ namespace btnet
 				where re_bug1 = @bg
 				order by 1");
 
-			sql = sql.Replace("bg", Convert.ToString(bugid));
-            sql = sql.Replace("parent", "parent of " + Convert.ToString(bugid));
-            sql = sql.Replace("child", "child of " + Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("parent", "parent of " + Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("child", "child of " + Convert.ToString(bugid));
 			DataSet ds_relationships = btnet.DbUtil.get_dataset(sql);
 
 			if (ds_relationships.Tables[0].Rows.Count > 0)
@@ -1159,7 +1159,7 @@ and a.bp_parent is null");
 			sql.Append( btnet.Util.get_setting("CommentSortOrder","desc"));
 			sql.Append( ", ba.bp_parent, ba.bp_id");
 
-            sql = sql.Replace("id", Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
             
             return btnet.DbUtil.get_dataset(sql);
 

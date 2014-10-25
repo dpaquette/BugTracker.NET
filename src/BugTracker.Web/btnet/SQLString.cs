@@ -27,13 +27,13 @@ namespace btnet
             return _value;
         }
 
-        public SQLString Replace(string parameter, string value)
+        public SQLString AddParameterWithValue(string parameter, string value)
         {
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
         }
 
-        public SQLString Replace(string parameter, int value)
+        public SQLString AddParameterWithValue(string parameter, int value)
         {
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;

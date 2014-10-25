@@ -55,7 +55,7 @@ void Page_Load(Object sender, EventArgs e)
 			// Get this entry's data from the db and fill in the form
 
 			sql = new SQLString(@"select udf_name, udf_sort_seq, udf_default from user_defined_attribute where udf_id = @udfid");
-			sql = sql.Replace("udfid", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("udfid", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -132,12 +132,12 @@ void on_update()
 				udf_default = @df
 				where udf_id = @id");
 
-			sql = sql.Replace("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("na", name.Value);
-		sql = sql.Replace("ss", sort_seq.Value);
-		sql = sql.Replace("df", Util.bool_to_string(default_selection.Checked));
+		sql = sql.AddParameterWithValue("na", name.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("df", Util.bool_to_string(default_selection.Checked));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("udfs.aspx");
 

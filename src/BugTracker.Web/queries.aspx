@@ -52,7 +52,7 @@ void Page_Load(Object sender, EventArgs e)
 			or isnull(qu_user,0) = 0
 			order by qu_desc");
 
-		sql = sql.Replace("all", show_all.Checked ? "1" : "0");
+		sql = sql.AddParameterWithValue("all", show_all.Checked ? "1" : "0");
 	}
 	else
 	{
@@ -72,7 +72,7 @@ void Page_Load(Object sender, EventArgs e)
 			order by qu_desc");
 	}
 
-	sql = sql.Replace("us",Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
 	ds = btnet.DbUtil.get_dataset(sql);
 
 }

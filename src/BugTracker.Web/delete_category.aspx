@@ -25,7 +25,7 @@ void Page_Load(Object sender, EventArgs e)
 	if (IsPostBack)
 	{
 		sql = new SQLString(@"delete categories where ct_id = @catid");
-        sql = sql.Replace("catid", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("catid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("categories.aspx");
 	}
@@ -39,7 +39,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = new SQLString(@"declare @cnt int
 			select @cnt = count(1) from bugs where bg_category = @ctid
 			select ct_name, @cnt [cnt] from categories where ct_id = @ctid");
-		sql = sql.Replace("ctid", id);
+		sql = sql.AddParameterWithValue("ctid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

@@ -268,8 +268,8 @@ Distributed under the terms of the GNU General Public License
 		and isnull(pu_permission_level,@dpl) not in (0, 1)
 		order by pj_name;");
 
-        sql = sql.Replace("us", Convert.ToString(security.user.usid));
-        sql = sql.Replace("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
         //1
         sql.Append("\nselect us_id, us_username from users order by us_username;");
@@ -317,12 +317,12 @@ Distributed under the terms of the GNU General Public License
 						bg_last_updated_date = getdate()
 						where bg_id = @id");
 
-        sql = sql.Replace("pj", project.SelectedItem.Value);
-        sql = sql.Replace("au", assigned_to.SelectedItem.Value);
-        sql = sql.Replace("st", status.SelectedItem.Value);
-        sql = sql.Replace("lu", Convert.ToString(security.user.usid));
-        sql = sql.Replace("sd", short_desc.Value.Replace("'", "''"));
-        sql = sql.Replace("id", Convert.ToString(id));
+        sql = sql.AddParameterWithValue("pj", project.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("au", assigned_to.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("st", status.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("lu", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("sd", short_desc.Value.Replace("'", "''"));
+        sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
         btnet.DbUtil.execute_nonquery(sql);
 
@@ -362,8 +362,8 @@ Distributed under the terms of the GNU General Public License
 		(bp_bug, bp_user, bp_date, bp_comment, bp_type)
 		values(@id, @userName, getdate(), 'Changed ' + @fieldName + ' from ' + @oldValue + ' to ' + @newValue, 'update')");
 
-        sql.Replace("id", id);
-        sql.Replace("userId", userId);
+        sql.AddParameterWithValue("id", id);
+        sql.AddParameterWithValue("userId", userId);
         
         btnet.DbUtil.execute_nonquery(sql);
     }

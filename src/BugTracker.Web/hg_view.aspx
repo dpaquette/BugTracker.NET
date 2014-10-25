@@ -27,7 +27,7 @@ inner join hg_affected_paths on hgap_hgrev_id = hgrev_id
 where hgap_id = @id");
 
     int hgap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("id", Convert.ToString(hgap_id));
+	sql = sql.AddParameterWithValue("id", Convert.ToString(hgap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

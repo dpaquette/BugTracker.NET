@@ -374,7 +374,7 @@ namespace btnet.Mail
 						from projects
 						where pj_id = @pj");
 
-            sql = sql.Replace("pj", Convert.ToString(projectid));
+            sql = sql.AddParameterWithValue("pj", Convert.ToString(projectid));
 
             object project_email = btnet.DbUtil.execute_scalar(sql);
 

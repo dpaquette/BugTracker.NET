@@ -52,9 +52,9 @@ if not exists (select bu_bug from bug_user where bu_bug = @bg and bu_user = @us)
 	insert into bug_user (bu_bug, bu_user, bu_flag, bu_seen, bu_vote) values(@bg, @us, 1, 0, 0) 
 update bug_user set bu_flag = @fl, bu_flag_datetime = getdate() where bu_bug = @bg and bu_user = @us and bu_flag <> @fl");
 
-			sql = sql.Replace("bg", Convert.ToString(bugid));
-			sql = sql.Replace("us", Convert.ToString(security.user.usid));
-			sql = sql.Replace("fl", Convert.ToString(flag));
+			sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("fl", Convert.ToString(flag));
 
 			btnet.DbUtil.execute_nonquery(sql);
 			break;

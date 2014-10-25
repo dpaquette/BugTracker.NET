@@ -30,8 +30,8 @@ from bug_posts
 where bp_id = @bp_id 
 and bp_bug = @bug_id");
 
-	sql = sql.Replace("bp_id", bp_id);
-	sql = sql.Replace("bug_id", bug_id);
+	sql = sql.AddParameterWithValue("bp_id", bp_id);
+	sql = sql.AddParameterWithValue("bug_id", bug_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

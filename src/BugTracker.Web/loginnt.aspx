@@ -54,7 +54,7 @@ void Page_Load(Object sender, EventArgs e)
 			from users
 			where us_username = @us
 			and us_active = 1");
-		sql = sql.Replace("us", windows_username);
+		sql = sql.AddParameterWithValue("us", windows_username);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 		if (dr != null)

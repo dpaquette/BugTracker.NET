@@ -35,7 +35,7 @@ order by gitcom_commit desc, gitap_path");
     int gitap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
 	
 	string_affected_path_id = Convert.ToString(gitap_id);
-	sql = sql.Replace("id", string_affected_path_id);
+	sql = sql.AddParameterWithValue("id", string_affected_path_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

@@ -124,12 +124,12 @@ ELSE
 select 0
 ");
 
-		sql = sql.Replace("hgrev_revision",revision);
-		sql = sql.Replace("hgrev_bug", Convert.ToString(bug));
-		sql = sql.Replace("hgrev_repository",repo);
-		sql = sql.Replace("hgrev_author",author);
-		sql = sql.Replace("hgrev_hg_date",date);
-		sql = sql.Replace("hgrev_desc",desc);
+		sql = sql.AddParameterWithValue("hgrev_revision",revision);
+		sql = sql.AddParameterWithValue("hgrev_bug", Convert.ToString(bug));
+		sql = sql.AddParameterWithValue("hgrev_repository",repo);
+		sql = sql.AddParameterWithValue("hgrev_author",author);
+		sql = sql.AddParameterWithValue("hgrev_hg_date",date);
+		sql = sql.AddParameterWithValue("hgrev_desc",desc);
 
 		int hgrev_id =  Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -160,9 +160,9 @@ values
 @hgap_path
 )");		
 
-				sql = sql.Replace("hgap_hgrev_id", Convert.ToString(hgrev_id));
-				sql = sql.Replace("hgap_action", action);
-				sql = sql.Replace("hgap_path", file_path);
+				sql = sql.AddParameterWithValue("hgap_hgrev_id", Convert.ToString(hgrev_id));
+				sql = sql.AddParameterWithValue("hgap_action", action);
+				sql = sql.AddParameterWithValue("hgap_path", file_path);
 
 				btnet.DbUtil.execute_nonquery(sql);
 

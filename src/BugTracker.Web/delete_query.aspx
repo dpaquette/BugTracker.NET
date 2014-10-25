@@ -27,7 +27,7 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 		sql = new SQLString(@"delete queries where qu_id = @id");
-        sql = sql.Replace("id", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("id", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("queries.aspx");
 	}
@@ -39,7 +39,7 @@ void Page_Load(Object sender, EventArgs e)
 		string id = Util.sanitize_integer(Request["id"]);
 
 		sql = new SQLString(@"select qu_desc, isnull(qu_user,0) qu_user from queries where qu_id = @id");
-		sql = sql.Replace("id", id);
+		sql = sql.AddParameterWithValue("id", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

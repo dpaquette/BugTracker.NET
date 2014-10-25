@@ -44,8 +44,8 @@ void Page_Load(Object sender, EventArgs e)
 			where bs_bug = @bg and bs_user = @us");
 	}
 
-	sql = sql.Replace("bg", Util.sanitize_integer(Request["id"]));
-	sql = sql.Replace("us", Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("bg", Util.sanitize_integer(Request["id"]));
+	sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
 	btnet.DbUtil.execute_nonquery(sql);
 
 }

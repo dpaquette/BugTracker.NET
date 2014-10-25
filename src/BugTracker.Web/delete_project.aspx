@@ -26,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 		sql = new SQLString(@"delete projects where pj_id = @projectId");
-        sql = sql.Replace("projectId", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("projectId", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("projects.aspx");
 	}
@@ -40,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = new SQLString(@"declare @cnt int
 			select @cnt = count(1) from bugs where bg_project = @projectId
 			select pj_name, @cnt [cnt] from projects where pj_id = @projectId");
-		sql = sql.Replace("projectId", id);
+		sql = sql.AddParameterWithValue("projectId", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

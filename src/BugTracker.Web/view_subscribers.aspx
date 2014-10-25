@@ -54,8 +54,8 @@ void Page_Load(Object sender, EventArgs e)
 
             sql = new SQLString(@"delete from bug_subscriptions where bs_bug = @bg and bs_user = @us;
 			insert into bug_subscriptions (bs_bug, bs_user) values(@bg, @us)");					;
-			sql = sql.Replace("bg",Convert.ToString(bugid));
-			sql = sql.Replace("us",Convert.ToString(new_subscriber_userid));
+			sql = sql.AddParameterWithValue("bg",Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("us",Convert.ToString(new_subscriber_userid));
 			btnet.DbUtil.execute_nonquery(sql);
 
 			// send a notification to this user only
@@ -86,7 +86,7 @@ and us_enable_notifications = 1
 and us_active = 1
 order by 1");
 
-		sql = sql.Replace("ses", Convert.ToString(Session["session_cookie"]));
+		sql = sql.AddParameterWithValue("ses", Convert.ToString(Session["session_cookie"]));
 
 	}
 	else
@@ -105,7 +105,7 @@ and us_active = 1
 order by 1");
 	}
 
-	sql = sql.Replace("bg", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
 	ds = btnet.DbUtil.get_dataset(sql);
 
 	// Get list of users who could be subscribed to this bug.
@@ -170,15 +170,15 @@ select @project = bg_project, @org = bg_org from bugs where bg_id = @bg;");
 	if (Util.get_setting("UseFullNames","0") == "0")
 	{
 		// false condition
-		sql = sql.Replace("fullnames","0 = 1");
+		sql = sql.AddParameterWithValue("fullnames","0 = 1");
 	}
 	else
 	{
 		// true condition
-		sql = sql.Replace("fullnames","1 = 1");
+		sql = sql.AddParameterWithValue("fullnames","1 = 1");
 	}
 
-	sql = sql.Replace("bg", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
 
 	//DataSet ds_users =
 	userid.DataSource = btnet.DbUtil.get_dataview(sql);

@@ -26,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 		sql = new SQLString(@"delete user_defined_attribute where udf_id = @udfid");
-        sql = sql.Replace("udfid", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("udfid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("udfs.aspx");
 	}
@@ -40,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = new SQLString(@"declare @cnt int
 			select @cnt = count(1) from bugs where bg_user_defined_attribute = @udfid
 			select udf_name, @cnt [cnt] from user_defined_attribute where udf_id = @udfid");
-		sql = sql.Replace("udfid", id);
+		sql = sql.AddParameterWithValue("udfid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

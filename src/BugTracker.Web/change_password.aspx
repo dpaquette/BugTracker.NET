@@ -64,8 +64,8 @@ select *,
 delete from emailed_links
 	where el_date < dateadd(n,-240,getdate())");
 
-			sql = sql.Replace("minutes",Util.get_setting("RegistrationExpiration","20"));
-			sql = sql.Replace("guid",guid);
+			sql = sql.AddParameterWithValue("minutes",Util.get_setting("RegistrationExpiration","20"));
+			sql = sql.AddParameterWithValue("guid",guid);
 
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 

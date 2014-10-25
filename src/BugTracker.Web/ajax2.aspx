@@ -29,7 +29,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = Util.alter_sql_per_project_permissions(sql, security);
 
 		string text = Request["q"];
-		sql = sql.Replace("str","%" + text + "%");
+		sql = sql.AddParameterWithValue("str","%" + text + "%");
 
 		DataSet ds = btnet.DbUtil.get_dataset(sql);
 

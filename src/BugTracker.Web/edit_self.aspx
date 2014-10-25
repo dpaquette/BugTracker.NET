@@ -46,7 +46,7 @@ void Page_Load(Object sender, EventArgs e)
 			or isnull(qu_org,0) = @org
 			order by qu_desc");
 
-		sql = sql.Replace("us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
 
 		query.DataSource = btnet.DbUtil.get_dataview(sql);
 		query.DataTextField = "qu_desc";
@@ -60,8 +60,8 @@ void Page_Load(Object sender, EventArgs e)
 			where isnull(pu_permission_level,@dpl) <> 0
 			order by pj_name");
 
-		sql = sql.Replace("us", Convert.ToString(security.user.usid));
-		sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
 		DataView projects_dv = btnet.DbUtil.get_dataview(sql);
 
@@ -95,7 +95,7 @@ void Page_Load(Object sender, EventArgs e)
 			from users
 			where us_id = @id");
 
-		sql = sql.Replace("id", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -242,23 +242,23 @@ void on_update ()
 			us_signature = @sg
 			where us_id = @id");
 
-		sql = sql.Replace("fn", firstname.Value);
-		sql = sql.Replace("ln", lastname.Value);
-		sql = sql.Replace("bp", bugs_per_page.Value);
-		sql = sql.Replace("fk", Util.bool_to_string(use_fckeditor.Checked));
-        sql = sql.Replace("pp", Util.bool_to_string(enable_popups.Checked));
-		sql = sql.Replace("em", email.Value);
-		sql = sql.Replace("en", Util.bool_to_string(enable_notifications.Checked));
-		sql = sql.Replace("ss", Util.bool_to_string(send_to_self.Checked));
-        sql = sql.Replace("rn", reported_notifications.SelectedItem.Value);
-        sql = sql.Replace("an", assigned_notifications.SelectedItem.Value);
-        sql = sql.Replace("sn", subscribed_notifications.SelectedItem.Value);
-        sql = sql.Replace("as", Util.bool_to_string(auto_subscribe.Checked));
-		sql = sql.Replace("ao", Util.bool_to_string(auto_subscribe_own.Checked));
-		sql = sql.Replace("ar", Util.bool_to_string(auto_subscribe_reported.Checked));
-		sql = sql.Replace("dq", query.SelectedItem.Value);
-		sql = sql.Replace("sg", signature.InnerText);
-		sql = sql.Replace("id", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("fn", firstname.Value);
+		sql = sql.AddParameterWithValue("ln", lastname.Value);
+		sql = sql.AddParameterWithValue("bp", bugs_per_page.Value);
+		sql = sql.AddParameterWithValue("fk", Util.bool_to_string(use_fckeditor.Checked));
+        sql = sql.AddParameterWithValue("pp", Util.bool_to_string(enable_popups.Checked));
+		sql = sql.AddParameterWithValue("em", email.Value);
+		sql = sql.AddParameterWithValue("en", Util.bool_to_string(enable_notifications.Checked));
+		sql = sql.AddParameterWithValue("ss", Util.bool_to_string(send_to_self.Checked));
+        sql = sql.AddParameterWithValue("rn", reported_notifications.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("an", assigned_notifications.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("sn", subscribed_notifications.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("as", Util.bool_to_string(auto_subscribe.Checked));
+		sql = sql.AddParameterWithValue("ao", Util.bool_to_string(auto_subscribe_own.Checked));
+		sql = sql.AddParameterWithValue("ar", Util.bool_to_string(auto_subscribe_reported.Checked));
+		sql = sql.AddParameterWithValue("dq", query.SelectedItem.Value);
+		sql = sql.AddParameterWithValue("sg", signature.InnerText);
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		// update user
 		btnet.DbUtil.execute_nonquery(sql);
@@ -274,7 +274,7 @@ void on_update ()
 		// First turn everything off, then turn selected ones on.
 		sql = new SQLString(@"update project_user_xref
 				set pu_auto_subscribe = 0 where pu_user = @id");
-		sql = sql.Replace("id", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 		btnet.DbUtil.execute_nonquery(sql);
 
 		// Second see what to turn back on
@@ -304,8 +304,8 @@ void on_update ()
 				where pj_id in (projects)
 				and pj_id not in (select pu_project from project_user_xref where pu_user = @id)");
 
-			sql = sql.Replace("id", Convert.ToString(id));
-			sql = sql.Replace("projects", projects);
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("projects", projects);
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 
@@ -343,8 +343,8 @@ void on_update ()
 				}
 			}
 
-			sql = sql.Replace("id", Convert.ToString(id));
-			sql = sql.Replace("projects", projects);
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("projects", projects);
 			btnet.DbUtil.execute_nonquery(sql);
 
 		}

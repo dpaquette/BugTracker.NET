@@ -58,7 +58,7 @@ void Page_Load(Object sender, EventArgs e)
 				pr_name, pr_sort_seq, pr_background_color, isnull(pr_style,'') [pr_style], pr_default
 				from priorities where pr_id = @id");
 
-			sql = sql.Replace("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -154,14 +154,14 @@ void on_update()
 				pr_default = @df
 				where pr_id = @id");
 
-			sql = sql.Replace("$id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("$id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("na", name.Value);
-		sql = sql.Replace("ss", sort_seq.Value);
-		sql = sql.Replace("co", color.Value);
-		sql = sql.Replace("st", style.Value);
-		sql = sql.Replace("df", Util.bool_to_string(default_selection.Checked));
+		sql = sql.AddParameterWithValue("na", name.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("co", color.Value);
+		sql = sql.AddParameterWithValue("st", style.Value);
+		sql = sql.AddParameterWithValue("df", Util.bool_to_string(default_selection.Checked));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("priorities.aspx");
 

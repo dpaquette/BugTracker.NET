@@ -26,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// do delete here
 		sql = new SQLString(@"delete orgs where og_id = @orgid");
-        sql = sql.Replace("orgid", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("orgid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("orgs.aspx");
 	}
@@ -43,7 +43,7 @@ void Page_Load(Object sender, EventArgs e)
 			select @cnt = @cnt + count(1) from queries where qu_org = @orgid;
 			select @cnt = @cnt + count(1) from bugs where bg_org = @orgid;
 			select og_name, @cnt [cnt] from orgs where og_id = @orgid");
-		sql = sql.Replace("orgid", id);
+		sql = sql.AddParameterWithValue("orgid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

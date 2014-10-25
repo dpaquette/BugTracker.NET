@@ -34,7 +34,7 @@ void Page_Load(Object sender, EventArgs e)
 		var sql = new SQLString(@"delete from sessions
 			where se_id = @se
 			or datediff(d, se_date, getdate()) > 2");
-		sql = sql.Replace("se", se_id);
+		sql = sql.AddParameterWithValue("se", se_id);
 		btnet.DbUtil.execute_nonquery(sql);		
 		
 		Session[se_id] = 0;

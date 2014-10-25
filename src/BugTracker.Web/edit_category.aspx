@@ -53,7 +53,7 @@ void Page_Load(Object sender, EventArgs e)
 			// Get this entry's data from the db and fill in the form
 
 			var sql = new SQLString(@"select ct_name, ct_sort_seq, ct_default from categories where ct_id = @categoryId");
-			sql = sql.Replace("categoryId", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("categoryId", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -131,12 +131,12 @@ void on_update ()
 				ct_default = @df
 				where ct_id = @id");
 
-			sql = sql.Replace("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("na", name.Value);
-		sql = sql.Replace("ss", sort_seq.Value);
-		sql = sql.Replace("df", Util.bool_to_string(default_selection.Checked));
+		sql = sql.AddParameterWithValue("na", name.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("df", Util.bool_to_string(default_selection.Checked));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("categories.aspx");
 

@@ -85,7 +85,7 @@ Distributed under the terms of the GNU General Public License
 			isnull(pj_custom_dropdown_values3,'') [pj_custom_dropdown_values3]
 			from projects
 			where pj_id = projectId");
-                sql = sql.Replace("projectId", Convert.ToString(id));
+                sql = sql.AddParameterWithValue("projectId", Convert.ToString(id));
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
 
                 // Fill in this form
@@ -230,7 +230,7 @@ Distributed under the terms of the GNU General Public License
 			@cdl1,@cdl2,@cdl3,
 			@cdv1,@cdv2,@cdv3)");
 
-                sql = sql.Replace("poppass", pop3_password.Value);
+                sql = sql.AddParameterWithValue("poppass", pop3_password.Value);
 
 
             }
@@ -259,36 +259,36 @@ Distributed under the terms of the GNU General Public License
 				pj_custom_dropdown_values2 = @cdv2,
 				pj_custom_dropdown_values3 = @cdv3
 				where pj_id = @id");
-                sql = sql.Replace("id", Convert.ToString(id));
-                sql = sql.Replace("POP3_PASSWORD", pop3_password.Value);
+                sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+                sql = sql.AddParameterWithValue("POP3_PASSWORD", pop3_password.Value);
             }
 
 
 
-            sql = sql.Replace("name", name.Value);
-            sql = sql.Replace("active", Util.bool_to_string(active.Checked));
-            sql = sql.Replace("defaultuser", default_user.SelectedItem.Value);
-            sql = sql.Replace("autoasg", Util.bool_to_string(auto_assign.Checked));
-            sql = sql.Replace("autosub", Util.bool_to_string(auto_subscribe.Checked));
-            sql = sql.Replace("defaultsel", Util.bool_to_string(default_selection.Checked));
-            sql = sql.Replace("enablepop", Util.bool_to_string(enable_pop3.Checked));
-            sql = sql.Replace("popuser", pop3_username.Value);
-            sql = sql.Replace("popfrom", pop3_email_from.Value);
+            sql = sql.AddParameterWithValue("name", name.Value);
+            sql = sql.AddParameterWithValue("active", Util.bool_to_string(active.Checked));
+            sql = sql.AddParameterWithValue("defaultuser", default_user.SelectedItem.Value);
+            sql = sql.AddParameterWithValue("autoasg", Util.bool_to_string(auto_assign.Checked));
+            sql = sql.AddParameterWithValue("autosub", Util.bool_to_string(auto_subscribe.Checked));
+            sql = sql.AddParameterWithValue("defaultsel", Util.bool_to_string(default_selection.Checked));
+            sql = sql.AddParameterWithValue("enablepop", Util.bool_to_string(enable_pop3.Checked));
+            sql = sql.AddParameterWithValue("popuser", pop3_username.Value);
+            sql = sql.AddParameterWithValue("popfrom", pop3_email_from.Value);
 
-            sql = sql.Replace("desc", desc.Value);
+            sql = sql.AddParameterWithValue("desc", desc.Value);
 
-            sql = sql.Replace("ecd1", Util.bool_to_string(enable_custom_dropdown1.Checked));
-            sql = sql.Replace("ecd2", Util.bool_to_string(enable_custom_dropdown2.Checked));
-            sql = sql.Replace("ecd3", Util.bool_to_string(enable_custom_dropdown3.Checked));
+            sql = sql.AddParameterWithValue("ecd1", Util.bool_to_string(enable_custom_dropdown1.Checked));
+            sql = sql.AddParameterWithValue("ecd2", Util.bool_to_string(enable_custom_dropdown2.Checked));
+            sql = sql.AddParameterWithValue("ecd3", Util.bool_to_string(enable_custom_dropdown3.Checked));
 
 
-            sql = sql.Replace("cdl1", custom_dropdown_label1.Value);
-            sql = sql.Replace("cdl2", custom_dropdown_label2.Value);
-            sql = sql.Replace("cdl3", custom_dropdown_label3.Value);
+            sql = sql.AddParameterWithValue("cdl1", custom_dropdown_label1.Value);
+            sql = sql.AddParameterWithValue("cdl2", custom_dropdown_label2.Value);
+            sql = sql.AddParameterWithValue("cdl3", custom_dropdown_label3.Value);
 
-            sql = sql.Replace("cdv1", custom_dropdown_values1.Value);
-            sql = sql.Replace("cdv2", custom_dropdown_values2.Value);
-            sql = sql.Replace("cdv3", custom_dropdown_values3.Value);
+            sql = sql.AddParameterWithValue("cdv1", custom_dropdown_values1.Value);
+            sql = sql.AddParameterWithValue("cdv2", custom_dropdown_values2.Value);
+            sql = sql.AddParameterWithValue("cdv3", custom_dropdown_values3.Value);
 
             btnet.DbUtil.execute_nonquery(sql);
             Server.Transfer("projects.aspx");

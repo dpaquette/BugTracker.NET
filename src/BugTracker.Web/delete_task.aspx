@@ -49,8 +49,8 @@ void Page_Load(Object sender, EventArgs e)
 		// do delete here
 
 		sql = new SQLString(@"delete bug_tasks where tsk_id = @tsk_id and tsk_bug = @bugid");
-		sql = sql.Replace("tsk_id", string_tsk_id);
-		sql = sql.Replace("bugid", string_bugid);
+		sql = sql.AddParameterWithValue("tsk_id", string_tsk_id);
+		sql = sql.AddParameterWithValue("bugid", string_bugid);
 		btnet.DbUtil.execute_nonquery(sql);
 		Response.Redirect ("tasks.aspx?bugid=" + string_bugid);
 	}
@@ -64,8 +64,8 @@ void Page_Load(Object sender, EventArgs e)
 		back_href.HRef = "tasks.aspx?bugid=" + string_bugid;
 
 		sql = new SQLString(@"select tsk_description from bug_tasks where tsk_id = @tsk_id and tsk_bug = @bugid");
-		sql = sql.Replace("tsk_id", string_tsk_id);
-		sql = sql.Replace("bugid", string_bugid);
+		sql = sql.AddParameterWithValue("tsk_id", string_tsk_id);
+		sql = sql.AddParameterWithValue("bugid", string_bugid);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

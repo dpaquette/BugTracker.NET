@@ -50,13 +50,13 @@ namespace btnet
 
                         // check if email exists
                         SQLString sql = new SQLString("select count(1) from users where us_email = @email");
-                        sql.Replace("email", email.Value);
+                        sql.AddParameterWithValue("email", email.Value);
                         user_count = (int)DbUtil.execute_scalar(sql);
 
                         if (user_count == 1)
                         {
                             sql = new SQLString("select us_id from users where us_email = @email");
-                            sql.Replace("email", email.Value);
+                            sql.AddParameterWithValue("email", email.Value);
                             user_id = (int)DbUtil.execute_scalar(sql);
                         }
 
@@ -67,13 +67,13 @@ namespace btnet
                         // check if email exists
                         SQLString sql = new SQLString(
                                                     "select count(1) from users where isnull(us_email,'') != '' and  us_username = @username");
-                        sql.Replace("username", username.Value);
+                        sql.AddParameterWithValue("username", username.Value);
                         user_count = (int)DbUtil.execute_scalar(sql);
 
                         if (user_count == 1)
                         {
                             sql = new SQLString("select us_id from users where us_username = @username");
-                            sql.Replace("username", username.Value);
+                            sql.AddParameterWithValue("username", username.Value);
                             user_id = (int)DbUtil.execute_scalar(sql);
                         }
                     }
@@ -82,16 +82,16 @@ namespace btnet
                         // check if email exists
                         SQLString sql = new SQLString(
                                                     "select count(1) from users where us_username = @username and us_email = @email");
-                        sql.Replace("username", username.Value);
-                        sql.Replace("email", email.Value);
+                        sql.AddParameterWithValue("username", username.Value);
+                        sql.AddParameterWithValue("email", email.Value);
                         user_count = (int)DbUtil.execute_scalar(sql);
 
                         if (user_count == 1)
                         {
                             sql = new SQLString(
                                                             "select us_id from users where us_username = @username and us_email = @email");
-                            sql.Replace("username", username.Value);
-                            sql.Replace("email", email.Value);
+                            sql.AddParameterWithValue("username", username.Value);
+                            sql.AddParameterWithValue("email", email.Value);
                             user_id = (int)DbUtil.execute_scalar(sql);
                         }
                     }
@@ -113,8 +113,8 @@ insert into emailed_links
 
 select @username us_username, @email us_email");
 
-                        sql = sql.Replace("guid", guid);
-                        sql = sql.Replace("user_id", Convert.ToString(user_id));
+                        sql = sql.AddParameterWithValue("guid", guid);
+                        sql = sql.AddParameterWithValue("user_id", Convert.ToString(user_id));
 
                         DataRow dr = DbUtil.get_datarow(sql);
 

@@ -57,8 +57,8 @@ end [view<br>history<br>(svn log)]");
 //	if (websvn_url != "")
 //	{
 //		sql += ",\n '<a target=_blank href=\"" + websvn_url + "\">WebSvn</a>' [WebSvn<br>URL]";
-//		sql = sql.Replace("$PATH","' + svnap_path + '");
-//		sql = sql.Replace("$REV", "' + convert(varchar,svnrev_revision) + '");
+//		sql = sql.AddParameterWithValue("$PATH","' + svnap_path + '");
+//		sql = sql.AddParameterWithValue("$REV", "' + convert(varchar,svnrev_revision) + '");
 //	}
 
 	sql.Append(@"
@@ -67,7 +67,7 @@ end [view<br>history<br>(svn log)]");
 		where svnrev_bug = @bg
 		order by svnrev_revision desc, svnap_path");
 
-	sql = sql.Replace("bg", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 }

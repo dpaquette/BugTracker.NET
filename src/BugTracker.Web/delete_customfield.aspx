@@ -36,14 +36,14 @@ void Page_Load(Object sender, EventArgs e)
 			where so.name = 'bugs'
 			and sc.colorder = @id");
 
-        sql = sql.Replace("id", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("id", Util.sanitize_integer(row_id.Value));
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		// if there is a default, delete it
 		if (dr["default_constraint_name"].ToString() != "")
 		{
 			sql = new SQLString(@"alter table bugs drop constraint @df");
-			sql = sql.Replace("df", (string) dr["default_constraint_name"]);
+			sql = sql.AddParameterWithValue("df", (string) dr["default_constraint_name"]);
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 
@@ -53,15 +53,15 @@ void Page_Load(Object sender, EventArgs e)
 alter table orgs drop column @orgcolumn]
 alter table bugs drop column @nm");
 
-        sql.Replace("orgcolumn", "og_" + dr["column_name"] + "_field_permission_level");
-		sql = sql.Replace("nm", (string) dr["column_name"]);
+        sql.AddParameterWithValue("orgcolumn", "og_" + dr["column_name"] + "_field_permission_level");
+		sql = sql.AddParameterWithValue("nm", (string) dr["column_name"]);
 		btnet.DbUtil.execute_nonquery(sql);
 
 
 		//delete row from custom column table
 		sql = new SQLString(@"delete from custom_col_metadata
 		where ccm_colorder = @num");
-        sql = sql.Replace("num", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("num", Util.sanitize_integer(row_id.Value));
 		
 		Application["custom_columns_dataset"]  = null;
 		btnet.DbUtil.execute_nonquery(sql);
@@ -81,7 +81,7 @@ alter table bugs drop column @nm");
 			where so.name = 'bugs'
 			and sc.colorder = @id");
 
-		sql = sql.Replace("id",id);
+		sql = sql.AddParameterWithValue("id",id);
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		confirm_href.InnerText = "confirm delete of \""

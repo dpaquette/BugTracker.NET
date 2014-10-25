@@ -38,7 +38,7 @@ void Page_Load(Object sender, EventArgs e)
 			var sql = new SQLString(@"use master
 				create database @db");
 
-			sql = sql.Replace("db", dbname);
+			sql = sql.AddParameterWithValue("db", dbname);
 			btnet.DbUtil.execute_nonquery(sql);
 
 			Response.Write ("<font color=red><b>Database Created.</b></font>");

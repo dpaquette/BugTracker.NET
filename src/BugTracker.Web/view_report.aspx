@@ -49,7 +49,7 @@ void Page_Load(Object sender, EventArgs e)
 		from reports
 		where rp_id = @id");
 
-	sql = sql.Replace("id", string_id);
+	sql = sql.AddParameterWithValue("id", string_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow (sql);
 

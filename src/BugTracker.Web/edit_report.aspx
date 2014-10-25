@@ -61,7 +61,7 @@ void Page_Load(Object sender, EventArgs e) {
 			sql = new SQLString(@"select
 				rp_desc, rp_sql, rp_chart_type
 				from reports where rp_id = @rpid");
-			sql = sql.Replace("rpid", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("rpid", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -140,11 +140,11 @@ void on_update()
 				rp_sql = @sq,
 				rp_chart_type = @ct
 				where rp_id = @id");
-			sql = sql.Replace("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 		}
 
-		sql = sql.Replace("$de", desc.Value.Replace("'","''"));
-		sql = sql.Replace("$sq", Server.HtmlDecode(sql_text.Value.Replace("'", "''")));
+		sql = sql.AddParameterWithValue("$de", desc.Value.Replace("'","''"));
+		sql = sql.AddParameterWithValue("$sq", Server.HtmlDecode(sql_text.Value.Replace("'", "''")));
 
 		if (pie.Checked) {
 			ct = "pie";
@@ -156,7 +156,7 @@ void on_update()
 			ct = "table";
 		}
 
-		sql = sql.Replace("$ct", ct);
+		sql = sql.AddParameterWithValue("$ct", ct);
 
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer("reports.aspx");

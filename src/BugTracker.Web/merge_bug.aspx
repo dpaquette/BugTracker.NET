@@ -118,8 +118,8 @@ bool validate()
 	select @into_desc = bg_short_desc, @into_id = bg_id from bugs where bg_id = 2into
 	select @from_desc, @into_desc, @from_id, @into_id	");
 
-	sql = sql.Replace("from", from_bug.Value);
-	sql = sql.Replace("into", into_bug.Value);
+	sql = sql.AddParameterWithValue("from", from_bug.Value);
+	sql = sql.AddParameterWithValue("into", into_bug.Value);
 
 	dr = btnet.DbUtil.get_datarow(sql);
 
@@ -182,7 +182,7 @@ void on_update()
 		sql = new SQLString(@"select bp_id, bp_file from bug_posts
 			where bp_type = 'file' and bp_bug = @from");
 
-		sql = sql.Replace("from", prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("from", prev_from_bug.Value);
 		DataSet ds = btnet.DbUtil.get_dataset(sql);
 
 		foreach (DataRow dr in ds.Tables[0].Rows)
@@ -237,8 +237,8 @@ update hg_revisions  set hgrev_bug  = @into where hgrev_bug = @from
 update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 ");
 			
-		sql = sql.Replace("from",prev_from_bug.Value);
-		sql = sql.Replace("into",prev_into_bug.Value);
+		sql = sql.AddParameterWithValue("from",prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("into",prev_into_bug.Value);
 
 		btnet.DbUtil.execute_nonquery(sql);
 
@@ -249,9 +249,9 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 			values(@into, @us,getdate(), 'comment', 'merged bug @from into this bug:', 'merged bug @from into this bug:')
 			select scope_identity()");
 
-		sql = sql.Replace("@from",prev_from_bug.Value);
-		sql = sql.Replace("@into",prev_into_bug.Value);
-		sql = sql.Replace("@us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("@from",prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("@into",prev_into_bug.Value);
+		sql = sql.AddParameterWithValue("@us",Convert.ToString(security.user.usid));
 
 		int comment_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -261,8 +261,8 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 			from bugs where bg_id = @from
 			and bp_id = @bc");
 
-		sql = sql.Replace("from",prev_from_bug.Value);
-		sql = sql.Replace("bc",Convert.ToString(comment_id));
+		sql = sql.AddParameterWithValue("from",prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("bc",Convert.ToString(comment_id));
 		btnet.DbUtil.execute_nonquery(sql);
 
 

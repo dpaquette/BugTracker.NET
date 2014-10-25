@@ -62,7 +62,7 @@ void Page_Load(Object sender, EventArgs e)
         from bug_posts where bp_id = @id");
     }
 
-    sql = sql.Replace("id", Convert.ToString(id));
+    sql = sql.AddParameterWithValue("id", Convert.ToString(id));
     DataRow dr = btnet.DbUtil.get_datarow(sql);
 
     bugid = (int) dr["bp_bug"];
@@ -150,20 +150,20 @@ void on_update()
         if (use_fckeditor)
         {
             string text = btnet.Util.strip_dangerous_tags(comment.Value);
-            sql = sql.Replace("cm", text.Replace("'", "&#39;"));
-            sql = sql.Replace("cs", btnet.Util.strip_html(comment.Value).Replace("'", "''"));
-            sql = sql.Replace("cn", "text/html");
+            sql = sql.AddParameterWithValue("cm", text.Replace("'", "&#39;"));
+            sql = sql.AddParameterWithValue("cs", btnet.Util.strip_html(comment.Value).Replace("'", "''"));
+            sql = sql.AddParameterWithValue("cn", "text/html");
         }
         else
         {
-            sql = sql.Replace("cm", HttpUtility.HtmlDecode(comment.Value).Replace("'", "''"));
-            sql = sql.Replace("cs", comment.Value.Replace("'", "''"));
-            sql = sql.Replace("cn", "text/plain");
+            sql = sql.AddParameterWithValue("cm", HttpUtility.HtmlDecode(comment.Value).Replace("'", "''"));
+            sql = sql.AddParameterWithValue("cs", comment.Value.Replace("'", "''"));
+            sql = sql.AddParameterWithValue("cn", "text/plain");
         }
 
-        sql = sql.Replace("id", Convert.ToString(id));
-        sql = sql.Replace("bugid", Convert.ToString(bugid));
-        sql = sql.Replace("internal", btnet.Util.bool_to_string(internal_only.Checked));
+        sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+        sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugid));
+        sql = sql.AddParameterWithValue("internal", btnet.Util.bool_to_string(internal_only.Checked));
         DataRow dr = btnet.DbUtil.get_datarow(sql);
 
         // Don't send notifications for internal only comments.

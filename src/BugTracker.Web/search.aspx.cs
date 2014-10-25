@@ -977,8 +977,8 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
 			where isnull(pu_permission_level,@dpl) <> 0
 			order by pj_name;");
 
-                sql = sql.Replace("us", Convert.ToString(security.user.usid));
-                sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+                sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
             }
 
 
@@ -989,7 +989,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
             else
             {
                 sql.Append(" select og_id, og_name from orgs where og_id = @ogId order by og_name;");
-                sql.Replace("ogId", security.user.org.ToString());
+                sql.AddParameterWithValue("ogId", security.user.org.ToString());
                 org.Visible = false;
                 org_label.Visible = false;
             }

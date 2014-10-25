@@ -141,12 +141,12 @@ ELSE
 select 0
 ");
 
-    sql = sql.Replace("svnrev_revision", revision);
-    sql = sql.Replace("svnrev_bug", bugid);
-    sql = sql.Replace("svnrev_repository", repo);
-    sql = sql.Replace("svnrev_author", author);
-    sql = sql.Replace("svnrev_svn_date", date);
-    sql = sql.Replace("svnrev_msg", msg);
+    sql = sql.AddParameterWithValue("svnrev_revision", revision);
+    sql = sql.AddParameterWithValue("svnrev_bug", bugid);
+    sql = sql.AddParameterWithValue("svnrev_repository", repo);
+    sql = sql.AddParameterWithValue("svnrev_author", author);
+    sql = sql.AddParameterWithValue("svnrev_svn_date", date);
+    sql = sql.AddParameterWithValue("svnrev_msg", msg);
 
     int svnrev_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -177,9 +177,9 @@ values
 @svnap_path
 )");
 
-            sql = sql.Replace("svnap_svnrev_id", Convert.ToString(svnrev_id));
-            sql = sql.Replace("svnap_action", action);
-            sql = sql.Replace("svnap_path", file_path);
+            sql = sql.AddParameterWithValue("svnap_svnrev_id", Convert.ToString(svnrev_id));
+            sql = sql.AddParameterWithValue("svnap_action", action);
+            sql = sql.AddParameterWithValue("svnap_path", file_path);
 
             btnet.DbUtil.execute_nonquery(sql);
 

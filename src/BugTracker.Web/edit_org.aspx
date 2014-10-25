@@ -101,7 +101,7 @@ void Page_Load(Object sender, EventArgs e)
 			// Get this entry's data from the db and fill in the form
 
 			sql = new SQLString(@"select *,isnull(og_domain,'') og_domain2 from orgs where og_id = @og_id");
-			sql = sql.Replace("og_id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("og_id", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -292,37 +292,37 @@ update orgs set
 	$custom3$
 	where og_id = $og_id";
 
-			sql = sql.Replace("og_id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("og_id", Convert.ToString(id));
 
 		}
 
-		sql = sql.Replace("name", og_name.Value);
-		sql = sql.Replace("domain", og_domain.Value);
-		sql = sql.Replace("active", Util.bool_to_string(og_active.Checked));
-		sql = sql.Replace("non_admins_can_use", Util.bool_to_string(non_admins_can_use.Checked));
-		sql = sql.Replace("external_user", Util.bool_to_string(external_user.Checked));
-		sql = sql.Replace("can_edit_sql", Util.bool_to_string(can_edit_sql.Checked));
-		sql = sql.Replace("can_delete_bug", Util.bool_to_string(can_delete_bug.Checked));
-		sql = sql.Replace("can_edit_and_delete_posts", Util.bool_to_string(can_edit_and_delete_posts.Checked));
-		sql = sql.Replace("can_merge_bugs", Util.bool_to_string(can_merge_bugs.Checked));
-		sql = sql.Replace("can_mass_edit_bugs", Util.bool_to_string(can_mass_edit_bugs.Checked));
-		sql = sql.Replace("can_use_reports", Util.bool_to_string(can_use_reports.Checked));
-		sql = sql.Replace("can_edit_reports", Util.bool_to_string(can_edit_reports.Checked));
-		sql = sql.Replace("can_be_assigned_to", Util.bool_to_string(can_be_assigned_to.Checked));
-		sql = sql.Replace("can_view_tasks", Util.bool_to_string(can_view_tasks.Checked));
-		sql = sql.Replace("can_edit_tasks", Util.bool_to_string(can_edit_tasks.Checked));
-		sql = sql.Replace("can_search", Util.bool_to_string(can_search.Checked));
-		sql = sql.Replace("can_only_see_own_reported", Util.bool_to_string(can_only_see_own_reported.Checked));
-		sql = sql.Replace("can_assign_to_internal_users", Util.bool_to_string(can_assign_to_internal_users.Checked));
-		sql = sql.Replace("other_orgs", other_orgs.SelectedValue);
-		sql = sql.Replace("flp_project", project_field.SelectedValue);
-		sql = sql.Replace("flp_org", org_field.SelectedValue);
-		sql = sql.Replace("flp_category", category_field.SelectedValue);
-		sql = sql.Replace("flp_tags", tags_field.SelectedValue);
-		sql = sql.Replace("flp_priority", priority_field.SelectedValue);
-		sql = sql.Replace("flp_status", status_field.SelectedValue);
-		sql = sql.Replace("flp_assigned_to", assigned_to_field.SelectedValue);
-		sql = sql.Replace("flp_udf", udf_field.SelectedValue);
+		sql = sql.AddParameterWithValue("name", og_name.Value);
+		sql = sql.AddParameterWithValue("domain", og_domain.Value);
+		sql = sql.AddParameterWithValue("active", Util.bool_to_string(og_active.Checked));
+		sql = sql.AddParameterWithValue("non_admins_can_use", Util.bool_to_string(non_admins_can_use.Checked));
+		sql = sql.AddParameterWithValue("external_user", Util.bool_to_string(external_user.Checked));
+		sql = sql.AddParameterWithValue("can_edit_sql", Util.bool_to_string(can_edit_sql.Checked));
+		sql = sql.AddParameterWithValue("can_delete_bug", Util.bool_to_string(can_delete_bug.Checked));
+		sql = sql.AddParameterWithValue("can_edit_and_delete_posts", Util.bool_to_string(can_edit_and_delete_posts.Checked));
+		sql = sql.AddParameterWithValue("can_merge_bugs", Util.bool_to_string(can_merge_bugs.Checked));
+		sql = sql.AddParameterWithValue("can_mass_edit_bugs", Util.bool_to_string(can_mass_edit_bugs.Checked));
+		sql = sql.AddParameterWithValue("can_use_reports", Util.bool_to_string(can_use_reports.Checked));
+		sql = sql.AddParameterWithValue("can_edit_reports", Util.bool_to_string(can_edit_reports.Checked));
+		sql = sql.AddParameterWithValue("can_be_assigned_to", Util.bool_to_string(can_be_assigned_to.Checked));
+		sql = sql.AddParameterWithValue("can_view_tasks", Util.bool_to_string(can_view_tasks.Checked));
+		sql = sql.AddParameterWithValue("can_edit_tasks", Util.bool_to_string(can_edit_tasks.Checked));
+		sql = sql.AddParameterWithValue("can_search", Util.bool_to_string(can_search.Checked));
+		sql = sql.AddParameterWithValue("can_only_see_own_reported", Util.bool_to_string(can_only_see_own_reported.Checked));
+		sql = sql.AddParameterWithValue("can_assign_to_internal_users", Util.bool_to_string(can_assign_to_internal_users.Checked));
+		sql = sql.AddParameterWithValue("other_orgs", other_orgs.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_project", project_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_org", org_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_category", category_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_tags", tags_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_priority", priority_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_status", status_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_assigned_to", assigned_to_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_udf", udf_field.SelectedValue);
 
 		if (id == 0)  // insert new
 		{

@@ -36,7 +36,7 @@ order by hgrev_revision desc, hgap_path");
     int hgap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
 	
 	string_affected_path_id = Convert.ToString(hgap_id);
-	sql = sql.Replace("id", string_affected_path_id);
+	sql = sql.AddParameterWithValue("id", string_affected_path_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

@@ -33,8 +33,8 @@ select *,
 delete from emailed_links
 	where el_date < dateadd(n,-240,getdate())");
 
-	sql = sql.Replace("minutes",Util.get_setting("RegistrationExpiration","20"));
-	sql = sql.Replace("guid",guid.Replace("'","''"));
+	sql = sql.AddParameterWithValue("minutes",Util.get_setting("RegistrationExpiration","20"));
+	sql = sql.AddParameterWithValue("guid",guid.Replace("'","''"));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -61,7 +61,7 @@ delete from emailed_links
 		
 		//  Delete the temp link
 		sql = new SQLString(@"delete from emailed_links where el_id = @guid");
-		sql = sql.Replace("guid",guid);
+		sql = sql.AddParameterWithValue("guid",guid);
 		btnet.DbUtil.execute_nonquery(sql);
 
 		msg.InnerHtml = "Your registration is complete.";

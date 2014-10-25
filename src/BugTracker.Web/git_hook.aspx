@@ -191,12 +191,12 @@ ELSE
 
 ");
 	
-	sql = sql.Replace("gitcom_commit",commit);
-	sql = sql.Replace("gitcom_bug", Convert.ToString(bug));
-	sql = sql.Replace("gitcom_repository",repo);
-	sql = sql.Replace("gitcom_author",author);
-	sql = sql.Replace("gitcom_git_date",date);
-	sql = sql.Replace("gitcom_msg",msg);
+	sql = sql.AddParameterWithValue("gitcom_commit",commit);
+	sql = sql.AddParameterWithValue("gitcom_bug", Convert.ToString(bug));
+	sql = sql.AddParameterWithValue("gitcom_repository",repo);
+	sql = sql.AddParameterWithValue("gitcom_author",author);
+	sql = sql.AddParameterWithValue("gitcom_git_date",date);
+	sql = sql.AddParameterWithValue("gitcom_msg",msg);
 
 	int gitcom_id =  Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));	
 
@@ -223,9 +223,9 @@ values
 )
 	");		
 
-			sql = sql.Replace("gitap_gitcom_id", gitcom_id_string);
-			sql = sql.Replace("gitap_action", actions[i]);
-			sql = sql.Replace("gitap_path", paths[i]);
+			sql = sql.AddParameterWithValue("gitap_gitcom_id", gitcom_id_string);
+			sql = sql.AddParameterWithValue("gitap_action", actions[i]);
+			sql = sql.AddParameterWithValue("gitap_path", paths[i]);
 
 			btnet.DbUtil.execute_nonquery(sql);
 		}

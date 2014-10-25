@@ -69,7 +69,7 @@ void Page_Load(Object sender, EventArgs e)
 		// Get this entry's data from the db and fill in the form
 
 		sql = new SQLString(@"select bp_comment, bp_file, bp_hidden_from_external_users from bug_posts where bp_id = @bugPostId");
-		sql = sql.Replace("bugPostId", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("bugPostId", Convert.ToString(id));
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		// Fill in this form
@@ -109,9 +109,9 @@ void on_update()
 			bp_hidden_from_external_users = @internal
 			where bp_id = @bugPostId");
 
-		sql = sql.Replace("bugPostId", Convert.ToString(id));
-		sql = sql.Replace("comment", desc.Value.Replace("'", "''"));
-		sql = sql.Replace("internal", btnet.Util.bool_to_string(internal_only.Checked));
+		sql = sql.AddParameterWithValue("bugPostId", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("comment", desc.Value.Replace("'", "''"));
+		sql = sql.AddParameterWithValue("internal", btnet.Util.bool_to_string(internal_only.Checked));
 
 		btnet.DbUtil.execute_nonquery(sql);
 

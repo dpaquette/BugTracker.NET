@@ -37,7 +37,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = new SQLString(@"
 delete reports where rp_id = $1;
 delete dashboard_items where ds_report = @reportId");
-        sql = sql.Replace("reportId", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("reportId", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("reports.aspx");
 	}
@@ -49,7 +49,7 @@ delete dashboard_items where ds_report = @reportId");
 		string id = Util.sanitize_integer(Request["id"] );
 
 		sql = new SQLString(@"select rp_desc from reports where rp_id = @id");
-		sql = sql.Replace("id", id);
+		sql = sql.AddParameterWithValue("id", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

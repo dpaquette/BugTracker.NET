@@ -120,8 +120,8 @@ left outer join users on tsk_assigned_to_user = us_id
 where tsk_bug = @bugid 
 order by tsk_sort_sequence, tsk_id");
 
-	sql = sql.Replace("bugid", Convert.ToString(bugid));
-	sql = sql.Replace("ses", ses);
+	sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("ses", ses);
 	
 	ds = btnet.DbUtil.get_dataset(sql);
 

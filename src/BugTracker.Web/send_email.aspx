@@ -276,7 +276,7 @@ function my_on_load()
 				}
 			}
 
-			sql = sql.Replace("pr", Convert.ToString(project));
+			sql = sql.AddParameterWithValue("pr", Convert.ToString(project));
 			DataSet ds_users_for_this_project = btnet.DbUtil.get_dataset(sql);
 
 			// remember the users for this this project

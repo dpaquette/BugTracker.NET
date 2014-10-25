@@ -112,7 +112,7 @@ select us_id, us_username from users order by us_username");
 				from queries where qu_id = @quid");
 
 
-			sql = sql.Replace("$1", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("$1", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			if ((int) dr["qu_user"] != security.user.usid)
@@ -232,7 +232,7 @@ Boolean validate()
 	{
 		// See if name is already used?
 		sql = new SQLString("select count(1) from queries where qu_desc = @de");
-		sql = sql.Replace("de", desc.Value);
+		sql = sql.AddParameterWithValue("de", desc.Value);
 		int query_count = (int) btnet.DbUtil.execute_scalar(sql);
 
 		if (query_count == 1)
@@ -246,8 +246,8 @@ Boolean validate()
 	{
 		// See if name is already used?
 		sql = new SQLString("select count(1) from queries where qu_desc = @de and qu_id <> @de");
-		sql = sql.Replace("de", desc.Value);
-		sql = sql.Replace("id", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("de", desc.Value);
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 		int query_count = (int) btnet.DbUtil.execute_scalar(sql);
 
 		if (query_count == 1)
@@ -285,41 +285,41 @@ void on_update()
 				qu_org = @rl
 				where qu_id = @id");
 
-			sql = sql.Replace("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("de", desc.Value);
+		sql = sql.AddParameterWithValue("de", desc.Value);
 //		if (Util.get_setting("HtmlEncodeSql","0") == "1")
 //		{
-//			sql = sql.Replace("$sq", Server.HtmlDecode(sql_text.Value.Replace("'","''")));
+//			sql = sql.AddParameterWithValue("$sq", Server.HtmlDecode(sql_text.Value.Replace("'","''")));
 //		}
 //		else
 //		{
-			sql = sql.Replace("sq", sql_text.Value);
+			sql = sql.AddParameterWithValue("sq", sql_text.Value);
 //		}
 
 		if (security.user.is_admin || security.user.can_edit_sql)
 		{
 			if (vis_everybody.Checked)
 			{
-				sql = sql.Replace("us", "0");
-				sql = sql.Replace("rl", "0");
+				sql = sql.AddParameterWithValue("us", "0");
+				sql = sql.AddParameterWithValue("rl", "0");
 			}
 			else if (vis_user.Checked)
 			{
-				sql = sql.Replace("us", Convert.ToString(user.SelectedItem.Value));
-				sql = sql.Replace("rl", "0");
+				sql = sql.AddParameterWithValue("us", Convert.ToString(user.SelectedItem.Value));
+				sql = sql.AddParameterWithValue("rl", "0");
 			}
 			else
 			{
-				sql = sql.Replace("rl", Convert.ToString(org.SelectedItem.Value));
-				sql = sql.Replace("us", "0");
+				sql = sql.AddParameterWithValue("rl", Convert.ToString(org.SelectedItem.Value));
+				sql = sql.AddParameterWithValue("us", "0");
 			}
 		}
 		else
 		{
-			sql = sql.Replace("us", Convert.ToString(security.user.usid));
-			sql = sql.Replace("rl", "0");
+			sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("rl", "0");
 		}
 		
 		btnet.DbUtil.execute_nonquery(sql);

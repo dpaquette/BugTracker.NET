@@ -48,13 +48,13 @@ void Page_Load(Object sender, EventArgs e)
 	{
 		// save the filename before deleting the row
 		sql = new SQLString(@"select bp_file from bug_posts where bp_id = @ba");
-		sql = sql.Replace("ba", attachment_id_string);
+		sql = sql.AddParameterWithValue("ba", attachment_id_string);
 		string filename = (string) btnet.DbUtil.execute_scalar(sql);
 
 		// delete the row representing the attachment
 		sql = new SQLString(@"delete bug_post_attachments where bpa_post = @ba
             delete bug_posts where bp_id = @ba");
-		sql = sql.Replace("ba", attachment_id_string);
+		sql = sql.AddParameterWithValue("ba", attachment_id_string);
 		btnet.DbUtil.execute_nonquery(sql);
 
 		// delete the file too
@@ -85,7 +85,7 @@ void Page_Load(Object sender, EventArgs e)
 		back_href.HRef = "edit_bug.aspx?id=" + bug_id_string;
 
 		sql = new SQLString(@"select bp_file from bug_posts where bp_id = @id");
-		sql = sql.Replace("id", attachment_id_string);
+		sql = sql.AddParameterWithValue("id", attachment_id_string);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

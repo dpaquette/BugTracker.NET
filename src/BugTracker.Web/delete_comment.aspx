@@ -39,7 +39,7 @@ void Page_Load(Object sender, EventArgs e)
 		// do delete here
 
 		sql = new SQLString(@"delete bug_posts where bp_id = @bpid");
-        sql = sql.Replace("bpid", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("bpid", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Response.Redirect ("edit_bug.aspx?id=" + btnet.Util.sanitize_integer(redirect_bugid.Value));
 	}
@@ -64,7 +64,7 @@ void Page_Load(Object sender, EventArgs e)
 		back_href.HRef = "edit_bug.aspx?id=" + bug_id;
 
 		sql = new SQLString(@"select bp_comment from bug_posts where bp_id = @bpid");
-		sql = sql.Replace("bpid", id);
+		sql = sql.AddParameterWithValue("bpid", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

@@ -51,8 +51,8 @@ void Page_Load(Object sender, EventArgs e)
 			order by us_username;
 			select pj_name from projects where pj_id = @pj;");
 
-        sql = sql.Replace("pj", project_id_string);
-		sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
+        sql = sql.AddParameterWithValue("pj", project_id_string);
+		sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
         DataSet ds = btnet.DbUtil.get_dataset(sql);
 
@@ -86,8 +86,8 @@ void on_update()
 		            insert into project_user_xref (pu_user, pu_project, pu_permission_level)
 		            values (@us, @pj, @pu); ");
 
-		sql = sql.Replace("pj", Util.sanitize_integer(Request["id"]));
-		sql = sql.Replace("us", Convert.ToString(dgi.Cells[1].Text));
+		sql = sql.AddParameterWithValue("pj", Util.sanitize_integer(Request["id"]));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(dgi.Cells[1].Text));
 
 		rb = (RadioButton) dgi.FindControl("none");
 		if (rb.Checked)
@@ -117,7 +117,7 @@ void on_update()
 
 
 
-		sql = sql.Replace("pu", permission_level);
+		sql = sql.AddParameterWithValue("pu", permission_level);
 
 
         btnet.DbUtil.execute_nonquery(sql);

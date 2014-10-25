@@ -58,7 +58,7 @@ void Page_Load(Object sender, EventArgs e)
 		back_href.HRef = "edit_bug.aspx?id=" + id;
 
 		sql = new SQLString(@"select bg_short_desc from bugs where bg_id = @bugId");
-		sql = sql.Replace("bugId", id);
+		sql = sql.AddParameterWithValue("bugId", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

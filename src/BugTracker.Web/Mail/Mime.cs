@@ -54,7 +54,7 @@ namespace btnet.Mail
             if (bugid != 0)
             {
                 var sql = new SQLString("select count(1) from bugs where bg_id = @bg");
-                sql = sql.Replace("bg", Convert.ToString(bugid));
+                sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
                 int bug_count = (int)btnet.DbUtil.execute_scalar(sql);
                 if (bug_count != 1)
                 {
@@ -142,7 +142,7 @@ where us_username = @us");
                 username = Email.simplify_email_address(from_addr);
 
                 // Does a user with this email already exist?
-                sql = sql.Replace("us", username);
+                sql = sql.AddParameterWithValue("us", username);
 
                 // We maybe found user@example.com, so let's use him as the user instead of the btnet_service.exe user
                 dr = btnet.DbUtil.get_datarow(sql);
@@ -169,7 +169,7 @@ where us_username = @us");
             else
             {
                 // Use the btnet_service.exe user as the username
-                sql = sql.Replace("$us", username.Replace("'", "''"));
+                sql = sql.AddParameterWithValue("$us", username.Replace("'", "''"));
                 dr = btnet.DbUtil.get_datarow(sql);
             }
 

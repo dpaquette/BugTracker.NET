@@ -113,8 +113,8 @@ left outer join project_user_xref
 where se_id = @se
 and us_active = 1");
 
-				sql = sql.Replace("se", se_id);
-				sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
+				sql = sql.AddParameterWithValue("se", se_id);
+				sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 				dr = btnet.DbUtil.get_datarow(sql);
 
 			}
@@ -146,7 +146,7 @@ left outer join project_user_xref
 where us_username = 'guest'
 and us_active = 1");
 
-					sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel","2"));
+					sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 					dr = btnet.DbUtil.get_datarow(sql);
 				}
 			}
@@ -211,8 +211,8 @@ and us_active = 1");
 			btnet.Util.write_to_log("guid=" + guid);
 			
 			var sql = new SQLString(@"insert into sessions (se_id, se_user) values(@gu, @us)");
-			sql = sql.Replace("gu", guid);
-			sql = sql.Replace("us", Convert.ToString(userid));
+			sql = sql.AddParameterWithValue("gu", guid);
+			sql = sql.AddParameterWithValue("us", Convert.ToString(userid));
 
 			btnet.DbUtil.execute_nonquery(sql);			
 

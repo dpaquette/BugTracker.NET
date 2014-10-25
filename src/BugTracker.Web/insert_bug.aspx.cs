@@ -137,7 +137,7 @@ namespace btnet
 			from bugs
 			where bg_id = @id");
 
-                sql = sql.Replace("id", Convert.ToString(bugid));
+                sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
 
                 if (Convert.ToInt32(btnet.DbUtil.execute_scalar(sql)) == 0)
                 {
@@ -274,15 +274,15 @@ namespace btnet
 				where bg_id = @bg
 				");
 
-                    sql = sql.Replace("st", StatusResultingFromIncomingEmail);
-                    sql = sql.Replace("bg", Convert.ToString(bugid));
+                    sql = sql.AddParameterWithValue("st", StatusResultingFromIncomingEmail);
+                    sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
                     DbUtil.execute_nonquery(sql);
 
                 }
 
                 sql = new SQLString("select bg_short_desc from bugs where bg_id = @bg");
 
-                sql = sql.Replace("bg", Convert.ToString(bugid));
+                sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
                 DataRow dr2 = btnet.DbUtil.get_datarow(sql);
 
 

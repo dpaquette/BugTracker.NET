@@ -87,9 +87,9 @@ void Page_Load(Object sender, EventArgs e)
 				insert into bug_posts
 						(bp_bug, bp_user, bp_date, bp_comment, bp_type)
 						values(@bg, @us, getdate(), N'deleted relationship to @bg2', 'update')");
-			sql = sql.Replace("bg2",Convert.ToString(bugid2));
-			sql = sql.Replace("bg",Convert.ToString(bugid));
-			sql = sql.Replace("us",Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("bg2",Convert.ToString(bugid2));
+			sql = sql.AddParameterWithValue("bg",Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 		else
@@ -117,7 +117,7 @@ void Page_Load(Object sender, EventArgs e)
 
 						// check if bug exists
 						sql = new SQLString(@"select count(1) from bugs where bg_id = @bg2");
-						sql = sql.Replace("bg2",Convert.ToString(bugid2));
+						sql = sql.AddParameterWithValue("bg2",Convert.ToString(bugid2));
 						rows = (int) btnet.DbUtil.execute_scalar(sql);
 
 						if (rows == 0)
@@ -128,8 +128,8 @@ void Page_Load(Object sender, EventArgs e)
 						{
 							// check if relationship exists
 							sql = new SQLString(@"select count(1) from bug_relationships where re_bug1 = @bg and re_bug2 = @bg2");
-							sql = sql.Replace("bg2",Convert.ToString(bugid2));
-							sql = sql.Replace("bg",Convert.ToString(bugid));
+							sql = sql.AddParameterWithValue("bg2",Convert.ToString(bugid2));
+							sql = sql.AddParameterWithValue("bg",Convert.ToString(bugid));
 							rows = (int) btnet.DbUtil.execute_scalar(sql);
 
 							if (rows > 0)
@@ -155,26 +155,26 @@ insert into bug_posts
 	(bp_bug, bp_user, bp_date, bp_comment, bp_type)
 	values(@bg, @us, getdate(), N'added relationship to ' + @bg2, 'update');");
 
-									sql = sql.Replace("bg2",Convert.ToString(bugid2));
-									sql = sql.Replace("bg",Convert.ToString(bugid));
-									sql = sql.Replace("us",Convert.ToString(security.user.usid));
-									sql = sql.Replace("ty",Request["type"].Replace("'","''"));
+									sql = sql.AddParameterWithValue("bg2",Convert.ToString(bugid2));
+									sql = sql.AddParameterWithValue("bg",Convert.ToString(bugid));
+									sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+									sql = sql.AddParameterWithValue("ty",Request["type"].Replace("'","''"));
 
 
 									if (siblings.Checked )
 									{
-										sql = sql.Replace("dir2","0");
-										sql = sql.Replace("dir1","0");
+										sql = sql.AddParameterWithValue("dir2","0");
+										sql = sql.AddParameterWithValue("dir1","0");
 									}
 									else if (child_to_parent.Checked)
 									{
-										sql = sql.Replace("dir2","1");
-										sql = sql.Replace("dir1","2");
+										sql = sql.AddParameterWithValue("dir2","1");
+										sql = sql.AddParameterWithValue("dir1","2");
 									}
 									else
 									{
-										sql = sql.Replace("dir2","2");
-										sql = sql.Replace("dir1","1");
+										sql = sql.AddParameterWithValue("dir2","2");
+										sql = sql.AddParameterWithValue("dir1","1");
 									}
 
 									btnet.DbUtil.execute_nonquery(sql);
@@ -216,7 +216,7 @@ where re_bug1 = @bg
 order by bg_id desc");
 
 
-	sql = sql.Replace("bg", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
 	sql = Util.alter_sql_per_project_permissions(sql, security);
 
 	ds = btnet.DbUtil.get_dataset(sql);

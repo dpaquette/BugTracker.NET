@@ -179,11 +179,11 @@ from bugs
 left outer join statuses on st_id = bg_status
 where bg_id = @bugid");
 
-                sql = sql.Replace("bugid", Convert.ToString(bugId));
+                sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugId));
 
                 DataSet ds_text_custom_cols = get_text_custom_cols();
 
-                sql = sql.Replace("$custom_cols", get_text_custom_cols_names(ds_text_custom_cols));
+                sql = sql.AddParameterWithValue("$custom_cols", get_text_custom_cols_names(ds_text_custom_cols));
                 
                 DataRow bugRow = DbUtil.get_datarow(sql);
                
@@ -195,7 +195,7 @@ where bg_id = @bugid");
                 where bp_type <> 'update'
                 and bp_hidden_from_external_users = 0
                 and bp_bug = @bugId");
-                sql.Replace("bugId", bugId.ToString());
+                sql.AddParameterWithValue("bugId", bugId.ToString());
                 DataSet bugPosts = DbUtil.get_dataset(sql);
 
                 IndexBug(bugRow, bugPosts.Tables[0]);

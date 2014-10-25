@@ -27,7 +27,7 @@ inner join git_affected_paths on gitap_gitcom_id = gitcom_id
 where gitap_id = @id");
 
     int gitap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("id", Convert.ToString(gitap_id));
+	sql = sql.AddParameterWithValue("id", Convert.ToString(gitap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

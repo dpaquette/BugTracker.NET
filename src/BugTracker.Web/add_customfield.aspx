@@ -208,48 +208,48 @@ alter table orgs add [og_$nm_field_permission_level] int null
 alter table bugs add [$nm] $dt $ln $null $df";
 
 		sql = sql.Replace("$nm", name.Value);
-		sql = sql.Replace("$dt", datatype.SelectedItem.Value);
+        sql = sql.Replace("$dt", datatype.SelectedItem.Value);
 
 		if (length.Value != "")
 		{
 			if (length.Value.StartsWith("("))
 			{
-				sql = sql.Replace("$ln", length.Value);
+                sql = sql.Replace("$ln", length.Value);
 			}
 			else
 			{
-				sql = sql.Replace("$ln", "(" + length.Value + ")");
+                sql = sql.Replace("$ln", "(" + length.Value + ")");
 			}
 		}
 		else
 		{
-			sql = sql.Replace("$ln", "");
+            sql = sql.Replace("$ln", "");
 		}
 
 		if (default_text.Value != "")
 		{
 			if (default_text.Value.StartsWith("("))
 			{
-				sql = sql.Replace("$df", "DEFAULT " + default_text.Value);
+                sql = sql.Replace("$df", "DEFAULT " + default_text.Value);
 			}
 			else
 			{
-				sql = sql.Replace("$df", "DEFAULT (" + default_text.Value + ")");
+                sql = sql.Replace("$df", "DEFAULT (" + default_text.Value + ")");
 			}
 		}
 		else
 		{
-			sql = sql.Replace("$df", "");
+            sql = sql.Replace("$df", "");
 		}
 
 
 		if (required.Checked)
 		{
-			sql = sql.Replace("$null", "NOT NULL");
+            sql = sql.Replace("$null", "NOT NULL");
 		}
 		else
 		{
-			sql = sql.Replace("$null", "NULL");
+            sql = sql.Replace("$null", "NULL");
 		}
 
 		bool alter_table_worked = false;
@@ -279,10 +279,10 @@ alter table bugs add [$nm] $dt $ln $null $df";
 				values(@colorder, N'$v', $ss, '$dt')";
 
 
-			sql = sql.Replace("$nm", name.Value);
-			sql = sql.Replace("$v", vals.Value.Replace("'", "''"));
-			sql = sql.Replace("$ss", sort_seq.Value);
-			sql = sql.Replace("$dt", dropdown_type.SelectedItem.Value.Replace("'", "''"));
+            sql = sql.Replace("$nm", name.Value);
+            sql = sql.Replace("$v", vals.Value.Replace("'", "''"));
+            sql = sql.Replace("$ss", sort_seq.Value);
+            sql = sql.Replace("$dt", dropdown_type.SelectedItem.Value.Replace("'", "''"));
 
 			btnet.DbUtil.execute_nonquery(new SQLString(sql));
 			Application["custom_columns_dataset"]  = null;

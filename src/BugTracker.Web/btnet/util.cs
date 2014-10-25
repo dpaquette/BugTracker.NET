@@ -514,9 +514,9 @@ namespace btnet
 
             var sql = new SQLString("update users set us_password = @en, us_salt = @salt where us_id = @id");
 
-            sql = sql.Replace("en", encrypted);
-            sql = sql.Replace("salt", Convert.ToString(salt));
-            sql = sql.Replace("id", Convert.ToString(us_id));
+            sql = sql.AddParameterWithValue("en", encrypted);
+            sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
+            sql = sql.AddParameterWithValue("id", Convert.ToString(us_id));
 
             btnet.DbUtil.execute_nonquery(sql);
         }
@@ -839,11 +839,11 @@ delete from #temp
 where us_id not in (select keep_me from #temp2)
 drop table #temp2";
 
-				sql = sql.Replace("limit_users",sql_limit_user_names);
+				sql = sql.AddParameterWithValue("limit_users",sql_limit_user_names);
 			}
 			else
 			{
-				sql = sql.Replace("limit_users","");
+				sql = sql.AddParameterWithValue("limit_users","");
 			}
 
 
@@ -851,18 +851,18 @@ drop table #temp2";
             if (force_full_names || Util.get_setting("UseFullNames", "0") == "1")
 			{
                 // true condition
-                sql = sql.Replace("@fullnames", "1 = 1");
+                sql = sql.AddParameterWithValue("@fullnames", "1 = 1");
             }
 			else
 			{
                 // false condition
-                sql = sql.Replace("@fullnames", "0 = 1");
+                sql = sql.AddParameterWithValue("@fullnames", "0 = 1");
 			}
 
-			sql = sql.Replace("@userid",Convert.ToString(security.user.usid));
-			sql = sql.Replace("@userorg",Convert.ToString(security.user.org));
-			sql = sql.Replace("@og_external_user",Convert.ToString(security.user.external_user ? 1 : 0));
-			sql = sql.Replace("@og_other_orgs_permission_level",Convert.ToString(security.user.other_orgs_permission_level));
+			sql = sql.AddParameterWithValue("@userid",Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("@userorg",Convert.ToString(security.user.org));
+			sql = sql.AddParameterWithValue("@og_external_user",Convert.ToString(security.user.external_user ? 1 : 0));
+			sql = sql.AddParameterWithValue("@og_other_orgs_permission_level",Convert.ToString(security.user.other_orgs_permission_level));
 
 			return btnet.DbUtil.get_dataset(sql).Tables[0];
 
@@ -879,7 +879,7 @@ drop table #temp2";
 					from projects
 					where pj_id = @pj)");
 
-			sql = sql.Replace("pj", Convert.ToString(projectid));
+			sql = sql.AddParameterWithValue("pj", Convert.ToString(projectid));
 			object obj = btnet.DbUtil.execute_scalar(sql);
 
 			if (obj != null)
@@ -1141,7 +1141,7 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
 		public static void update_most_recent_login_datetime(int us_id)
 		{
 			var sql = new SQLString(@"update users set us_most_recent_login_datetime = getdate() where us_id = @us");
-			sql = sql.Replace("us", Convert.ToString(us_id));
+			sql = sql.AddParameterWithValue("us", Convert.ToString(us_id));
 			DbUtil.execute_nonquery(sql);
 		}
 

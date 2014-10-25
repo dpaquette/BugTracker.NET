@@ -28,7 +28,7 @@ void Page_Load(Object sender, EventArgs e)
 	if (!security.user.is_admin)
 	{
 		sql = new SQLString(@"select us_created_user, us_admin from users where us_id = @us");
-		sql = sql.Replace("us", id);
+		sql = sql.AddParameterWithValue("us", id);
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		if (security.user.usid != (int) dr["us_created_user"])
@@ -56,7 +56,7 @@ delete queries where qu_user = @us
 delete queued_notifications where qn_user = @us
 delete dashboard_items where ds_user = @us");
 
-        sql = sql.Replace("us", Util.sanitize_integer(row_id.Value));
+        sql = sql.AddParameterWithValue("us", Util.sanitize_integer(row_id.Value));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("users.aspx");
 	}
@@ -74,7 +74,7 @@ end
 select us_username, @cnt [cnt] from users where us_id = @us");
 
 
-		sql = sql.Replace("us", id);
+		sql = sql.AddParameterWithValue("us", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

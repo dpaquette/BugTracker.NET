@@ -184,7 +184,7 @@ namespace btnet
                 // Use sql specified in query string.
                 // This is the normal path from the queries page.
                 sql = new SQLString(@"select qu_sql from queries where qu_id = @quid");
-                sql = sql.Replace("quid", qu_id_string);
+                sql = sql.AddParameterWithValue("quid", qu_id_string);
                 bug_sql = new SQLString((string)btnet.DbUtil.execute_scalar(sql));
             }
 
@@ -194,7 +194,7 @@ namespace btnet
                 // Use sql associated with user
                 sql = new SQLString(@"select qu_id, qu_sql from queries where qu_id in
 			(select us_default_query from users where us_id = @us)");
-                sql = sql.Replace("us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {
@@ -241,19 +241,19 @@ namespace btnet
 
 
             // replace magic variables
-            bug_sql = bug_sql.Replace("ME", Convert.ToString(security.user.usid));
+            bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
 
             bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
 
             if (Util.get_setting("UseFullNames", "0") == "0")
             {
                 // false condition
-                bug_sql = bug_sql.Replace("fullnames", "0 = 1");
+                bug_sql = bug_sql.AddParameterWithValue("fullnames", "0 = 1");
             }
             else
             {
                 // true condition
-                bug_sql = bug_sql.Replace("fullnames", "1 = 1");
+                bug_sql = bug_sql.AddParameterWithValue("fullnames", "1 = 1");
             }
 
             // run the query
@@ -300,8 +300,8 @@ or isnull(qu_user,0) = @us
 or isnull(qu_org,0) = @org
 order by qu_desc");
 
-            sql = sql.Replace("us", Convert.ToString(security.user.usid));
-            sql = sql.Replace("org", Convert.ToString(security.user.org));
+            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("org", Convert.ToString(security.user.org));
 
             query.DataSource = btnet.DbUtil.get_dataview(sql);
 

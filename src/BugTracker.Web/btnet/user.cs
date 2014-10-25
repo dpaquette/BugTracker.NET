@@ -139,7 +139,7 @@ namespace btnet
 
                     // automatically add it if it's missing
                     SQLString sql = new SQLString("alter table orgs add [@name] int null");
-                    sql.Replace("name", og_name);
+                    sql.AddParameterWithValue("name", og_name);
                     btnet.DbUtil.execute_nonquery(sql);
                     dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
                 }
@@ -315,28 +315,28 @@ select @new_user_id
 
 END
 ");
-            sql = sql.Replace("username", username);
-			sql = sql.Replace("email", email);
-			sql = sql.Replace("firstname", firstname);
-			sql = sql.Replace("lastname", lastname);
-            sql = sql.Replace("signature", signature);
-			sql = sql.Replace("salt", Convert.ToString(salt));
-			sql = sql.Replace("password", password);
-            sql = sql.Replace("template_user", template_username);
+            sql = sql.AddParameterWithValue("username", username);
+			sql = sql.AddParameterWithValue("email", email);
+			sql = sql.AddParameterWithValue("firstname", firstname);
+			sql = sql.AddParameterWithValue("lastname", lastname);
+            sql = sql.AddParameterWithValue("signature", signature);
+			sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
+			sql = sql.AddParameterWithValue("password", password);
+            sql = sql.AddParameterWithValue("template_user", template_username);
 
-            sql = sql.Replace("use_domain_as_org_name", Convert.ToString(use_domain_as_org_name ? "1" : "0"));
+            sql = sql.AddParameterWithValue("use_domain_as_org_name", Convert.ToString(use_domain_as_org_name ? "1" : "0"));
 
             string[] email_parts = email.Split('@');
             if (email_parts.Length == 2)
             {
-                sql = sql.Replace("domain", email_parts[1]);
+                sql = sql.AddParameterWithValue("domain", email_parts[1]);
             }
             else
             {
-                sql = sql.Replace("domain", email);
+                sql = sql.AddParameterWithValue("domain", email);
             }
             
-            sql = sql.Replace("ORG_COLUMNS", org_columns.ToString());
+            sql = sql.AddParameterWithValue("ORG_COLUMNS", org_columns.ToString());
             return Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
         
         }

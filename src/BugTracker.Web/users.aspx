@@ -133,20 +133,20 @@ void Page_Load(Object sender, EventArgs e)
 	}
 	else
 	{
-		sql = sql.Replace("$inactive", ",0");
+        sql = sql.Replace("$inactive", ",0");
 	}
 
 
 	if (filter_users.Value != "")
 	{
-		sql = sql.Replace("$filter_users", "and u.us_username like '" + filter_users.Value.Replace("'","''") + "%'");
+        sql = sql.Replace("$filter_users", "and u.us_username like '" + filter_users.Value.Replace("'", "''") + "%'");
 	}
 	else
 	{
-		sql = sql.Replace("$filter_users", "");
+        sql = sql.Replace("$filter_users", "");
 	}
     var filteredSQL = new SQLString(sql);
-    filteredSQL.Replace("us", Convert.ToString(security.user.usid));
+    filteredSQL.AddParameterWithValue("us", Convert.ToString(security.user.usid));
     ds = btnet.DbUtil.get_dataset(filteredSQL);
 
 	// cookies

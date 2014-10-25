@@ -39,7 +39,7 @@ inner join reports on rp_id = ds_report
 where ds_user = @user
 order by ds_col, ds_row");
 
-	sql = sql.Replace("user", Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 

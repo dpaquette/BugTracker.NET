@@ -869,27 +869,27 @@ Distributed under the terms of the GNU General Public License
         end
         select @now");
 
-        sql = sql.Replace("sd", short_desc.Value);
-        sql = sql.Replace("tags", tags.Value);
-        sql = sql.Replace("lu", Convert.ToString(security.user.usid));
-        sql = sql.Replace("id", Convert.ToString(id));
-        sql = sql.Replace("pj", new_project);
-        sql = sql.Replace("og", org.SelectedItem.Value);
-        sql = sql.Replace("ct", category.SelectedItem.Value);
-        sql = sql.Replace("pr", priority.SelectedItem.Value);
-        sql = sql.Replace("au", assigned_to.SelectedItem.Value);
-        sql = sql.Replace("st", status.SelectedItem.Value);
-        sql = sql.Replace("udf", udf.SelectedItem.Value);
-        sql = sql.Replace("snapshot_datetime", snapshot_timestamp.Value);
+        sql = sql.AddParameterWithValue("sd", short_desc.Value);
+        sql = sql.AddParameterWithValue("tags", tags.Value);
+        sql = sql.AddParameterWithValue("lu", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+        sql = sql.AddParameterWithValue("pj", new_project);
+        sql = sql.AddParameterWithValue("og", org.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("ct", category.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("pr", priority.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("au", assigned_to.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("st", status.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("udf", udf.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("snapshot_datetime", snapshot_timestamp.Value);
 
         if (permission_level == Security.PERMISSION_READONLY
         || permission_level == Security.PERMISSION_REPORTER)
         {
-            sql = sql.Replace("@pcd_placeholder", "");
+            sql = sql.AddParameterWithValue("@pcd_placeholder", "");
         }
         else
         {
-            sql = sql.Replace("@pcd_placeholder", @",
+            sql = sql.AddParameterWithValue("@pcd_placeholder", @",
 bg_project_custom_dropdown_value1 = @pcd1,
 bg_project_custom_dropdown_value2 = @pcd2,
 bg_project_custom_dropdown_value3 = @pcd3
@@ -912,14 +912,14 @@ bg_project_custom_dropdown_value3 = @pcd3
                 pcd3 = "";
             }
 
-            sql = sql.Replace("pcd1", pcd1);
-            sql = sql.Replace("pcd2", pcd2);
-            sql = sql.Replace("pcd3", pcd3);
+            sql = sql.AddParameterWithValue("pcd1", pcd1);
+            sql = sql.AddParameterWithValue("pcd2", pcd2);
+            sql = sql.AddParameterWithValue("pcd3", pcd3);
         }
 
         if (ds_custom_cols.Tables[0].Rows.Count == 0 || permission_level != Security.PERMISSION_ALL)
         {
-            sql = sql.Replace("@custom_cols_placeholder", "");
+            sql = sql.AddParameterWithValue("@custom_cols_placeholder", "");
         }
         else
         {
@@ -955,7 +955,7 @@ bg_project_custom_dropdown_value3 = @pcd3
 
                 custom_cols_sql += custom_col_val;
             }
-            sql = sql.Replace("custom_cols_placeholder", custom_cols_sql);
+            sql = sql.AddParameterWithValue("custom_cols_placeholder", custom_cols_sql);
         }
 
         DateTime last_update_date = (DateTime)btnet.DbUtil.execute_scalar(sql);
@@ -1287,34 +1287,34 @@ order by us_username; ");
     if (btnet.Util.get_setting("UseFullNames", "0") == "0")
     {
         // false condition
-        sql = sql.Replace("fullnames", "0");
+        sql = sql.AddParameterWithValue("fullnames", "0");
     }
     else
     {
         // true condition
-        sql = sql.Replace("fullnames", "1");
+        sql = sql.AddParameterWithValue("fullnames", "1");
     }
 
     if (project.SelectedItem != null)
     {
-        sql = sql.Replace("@pj", project.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("@pj", project.SelectedItem.Value);
     }
     else
     {
-        sql = sql.Replace("@pj", "0");
+        sql = sql.AddParameterWithValue("@pj", "0");
     }
 
 
-    sql = sql.Replace("@og_id", Convert.ToString(security.user.org));
-    sql = sql.Replace("@og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
+    sql = sql.AddParameterWithValue("@og_id", Convert.ToString(security.user.org));
+    sql = sql.AddParameterWithValue("@og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
 
     if (security.user.can_assign_to_internal_users)
     {
-        sql = sql.Replace("@og_can_assign_to_internal_users", "1");
+        sql = sql.AddParameterWithValue("@og_can_assign_to_internal_users", "1");
     }
     else
     {
-        sql = sql.Replace("@og_can_assign_to_internal_users", "0");
+        sql = sql.AddParameterWithValue("@og_can_assign_to_internal_users", "0");
     }
 
     dt_users = btnet.DbUtil.get_dataset(sql).Tables[0];
@@ -1446,8 +1446,8 @@ order by us_username; ");
                 // User might have changed bug to a project where we automatically subscribe
                 // so be prepared to format the link even if this isn't the first time in.
                 sql = new SQLString("select count(1) from bug_subscriptions where bs_bug = @bg and bs_user = @us");
-                sql = sql.Replace("@bg", Convert.ToString(id));
-                sql = sql.Replace("@us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("@bg", Convert.ToString(id));
+                sql = sql.AddParameterWithValue("@us", Convert.ToString(security.user.usid));
                 subscribed = (int)btnet.DbUtil.execute_scalar(sql);
             }
 
@@ -1866,8 +1866,8 @@ order by us_username; ");
         and isnull(pu_permission_level,@dpl) not in (0, 1)
         order by pj_name;");
 
-        sql = sql.Replace("us", Convert.ToString(security.user.usid));
-        sql = sql.Replace("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
         // 1
         sql.Append("\nselect og_id, og_name from orgs where og_active = 1 order by og_name;");
@@ -2013,11 +2013,11 @@ order by us_username; ");
         (bp_bug, bp_user, bp_date, bp_comment, bp_type)
         values(@id, @us, getdate(), 'Changed ' + @field + ' from ' + @oldValue + ' to ' + @newValue, 'update'");
 
-        sql.Replace("id", Convert.ToString(id));
-        sql.Replace("us", Convert.ToString(security.user.usid));
-        sql.Replace("field", field);
-        sql.Replace("oldValue", oldValue);
-        sql.Replace("newValue", newValue);
+        sql.AddParameterWithValue("id", Convert.ToString(id));
+        sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql.AddParameterWithValue("field", field);
+        sql.AddParameterWithValue("oldValue", oldValue);
+        sql.AddParameterWithValue("newValue", newValue);
         btnet.DbUtil.execute_nonquery(sql);
     }
 
@@ -2162,7 +2162,7 @@ order by us_username; ");
                 else
                 {
                     sql_get_username = new SQLString("select us_username from users where us_id = @userId");
-                    before = (string) btnet.DbUtil.execute_scalar(sql_get_username.Replace("userId", btnet.Util.sanitize_integer(before)));
+                    before = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", btnet.Util.sanitize_integer(before)));
                 }
 
 
@@ -2173,7 +2173,7 @@ order by us_username; ");
                 else
                 {
                     sql_get_username = new SQLString("select us_username from users where us_id = @userId");
-                    after = (string) btnet.DbUtil.execute_scalar(sql_get_username.Replace("userId", btnet.Util.sanitize_integer(after)));
+                    after = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", btnet.Util.sanitize_integer(after)));
                 }
             }
             AddChange(column_name, before, after);
@@ -2225,9 +2225,9 @@ order by us_username; ");
         if @permission_level = -1 set @permission_level = @dpl
         select @permission_level");
 
-        sql = sql.Replace("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
-        sql = sql.Replace("pj", projectToCheck);
-        sql = sql.Replace("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+        sql = sql.AddParameterWithValue("pj", projectToCheck);
+        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
         int pl = (int)btnet.DbUtil.execute_scalar(sql);
 
         // reduce permissions for guest
@@ -2375,8 +2375,8 @@ from users
 inner join orgs on us_org = og_id
 where us_id = @us_id");
 
-        sql = sql.Replace("us_id", Convert.ToString(assigned_to));
-        sql = sql.Replace("bg_org", Convert.ToString(org));
+        sql = sql.AddParameterWithValue("us_id", Convert.ToString(assigned_to));
+        sql = sql.AddParameterWithValue("bg_org", Convert.ToString(org));
 
         object allowed = btnet.DbUtil.execute_scalar(sql);
 
@@ -2642,7 +2642,7 @@ where us_id = @us_id");
             isnull(pj_custom_dropdown_values3,'') [pj_custom_dropdown_values3]
             from projects where pj_id = @pj)");
 
-            sql = sql.Replace("pj", project.SelectedItem.Value);
+            sql = sql.AddParameterWithValue("pj", project.SelectedItem.Value);
 
             DataRow project_dr = btnet.DbUtil.get_datarow(sql);
 

@@ -46,7 +46,7 @@ Distributed under the terms of the GNU General Public License
         if (authenticated)
         {
             var sql = new SQLString("select us_id from users where us_username = @us");
-            sql = sql.Replace("us", user.Value);
+            sql = sql.AddParameterWithValue("us", user.Value);
             DataRow dr = btnet.DbUtil.get_datarow(sql);
             if (dr != null)
             {

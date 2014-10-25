@@ -60,7 +60,7 @@ inner join hg_affected_paths on hgap_hgrev_id = hgrev_id
 where hgrev_bug = @bg
 order by hgrev_hg_date desc, hgap_path");
 
-	sql = sql.Replace("bg", Convert.ToString(bugid));
+	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 }

@@ -32,7 +32,7 @@ order by svnrev_revision desc, svnap_path");
     int svnap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
 	string string_affected_path_id = Convert.ToString(svnap_id);
 
-	sql = sql.Replace("id", string_affected_path_id);
+	sql = sql.AddParameterWithValue("id", string_affected_path_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

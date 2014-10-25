@@ -41,7 +41,7 @@ Distributed under the terms of the GNU General Public License
 						from bug_posts
 						where bp_id = @id");
 
-				sql = sql.Replace("id", string_bp_id);
+				sql = sql.AddParameterWithValue("id", string_bp_id);
 
 				DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -60,7 +60,7 @@ Distributed under the terms of the GNU General Public License
 						from bugs
 						where bg_id = id");
 
-				sql = sql.Replace("id", string_bg_id);
+				sql = sql.AddParameterWithValue("id", string_bg_id);
 
 				object obj = btnet.DbUtil.execute_scalar(sql);
 

@@ -51,7 +51,7 @@ left outer join sysobjects dflts on dflts.id = mm.id
 where so.name = 'bugs'
 and sc.colorder = @co");
 
-		sql = sql.Replace("co", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("co", Convert.ToString(id));
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 		name.InnerText = (string) dr["name"];
@@ -151,9 +151,9 @@ void on_update()
 				ccm_sort_seq = @ss
 				where ccm_colorder = @co");
 
-		sql = sql.Replace("co", Convert.ToString(id));
-		sql = sql.Replace("v", vals.Value);
-		sql = sql.Replace("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("co", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("v", vals.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
 
 		btnet.DbUtil.execute_nonquery(sql);
 		Application["custom_columns_dataset"]  = null;

@@ -82,8 +82,8 @@ namespace btnet
 				where bp_id = @id
 				or (bp_parent = @id and bp_type='file')");
 
-                    sql = sql.Replace("id", string_bp_id);
-                    sql = sql.Replace("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("id", string_bp_id);
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
 
                     DataView dv = btnet.DbUtil.get_dataview(sql);
                     dr = null;
@@ -292,8 +292,8 @@ namespace btnet
 				left outer join projects on bg_project = pj_id
 				where bg_id = @bg");
 
-                    sql = sql.Replace("us", Convert.ToString(security.user.usid));
-                    sql = sql.Replace("bg", string_bg_id);
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("bg", string_bg_id);
 
                     dr = btnet.DbUtil.get_datarow(sql);
 
@@ -516,29 +516,29 @@ update bugs set
 	bg_last_updated_date = getdate()
 	where bg_id = @id");
 
-            sql = sql.Replace("id", bg_id.Value);
-            sql = sql.Replace("us", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("id", bg_id.Value);
+            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
             if (security.user.use_fckeditor)
             {
                 string adjusted_body = "Subject: " + subject.Value + "<br><br>";
                 adjusted_body += btnet.Util.strip_dangerous_tags(body.Value);
 
-                sql = sql.Replace("cm", adjusted_body);
-                sql = sql.Replace("cs", adjusted_body);
-                sql = sql.Replace("ct", "text/html");
+                sql = sql.AddParameterWithValue("cm", adjusted_body);
+                sql = sql.AddParameterWithValue("cs", adjusted_body);
+                sql = sql.AddParameterWithValue("ct", "text/html");
             }
             else
             {
                 string adjusted_body = "Subject: " + subject.Value + "\n\n";
                 adjusted_body += HttpUtility.HtmlDecode(body.Value);
 
-                sql = sql.Replace("cm", adjusted_body);
-                sql = sql.Replace("cs", adjusted_body);
-                sql = sql.Replace("ct", "text/plain");
+                sql = sql.AddParameterWithValue("cm", adjusted_body);
+                sql = sql.AddParameterWithValue("cs", adjusted_body);
+                sql = sql.AddParameterWithValue("ct", "text/plain");
             }
-            sql = sql.Replace("fr", from.SelectedItem.Value);
-            sql = sql.Replace("to", to.Value);
-            sql = sql.Replace("cc", cc.Value);
+            sql = sql.AddParameterWithValue("fr", from.SelectedItem.Value);
+            sql = sql.AddParameterWithValue("to", to.Value);
+            sql = sql.AddParameterWithValue("cc", cc.Value);
 
             int comment_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 

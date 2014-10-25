@@ -54,7 +54,7 @@ void Page_Load(Object sender, EventArgs e)
 			// Get this entry's data from the db and fill in the form
 
 			sql = new SQLString(@"select st_name, st_sort_seq, isnull(st_style,'') [st_style], st_default from statuses where st_id = @id");
-			sql = sql.Replace("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -133,13 +133,13 @@ void on_update()
 				st_default = @df
 				where st_id = @id");
 
-			sql = sql.Replace("$id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("$id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("na", name.Value);
-		sql = sql.Replace("ss", sort_seq.Value);
-		sql = sql.Replace("st", style.Value);
-		sql = sql.Replace("df", Util.bool_to_string(default_selection.Checked));
+		sql = sql.AddParameterWithValue("na", name.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("st", style.Value);
+		sql = sql.AddParameterWithValue("df", Util.bool_to_string(default_selection.Checked));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("statuses.aspx");
 
