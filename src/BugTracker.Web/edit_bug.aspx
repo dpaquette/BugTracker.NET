@@ -1255,12 +1255,12 @@ bg_project_custom_dropdown_value3 = @pcd3
     if (btnet.Util.get_setting("DefaultPermissionLevel", "2") == "0")
     {
         sql = new SQLString(@"
-/* users this project */ select us_id, case when @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
-from users
-inner join orgs on us_org = og_id
-where us_active = 1
-and og_can_be_assigned_to = 1
-and (@og_other_orgs_permission_level <> 0 or @og_id = og_id or (og_external_user = 0 and @og_can_assign_to_internal_users))
+/* users this project */ select us_id, case when 1 = @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
+from users 
+inner join orgs on us_org = og_id 
+where us_active = 1 
+and og_can_be_assigned_to = 1 
+and (@og_other_orgs_permission_level <> 0 or @og_id = og_id or (og_external_user = 0 and 1 = @og_can_assign_to_internal_users))
 and us_id in
     (select pu_user from project_user_xref
         where pu_project = @pj
@@ -1271,12 +1271,12 @@ order by us_username; ");
     else
     {
         sql = new SQLString(@"
-/* users this project */ select us_id, case when @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
-from users
+/* users this project */ select us_id, case when 1 = @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
+from users 
 inner join orgs on us_org = og_id
 where us_active = 1
 and og_can_be_assigned_to = 1
-and (@og_other_orgs_permission_level <> 0 or @og_id = og_id or (og_external_user = 0 and @og_can_assign_to_internal_users))
+and (@og_other_orgs_permission_level <> 0 or @og_id = og_id or (og_external_user = 0 and 1 = @og_can_assign_to_internal_users))
 and us_id not in
     (select pu_user from project_user_xref
         where pu_project = @pj
@@ -1287,12 +1287,12 @@ order by us_username; ");
     if (btnet.Util.get_setting("UseFullNames", "0") == "0")
     {
         // false condition
-        sql = sql.Replace("fullnames", "0 = 1");
+        sql = sql.Replace("fullnames", "0");
     }
     else
     {
         // true condition
-        sql = sql.Replace("fullnames", "1 = 1");
+        sql = sql.Replace("fullnames", "1");
     }
 
     if (project.SelectedItem != null)
@@ -1310,11 +1310,11 @@ order by us_username; ");
 
     if (security.user.can_assign_to_internal_users)
     {
-        sql = sql.Replace("@og_can_assign_to_internal_users", "1 = 1");
+        sql = sql.Replace("@og_can_assign_to_internal_users", "1");
     }
     else
     {
-        sql = sql.Replace("@og_can_assign_to_internal_users", "0 = 1");
+        sql = sql.Replace("@og_can_assign_to_internal_users", "0");
     }
 
     dt_users = btnet.DbUtil.get_dataset(sql).Tables[0];

@@ -608,10 +608,10 @@ where re_bug1 = @id;");
             sql.Append(@"
 
 select bg_id [id],
-bg_short_desc [short_desc],
-isnull(bg_tags,'') [bg_tags],
-isnull(ru.us_username,'[deleted user]') [reporter],
-isnull(ru.us_email,'') [reporter_email],
+bg_short_desc [short_desc], 
+isnull(bg_tags,'') [bg_tags], 
+isnull(ru.us_username,'[deleted user]') [reporter], 
+isnull(ru.us_email,'') [reporter_email], 
 case rtrim(ru.us_firstname)
 	when null then isnull(ru.us_lastname, '')
 	when '' then isnull(ru.us_lastname, '')
@@ -670,26 +670,25 @@ isnull(bg_project_custom_dropdown_value1,'') [bg_project_custom_dropdown_value1]
 isnull(bg_project_custom_dropdown_value2,'') [bg_project_custom_dropdown_value2],
 isnull(bg_project_custom_dropdown_value3,'') [bg_project_custom_dropdown_value3],
 @related [relationship_cnt],
-@svn_revisions [svn_revision_cnt],
-@git_commits [git_commit_cnt],
-@hg_revisions [hg_commit_cnt],
-@tasks [task_cnt],
-getdate() [snapshot_timestamp]
-@custom_cols_placeholder
-from bugs
-inner join users this_user on us_id = @this_usid
-inner join orgs userorg on this_user.us_org = userorg.og_id
-left outer join user_defined_attribute on bg_user_defined_attribute = udf_id
-left outer join projects on bg_project = pj_id
-left outer join orgs bugorg on bg_org = bugorg.og_id
-left outer join categories on bg_category = ct_id
-left outer join priorities on bg_priority = pr_id
-left outer join statuses on bg_status = st_id
-left outer join users asg on bg_assigned_to_user = asg.us_id
-left outer join users ru on bg_reported_user = ru.us_id
-left outer join users lu on bg_last_updated_user = lu.us_id
-left outer join bug_subscriptions on bs_bug = bg_id and bs_user = @this_usid
-left outer join project_user_xref on pj_id = pu_project
+@svn_revisions [svn_revision_cnt], 
+@git_commits [git_commit_cnt], 
+@hg_revisions [hg_commit_cnt], 
+@tasks [task_cnt], 
+getdate() [snapshot_timestamp] 
+from bugs 
+inner join users this_user on us_id = @this_usid 
+inner join orgs userorg on this_user.us_org = userorg.og_id 
+left outer join user_defined_attribute on bg_user_defined_attribute = udf_id 
+left outer join projects on bg_project = pj_id 
+left outer join orgs bugorg on bg_org = bugorg.og_id 
+left outer join categories on bg_category = ct_id 
+left outer join priorities on bg_priority = pr_id 
+left outer join statuses on bg_status = st_id 
+left outer join users asg on bg_assigned_to_user = asg.us_id 
+left outer join users ru on bg_reported_user = ru.us_id 
+left outer join users lu on bg_last_updated_user = lu.us_id 
+left outer join bug_subscriptions on bs_bug = bg_id and bs_user = @this_usid 
+left outer join project_user_xref on pj_id = pu_project 
 and pu_user = @this_usid
 where bg_id = @id");
 
@@ -703,16 +702,16 @@ where bg_id = @id");
 
 				foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
 				{
-					custom_cols_sql += ",[" + drcc["name"].ToString() + "]";
+					custom_cols_sql += ",[" + drcc["name"] + "]";
 
 				}
-				sql = sql.Replace("@custom_cols_placeholder", custom_cols_sql);
+				sql = sql.Replace("custom_cols_placeholder", custom_cols_sql);
 			}
 
-			sql = sql.Replace("@id", Convert.ToString(bugid));
-			sql = sql.Replace("@this_usid", Convert.ToString(security.user.usid));
-			sql = sql.Replace("@this_org", Convert.ToString(security.user.org));
-			sql = sql.Replace("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+			sql = sql.Replace("id", Convert.ToString(bugid));
+			sql = sql.Replace("this_usid", Convert.ToString(security.user.usid));
+			sql = sql.Replace("this_org", Convert.ToString(security.user.org));
+			sql = sql.Replace("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
 
 			
 			return btnet.DbUtil.get_datarow(sql);
