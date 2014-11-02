@@ -1,6 +1,6 @@
 #Updating CKEditor
 
-In the last blog post we looked at updating jQuery and a bunch of other components related to jQuery. We skipped looking at the CKEditor because, while writen in JavaScript, it does not have a dependency on jQuery. Some of you youngsters might not know this but it is actually possible to write JavaScript without referencing jQuery. I know what you're thinking: "Old man Timms has gotten into the elderberry wine again" but it is true.
+In the last blog post we looked at updating jQuery and a bunch of other components related to jQuery. We skipped looking at the CKEditor because, while written in JavaScript, it does not have a dependency on jQuery. Some of you youngsters might not know this but it is actually possible to write JavaScript without referencing jQuery. I know what you're thinking: "Old man Timms has gotten into the elderberry wine again" but it is true.
 
 [CKEditor](http://ckeditor.com/) is a rich text editor that allows users to add styles such as bold or underline to their bug reports. This is exactly the sort of thing "business" needs: pretty bugs. That being said, I enjoy using markdown on github so there is legitimate need for this.
 
