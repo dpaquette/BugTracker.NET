@@ -44,7 +44,8 @@
  - removing underused or unused code
  - creating a plugin infrastructure
  - create a configuration checking tool or, better yet, an online setup wizard like umbraco or gallery (is gallery still a thing?)
-1. Setting it up for deploy
+1. Builds
+ - Experiment with TFS build
  - Packaging
  - Deploying to azure
  - Building a Web Platform Install package(http://www.microsoft.com/web/gallery/)
