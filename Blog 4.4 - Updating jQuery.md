@@ -10,7 +10,7 @@ We would like to cut that down to a single, up to date, version. The latest vers
 
 So now we have a decision to make: do we want to support older versions of Internet Explorer? It is a tough decision. If you're working on updating a production website then you can take a look at the logs to see which browsers are the most prevalent. That should give you some foundation on which to make a decision.
 
-We don't have a production website at the moment so we don't have the best data available on which to make a decision. There are plenty of sites out there with browser statistics. The vary greatly from site to site and from region to region. For instance IE is very popular in South Korea due to government websites requiring it. Google and a number of other large companies have adopted as last two version policy. As IE 11 is the latest this would mean that IE 10 would be the oldest browser we would support.
+We don't have a production website at the moment so we don't have the best data available on which to make a decision. There are plenty of sites out there with browser statistics. The vary greatly from site to site and from region to region. For instance IE is very popular in South Korea due to government websites requiring it. Google and a number of other large companies have adopted a last two version policy. As IE 11 is the latest this would mean that IE 10 would be the oldest browser we would support.
 
 Because of the general age of the code base I think it likely that some of the users will still be on older software. We'll stick with the 1.X branch for now but keep an eye on stats to see when we can upgrade.
 
@@ -34,7 +34,7 @@ The version of the plugin included in BugTracker.NET is compressed and has comme
 
  It is likely that we'll be able to replace the TextAreaResizer with a newer and better documented project.
 
-In every case the usage of jQuery is either simplistic or it is tied to a plugin. If we update the plugins in line with the jQuery then there should be relativly little risk of breaking the plugin functionality.
+In every case the usage of jQuery is either simplistic or it is tied to a plugin. If we update the plugins in line with the jQuery then there should be relatively little risk of breaking the plugin functionality.
 
 ##Updating jQuery
 
@@ -97,11 +97,11 @@ Looking at all of these files I see that the library relies on the use of data-*
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/1755a9b396e2788055dac0714e02e626f361e192)
 
-This actually brings up a good point: if you're expending more effort on an update task that you're getting back, abandon it. The goal here is not to make the project perfect but to remove pain points, security risks or code that is preventing rapid evolution of the project.
+This actually brings up a good point: if you're expending more effort on an update task than you're getting back, abandon it. The goal here is not to make the project perfect but to remove pain points, security risks or code that is preventing rapid evolution of the project.
 
 ##Updating jQuery TextAreaResizer
 
-The final component we need to update is the TextAreaResizer. Unfortunatly I was unable to find any updated package, or in fact any page that mentioned the original page. This is actually worrying as the code is likely unmaintained. While the situation is not as dire as the library is inherently open source due to it being JavaScript it is still worrying. However there may actually be no need to use this plugin. jQuery UI includes a resizable behaviour that can be applied to the text areas.
+The final component we need to update is the TextAreaResizer. Unfortunately I was unable to find any updated package, or in fact any page that mentioned the original page. This is actually worrying as the code is likely unmaintained. While the situation is not as dire as the library is inherently open source due to it being JavaScript it is still worrying. However there may actually be no need to use this plugin. jQuery UI includes a resizable behaviour that can be applied to the text areas.
 
 Thus all we need to is delete any existing references to TextAreaResizer and in its place add
 
@@ -115,4 +115,4 @@ $('textarea').resizable()
 
 We've successfully upgraded jQuery and all of its dependencies to the latest version and actually trimmed out an entire library. The JavaScript organization in the project could use some real love. JavaScript is included haphazardly in a jumble of JavaScript and C#. There is no structure to the JavaScript code, no namespaces or even a directory structure. There are even some places where the C# code emits JavaScript.
 
-While we've improved the jQuery it is really only a foundation for a future effort in which we clean up the JavaScript. Stay tunned!
+While we've improved the jQuery it is really only a foundation for a future effort in which we clean up the JavaScript. Stay tuned!
