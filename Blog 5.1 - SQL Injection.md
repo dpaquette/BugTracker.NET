@@ -48,7 +48,7 @@ The construction of this query relies on the various parameters having been esca
 
 Now looking through the application I can't actually find any parameters that aren't properly escaped. I think it is likely that they exist, somewhere, and that the large amount of code is obscuring them. However it does require that every parameter be manually escaped. It is very easy to forget such things andy it only takes one mistake to allow an attacker to delete the entire database. The [general advice](https://www.owasp.org/images/d/d4/OWASP_IL_2007_SQL_Smuggling.pdf) is to avoid blacklisting characters.
 
-We want to make sure that not only is the application itself secure but that future developers are prevented, as best as possible, from shotting themselves in the foot. If every query is parameterized then it should act as something of a hint to future developers that they too should parameterize queries.
+We want to make sure that not only is the application itself secure but that future developers are prevented, as best as possible, from shooting themselves in the foot. If every query is parameterized then it should act as something of a hint to future developers that they too should parameterize queries.
 
 The funny part about this query is that the syntax for string replacement is not that different from the syntax for parameterizing the query. Unfortunately the replacement syntax is used for code other than replacing parameters in SQL. For instance it is used in replacing tokens in an e-mail subject line
 
@@ -185,7 +185,7 @@ It would have been marvellous to have some automated tests at this juncture to g
 
 As it turns out the tests were unnecessary because it was immediately apparent that the application was broken. BugTracker.NET uses a lot of queries on the search page that are stored simply as strings in the database. I hadn't updated these queries to replace the old parameters syntax.
 
-With that fixed I again tried out the application again to find it didn't work at all. As it turns out when you compile an ASP.net application in Visual Studio the compiler more or less just assumes that anything in a .aspx file is perfect. This code is compiled at runtime so errors don't show up until you've deployed the application. There were substantial errors in the .aspx files as they contained quite a bit of database code.
+With that fixed I tried out the application again to find it didn't work at all. As it turns out when you compile an ASP.net application in Visual Studio the compiler more or less just assumes that anything in a .aspx file is perfect. This code is compiled at runtime so errors don't show up until you've deployed the application. There were substantial errors in the .aspx files as they contained quite a bit of database code.
 
 The compilation of .aspx files is performed by an application called aspnet_compiler.exe. We can actually hook this compiler into our build process so that we can be warned at build time that there are issues in the .aspx code.
 
