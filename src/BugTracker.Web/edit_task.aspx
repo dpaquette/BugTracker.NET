@@ -10,7 +10,7 @@ Distributed under the terms of the GNU General Public License
 
 int tsk_id;
 int bugid;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -142,9 +142,9 @@ void Page_Load(Object sender, EventArgs e)
 
 			// Get this entry's data from the db and fill in the form
 
-			sql = @"select * from bug_tasks where tsk_id = $tsk_id and tsk_bug = $bugid";
-			sql = sql.Replace("$tsk_id", Convert.ToString(tsk_id));
-			sql = sql.Replace("$bugid", Convert.ToString(bugid));
+			sql = new SQLString(@"select * from bug_tasks where tsk_id = @tsk_id and tsk_bug = @bugid");
+            sql = sql.AddParameterWithValue("tsk_id", Convert.ToString(tsk_id));
+            sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugid));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
            
             assigned_to.Items.FindByValue(Convert.ToString(dr["tsk_assigned_to_user"])).Selected = true;
@@ -225,63 +225,63 @@ void load_users_dropdowns(int bugid)
 		current_value = assigned_to.SelectedItem.Value;
 	}
 
-	sql = @"
+	sql = new SQLString(@"
 declare @project int
 declare @assigned_to int
-select @project = bg_project, @assigned_to = bg_assigned_to_user from bugs where bg_id = $bg_id";
+select @project = bg_project, @assigned_to = bg_assigned_to_user from bugs where bg_id = @bg_id");
 
 	// Load the user dropdown, which changes per project
 	// Only users explicitly allowed will be listed
     if (btnet.Util.get_setting("DefaultPermissionLevel", "2") == "0")
     {
-        sql += @"
+        sql.Append( @"
 
-/* users this project */ select us_id, case when $fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
+/* users this project */ select us_id, case when @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
 from users
 inner join orgs on us_org = og_id
 where us_active = 1
 and og_can_be_assigned_to = 1
-and ($og_other_orgs_permission_level <> 0 or $og_id = og_id or og_external_user = 0)
+and (@og_other_orgs_permission_level <> 0 or @og_id = og_id or og_external_user = 0)
 and us_id in
     (select pu_user from project_user_xref
         where pu_project = @project
 	    and pu_permission_level <> 0)
-order by us_username; ";
+order by us_username; ");
     }
     // Only users explictly DISallowed will be omitted
     else
     {
-        sql += @"
-/* users this project */ select us_id, case when $fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
+        sql.Append(@"
+/* users this project */ select us_id, case when @fullnames then us_lastname + ', ' + us_firstname else us_username end us_username
 from users
 inner join orgs on us_org = og_id
 where us_active = 1
 and og_can_be_assigned_to = 1
-and ($og_other_orgs_permission_level <> 0 or $og_id = og_id or og_external_user = 0)
+and (@og_other_orgs_permission_level <> 0 or @og_id = og_id or og_external_user = 0)
 and us_id not in
     (select pu_user from project_user_xref
 	    where pu_project = @project
 		and pu_permission_level = 0)
-order by us_username; ";
+order by us_username; ");
     }
 
-	sql += "\nselect st_id, st_name from statuses order by st_sort_seq, st_name";
+	sql.Append("\nselect st_id, st_name from statuses order by st_sort_seq, st_name");
 
-	sql += "\nselect isnull(@assigned_to,0) ";
-	
-	sql = sql.Replace("$og_id",Convert.ToString(security.user.org));
-	sql = sql.Replace("$og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
-	sql = sql.Replace("$bg_id",Convert.ToString(bugid));
+	sql.Append("\nselect isnull(@assigned_to,0) ");
+
+    sql = sql.AddParameterWithValue("og_id", Convert.ToString(security.user.org));
+    sql = sql.AddParameterWithValue("og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
+    sql = sql.AddParameterWithValue("bg_id", Convert.ToString(bugid));
 	
 	if (Util.get_setting("UseFullNames","0") == "0")
 	{
 		// false condition
-		sql = sql.Replace("$fullnames","0 = 1");
+        sql = sql.AddParameterWithValue("fullnames", "0 = 1");
 	}
 	else
 	{
 		// true condition
-		sql = sql.Replace("$fullnames","1 = 1");
+        sql = sql.AddParameterWithValue("fullnames", "1 = 1");
 	}
     
 	assigned_to.DataSource = new DataView((DataTable)btnet.DbUtil.get_dataset(sql).Tables[0]);	
@@ -479,7 +479,7 @@ void on_update()
 	{
 		if (tsk_id == 0)  // insert new
 		{
-			sql = @"
+			sql = new SQLString(@"
 insert into bug_tasks (
 tsk_bug,
 tsk_created_user,
@@ -500,23 +500,23 @@ tsk_sort_sequence,
 tsk_description
 )
 values (
-$tsk_bug,
-$tsk_created_user,
+tsk_bug,
+tsk_created_user,
 getdate(),
-$tsk_last_updated_user,
+tsk_last_updated_user,
 getdate(),
-$tsk_assigned_to_user,
-'$tsk_planned_start_date',
-'$tsk_actual_start_date',
-'$tsk_planned_end_date',
-'$tsk_actual_end_date',
-$tsk_planned_duration,
-$tsk_actual_duration,
-N'$tsk_duration_units',
-$tsk_percent_complete,
-$tsk_status,
-$tsk_sort_sequence,
-N'$tsk_description'
+tsk_assigned_to_user,
+tsk_planned_start_date,
+tsk_actual_start_date,
+tsk_planned_end_date,
+tsk_actual_end_date,
+tsk_planned_duration,
+tsk_actual_duration,
+tsk_duration_units,
+tsk_percent_complete,
+tsk_status,
+tsk_sort_sequence,
+tsk_description'
 )
 
 declare @tsk_id int
@@ -524,73 +524,73 @@ select @tsk_id = scope_identity()
 
 insert into bug_posts
 (bp_bug, bp_user, bp_date, bp_comment, bp_type)
-values($tsk_bug, $tsk_last_updated_user, getdate(), N'added task ' + convert(varchar, @tsk_id), 'update')";
+values(@tsk_bug, @tsk_last_updated_user, getdate(), N'added task ' + convert(varchar, @tsk_id), 'update')");
 
 
-			sql = sql.Replace("$tsk_created_user", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("tsk_created_user", Convert.ToString(security.user.usid));
 		
 
 		}
 		else // edit existing
 		{
 
-			sql = @"
+			sql = new SQLString(@"
 update bug_tasks set
-tsk_last_updated_user = $tsk_last_updated_user,
+tsk_last_updated_user = @tsk_last_updated_user,
 tsk_last_updated_date = getdate(),
-tsk_assigned_to_user = $tsk_assigned_to_user,
-tsk_planned_start_date = '$tsk_planned_start_date',
-tsk_actual_start_date = '$tsk_actual_start_date',
-tsk_planned_end_date = '$tsk_planned_end_date',
-tsk_actual_end_date = '$tsk_actual_end_date',
-tsk_planned_duration = $tsk_planned_duration,
-tsk_actual_duration = $tsk_actual_duration,
-tsk_duration_units = N'$tsk_duration_units',
-tsk_percent_complete = $tsk_percent_complete,
-tsk_status = $tsk_status,
-tsk_sort_sequence = $tsk_sort_sequence,
-tsk_description = N'$tsk_description'
-where tsk_id = $tsk_id
+tsk_assigned_to_user = @tsk_assigned_to_user,
+tsk_planned_start_date = '@tsk_planned_start_date',
+tsk_actual_start_date = '@tsk_actual_start_date',
+tsk_planned_end_date = '@tsk_planned_end_date',
+tsk_actual_end_date = '@tsk_actual_end_date',
+tsk_planned_duration = @tsk_planned_duration,
+tsk_actual_duration = @tsk_actual_duration,
+tsk_duration_units = @tsk_duration_units,
+tsk_percent_complete = @tsk_percent_complete,
+tsk_status = @tsk_status,
+tsk_sort_sequence = @tsk_sort_sequence,
+tsk_description = @tsk_description
+where tsk_id = @tsk_id
                 
 insert into bug_posts
 (bp_bug, bp_user, bp_date, bp_comment, bp_type)
-values($tsk_bug, $tsk_last_updated_user, getdate(), N'updated task $tsk_id', 'update')";
+values(@tsk_bug, @tsk_last_updated_user, getdate(), N'updated task ' + @tsk_id, 'update')");
 
-			sql = sql.Replace("$tsk_id", Convert.ToString(tsk_id));
+			sql = sql.AddParameterWithValue("tsk_id", Convert.ToString(tsk_id));
 
 		}
 
-        sql = sql.Replace("$tsk_bug", Convert.ToString(bugid));
-        sql = sql.Replace("$tsk_last_updated_user", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("tsk_bug", Convert.ToString(bugid));
+        sql = sql.AddParameterWithValue("tsk_last_updated_user", Convert.ToString(security.user.usid));
 		
-		sql = sql.Replace("$tsk_planned_start_date", format_date_hour_min(
+		sql = sql.AddParameterWithValue("tsk_planned_start_date", format_date_hour_min(
 			planned_start_date.Value,
 			planned_start_hour.SelectedItem.Value,
 			planned_start_min.SelectedItem.Value));
 
-		sql = sql.Replace("$tsk_actual_start_date", format_date_hour_min(
+		sql = sql.AddParameterWithValue("tsk_actual_start_date", format_date_hour_min(
 			actual_start_date.Value,
 			actual_start_hour.SelectedItem.Value,
 			actual_start_min.SelectedItem.Value));
 
-		sql = sql.Replace("$tsk_planned_end_date", format_date_hour_min(
+		sql = sql.AddParameterWithValue("tsk_planned_end_date", format_date_hour_min(
 			planned_end_date.Value,
 			planned_end_hour.SelectedItem.Value,
 			planned_end_min.SelectedItem.Value));
 
-		sql = sql.Replace("$tsk_actual_end_date", format_date_hour_min(
+		sql = sql.AddParameterWithValue("tsk_actual_end_date", format_date_hour_min(
 			actual_end_date.Value,
 			actual_end_hour.SelectedItem.Value,
 			actual_end_min.SelectedItem.Value));
 			
-		sql = sql.Replace("$tsk_planned_duration", format_decimal_for_db(planned_duration.Value));
-		sql = sql.Replace("$tsk_actual_duration", format_decimal_for_db(actual_duration.Value));
-		sql = sql.Replace("$tsk_percent_complete", format_number_for_db(percent_complete.Value));
-		sql = sql.Replace("$tsk_status", status.SelectedItem.Value);
-		sql = sql.Replace("$tsk_sort_sequence", format_number_for_db(sort_sequence.Value));
-		sql = sql.Replace("$tsk_assigned_to_user", assigned_to.SelectedItem.Value);
-		sql = sql.Replace("$tsk_description", desc.Value.Replace("'","''"));
-		sql = sql.Replace("$tsk_duration_units", duration_units.SelectedItem.Value.Replace("'","''"));
+		sql = sql.AddParameterWithValue("tsk_planned_duration", format_decimal_for_db(planned_duration.Value));
+		sql = sql.AddParameterWithValue("tsk_actual_duration", format_decimal_for_db(actual_duration.Value));
+		sql = sql.AddParameterWithValue("tsk_percent_complete", format_number_for_db(percent_complete.Value));
+		sql = sql.AddParameterWithValue("tsk_status", status.SelectedItem.Value);
+		sql = sql.AddParameterWithValue("tsk_sort_sequence", format_number_for_db(sort_sequence.Value));
+		sql = sql.AddParameterWithValue("tsk_assigned_to_user", assigned_to.SelectedItem.Value);
+		sql = sql.AddParameterWithValue("tsk_description", desc.Value);
+		sql = sql.AddParameterWithValue("tsk_duration_units", duration_units.SelectedItem.Value);
 
 		btnet.DbUtil.execute_nonquery(sql);
         

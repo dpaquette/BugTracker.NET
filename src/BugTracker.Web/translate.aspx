@@ -10,7 +10,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-    String sql;
+    SQLString sql;
     
     Security security;
 
@@ -37,11 +37,11 @@ Distributed under the terms of the GNU General Public License
 
 				string_bp_id = Util.sanitize_integer(string_bp_id);
 
-				sql = @"select bp_bug, bp_comment
+				sql = new SQLString(@"select bp_bug, bp_comment
 						from bug_posts
-						where bp_id = $id";
+						where bp_id = @id");
 
-				sql = sql.Replace("$id", string_bp_id);
+				sql = sql.AddParameterWithValue("id", string_bp_id);
 
 				DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -56,11 +56,11 @@ Distributed under the terms of the GNU General Public License
 
 				string_bg_id = Util.sanitize_integer(string_bg_id);
 
-				sql = @"select bg_short_desc
+				sql = new SQLString(@"select bg_short_desc
 						from bugs
-						where bg_id = $id";
+						where bg_id = id");
 
-				sql = sql.Replace("$id", string_bg_id);
+				sql = sql.AddParameterWithValue("id", string_bg_id);
 
 				object obj = btnet.DbUtil.execute_scalar(sql);
 

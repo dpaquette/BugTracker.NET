@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -48,21 +48,21 @@ void Page_Load(Object sender, EventArgs e)
 
     if (!IsPostBack)
     {
-        sql = @"select bp_comment, bp_type,
+        sql = new SQLString(@"select bp_comment, bp_type,
         isnull(bp_comment_search,bp_comment) bp_comment_search,
         isnull(bp_content_type,'') bp_content_type,
         bp_bug, bp_hidden_from_external_users
-        from bug_posts where bp_id = $id";
+        from bug_posts where bp_id = @id");
     }
     else
     {
-        sql = @"select bp_bug, bp_type,
+        sql = new SQLString(@"select bp_bug, bp_type,
         isnull(bp_content_type,'') bp_content_type,
         bp_hidden_from_external_users
-        from bug_posts where bp_id = $id";
+        from bug_posts where bp_id = @id");
     }
 
-    sql = sql.Replace("$id", Convert.ToString(id));
+    sql = sql.AddParameterWithValue("id", Convert.ToString(id));
     DataRow dr = btnet.DbUtil.get_datarow(sql);
 
     bugid = (int) dr["bp_bug"];
@@ -138,32 +138,32 @@ void on_update()
     if (good)
     {
 
-        sql = @"update bug_posts set
-                    bp_comment = N'$cm',
-                    bp_comment_search = N'$cs',
-                    bp_content_type = N'$cn',
-                    bp_hidden_from_external_users = $internal
-                where bp_id = $id
+        sql = new SQLString(@"update bug_posts set
+                    bp_comment = @cm,
+                    bp_comment_search = @cs,
+                    bp_content_type = @cn,
+                    bp_hidden_from_external_users = @internal
+                where bp_id = @id
 
-                select bg_short_desc from bugs where bg_id = $bugid";
+                select bg_short_desc from bugs where bg_id = @bugid");
 
         if (use_fckeditor)
         {
             string text = btnet.Util.strip_dangerous_tags(comment.Value);
-            sql = sql.Replace("$cm", text.Replace("'", "&#39;"));
-            sql = sql.Replace("$cs", btnet.Util.strip_html(comment.Value).Replace("'", "''"));
-            sql = sql.Replace("$cn", "text/html");
+            sql = sql.AddParameterWithValue("cm", text.Replace("'", "&#39;"));
+            sql = sql.AddParameterWithValue("cs", btnet.Util.strip_html(comment.Value).Replace("'", "''"));
+            sql = sql.AddParameterWithValue("cn", "text/html");
         }
         else
         {
-            sql = sql.Replace("$cm", HttpUtility.HtmlDecode(comment.Value).Replace("'", "''"));
-            sql = sql.Replace("$cs", comment.Value.Replace("'", "''"));
-            sql = sql.Replace("$cn", "text/plain");
+            sql = sql.AddParameterWithValue("cm", HttpUtility.HtmlDecode(comment.Value).Replace("'", "''"));
+            sql = sql.AddParameterWithValue("cs", comment.Value.Replace("'", "''"));
+            sql = sql.AddParameterWithValue("cn", "text/plain");
         }
 
-        sql = sql.Replace("$id", Convert.ToString(id));
-        sql = sql.Replace("$bugid", Convert.ToString(bugid));
-        sql = sql.Replace("$internal", btnet.Util.bool_to_string(internal_only.Checked));
+        sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+        sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugid));
+        sql = sql.AddParameterWithValue("internal", btnet.Util.bool_to_string(internal_only.Checked));
         DataRow dr = btnet.DbUtil.get_datarow(sql);
 
         // Don't send notifications for internal only comments.

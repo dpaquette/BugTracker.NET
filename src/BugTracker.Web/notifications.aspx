@@ -24,7 +24,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "queued notifications";
 
 	ds = btnet.DbUtil.get_dataset(
-		@"select
+		new SQLString(@"select
 		qn_id [id],
 		qn_date_created [date created],
 		qn_to [to],
@@ -33,7 +33,7 @@ void Page_Load(Object sender, EventArgs e)
 		qn_retries [retries],
 		qn_last_exception [last error]
 		from queued_notifications
-		order by id;");
+		order by id;"));
 
 	ses = (string) Session["session_cookie"];
 }

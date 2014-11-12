@@ -65,18 +65,18 @@ namespace btnet
             this.email = (string)dr["us_email"];
 
             this.bugs_per_page = Convert.ToInt32(dr["us_bugs_per_page"]);
-			if (Util.get_setting("DisableFCKEditor","0") == "1")
-			{
-				this.use_fckeditor = false;
-			}
-			else
-			{
-            	this.use_fckeditor = Convert.ToBoolean(dr["us_use_fckeditor"]);
-			}
+            if (Util.get_setting("DisableFCKEditor", "0") == "1")
+            {
+                this.use_fckeditor = false;
+            }
+            else
+            {
+                this.use_fckeditor = Convert.ToBoolean(dr["us_use_fckeditor"]);
+            }
             this.enable_popups = Convert.ToBoolean(dr["us_enable_bug_list_popups"]);
 
             this.external_user = Convert.ToBoolean(dr["og_external_user"]);
-            this.can_only_see_own_reported  = Convert.ToBoolean(dr["og_can_only_see_own_reported"]);
+            this.can_only_see_own_reported = Convert.ToBoolean(dr["og_can_only_see_own_reported"]);
             this.can_edit_sql = Convert.ToBoolean(dr["og_can_edit_sql"]);
             this.can_delete_bug = Convert.ToBoolean(dr["og_can_delete_bug"]);
             this.can_edit_and_delete_posts = Convert.ToBoolean(dr["og_can_edit_and_delete_posts"]);
@@ -91,19 +91,19 @@ namespace btnet
             this.can_assign_to_internal_users = Convert.ToBoolean(dr["og_can_assign_to_internal_users"]);
             this.other_orgs_permission_level = (int)dr["og_other_orgs_permission_level"];
             this.org = (int)dr["og_id"];
-            this.org_name = (string) dr["og_name"];
+            this.org_name = (string)dr["og_name"];
             this.forced_project = (int)dr["us_forced_project"];
 
             this.category_field_permission_level = (int)dr["og_category_field_permission_level"];
 
-            if (Util.get_setting("EnableTags","0") == "1")
+            if (Util.get_setting("EnableTags", "0") == "1")
             {
-            	this.tags_field_permission_level = (int)dr["og_tags_field_permission_level"];
-			}
-			else
-			{
-				this.tags_field_permission_level = Security.PERMISSION_NONE;
-			}
+                this.tags_field_permission_level = (int)dr["og_tags_field_permission_level"];
+            }
+            else
+            {
+                this.tags_field_permission_level = Security.PERMISSION_NONE;
+            }
             this.priority_field_permission_level = (int)dr["og_priority_field_permission_level"];
             this.assigned_to_field_permission_level = (int)dr["og_assigned_to_field_permission_level"];
             this.status_field_permission_level = (int)dr["og_status_field_permission_level"];
@@ -111,40 +111,40 @@ namespace btnet
             this.org_field_permission_level = (int)dr["og_org_field_permission_level"];
             this.udf_field_permission_level = (int)dr["og_udf_field_permission_level"];
 
-			// field permission for custom fields
-			DataSet ds_custom = Util.get_custom_columns();
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-				string og_name = "og_" 
-					+ (string)dr_custom["name"]
-					+ "_field_permission_level";
-				
-				try
-				{
-					object obj = dr[og_name];
-					if (Convert.IsDBNull(obj))
-					{
-						dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
-					}
-					else
-					{
-						dict_custom_field_permission_level[bg_name] = (int) dr[og_name];
-					}
-				}
-				
-				catch(Exception ex)
-				{
-					btnet.Util.write_to_log("exception looking for " + og_name + ":" + ex.Message);
-					
-					// automatically add it if it's missing
-					btnet.DbUtil.execute_nonquery("alter table orgs add [" 
-						+ og_name
-						+ "] int null");
-					dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
-				}
-				
-			}
+            // field permission for custom fields
+            DataSet ds_custom = Util.get_custom_columns();
+            foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
+            {
+                string bg_name = (string)dr_custom["name"];
+                string og_name = "og_"
+                    + (string)dr_custom["name"]
+                    + "_field_permission_level";
+
+                try
+                {
+                    object obj = dr[og_name];
+                    if (Convert.IsDBNull(obj))
+                    {
+                        dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
+                    }
+                    else
+                    {
+                        dict_custom_field_permission_level[bg_name] = (int)dr[og_name];
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    btnet.Util.write_to_log("exception looking for " + og_name + ":" + ex.Message);
+
+                    // automatically add it if it's missing
+                    SQLString sql = new SQLString("alter table orgs add [@name] int null");
+                    sql.AddParameterWithValue("name", og_name);
+                    btnet.DbUtil.execute_nonquery(sql);
+                    dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
+                }
+
+            }
 
             if (((string)dr["us_firstname"]).Trim().Length == 0)
             {
@@ -205,16 +205,16 @@ namespace btnet
             btnet.Util.write_to_log("copy_user creating " + username + " from template user " + template_username);
             StringBuilder org_columns = new StringBuilder();
 
-            string sql = "";
+            SQLString sql = new SQLString("");
 
             if (use_domain_as_org_name)
             {
-                sql = @" /* get org cols */
+                sql.Append(@" /* get org cols */
 select sc.name
 from syscolumns sc
 inner join sysobjects so on sc.id = so.id
 where so.name = 'orgs'
-and sc.name not in ('og_id', 'og_name', 'og_domain')";
+and sc.name not in ('og_id', 'og_name', 'og_domain')");
 
                 DataSet ds = btnet.DbUtil.get_dataset(sql);
                 foreach (DataRow dr in ds.Tables[0].Rows)
@@ -228,32 +228,32 @@ and sc.name not in ('og_id', 'og_name', 'og_domain')";
             }
 
 
-			sql = @"
+			sql = new SQLString(@"
 /* copy user */
 declare @template_user_id int
 declare @template_org_id int
 select @template_user_id = us_id,
 @template_org_id = us_org 
-from users where us_username = N'$template_user'
+from users where us_username = @template_user
 
 declare @org_id int
 set @org_id = -1
 
-IF $use_domain_as_org_name = 1
+IF @use_domain_as_org_name = 1
 BEGIN
-    select @org_id = og_id from orgs where og_domain = N'$domain'
+    select @org_id = og_id from orgs where og_domain = @domain
     IF @org_id = -1
     BEGIN
         insert into orgs
         (
             og_name,
             og_domain       
-            $ORG_COLUMNS        
+            @ORG_COLUMNS        
         )
         select 
-        N'$domain',
-        N'$domain'
-        $ORG_COLUMNS
+        @domain,
+        @domain
+        @ORG_COLUMNS
         from orgs where og_id = @template_org_id
         select @org_id = scope_identity()
     END
@@ -262,7 +262,7 @@ END
 declare @new_user_id int
 set @new_user_id = -1
 
-IF NOT EXISTS (SELECT us_id FROM users WHERE us_username = '$username')
+IF NOT EXISTS (SELECT us_id FROM users WHERE us_username = @username)
 BEGIN
 
 insert into users
@@ -284,7 +284,7 @@ insert into users
 	us_org)
 
 select
-	N'$username', N'$email', N'$firstname', N'$lastname', N'$signature', $salt, N'$password',
+	@username, @email, @firstname, @lastname, @signature, @salt, @password,
 	us_default_query,
 	us_enable_notifications,
 	us_auto_subscribe,
@@ -314,29 +314,29 @@ select pu_project, @new_user_id, pu_auto_subscribe, pu_permission_level, pu_admi
 select @new_user_id
 
 END
-";
-            sql = sql.Replace("$username", username.Replace("'","''"));
-			sql = sql.Replace("$email", email.Replace("'","''"));
-			sql = sql.Replace("$firstname", firstname.Replace("'","''"));
-			sql = sql.Replace("$lastname", lastname.Replace("'","''"));
-            sql = sql.Replace("$signature", signature.Replace("'", "''"));
-			sql = sql.Replace("$salt", Convert.ToString(salt));
-			sql = sql.Replace("$password", password);
-            sql = sql.Replace("$template_user", template_username.Replace("'", "''"));
+");
+            sql = sql.AddParameterWithValue("username", username);
+			sql = sql.AddParameterWithValue("email", email);
+			sql = sql.AddParameterWithValue("firstname", firstname);
+			sql = sql.AddParameterWithValue("lastname", lastname);
+            sql = sql.AddParameterWithValue("signature", signature);
+			sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
+			sql = sql.AddParameterWithValue("password", password);
+            sql = sql.AddParameterWithValue("template_user", template_username);
 
-            sql = sql.Replace("$use_domain_as_org_name", Convert.ToString(use_domain_as_org_name ? "1" : "0"));
+            sql = sql.AddParameterWithValue("use_domain_as_org_name", Convert.ToString(use_domain_as_org_name ? "1" : "0"));
 
             string[] email_parts = email.Split('@');
             if (email_parts.Length == 2)
             {
-                sql = sql.Replace("$domain", email_parts[1].Replace("'", "''"));
+                sql = sql.AddParameterWithValue("domain", email_parts[1]);
             }
             else
             {
-                sql = sql.Replace("$domain", email.Replace("'", "''"));
+                sql = sql.AddParameterWithValue("domain", email);
             }
             
-            sql = sql.Replace("$ORG_COLUMNS", org_columns.ToString());
+            sql = sql.AddParameterWithValue("ORG_COLUMNS", org_columns.ToString());
             return Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
         
         }

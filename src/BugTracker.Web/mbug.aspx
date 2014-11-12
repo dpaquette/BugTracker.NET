@@ -13,7 +13,7 @@ Distributed under the terms of the GNU General Public License
     DataSet ds_posts;
 
     int permission_level;
-    String sql;
+    SQLString sql;
     bool status_changed;
     bool assigned_to_changed;
     String err_text;
@@ -78,8 +78,8 @@ Distributed under the terms of the GNU General Public License
 
                 load_dropdowns(security.user);
 
-                sql = "\nselect top 1 pj_id from projects where pj_default = 1 order by pj_name;"; // 0
-                sql += "\nselect top 1 st_id from statuses where st_default = 1 order by st_name;"; // 1
+                sql = new SQLString("select top 1 pj_id from projects where pj_default = 1 order by pj_name;"); // 0
+                sql.Append("\nselect top 1 st_id from statuses where st_default = 1 order by st_name;"); // 1
 
                 DataSet ds_defaults = btnet.DbUtil.get_dataset(sql);
                 DataTable dt_project_default = ds_defaults.Tables[0];
@@ -260,22 +260,22 @@ Distributed under the terms of the GNU General Public License
 
         // only show projects where user has permissions
         // 0
-        String sql = @"/* drop downs */ select pj_id, pj_name
+        var sql = new SQLString(@"/* drop downs */ select pj_id, pj_name
 		from projects
 		left outer join project_user_xref on pj_id = pu_project
-		and pu_user = $us
+		and pu_user = @us
 		where pj_active = 1
-		and isnull(pu_permission_level,$dpl) not in (0, 1)
-		order by pj_name;";
+		and isnull(pu_permission_level,@dpl) not in (0, 1)
+		order by pj_name;");
 
-        sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-        sql = sql.Replace("$dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
+        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
         //1
-        sql += "\nselect us_id, us_username from users order by us_username;";
+        sql.Append("\nselect us_id, us_username from users order by us_username;");
 
         //2
-        sql += "\nselect st_id, st_name from statuses order by st_sort_seq, st_name;";
+        sql.Append("\nselect st_id, st_name from statuses order by st_sort_seq, st_name;");
 
 
         // do a batch of sql statements
@@ -308,21 +308,21 @@ Distributed under the terms of the GNU General Public License
         status_changed = false;
         assigned_to_changed = false;
 
-        sql = @"update bugs set
-				bg_short_desc = N'$sd$',
-                        bg_project = $pj$,
-						bg_assigned_to_user = $au$,
-						bg_status = $st$,
-						bg_last_updated_user = $lu$,
+        sql = new SQLString(@"update bugs set
+				bg_short_desc = @sd,
+                        bg_project = @pj,
+						bg_assigned_to_user = @au,
+						bg_status = @st,
+						bg_last_updated_user = @lu,
 						bg_last_updated_date = getdate()
-						where bg_id = $id$";
+						where bg_id = @id");
 
-        sql = sql.Replace("$pj$", project.SelectedItem.Value);
-        sql = sql.Replace("$au$", assigned_to.SelectedItem.Value);
-        sql = sql.Replace("$st$", status.SelectedItem.Value);
-        sql = sql.Replace("$lu$", Convert.ToString(security.user.usid));
-        sql = sql.Replace("$sd$", short_desc.Value.Replace("'", "''"));
-        sql = sql.Replace("$id$", Convert.ToString(id));
+        sql = sql.AddParameterWithValue("pj", project.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("au", assigned_to.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("st", status.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("lu", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("sd", short_desc.Value.Replace("'", "''"));
+        sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
         btnet.DbUtil.execute_nonquery(sql);
 
@@ -354,21 +354,27 @@ Distributed under the terms of the GNU General Public License
         return "";
     }
 
+
+    private void SaveChangeLogEntry(int id, int userId, string fieldName, string oldValue, string newValue)
+    {
+        var sql = new SQLString(@"
+		insert into bug_posts
+		(bp_bug, bp_user, bp_date, bp_comment, bp_type)
+		values(@id, @userName, getdate(), 'Changed ' + @fieldName + ' from ' + @oldValue + ' to ' + @newValue, 'update')");
+
+        sql.AddParameterWithValue("id", id);
+        sql.AddParameterWithValue("userId", userId);
+        
+        btnet.DbUtil.execute_nonquery(sql);
+    }
+    
     ///////////////////////////////////////////////////////////////////////
     // returns true if there was a change
     bool record_changes()
     {
 
-        string base_sql = @"
-		insert into bug_posts
-		(bp_bug, bp_user, bp_date, bp_comment, bp_type)
-		values($id, $us, getdate(), N'$3', 'update')";
-
-        base_sql = base_sql.Replace("$id", Convert.ToString(id));
-        base_sql = base_sql.Replace("$us", Convert.ToString(security.user.usid));
-
         string from;
-        sql = "";
+
 
         bool do_update = false;
 
@@ -376,12 +382,7 @@ Distributed under the terms of the GNU General Public License
         {
 
             do_update = true;
-            sql += base_sql.Replace(
-                "$3",
-                "changed desc from \""
-                + prev_short_desc.Value.Replace("'", "''") + "\" to \""
-                + short_desc.Value.Replace("'", "''") + "\"");
-
+            SaveChangeLogEntry(id, security.user.usid, "desc", prev_short_desc.Value, short_desc.Value);
             prev_short_desc.Value = short_desc.Value;
         }
 
@@ -392,12 +393,7 @@ Distributed under the terms of the GNU General Public License
             //from = get_dropdown_text_from_value(project, prev_project.Value);
 
             do_update = true;
-            sql += base_sql.Replace(
-                "$3",
-                "changed project from \""
-                + prev_project_name.Value.Replace("'", "''") + "\" to \""
-                + project.SelectedItem.Text.Replace("'", "''") + "\"");
-
+            SaveChangeLogEntry(id, security.user.usid, "project", prev_project_name.Value, project.SelectedItem.Text);
             prev_project.Value = project.SelectedItem.Value;
             prev_project_name.Value = project.SelectedItem.Text;
 
@@ -409,12 +405,7 @@ Distributed under the terms of the GNU General Public License
             assigned_to_changed = true; // for notifications
 
             do_update = true;
-            sql += base_sql.Replace(
-                "$3",
-                "changed assigned_to from \""
-                + prev_assigned_to_username.Value.Replace("'", "''") + "\" to \""
-                + assigned_to.SelectedItem.Text.Replace("'", "''") + "\"");
-
+            SaveChangeLogEntry(id, security.user.usid, "assigned_to", prev_assigned_to_username.Value, assigned_to.SelectedItem.Text);
             prev_assigned_to.Value = assigned_to.SelectedItem.Value;
             prev_assigned_to_username.Value = assigned_to.SelectedItem.Text;
         }
@@ -427,12 +418,8 @@ Distributed under the terms of the GNU General Public License
             from = get_dropdown_text_from_value(status, prev_status.Value);
 
             do_update = true;
-            sql += base_sql.Replace(
-                "$3",
-                "changed status from \""
-                + from.Replace("'", "''") + "\" to \""
-                + status.SelectedItem.Text.Replace("'", "''") + "\"");
-
+            SaveChangeLogEntry(id, security.user.usid, "status", from, status.SelectedItem.Text);
+            
             prev_status.Value = status.SelectedItem.Value;
 
         }

@@ -23,14 +23,14 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "categories";
 		
-	ds = btnet.DbUtil.get_dataset(
+	ds = btnet.DbUtil.get_dataset(new SQLString(
 		@"select
 		ct_id [id],
 		ct_name [category],
 		ct_sort_seq [sort seq],
 		case when ct_default = 1 then 'Y' else 'N' end [default],
 		ct_id [hidden]
-		from categories order by ct_name");
+		from categories order by ct_name"));
 
 }
 

@@ -239,11 +239,11 @@ function my_on_load()
 			if (project == 0)
 			{
 
-				sql = @"select us_id
+				sql = new SQLString(@"select us_id
 					from users
 					where us_active = 1
 					and len(us_email) > 0
-					order by us_email";
+					order by us_email");
 
 			}
 			else
@@ -251,32 +251,32 @@ function my_on_load()
 				// Only users explicitly allowed will be listed
 				if (btnet.Util.get_setting("DefaultPermissionLevel","2") == "0")
 				{
-					sql = @"select us_id
+					sql = new SQLString(@"select us_id
 						from users
 						where us_active = 1
 						and len(us_email) > 0
 						and us_id in
 							(select pu_user from project_user_xref
-							where pu_project = $pr
+							where pu_project = @pr
 							and pu_permission_level <> 0)
-						order by us_email";
+						order by us_email");
 				}
 				// Only users explictly DISallowed will be omitted
 				else
 				{
-					sql = @"select us_id
+					sql = new SQLString(@"select us_id
 						from users
 						where us_active = 1
 						and len(us_email) > 0
 						and us_id not in
 							(select pu_user from project_user_xref
-							where pu_project = $pr
+							where pu_project = @pr
 							and pu_permission_level = 0)
-						order by us_email";
+						order by us_email");
 				}
 			}
 
-			sql = sql.Replace("$pr", Convert.ToString(project));
+			sql = sql.AddParameterWithValue("pr", Convert.ToString(project));
 			DataSet ds_users_for_this_project = btnet.DbUtil.get_dataset(sql);
 
 			// remember the users for this this project

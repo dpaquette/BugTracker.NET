@@ -53,8 +53,8 @@ namespace btnet.Mail
             // maybe a deleted bug?
             if (bugid != 0)
             {
-                string sql = "select count(1) from bugs where bg_id = $bg";
-                sql = sql.Replace("$bg", Convert.ToString(bugid));
+                var sql = new SQLString("select count(1) from bugs where bg_id = @bg");
+                sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
                 int bug_count = (int)btnet.DbUtil.execute_scalar(sql);
                 if (bug_count != 1)
                 {
@@ -126,11 +126,11 @@ namespace btnet.Mail
 
             DataRow dr = null;
 
-            string sql = @"
+            var sql = new SQLString( @"
 select us_id, us_admin, us_username, us_org, og_other_orgs_permission_level, isnull(us_forced_project,0) us_forced_project
 from users
 inner join orgs on us_org = og_id
-where us_username = N'$us'";
+where us_username = @us");
 
             // Create a new user from the "from" email address    
             string btnet_service_username = Util.get_setting("CreateUserFromEmailAddressIfThisUsername", "");
@@ -142,7 +142,7 @@ where us_username = N'$us'";
                 username = Email.simplify_email_address(from_addr);
 
                 // Does a user with this email already exist?
-                sql = sql.Replace("$us", username.Replace("'", "''"));
+                sql = sql.AddParameterWithValue("us", username);
 
                 // We maybe found user@example.com, so let's use him as the user instead of the btnet_service.exe user
                 dr = btnet.DbUtil.get_datarow(sql);
@@ -169,7 +169,7 @@ where us_username = N'$us'";
             else
             {
                 // Use the btnet_service.exe user as the username
-                sql = sql.Replace("$us", username.Replace("'", "''"));
+                sql = sql.AddParameterWithValue("$us", username.Replace("'", "''"));
                 dr = btnet.DbUtil.get_datarow(sql);
             }
 

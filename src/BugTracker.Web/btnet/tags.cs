@@ -37,26 +37,26 @@ namespace btnet
 				
 				// Because "create view" wants to be the first in a batch, it won't work in setup.sql.
 				// So let's just run it here every time.
-				string sql = @"
+				var sql = new SQLString(@"
 if exists (select * from dbo.sysobjects where id = object_id(N'[votes_view]'))
-drop view [votes_view]";
+drop view [votes_view]");
 
 				btnet.DbUtil.execute_nonquery(sql);
 
-				sql = @"
+				sql = new SQLString(@"
 create view votes_view as
 select bu_bug as vote_bug, sum(bu_vote) as vote_total
 from bug_user
 group by bu_bug
-having sum(bu_vote) > 0";
+having sum(bu_vote) > 0");
 
 				btnet.DbUtil.execute_nonquery(sql);
 				
-				sql = @"
+				sql = new SQLString(@"
 select bu_bug, count(1)
 from bug_user 
 where bu_vote = 1
-group by bu_bug";
+group by bu_bug");
 
 				DataSet ds = btnet.DbUtil.get_dataset(sql);
 
@@ -81,7 +81,7 @@ group by bu_bug";
 
 				// update the cache
 
-				DataSet ds = btnet.DbUtil.get_dataset("select bg_id, bg_tags from bugs where isnull(bg_tags,'') <> ''");
+				DataSet ds = btnet.DbUtil.get_dataset(new SQLString( "select bg_id, bg_tags from bugs where isnull(bg_tags,'') <> ''"));
 
 				foreach (DataRow dr in ds.Tables[0].Rows)
 				{

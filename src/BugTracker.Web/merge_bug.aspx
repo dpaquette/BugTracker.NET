@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 DataRow dr;
@@ -107,19 +107,19 @@ bool validate()
 
 	// Continue and see if from and to exist in db
 
-	sql = @"
+	sql =new SQLString( @"
 	declare @from_desc nvarchar(200)
 	declare @into_desc nvarchar(200)
 	declare @from_id int
 	declare @into_id int
 	set @from_id = -1
 	set @into_id = -1
-	select @from_desc = bg_short_desc, @from_id = bg_id from bugs where bg_id = $from
-	select @into_desc = bg_short_desc, @into_id = bg_id from bugs where bg_id = $into
-	select @from_desc, @into_desc, @from_id, @into_id	";
+	select @from_desc = bg_short_desc, @from_id = bg_id from bugs where bg_id = @from
+	select @into_desc = bg_short_desc, @into_id = bg_id from bugs where bg_id = 2into
+	select @from_desc, @into_desc, @from_id, @into_id	");
 
-	sql = sql.Replace("$from", from_bug.Value);
-	sql = sql.Replace("$into", into_bug.Value);
+	sql = sql.AddParameterWithValue("from", from_bug.Value);
+	sql = sql.AddParameterWithValue("into", into_bug.Value);
 
 	dr = btnet.DbUtil.get_datarow(sql);
 
@@ -179,10 +179,10 @@ void on_update()
         if (upload_folder != null)
         {
 
-		sql = @"select bp_id, bp_file from bug_posts
-			where bp_type = 'file' and bp_bug = $from";
+		sql = new SQLString(@"select bp_id, bp_file from bug_posts
+			where bp_type = 'file' and bp_bug = @from");
 
-		sql = sql.Replace("$from", prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("from", prev_from_bug.Value);
 		DataSet ds = btnet.DbUtil.get_dataset(sql);
 
 		foreach (DataRow dr in ds.Tables[0].Rows)
@@ -215,54 +215,54 @@ void on_update()
 
 
 		// copy the from db entries to the to
-		sql = @"
+		sql = new SQLString(@"
 insert into bug_subscriptions
 (bs_bug, bs_user)
-select $into, bs_user
+select @into, bs_user
 from bug_subscriptions
-where bs_bug = $from
-and bs_user not in (select bs_user from bug_subscriptions where bs_bug = $into)
+where bs_bug = @from
+and bs_user not in (select bs_user from bug_subscriptions where bs_bug = @into)
 
 insert into bug_user
 (bu_bug, bu_user, bu_flag, bu_flag_datetime, bu_seen, bu_seen_datetime, bu_vote, bu_vote_datetime)
-select $into, bu_user, bu_flag, bu_flag_datetime, bu_seen, bu_seen_datetime, bu_vote, bu_vote_datetime
+select @into, bu_user, bu_flag, bu_flag_datetime, bu_seen, bu_seen_datetime, bu_vote, bu_vote_datetime
 from bug_user
-where bu_bug = $from
-and bu_user not in (select bu_user from bug_user where bu_bug = $into)
+where bu_bug = @from
+and bu_user not in (select bu_user from bug_user where bu_bug = @into)
 
-update bug_posts     set bp_bug     = $into	where bp_bug = $from
-update bug_tasks     set tsk_bug    = $into where tsk_bug = $from
-update svn_revisions set svnrev_bug = $into where svnrev_bug = $from
-update hg_revisions  set hgrev_bug  = $into where hgrev_bug = $from
-update git_commits   set gitcom_bug = $into where gitcom_bug = $from
-";
+update bug_posts     set bp_bug     = @into	where bp_bug = @from
+update bug_tasks     set tsk_bug    = @into where tsk_bug = @from
+update svn_revisions set svnrev_bug = @into where svnrev_bug = @from
+update hg_revisions  set hgrev_bug  = @into where hgrev_bug = @from
+update git_commits   set gitcom_bug = @into where gitcom_bug = @from
+");
 			
-		sql = sql.Replace("$from",prev_from_bug.Value);
-		sql = sql.Replace("$into",prev_into_bug.Value);
+		sql = sql.AddParameterWithValue("from",prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("into",prev_into_bug.Value);
 
 		btnet.DbUtil.execute_nonquery(sql);
 
 		// record the merge itself
 
-		sql = @"insert into bug_posts
+		sql = new SQLString(@"insert into bug_posts
 			(bp_bug, bp_user, bp_date, bp_type, bp_comment, bp_comment_search)
-			values($into,$us,getdate(), 'comment', 'merged bug $from into this bug:', 'merged bug $from into this bug:')
-			select scope_identity()";
+			values(@into, @us,getdate(), 'comment', 'merged bug @from into this bug:', 'merged bug @from into this bug:')
+			select scope_identity()");
 
-		sql = sql.Replace("$from",prev_from_bug.Value);
-		sql = sql.Replace("$into",prev_into_bug.Value);
-		sql = sql.Replace("$us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("@from",prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("@into",prev_into_bug.Value);
+		sql = sql.AddParameterWithValue("@us",Convert.ToString(security.user.usid));
 
 		int comment_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
 		// update bug comments with info from old bug
-		sql = @"update bug_posts
+		sql = new SQLString(@"update bug_posts
 			set bp_comment = convert(nvarchar,bp_comment) + char(10) + bg_short_desc
-			from bugs where bg_id = $from
-			and bp_id = $bc";
+			from bugs where bg_id = @from
+			and bp_id = @bc");
 
-		sql = sql.Replace("$from",prev_from_bug.Value);
-		sql = sql.Replace("$bc",Convert.ToString(comment_id));
+		sql = sql.AddParameterWithValue("from",prev_from_bug.Value);
+		sql = sql.AddParameterWithValue("bc",Convert.ToString(comment_id));
 		btnet.DbUtil.execute_nonquery(sql);
 
 

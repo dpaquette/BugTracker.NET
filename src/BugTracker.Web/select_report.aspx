@@ -33,7 +33,7 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "reports";
 
-	string sql = @"
+	var sql = new SQLString(@"
 select
 rp_desc [report],
 case
@@ -46,7 +46,7 @@ case
 	else
 		'&nbsp;' end [chart],
 '<a href=''javascript:select_report(""data"",' + convert(varchar, rp_id) + ')''>select data</a>' [data]
-from reports order by rp_desc";
+from reports order by rp_desc");
 
     ds = btnet.DbUtil.get_dataset(sql);
 

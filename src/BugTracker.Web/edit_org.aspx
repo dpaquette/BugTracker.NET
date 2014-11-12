@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -100,8 +100,8 @@ void Page_Load(Object sender, EventArgs e)
 
 			// Get this entry's data from the db and fill in the form
 
-			sql = @"select *,isnull(og_domain,'') og_domain2 from orgs where og_id = $og_id";
-			sql = sql.Replace("$og_id", Convert.ToString(id));
+			sql = new SQLString(@"select *,isnull(og_domain,'') og_domain2 from orgs where og_id = @og_id");
+			sql = sql.AddParameterWithValue("og_id", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -190,12 +190,12 @@ void on_update ()
 {
 
 	Boolean good = validate();
-
+    string sqlTemplate ="";
 	if (good)
 	{
 		if (id == 0)  // insert new
 		{
-			sql = @"
+			sqlTemplate = @"
 insert into orgs
 	(og_name,
 	og_domain,
@@ -227,102 +227,102 @@ insert into orgs
 	$custom1$
 	)
 	values (
-	N'$name', 
-	N'$domain',
-	$active,
-	$non_admins_can_use,
-	$external_user,
-	$can_edit_sql,
-	$can_delete_bug,
-	$can_edit_and_delete_posts,
-	$can_merge_bugs,
-	$can_mass_edit_bugs,
-	$can_use_reports,
-	$can_edit_reports,
-	$can_be_assigned_to,
-	$can_view_tasks,
-	$can_edit_tasks,
-	$can_search,
-	$can_only_see_own_reported,
-	$can_assign_to_internal_users,
-	$other_orgs,
-	$flp_project,
-	$flp_org,
-	$flp_category,
-	$flp_tags,
-	$flp_priority,
-	$flp_status,
-	$flp_assigned_to,
-	$flp_udf
-	$custom2$
+	@name, 
+	@domain,
+	@active,
+	@non_admins_can_use,
+	@external_user,
+	@can_edit_sql,
+	@can_delete_bug,
+	@can_edit_and_delete_posts,
+	@can_merge_bugs,
+	@can_mass_edit_bugs,
+	@can_use_reports,
+	@can_edit_reports,
+	@can_be_assigned_to,
+	@can_view_tasks,
+	@can_edit_tasks,
+	@can_search,
+	@can_only_see_own_reported,
+	@can_assign_to_internal_users,
+	@other_orgs,
+	@flp_project,
+	@flp_org,
+	@flp_category,
+	@flp_tags,
+	@flp_priority,
+	@flp_status,
+	@flp_assigned_to,
+	@flp_udf
+	@custom2$
 )";
 		}
 		else // edit existing
 		{
 
-			sql = @"
+			sqlTemplate = @"
 update orgs set
-	og_name = N'$name',
-	og_domain = N'$domain',
-	og_active = $active,
-	og_non_admins_can_use = $non_admins_can_use,
-	og_external_user = $external_user,
-	og_can_edit_sql = $can_edit_sql,
-	og_can_delete_bug = $can_delete_bug,
-	og_can_edit_and_delete_posts = $can_edit_and_delete_posts,
-	og_can_merge_bugs = $can_merge_bugs,
-	og_can_mass_edit_bugs = $can_mass_edit_bugs,
-	og_can_use_reports = $can_use_reports,
-	og_can_edit_reports = $can_edit_reports,
-	og_can_be_assigned_to = $can_be_assigned_to,
-	og_can_view_tasks = $can_view_tasks,
-	og_can_edit_tasks = $can_edit_tasks,
-	og_can_search = $can_search,
-	og_can_only_see_own_reported = $can_only_see_own_reported,
-	og_can_assign_to_internal_users = $can_assign_to_internal_users,
-	og_other_orgs_permission_level = $other_orgs,
-	og_project_field_permission_level = $flp_project,
-	og_org_field_permission_level = $flp_org,
-	og_category_field_permission_level = $flp_category,
-	og_tags_field_permission_level = $flp_tags,
-	og_priority_field_permission_level = $flp_priority,
-	og_status_field_permission_level = $flp_status,
-	og_assigned_to_field_permission_level = $flp_assigned_to,
-	og_udf_field_permission_level = $flp_udf
+	og_name = @name,
+	og_domain = @domain,
+	og_active = @active,
+	og_non_admins_can_use = @non_admins_can_use,
+	og_external_user = @external_user,
+	og_can_edit_sql = @can_edit_sql,
+	og_can_delete_bug = @can_delete_bug,
+	og_can_edit_and_delete_posts = @can_edit_and_delete_posts,
+	og_can_merge_bugs = @can_merge_bugs,
+	og_can_mass_edit_bugs = @can_mass_edit_bugs,
+	og_can_use_reports = @can_use_reports,
+	og_can_edit_reports = @can_edit_reports,
+	og_can_be_assigned_to = @can_be_assigned_to,
+	og_can_view_tasks = @can_view_tasks,
+	og_can_edit_tasks = @can_edit_tasks,
+	og_can_search = @can_search,
+	og_can_only_see_own_reported = @can_only_see_own_reported,
+	og_can_assign_to_internal_users = @can_assign_to_internal_users,
+	og_other_orgs_permission_level = @other_orgs,
+	og_project_field_permission_level = @flp_project,
+	og_org_field_permission_level = @flp_org,
+	og_category_field_permission_level = @flp_category,
+	og_tags_field_permission_level = @flp_tags,
+	og_priority_field_permission_level = @flp_priority,
+	og_status_field_permission_level = @flp_status,
+	og_assigned_to_field_permission_level = @flp_assigned_to,
+	og_udf_field_permission_level = @flp_udf
 	$custom3$
 	where og_id = $og_id";
 
-			sql = sql.Replace("$og_id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("og_id", Convert.ToString(id));
 
 		}
 
-		sql = sql.Replace("$name", og_name.Value.Replace("'","''"));
-		sql = sql.Replace("$domain", og_domain.Value.Replace("'","''"));
-		sql = sql.Replace("$active", Util.bool_to_string(og_active.Checked));
-		sql = sql.Replace("$non_admins_can_use", Util.bool_to_string(non_admins_can_use.Checked));
-		sql = sql.Replace("$external_user", Util.bool_to_string(external_user.Checked));
-		sql = sql.Replace("$can_edit_sql", Util.bool_to_string(can_edit_sql.Checked));
-		sql = sql.Replace("$can_delete_bug", Util.bool_to_string(can_delete_bug.Checked));
-		sql = sql.Replace("$can_edit_and_delete_posts", Util.bool_to_string(can_edit_and_delete_posts.Checked));
-		sql = sql.Replace("$can_merge_bugs", Util.bool_to_string(can_merge_bugs.Checked));
-		sql = sql.Replace("$can_mass_edit_bugs", Util.bool_to_string(can_mass_edit_bugs.Checked));
-		sql = sql.Replace("$can_use_reports", Util.bool_to_string(can_use_reports.Checked));
-		sql = sql.Replace("$can_edit_reports", Util.bool_to_string(can_edit_reports.Checked));
-		sql = sql.Replace("$can_be_assigned_to", Util.bool_to_string(can_be_assigned_to.Checked));
-		sql = sql.Replace("$can_view_tasks", Util.bool_to_string(can_view_tasks.Checked));
-		sql = sql.Replace("$can_edit_tasks", Util.bool_to_string(can_edit_tasks.Checked));
-		sql = sql.Replace("$can_search", Util.bool_to_string(can_search.Checked));
-		sql = sql.Replace("$can_only_see_own_reported", Util.bool_to_string(can_only_see_own_reported.Checked));
-		sql = sql.Replace("$can_assign_to_internal_users", Util.bool_to_string(can_assign_to_internal_users.Checked));
-		sql = sql.Replace("$other_orgs", other_orgs.SelectedValue);
-		sql = sql.Replace("$flp_project", project_field.SelectedValue);
-		sql = sql.Replace("$flp_org", org_field.SelectedValue);
-		sql = sql.Replace("$flp_category", category_field.SelectedValue);
-		sql = sql.Replace("$flp_tags", tags_field.SelectedValue);
-		sql = sql.Replace("$flp_priority", priority_field.SelectedValue);
-		sql = sql.Replace("$flp_status", status_field.SelectedValue);
-		sql = sql.Replace("$flp_assigned_to", assigned_to_field.SelectedValue);
-		sql = sql.Replace("$flp_udf", udf_field.SelectedValue);
+		sql = sql.AddParameterWithValue("name", og_name.Value);
+		sql = sql.AddParameterWithValue("domain", og_domain.Value);
+		sql = sql.AddParameterWithValue("active", Util.bool_to_string(og_active.Checked));
+		sql = sql.AddParameterWithValue("non_admins_can_use", Util.bool_to_string(non_admins_can_use.Checked));
+		sql = sql.AddParameterWithValue("external_user", Util.bool_to_string(external_user.Checked));
+		sql = sql.AddParameterWithValue("can_edit_sql", Util.bool_to_string(can_edit_sql.Checked));
+		sql = sql.AddParameterWithValue("can_delete_bug", Util.bool_to_string(can_delete_bug.Checked));
+		sql = sql.AddParameterWithValue("can_edit_and_delete_posts", Util.bool_to_string(can_edit_and_delete_posts.Checked));
+		sql = sql.AddParameterWithValue("can_merge_bugs", Util.bool_to_string(can_merge_bugs.Checked));
+		sql = sql.AddParameterWithValue("can_mass_edit_bugs", Util.bool_to_string(can_mass_edit_bugs.Checked));
+		sql = sql.AddParameterWithValue("can_use_reports", Util.bool_to_string(can_use_reports.Checked));
+		sql = sql.AddParameterWithValue("can_edit_reports", Util.bool_to_string(can_edit_reports.Checked));
+		sql = sql.AddParameterWithValue("can_be_assigned_to", Util.bool_to_string(can_be_assigned_to.Checked));
+		sql = sql.AddParameterWithValue("can_view_tasks", Util.bool_to_string(can_view_tasks.Checked));
+		sql = sql.AddParameterWithValue("can_edit_tasks", Util.bool_to_string(can_edit_tasks.Checked));
+		sql = sql.AddParameterWithValue("can_search", Util.bool_to_string(can_search.Checked));
+		sql = sql.AddParameterWithValue("can_only_see_own_reported", Util.bool_to_string(can_only_see_own_reported.Checked));
+		sql = sql.AddParameterWithValue("can_assign_to_internal_users", Util.bool_to_string(can_assign_to_internal_users.Checked));
+		sql = sql.AddParameterWithValue("other_orgs", other_orgs.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_project", project_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_org", org_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_category", category_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_tags", tags_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_priority", priority_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_status", status_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_assigned_to", assigned_to_field.SelectedValue);
+		sql = sql.AddParameterWithValue("flp_udf", udf_field.SelectedValue);
 
 		if (id == 0)  // insert new
 		{
@@ -339,8 +339,8 @@ update orgs set
 				custom2 += "," + btnet.Util.sanitize_integer(Request[bg_name]);
 
 			}
-			sql = sql.Replace("$custom1$",custom1);
-			sql = sql.Replace("$custom2$",custom2);
+			sqlTemplate = sqlTemplate.Replace("$custom1$",custom1);
+			sqlTemplate = sqlTemplate.Replace("$custom2$",custom2);
 		}
 		else
 		{
@@ -355,9 +355,9 @@ update orgs set
                 custom3 += ",[" + og_col_name + "]=" + btnet.Util.sanitize_integer(Request[bg_name]);
 
 			}
-			sql = sql.Replace("$custom3$",custom3);
+			sqlTemplate = sqlTemplate.Replace("$custom3$",custom3);
 		}
-
+        sql.Append(sqlTemplate);
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("orgs.aspx");
 

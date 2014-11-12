@@ -24,14 +24,14 @@ void Page_Load(Object sender, EventArgs e)
 	string bp_id = btnet.Util.sanitize_integer(Request["id"]);
 	string bug_id = btnet.Util.sanitize_integer(Request["bug_id"]);
 
-	string sql = @"
+	var sql = new SQLString(@"
 select bp_file, isnull(bp_content_type,'') [bp_content_type] 
 from bug_posts 
-where bp_id = $bp_id 
-and bp_bug = $bug_id";
+where bp_id = @bp_id 
+and bp_bug = @bug_id");
 
-	sql = sql.Replace("$bp_id", bp_id);
-	sql = sql.Replace("$bug_id", bug_id);
+	sql = sql.AddParameterWithValue("bp_id", bp_id);
+	sql = sql.AddParameterWithValue("bug_id", bug_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -63,13 +63,13 @@ and bp_bug = $bug_id";
 	string content_type = (string) dr["bp_content_type"];
 
     // First, try to find it in the bug_post_attachments table.
-    sql = @"select bpa_content
+    var directSQL = @"select bpa_content
             from bug_post_attachments
             where bpa_post = @bp_id";
 
     bool foundInDatabase = false;
     String foundAtPath = null;
-    using (SqlCommand cmd = new SqlCommand(sql))
+    using (SqlCommand cmd = new SqlCommand(directSQL))
     {
         cmd.Parameters.AddWithValue("@bp_id", bp_id);
 

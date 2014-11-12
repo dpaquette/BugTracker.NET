@@ -105,11 +105,11 @@ void Page_Load(Object sender, EventArgs e)
 void insert_revision_row_per_bug(string bugid, string repo, string revision, string author, string date, string msg, XmlElement logentry)
 {
 
-    string sql = @"
+    var sql = new SQLString(@"
 declare @cnt int
 select @cnt = count(1) from svn_revisions 
-where svnrev_revision = '$svnrev_revision'
-and svnrev_repository = N'$svnrev_repository'
+where svnrev_revision = @svnrev_revision
+and svnrev_repository = @svnrev_repository
 and svnrev_bug = $svnrev_bug
 
 if @cnt = 0 
@@ -126,27 +126,27 @@ insert into svn_revisions
 )
 values
 (
-	'$svnrev_revision',
+	@svnrev_revision,
 	$svnrev_bug,
-	N'$svnrev_repository',
-	N'$svnrev_author',
-	N'$svnrev_svn_date',
+	@svnrev_repository,
+	@svnrev_author,
+	@svnrev_svn_date,
 	getdate(),
-	N'$svnrev_msg'
+	@svnrev_msg
 )
 
 select scope_identity()
 END	
 ELSE
 select 0
-";
+");
 
-    sql = sql.Replace("$svnrev_revision", revision.Replace("'", "''"));
-    sql = sql.Replace("$svnrev_bug", bugid);
-    sql = sql.Replace("$svnrev_repository", repo.Replace("'", "''"));
-    sql = sql.Replace("$svnrev_author", author.Replace("'", "''"));
-    sql = sql.Replace("$svnrev_svn_date", date.Replace("'", "''"));
-    sql = sql.Replace("$svnrev_msg", msg.Replace("'", "''"));
+    sql = sql.AddParameterWithValue("svnrev_revision", revision);
+    sql = sql.AddParameterWithValue("svnrev_bug", bugid);
+    sql = sql.AddParameterWithValue("svnrev_repository", repo);
+    sql = sql.AddParameterWithValue("svnrev_author", author);
+    sql = sql.AddParameterWithValue("svnrev_svn_date", date);
+    sql = sql.AddParameterWithValue("svnrev_msg", msg);
 
     int svnrev_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -163,7 +163,7 @@ select 0
             string file_path = path_element.InnerText;
 
 
-            sql = @"
+            sql = new SQLString(@"
 insert into svn_affected_paths
 (
 svnap_svnrev_id,
@@ -172,14 +172,14 @@ svnap_path
 )
 values
 (
-$svnap_svnrev_id,
-N'$svnap_action',
-N'$svnap_path'
-)";
+@svnap_svnrev_id,
+@svnap_action,
+@svnap_path
+)");
 
-            sql = sql.Replace("$svnap_svnrev_id", Convert.ToString(svnrev_id));
-            sql = sql.Replace("$svnap_action", action.Replace("'", "''"));
-            sql = sql.Replace("$svnap_path", file_path.Replace("'", "''"));
+            sql = sql.AddParameterWithValue("svnap_svnrev_id", Convert.ToString(svnrev_id));
+            sql = sql.AddParameterWithValue("svnap_action", action);
+            sql = sql.AddParameterWithValue("svnap_path", file_path);
 
             btnet.DbUtil.execute_nonquery(sql);
 

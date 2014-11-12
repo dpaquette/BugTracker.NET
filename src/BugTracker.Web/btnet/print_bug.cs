@@ -203,8 +203,8 @@ namespace btnet
 							int userid = Convert.ToInt32(obj);
 							if (userid != 0)
 							{
-								string sql_get_username = "select us_username from users where us_id = $1";
-								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.Replace("$1", Convert.ToString(userid)));
+								var sql_get_username = new SQLString("select us_username from users where us_id = @userId");
+								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", Convert.ToString(userid)));
 							}
 						}
 					}
@@ -227,16 +227,16 @@ namespace btnet
 			if ((int)dr["project"] != 0)
 			{
 
-				string sql = @"select
+				var sql = new SQLString(@"select
 					isnull(pj_enable_custom_dropdown1,0) [pj_enable_custom_dropdown1],
 					isnull(pj_enable_custom_dropdown2,0) [pj_enable_custom_dropdown2],
 					isnull(pj_enable_custom_dropdown3,0) [pj_enable_custom_dropdown3],
 					isnull(pj_custom_dropdown_label1,'') [pj_custom_dropdown_label1],
 					isnull(pj_custom_dropdown_label2,'') [pj_custom_dropdown_label2],
 					isnull(pj_custom_dropdown_label3,'') [pj_custom_dropdown_label3]
-					from projects where pj_id = $pj";
+					from projects where pj_id = @pj");
 
-				sql = sql.Replace("$pj", Convert.ToString((int)dr["project"]));
+				sql = sql.AddParameterWithValue("pj", Convert.ToString((int)dr["project"]));
 
 				DataRow project_dr = btnet.DbUtil.get_datarow(sql);
 
@@ -311,19 +311,21 @@ namespace btnet
 		protected static void write_relationships(HttpResponse Response, int bugid)
 		{
 		
-			string sql = @"select bg_id [id],
+			var sql = new SQLString(@"select bg_id [id],
 				bg_short_desc [desc],
 				re_type [comment],
 				case
 					when re_direction = 0 then ''
-					when re_direction = 2 then 'child of $bg'
-					else 'parent of $bg' end [parent/child]
+					when re_direction = 2 then @child
+					else @parent end [parent/child]
 				from bug_relationships
 				inner join bugs on re_bug2 = bg_id
-				where re_bug1 = $bg
-				order by 1";
+				where re_bug1 = @bg
+				order by 1");
 
-			sql = sql.Replace("$bg", Convert.ToString(bugid));
+			sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("parent", "parent of " + Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("child", "child of " + Convert.ToString(bugid));
 			DataSet ds_relationships = btnet.DbUtil.get_dataset(sql);
 
 			if (ds_relationships.Tables[0].Rows.Count > 0)
@@ -1109,7 +1111,7 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public static DataSet get_bug_posts(int bugid, bool external_user, bool history_inline)
         {
-            string sql = @"
+            SQLString sql = new SQLString(@"
 /* get_bug_posts */
 select
 a.bp_bug,
@@ -1139,25 +1141,25 @@ isnull(ba.bp_content_type,'') ba_content_type -- intentionally ba
 from bug_posts a
 left outer join users on us_id = a.bp_user
 left outer join bug_posts ba on ba.bp_parent = a.bp_id and ba.bp_bug = a.bp_bug
-where a.bp_bug = $id
-and a.bp_parent is null";
+where a.bp_bug = @id
+and a.bp_parent is null");
 
 
 			if (!history_inline)
 			{
-				sql += "\n and a.bp_type <> 'update'";
+				sql.Append("\n and a.bp_type <> 'update'");
 			}
 			
 			if (external_user)
 			{
-				sql += "\n and a.bp_hidden_from_external_users = 0";
+				sql.Append("\n and a.bp_hidden_from_external_users = 0");
 			}
 			
-			sql += "\n order by a.bp_id "; 
-			sql += btnet.Util.get_setting("CommentSortOrder","desc");
-			sql += ", ba.bp_parent, ba.bp_id";
+			sql.Append( "\n order by a.bp_id "); 
+			sql.Append( btnet.Util.get_setting("CommentSortOrder","desc"));
+			sql.Append( ", ba.bp_parent, ba.bp_id");
 
-            sql = sql.Replace("$id", Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
             
             return btnet.DbUtil.get_dataset(sql);
 

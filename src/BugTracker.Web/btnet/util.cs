@@ -374,7 +374,7 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static string alter_sql_per_project_permissions(string sql, Security security)
+		public static SQLString alter_sql_per_project_permissions(SQLString sql, Security security)
 		{
 
 			string project_permissions_sql;
@@ -424,23 +424,23 @@ namespace btnet
 			// Figure out where to alter sql for project permissions
             // I've tried lots of different schemes over the years....
 
-            int alter_here_pos = sql.IndexOf("$ALTER_HERE"); // places - can be multiple - are explicitly marked
+            int alter_here_pos = sql.ToString().IndexOf("$ALTER_HERE"); // places - can be multiple - are explicitly marked
             if (alter_here_pos != -1)
             {
-                return sql.Replace("$ALTER_HERE", "/* ALTER_HERE */ " + project_permissions_sql);
+                return new SQLString(sql.ToString().Replace("$ALTER_HERE", "/* ALTER_HERE */ " + project_permissions_sql), sql.GetParameters());
             }
             else
             {
                 string bug_sql;
-
-                int where_pos = sql.IndexOf("WhErE"); // first look for a "special" where, case sensitive, in case there are multiple where's to choose from
+                var rawSQL = sql.ToString();
+                int where_pos = rawSQL.IndexOf("WhErE"); // first look for a "special" where, case sensitive, in case there are multiple where's to choose from
                 if (where_pos == -1)
-                    where_pos = sql.ToUpper().IndexOf("WHERE");
+                    where_pos = rawSQL.ToUpper().IndexOf("WHERE");
 
-                int order_pos = sql.IndexOf("/*ENDWHR*/"); // marker for end of the where statement
+                int order_pos = rawSQL.IndexOf("/*ENDWHR*/"); // marker for end of the where statement
 
                 if (order_pos == -1)
-                    order_pos = sql.ToUpper().LastIndexOf("ORDER BY");
+                    order_pos = rawSQL.ToUpper().LastIndexOf("ORDER BY");
 
                 if (order_pos < where_pos)
                     order_pos = -1; // ignore an order by that occurs in a subquery, for example
@@ -448,38 +448,38 @@ namespace btnet
                 if (where_pos != -1 && order_pos != -1)
                 {
                     // both WHERE and ORDER BY clauses
-                    bug_sql = sql.Substring(0, where_pos + 5)
+                    bug_sql = rawSQL.Substring(0, where_pos + 5)
                         + " /* altered - both  */ ( "
-                        + sql.Substring(where_pos + 5, order_pos - (where_pos + 5))
+                        + rawSQL.Substring(where_pos + 5, order_pos - (where_pos + 5))
                         + " ) AND ( "
                         + project_permissions_sql
                         + " ) "
-                        + sql.Substring(order_pos);
+                        + rawSQL.Substring(order_pos);
                 }
                 else if (order_pos == -1 && where_pos == -1)
                 {
                     // Neither
-                    bug_sql = sql + " /* altered - neither */ WHERE " + project_permissions_sql;
+                    bug_sql = rawSQL + " /* altered - neither */ WHERE " + project_permissions_sql;
                 }
                 else if (order_pos == -1)
                 {
                     // WHERE, without order
-                    bug_sql = sql.Substring(0, where_pos + 5)
+                    bug_sql = rawSQL.Substring(0, where_pos + 5)
                         + " /* altered - just where */ ( "
-                        + sql.Substring(where_pos + 5)
+                        + rawSQL.Substring(where_pos + 5)
                         + " ) AND ( "
                         + project_permissions_sql + " )";
                 }
                 else
                 {
                     // ORDER BY, without WHERE
-                    bug_sql = sql.Substring(0, order_pos)
+                    bug_sql = rawSQL.Substring(0, order_pos)
                         + " /* altered - just order by  */ WHERE "
                         + project_permissions_sql
-                        + sql.Substring(order_pos);
+                        + rawSQL.Substring(order_pos);
                 }
 
-                return bug_sql;
+                return new SQLString(bug_sql, sql.GetParameters());
             }
 
 		}
@@ -515,11 +515,11 @@ namespace btnet
 
             string encrypted = Util.encrypt_string_using_MD5(unencypted + Convert.ToString(salt));
 
-            string sql = "update users set us_password = N'$en', us_salt = $salt where us_id = $id";
+            var sql = new SQLString("update users set us_password = @en, us_salt = @salt where us_id = @id");
 
-            sql = sql.Replace("$en", encrypted);
-            sql = sql.Replace("$salt", Convert.ToString(salt));
-            sql = sql.Replace("$id", Convert.ToString(us_id));
+            sql = sql.AddParameterWithValue("en", encrypted);
+            sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
+            sql = sql.AddParameterWithValue("id", Convert.ToString(us_id));
 
             btnet.DbUtil.execute_nonquery(sql);
         }
@@ -728,18 +728,18 @@ namespace btnet
 		///////////////////////////////////////////////////////////////////////
 		public static DataTable get_related_users(Security security, bool force_full_names)
 		{
-			string sql = "";
+			SQLString sql;
 
 			if (Util.get_setting("DefaultPermissionLevel","2") == "0")
 			{
 				// only show users who have explicit permission
 				// for projects that this user has permissions for
 
-				sql = @"
+				sql = new SQLString(@"
 /* get related users 1 */
 
 select us_id,
-case when $fullnames then
+case when @fullnames then
     case when len(isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')) > 1
 	then isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')
     else us_username end
@@ -754,23 +754,23 @@ where us_id in
 	(select pu1.pu_user from project_user_xref pu1
 	where pu1.pu_project in
 		(select pu2.pu_project from project_user_xref pu2
-		where pu2.pu_user = $user.usid
+		where pu2.pu_user = @userid
 		and pu2.pu_permission_level <> 0
 		)
 	and pu1.pu_permission_level <> 0
 	)
 
-if $og_external_user = 1 -- external
-and $og_other_orgs_permission_level = 0 -- other orgs
+if @og_external_user = 1 -- external
+and @og_other_orgs_permission_level = 0 -- other orgs
 begin
-	delete from #temp where og_external_user = 1 and us_org <> $user.org 
+	delete from #temp where og_external_user = 1 and us_org <> @userorg 
 end
 
-$limit_users
+@limit_users
 
 select us_id, us_username, us_email from #temp order by us_username
 
-drop table #temp";
+drop table #temp");
 
 
 
@@ -782,10 +782,10 @@ drop table #temp";
 
 				// the cartesian join in the first select is intentional
 
-				sql= @"
+				sql= new SQLString(@"
 /* get related users 2 */
 select  pj_id, us_id,
-case when $fullnames then
+case when @fullnames then
     case when len(isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')) > 1
 	then isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')
     else us_username end
@@ -796,21 +796,21 @@ from projects, users
 where pj_id not in
 (
 	select pu_project from project_user_xref
-	where pu_permission_level = 0 and pu_user = $user.usid
+	where pu_permission_level = 0 and pu_user = @userid
 )
 
 
-$limit_users
+@limit_users
 
 
-if $og_external_user = 1 -- external
-and $og_other_orgs_permission_level = 0 -- other orgs
+if @og_external_user = 1 -- external
+and @og_other_orgs_permission_level = 0 -- other orgs
 begin
 	select distinct a.us_id, a.us_username, a.us_email
 	from #temp a
 	inner join users b on a.us_id = b.us_id
 	inner join orgs on b.us_org = og_id
-	where og_external_user = 0 or b.us_org = $user.org
+	where og_external_user = 0 or b.us_org = @user.org
 	order by a.us_username
 end
 else
@@ -824,13 +824,13 @@ begin
 		order by us_username
 end
 
-drop table #temp";
+drop table #temp");
 
 			}
 
 			if (Util.get_setting("LimitUsernameDropdownsInSearch","0") == "1")
 			{
-				string sql_limit_user_names = @"
+				var sql_limit_user_names = @"
 
 select isnull(bg_assigned_to_user,0) keep_me
 into #temp2
@@ -842,11 +842,11 @@ delete from #temp
 where us_id not in (select keep_me from #temp2)
 drop table #temp2";
 
-				sql = sql.Replace("$limit_users",sql_limit_user_names);
+				sql = sql.AddParameterWithValue("limit_users",sql_limit_user_names);
 			}
 			else
 			{
-				sql = sql.Replace("$limit_users","");
+				sql = sql.AddParameterWithValue("limit_users","");
 			}
 
 
@@ -854,18 +854,18 @@ drop table #temp2";
             if (force_full_names || Util.get_setting("UseFullNames", "0") == "1")
 			{
                 // true condition
-                sql = sql.Replace("$fullnames", "1 = 1");
+                sql = sql.AddParameterWithValue("@fullnames", "1 = 1");
             }
 			else
 			{
                 // false condition
-                sql = sql.Replace("$fullnames", "0 = 1");
+                sql = sql.AddParameterWithValue("@fullnames", "0 = 1");
 			}
 
-			sql = sql.Replace("$user.usid",Convert.ToString(security.user.usid));
-			sql = sql.Replace("$user.org",Convert.ToString(security.user.org));
-			sql = sql.Replace("$og_external_user",Convert.ToString(security.user.external_user ? 1 : 0));
-			sql = sql.Replace("$og_other_orgs_permission_level",Convert.ToString(security.user.other_orgs_permission_level));
+			sql = sql.AddParameterWithValue("@userid",Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("@userorg",Convert.ToString(security.user.org));
+			sql = sql.AddParameterWithValue("@og_external_user",Convert.ToString(security.user.external_user ? 1 : 0));
+			sql = sql.AddParameterWithValue("@og_other_orgs_permission_level",Convert.ToString(security.user.other_orgs_permission_level));
 
 			return btnet.DbUtil.get_dataset(sql).Tables[0];
 
@@ -878,11 +878,11 @@ drop table #temp2";
 
 			if (projectid == 0) {return 0;}
 
-			string sql = @"select isnull(pj_default_user,0)
+			var sql = new SQLString(@"select isnull(pj_default_user,0)
 					from projects
-					where pj_id = $pj";
+					where pj_id = @pj)");
 
-			sql = sql.Replace("$pj", Convert.ToString(projectid));
+			sql = sql.AddParameterWithValue("pj", Convert.ToString(projectid));
 			object obj = btnet.DbUtil.execute_scalar(sql);
 
 			if (obj != null)
@@ -909,7 +909,7 @@ drop table #temp2";
             }
             else
             {
-            	ds = btnet.DbUtil.get_dataset(@"
+            	ds = btnet.DbUtil.get_dataset(new SQLString(@"
 /* custom columns */ select sc.name, st.[name] [datatype], 
 case when st.[name] = 'nvarchar' or st.[name] = 'nchar' then sc.length/2 else sc.length end as [length], 
 sc.xprec, sc.xscale, sc.isnullable,
@@ -945,7 +945,7 @@ and sc.name not in ('rowguid',
 'bg_project_custom_dropdown_value2',
 'bg_project_custom_dropdown_value3',
 'bg_tags')
-order by sc.id, isnull(ccm_sort_seq,sc.colorder)");
+order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
 				
 				context.Application["custom_columns_dataset"]  = ds;
 				return ds;
@@ -1139,8 +1139,8 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)");
         ///////////////////////////////////////////////////////////////////////
 		public static void update_most_recent_login_datetime(int us_id)
 		{
-			string sql = @"update users set us_most_recent_login_datetime = getdate() where us_id = $us";
-			sql = sql.Replace("$us", Convert.ToString(us_id));
+			var sql = new SQLString(@"update users set us_most_recent_login_datetime = getdate() where us_id = @us");
+			sql = sql.AddParameterWithValue("us", Convert.ToString(us_id));
 			DbUtil.execute_nonquery(sql);
 		}
 
@@ -1281,75 +1281,75 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)");
 		///////////////////////////////////////////////////////////////////////
 		public static DataSet get_all_tasks(Security security, int bugid)
 		{
-            string sql = "select ";
+            var sql = new SQLString("select ");
             
             if (bugid == 0)
             {
-                sql += @"
+                sql.Append( @"
 bg_id as [id], 
 bg_short_desc as [description], 
 pj_name as [project], 
 ct_name as [category], 
 bug_statuses.st_name as [status],  
-bug_users.us_username as [assigned to],";
+bug_users.us_username as [assigned to],");
             }
 
-            sql += "tsk_id [task<br>id], tsk_description [task<br>description] ";
+            sql.Append("tsk_id [task<br>id], tsk_description [task<br>description] ");
 
 			if (btnet.Util.get_setting("ShowTaskAssignedTo","1") == "1")
 			{
-				sql += ", task_users.us_username [task<br>assigned to]";
+				sql.Append(", task_users.us_username [task<br>assigned to]");
 			}
 
 			if (btnet.Util.get_setting("ShowTaskPlannedStartDate","1") == "1")
 			{
-				sql += ", tsk_planned_start_date [planned start]";
+				sql.Append(", tsk_planned_start_date [planned start]");
 			}
 			if (btnet.Util.get_setting("ShowTaskActualStartDate","1") == "1")
 			{
-				sql += ", tsk_actual_start_date [actual start]";
+				sql.Append(", tsk_actual_start_date [actual start]");
 			}
 
 			if (btnet.Util.get_setting("ShowTaskPlannedEndDate","1") == "1")
 			{
-				sql += ", tsk_planned_end_date [planned end]";
+				sql.Append(", tsk_planned_end_date [planned end]");
 			}
 			if (btnet.Util.get_setting("ShowTaskActualEndDate","1") == "1")
 			{
-				sql += ", tsk_actual_end_date [actual end]";
+				sql.Append(", tsk_actual_end_date [actual end]");
 			}
 
 			if (btnet.Util.get_setting("ShowTaskPlannedDuration","1") == "1")
 			{
-				sql += ", tsk_planned_duration [planned<br>duration]";
+				sql.Append(", tsk_planned_duration [planned<br>duration]");
 			}
 			if (btnet.Util.get_setting("ShowTaskActualDuration","1") == "1")
 			{
-				sql += ", tsk_actual_duration  [actual<br>duration]";
+				sql.Append( ", tsk_actual_duration  [actual<br>duration]");
 			}
 
 
 			if (btnet.Util.get_setting("ShowTaskDurationUnits","1") == "1")
 			{
-				sql += ", tsk_duration_units [duration<br>units]";
+				sql.Append(", tsk_duration_units [duration<br>units]");
 			}
 
 			if (btnet.Util.get_setting("ShowTaskPercentComplete","1") == "1")
 			{
-				sql += ", tsk_percent_complete [percent<br>complete]";
+				sql.Append(", tsk_percent_complete [percent<br>complete]");
 			}
 
 			if (btnet.Util.get_setting("ShowTaskStatus","1") == "1")
 			{
-				sql += ", task_statuses.st_name  [task<br>status]";
+				sql.Append(", task_statuses.st_name  [task<br>status]");
 			}		
 
 			if (btnet.Util.get_setting("ShowTaskSortSequence","1") == "1")
 			{
-				sql += ", tsk_sort_sequence  [seq]";
+				sql.Append(", tsk_sort_sequence  [seq]");
 			}	
 
-			sql += @"
+			sql.Append(@"
 from bug_tasks 
 inner join bugs on tsk_bug = bg_id
 left outer join projects on bg_project = pj_id
@@ -1359,19 +1359,19 @@ left outer join statuses task_statuses on tsk_status = task_statuses.st_id
 left outer join users bug_users on bg_assigned_to_user = bug_users.us_id
 left outer join users task_users on tsk_assigned_to_user = task_users.us_id
 where tsk_bug in 
-("; 
+("); 
 
 			if (bugid == 0)
 			{
-				sql += btnet.Util.alter_sql_per_project_permissions("select bg_id from bugs", security);
+				sql.Append(btnet.Util.alter_sql_per_project_permissions(new SQLString("select bg_id from bugs"), security));
 			}
 			else
 			{
-				sql += Convert.ToString(bugid);
+				sql.Append(Convert.ToString(bugid));
 			}
-			sql += @"
+			sql.Append(@"
 )
-order by tsk_sort_sequence, tsk_id";
+order by tsk_sort_sequence, tsk_id");
 
 			
 			DataSet ds = btnet.DbUtil.get_dataset(sql);

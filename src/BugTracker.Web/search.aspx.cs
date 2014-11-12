@@ -77,12 +77,12 @@ namespace btnet
 
                 // are there any project dropdowns?
 
-                string sql = @"
+                var sql = new SQLString(@"
 select count(1)
 from projects
 where isnull(pj_enable_custom_dropdown1,0) = 1
 or isnull(pj_enable_custom_dropdown2,0) = 1
-or isnull(pj_enable_custom_dropdown3,0) = 1";
+or isnull(pj_enable_custom_dropdown3,0) = 1");
 
                 int projects_with_custom_dropdowns = (int)btnet.DbUtil.execute_scalar(sql);
 
@@ -97,7 +97,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1";
 
                 // get the project dropdowns
 
-                string sql = @"
+                var sql = new SQLString(@"
 select
 pj_id,
 isnull(pj_enable_custom_dropdown1,0) pj_enable_custom_dropdown1,
@@ -112,7 +112,7 @@ isnull(pj_custom_dropdown_values3,'') pj_custom_dropdown_values3
 from projects
 where isnull(pj_enable_custom_dropdown1,0) = 1
 or isnull(pj_enable_custom_dropdown2,0) = 1
-or isnull(pj_enable_custom_dropdown3,0) = 1";
+or isnull(pj_enable_custom_dropdown3,0) = 1");
 
                 DataSet ds_projects = btnet.DbUtil.get_dataset(sql);
 
@@ -741,13 +741,13 @@ or isnull(pj_enable_custom_dropdown3,0) = 1";
                     select += "left outer join user_defined_attribute on udf_id = bg_user_defined_attribute";
                 }
 
-                sql = select + where + " order by bg_id desc";
+                sql = new SQLString(select + where + " order by bg_id desc");
 
             }
             else
             {
                 search_sql = search_sql.Replace("[br]", "\n");
-                sql = search_sql.Replace("$WHERE$", where);
+                sql = new SQLString(search_sql.Replace("$WHERE$", where));
             }
 
             sql = Util.alter_sql_per_project_permissions(sql, security);
@@ -966,38 +966,39 @@ or isnull(pj_enable_custom_dropdown3,0) = 1";
             // only show projects where user has permissions
             if (security.user.is_admin)
             {
-                sql = "/* drop downs */ select pj_id, pj_name from projects order by pj_name;";
+                sql = new SQLString( "/* drop downs */ select pj_id, pj_name from projects order by pj_name;");
             }
             else
             {
-                sql = @"/* drop downs */ select pj_id, pj_name
+                sql = new SQLString(@"/* drop downs */ select pj_id, pj_name
 			from projects
 			left outer join project_user_xref on pj_id = pu_project
-			and pu_user = $us
-			where isnull(pu_permission_level,$dpl) <> 0
-			order by pj_name;";
+			and pu_user = @us
+			where isnull(pu_permission_level,@dpl) <> 0
+			order by pj_name;");
 
-                sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-                sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel", "2"));
+                sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
             }
 
 
             if (security.user.other_orgs_permission_level != 0)
             {
-                sql += " select og_id, og_name from orgs order by og_name;";
+                sql.Append(" select og_id, og_name from orgs order by og_name;");
             }
             else
             {
-                sql += " select og_id, og_name from orgs where og_id = " + Convert.ToInt32(security.user.org) + " order by og_name;";
+                sql.Append(" select og_id, og_name from orgs where og_id = @ogId order by og_name;");
+                sql.AddParameterWithValue("ogId", security.user.org.ToString());
                 org.Visible = false;
                 org_label.Visible = false;
             }
 
-            sql += @"
+            sql.Append(@"
 	select ct_id, ct_name from categories order by ct_sort_seq, ct_name;
 	select pr_id, pr_name from priorities order by pr_sort_seq, pr_name;
 	select st_id, st_name from statuses order by st_sort_seq, st_name;
-	select udf_id, udf_name from user_defined_attribute order by udf_sort_seq, udf_name";
+	select udf_id, udf_name from user_defined_attribute order by udf_sort_seq, udf_name");
 
             DataSet ds_dropdowns = btnet.DbUtil.get_dataset(sql);
 
@@ -1120,7 +1121,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1";
             write_custom_date_control("to__" + name); // magic
         }
 
-        protected string sql;
+        protected SQLString sql;
         protected DataView dv;
         protected DataSet ds_custom_cols = null;
 

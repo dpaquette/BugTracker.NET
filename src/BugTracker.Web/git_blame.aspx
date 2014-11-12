@@ -20,14 +20,14 @@ void Page_Load(Object sender, EventArgs e)
 	security = new Security();
 	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
-	string sql = @"
+	var sql = new SQLString(@"
 select gitcom_commit, gitcom_bug, gitcom_repository, gitap_path 
 from git_commits
 inner join git_affected_paths on gitap_gitcom_id = gitcom_id
-where gitap_id = $id";
+where gitap_id = @id");
 
     int gitap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("$id", Convert.ToString(gitap_id));
+	sql = sql.AddParameterWithValue("id", Convert.ToString(gitap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

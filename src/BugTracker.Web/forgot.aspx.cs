@@ -49,13 +49,15 @@ namespace btnet
                     {
 
                         // check if email exists
-                        user_count = (int)btnet.DbUtil.execute_scalar(
-                            "select count(1) from users where us_email = N'" + email.Value.Replace("'", "''") + "'");
+                        SQLString sql = new SQLString("select count(1) from users where us_email = @email");
+                        sql.AddParameterWithValue("email", email.Value);
+                        user_count = (int)DbUtil.execute_scalar(sql);
 
                         if (user_count == 1)
                         {
-                            user_id = (int)btnet.DbUtil.execute_scalar(
-                                "select us_id from users where us_email = N'" + email.Value.Replace("'", "''") + "'");
+                            sql = new SQLString("select us_id from users where us_email = @email");
+                            sql.AddParameterWithValue("email", email.Value);
+                            user_id = (int)DbUtil.execute_scalar(sql);
                         }
 
 
@@ -63,27 +65,34 @@ namespace btnet
                     else if (email.Value == "" && username.Value != "")
                     {
                         // check if email exists
-                        user_count = (int)btnet.DbUtil.execute_scalar(
-                            "select count(1) from users where isnull(us_email,'') != '' and  us_username = N'" + username.Value.Replace("'", "''") + "'");
+                        SQLString sql = new SQLString(
+                                                    "select count(1) from users where isnull(us_email,'') != '' and  us_username = @username");
+                        sql.AddParameterWithValue("username", username.Value);
+                        user_count = (int)DbUtil.execute_scalar(sql);
 
                         if (user_count == 1)
                         {
-                            user_id = (int)btnet.DbUtil.execute_scalar(
-                                "select us_id from users where us_username = N'" + username.Value.Replace("'", "''") + "'");
+                            sql = new SQLString("select us_id from users where us_username = @username");
+                            sql.AddParameterWithValue("username", username.Value);
+                            user_id = (int)DbUtil.execute_scalar(sql);
                         }
                     }
                     else if (email.Value != "" && username.Value != "")
                     {
                         // check if email exists
-                        user_count = (int)btnet.DbUtil.execute_scalar(
-                            "select count(1) from users where us_username = N'" + username.Value.Replace("'", "''") + "' and us_email = N'"
-                            + email.Value.Replace("'", "''") + "'");
+                        SQLString sql = new SQLString(
+                                                    "select count(1) from users where us_username = @username and us_email = @email");
+                        sql.AddParameterWithValue("username", username.Value);
+                        sql.AddParameterWithValue("email", email.Value);
+                        user_count = (int)DbUtil.execute_scalar(sql);
 
                         if (user_count == 1)
                         {
-                            user_id = (int)btnet.DbUtil.execute_scalar(
-                                "select us_id from users where us_username = N'" + username.Value.Replace("'", "''") + "' and us_email = N'"
-                                + email.Value.Replace("'", "''") + "'");
+                            sql = new SQLString(
+                                                            "select us_id from users where us_username = @username and us_email = @email");
+                            sql.AddParameterWithValue("username", username.Value);
+                            sql.AddParameterWithValue("email", email.Value);
+                            user_id = (int)DbUtil.execute_scalar(sql);
                         }
                     }
 
@@ -91,23 +100,23 @@ namespace btnet
                     if (user_count == 1)
                     {
                         string guid = Guid.NewGuid().ToString();
-                        string sql = @"
+                        var sql = new SQLString(@"
 declare @username nvarchar(255)
 declare @email nvarchar(255)
 
 select @username = us_username, @email = us_email
-	from users where us_id = $user_id
+	from users where us_id = @user_id
 
 insert into emailed_links
 	(el_id, el_date, el_email, el_action, el_user_id)
-	values ('$guid', getdate(), @email, N'forgot', $user_id)
+	values (@guid, getdate(), @email, N'forgot', @user_id)
 
-select @username us_username, @email us_email";
+select @username us_username, @email us_email");
 
-                        sql = sql.Replace("$guid", guid);
-                        sql = sql.Replace("$user_id", Convert.ToString(user_id));
+                        sql = sql.AddParameterWithValue("guid", guid);
+                        sql = sql.AddParameterWithValue("user_id", Convert.ToString(user_id));
 
-                        DataRow dr = btnet.DbUtil.get_datarow(sql);
+                        DataRow dr = DbUtil.get_datarow(sql);
 
                         string result = Email.send_email(
                             (string)dr["us_email"],

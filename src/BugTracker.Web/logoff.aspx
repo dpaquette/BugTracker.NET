@@ -20,7 +20,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.set_context(HttpContext.Current);
 
 	
-	btnet.DbUtil.get_sqlconnection();
+	btnet.DbUtil.GetConnection();
 
 	// delete the session row
 
@@ -31,10 +31,10 @@ void Page_Load(Object sender, EventArgs e)
 
 		string se_id = cookie.Value.Replace("'", "''");
 		
-		string sql = @"delete from sessions
-			where se_id = N'$se'
-			or datediff(d, se_date, getdate()) > 2";
-		sql = sql.Replace("$se", se_id);
+		var sql = new SQLString(@"delete from sessions
+			where se_id = @se
+			or datediff(d, se_date, getdate()) > 2");
+		sql = sql.AddParameterWithValue("se", se_id);
 		btnet.DbUtil.execute_nonquery(sql);		
 		
 		Session[se_id] = 0;

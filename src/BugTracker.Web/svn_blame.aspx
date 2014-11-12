@@ -26,17 +26,17 @@ void Page_Load(Object sender, EventArgs e)
 
 	// get info about revision
 
-	string sql = @"
+	var sql = new SQLString(@"
 select svnrev_revision, svnrev_repository, svnap_path, svnrev_bug
 from svn_revisions
 inner join svn_affected_paths on svnap_svnrev_id = svnrev_id
-where svnap_id = $id
-order by svnrev_revision desc, svnap_path";
+where svnap_id = @id
+order by svnrev_revision desc, svnap_path");
 
     int svnap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
 	string string_affected_path_id = Convert.ToString(svnap_id);
 
-	sql = sql.Replace("$id", string_affected_path_id);
+	sql = sql.AddParameterWithValue("id", string_affected_path_id);
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

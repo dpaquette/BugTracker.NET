@@ -32,14 +32,14 @@ void Page_Load(Object sender, EventArgs e)
 
 	ses = (string) Session["session_cookie"];
 
-	string sql = @"
+	var sql = new SQLString(@"
 select ds_id, ds_col, ds_row, ds_chart_type, rp_desc
 from dashboard_items ds
 inner join reports on rp_id = ds_report
-where ds_user = $user
-order by ds_col, ds_row";
+where ds_user = @user
+order by ds_col, ds_row");
 
-	sql = sql.Replace("$user", Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 

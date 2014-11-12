@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -57,8 +57,8 @@ void Page_Load(Object sender, EventArgs e)
 
 		back_href.HRef = "edit_bug.aspx?id=" + id;
 
-		sql = @"select bg_short_desc from bugs where bg_id = $1";
-		sql = sql.Replace("$1", id);
+		sql = new SQLString(@"select bg_short_desc from bugs where bg_id = @bugId");
+		sql = sql.AddParameterWithValue("bugId", id);
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 

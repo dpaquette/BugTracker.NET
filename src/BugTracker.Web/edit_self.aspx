@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -36,17 +36,17 @@ void Page_Load(Object sender, EventArgs e)
 	{
 
 
-		sql = @"declare @org int
-			select @org = us_org from users where us_id = $us
+		sql = new SQLString(@"declare @org int
+			select @org = us_org from users where us_id = @us
 
 			select qu_id, qu_desc
 			from queries
 			where (isnull(qu_user,0) = 0 and isnull(qu_org,0) = 0)
-			or isnull(qu_user,0) = $us
+			or isnull(qu_user,0) = @us
 			or isnull(qu_org,0) = @org
-			order by qu_desc";
+			order by qu_desc");
 
-		sql = sql.Replace("$us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
 
 		query.DataSource = btnet.DbUtil.get_dataview(sql);
 		query.DataTextField = "qu_desc";
@@ -54,14 +54,14 @@ void Page_Load(Object sender, EventArgs e)
 		query.DataBind();
 
 
-		sql = @"select pj_id, pj_name, isnull(pu_auto_subscribe,0) [pu_auto_subscribe]
+		sql = new SQLString(@"select pj_id, pj_name, isnull(pu_auto_subscribe,0) [pu_auto_subscribe]
 			from projects
-			left outer join project_user_xref on pj_id = pu_project and $us = pu_user
-			where isnull(pu_permission_level,$dpl) <> 0
-			order by pj_name";
+			left outer join project_user_xref on pj_id = pu_project and @us = pu_user
+			where isnull(pu_permission_level,@dpl) <> 0
+			order by pj_name");
 
-		sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-		sql = sql.Replace("$dpl", Util.get_setting("DefaultPermissionLevel","2"));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
 		DataView projects_dv = btnet.DbUtil.get_dataview(sql);
 
@@ -74,7 +74,7 @@ void Page_Load(Object sender, EventArgs e)
 		// Get this entry's data from the db and fill in the form
 		// MAW -- 2006/01/27 -- Converted to use new notification columns
 
-		sql = @"select
+		sql = new SQLString(@"select
 			us_username [username],
 			isnull(us_firstname,'') [firstname],
 			isnull(us_lastname,'') [lastname],
@@ -93,9 +93,9 @@ void Page_Load(Object sender, EventArgs e)
 			us_default_query,
 			isnull(us_signature,'') [signature]
 			from users
-			where us_id = $id";
+			where us_id = @id");
 
-		sql = sql.Replace("$id", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -223,42 +223,42 @@ void on_update ()
 	if (good)
 	{
 
-		sql = @"update users set
-			us_firstname = N'$fn',
-			us_lastname = N'$ln',
-			us_bugs_per_page = N'$bp',
-			us_use_fckeditor = $fk,
-			us_enable_bug_list_popups = $pp,
-			us_email = N'$em',
-			us_enable_notifications = $en,
-			us_send_notifications_to_self = $ss,
-            us_reported_notifications = $rn,
-            us_assigned_notifications = $an,
-            us_subscribed_notifications = $sn,
-			us_auto_subscribe = $as,
-			us_auto_subscribe_own_bugs = $ao,
-			us_auto_subscribe_reported_bugs = $ar,
-			us_default_query = $dq,
-			us_signature = N'$sg'
-			where us_id = $id";
+		sql = new SQLString(@"update users set
+			us_firstname = @fn,
+			us_lastname = @ln,
+			us_bugs_per_page = @bp,
+			us_use_fckeditor = @fk,
+			us_enable_bug_list_popups = @pp,
+			us_email = @em,
+			us_enable_notifications = @en,
+			us_send_notifications_to_self = @ss,
+            us_reported_notifications = @rn,
+            us_assigned_notifications = @an,
+            us_subscribed_notifications = @sn,
+			us_auto_subscribe = @as,
+			us_auto_subscribe_own_bugs = @ao,
+			us_auto_subscribe_reported_bugs = @ar,
+			us_default_query = @dq,
+			us_signature = @sg
+			where us_id = @id");
 
-		sql = sql.Replace("$fn", firstname.Value.Replace("'","''"));
-		sql = sql.Replace("$ln", lastname.Value.Replace("'","''"));
-		sql = sql.Replace("$bp", bugs_per_page.Value.Replace("'","''"));
-		sql = sql.Replace("$fk", Util.bool_to_string(use_fckeditor.Checked));
-        sql = sql.Replace("$pp", Util.bool_to_string(enable_popups.Checked));
-		sql = sql.Replace("$em", email.Value.Replace("'","''"));
-		sql = sql.Replace("$en", Util.bool_to_string(enable_notifications.Checked));
-		sql = sql.Replace("$ss", Util.bool_to_string(send_to_self.Checked));
-        sql = sql.Replace("$rn", reported_notifications.SelectedItem.Value);
-        sql = sql.Replace("$an", assigned_notifications.SelectedItem.Value);
-        sql = sql.Replace("$sn", subscribed_notifications.SelectedItem.Value);
-        sql = sql.Replace("$as", Util.bool_to_string(auto_subscribe.Checked));
-		sql = sql.Replace("$ao", Util.bool_to_string(auto_subscribe_own.Checked));
-		sql = sql.Replace("$ar", Util.bool_to_string(auto_subscribe_reported.Checked));
-		sql = sql.Replace("$dq", query.SelectedItem.Value);
-		sql = sql.Replace("$sg", signature.InnerText.Replace("'","''"));
-		sql = sql.Replace("$id", Convert.ToString(id));
+		sql = sql.AddParameterWithValue("fn", firstname.Value);
+		sql = sql.AddParameterWithValue("ln", lastname.Value);
+		sql = sql.AddParameterWithValue("bp", bugs_per_page.Value);
+		sql = sql.AddParameterWithValue("fk", Util.bool_to_string(use_fckeditor.Checked));
+        sql = sql.AddParameterWithValue("pp", Util.bool_to_string(enable_popups.Checked));
+		sql = sql.AddParameterWithValue("em", email.Value);
+		sql = sql.AddParameterWithValue("en", Util.bool_to_string(enable_notifications.Checked));
+		sql = sql.AddParameterWithValue("ss", Util.bool_to_string(send_to_self.Checked));
+        sql = sql.AddParameterWithValue("rn", reported_notifications.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("an", assigned_notifications.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("sn", subscribed_notifications.SelectedItem.Value);
+        sql = sql.AddParameterWithValue("as", Util.bool_to_string(auto_subscribe.Checked));
+		sql = sql.AddParameterWithValue("ao", Util.bool_to_string(auto_subscribe_own.Checked));
+		sql = sql.AddParameterWithValue("ar", Util.bool_to_string(auto_subscribe_reported.Checked));
+		sql = sql.AddParameterWithValue("dq", query.SelectedItem.Value);
+		sql = sql.AddParameterWithValue("sg", signature.InnerText);
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
 		// update user
 		btnet.DbUtil.execute_nonquery(sql);
@@ -272,9 +272,9 @@ void on_update ()
 		// Now update project_user_xref
 
 		// First turn everything off, then turn selected ones on.
-		sql = @"update project_user_xref
-				set pu_auto_subscribe = 0 where pu_user = $id";
-		sql = sql.Replace("$id", Convert.ToString(id));
+		sql = new SQLString(@"update project_user_xref
+				set pu_auto_subscribe = 0 where pu_user = @id");
+		sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 		btnet.DbUtil.execute_nonquery(sql);
 
 		// Second see what to turn back on
@@ -295,17 +295,17 @@ void on_update ()
 		if (projects != "")
 		{
 
-			sql = @"update project_user_xref
-				set pu_auto_subscribe = 1 where pu_user = $id and pu_project in ($projects)
+			sql = new SQLString(@"update project_user_xref
+				set pu_auto_subscribe = 1 where pu_user = @id and pu_project in ($projects)
 
 			insert into project_user_xref (pu_project, pu_user, pu_auto_subscribe)
-				select pj_id, $id, 1
+				select pj_id, @id, 1
 				from projects
-				where pj_id in ($projects)
-				and pj_id not in (select pu_project from project_user_xref where pu_user = $id)";
+				where pj_id in (projects)
+				and pj_id not in (select pu_project from project_user_xref where pu_user = @id)");
 
-			sql = sql.Replace("$id", Convert.ToString(id));
-			sql = sql.Replace("$projects", projects);
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("projects", projects);
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 
@@ -313,38 +313,38 @@ void on_update ()
 		// apply subscriptions retroactively
 		if (retroactive.Checked)
 		{
-			sql = @"delete from bug_subscriptions where bs_user = $id;";
+			sql = new SQLString(@"delete from bug_subscriptions where bs_user = @id;");
 			if (auto_subscribe.Checked)
 			{
-				sql += @"insert into bug_subscriptions (bs_bug, bs_user)
-					select bg_id, $id from bugs;";
+				sql.Append( @"insert into bug_subscriptions (bs_bug, bs_user)
+					select bg_id, @id from bugs;");
 			}
 			else
 			{
 				if (auto_subscribe_reported.Checked)
 				{
-					sql += @"insert into bug_subscriptions (bs_bug, bs_user)
-						select bg_id, $id from bugs where bg_reported_user = $id
-						and bg_id not in (select bs_bug from bug_subscriptions where bs_user = $id);";
+					sql.Append(@"insert into bug_subscriptions (bs_bug, bs_user)
+						select bg_id, @id from bugs where bg_reported_user = @id
+						and bg_id not in (select bs_bug from bug_subscriptions where bs_user = @id);");
 				}
 
 				if (auto_subscribe_own.Checked)
 				{
-					sql += @"insert into bug_subscriptions (bs_bug, bs_user)
-						select bg_id, $id from bugs where bg_assigned_to_user = $id
-						and bg_id not in (select bs_bug from bug_subscriptions where bs_user = $id);";
+					sql.Append(@"insert into bug_subscriptions (bs_bug, bs_user)
+						select bg_id, @id from bugs where bg_assigned_to_user = @id
+						and bg_id not in (select bs_bug from bug_subscriptions where bs_user = @id);");
 				}
 
 				if (projects != "")
 				{
-					sql += @"insert into bug_subscriptions (bs_bug, bs_user)
-						select bg_id, $id from bugs where bg_project in ($projects)
-						and bg_id not in (select bs_bug from bug_subscriptions where bs_user = $id);";
+					sql.Append(@"insert into bug_subscriptions (bs_bug, bs_user)
+						select bg_id, @id from bugs where bg_project in (@projects)
+						and bg_id not in (select bs_bug from bug_subscriptions where bs_user = @id);");
 				}
 			}
 
-			sql = sql.Replace("$id", Convert.ToString(id));
-			sql = sql.Replace("$projects", projects);
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("projects", projects);
 			btnet.DbUtil.execute_nonquery(sql);
 
 		}

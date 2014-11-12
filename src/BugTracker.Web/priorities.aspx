@@ -22,14 +22,14 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "priorities";
 
-	ds = btnet.DbUtil.get_dataset (
+	ds = btnet.DbUtil.get_dataset (new SQLString(
 		@"select pr_id [id],
 		pr_name [description],
 		pr_sort_seq [sort seq],
 		'<div style=''background:' + pr_background_color + ';''>' + pr_background_color + '</div>' [background<br>color],
 		pr_style [css<br>class],
 		case when pr_default = 1 then 'Y' else 'N' end [default],
-		pr_id [hidden] from priorities");
+		pr_id [hidden] from priorities"));
 
 }
 

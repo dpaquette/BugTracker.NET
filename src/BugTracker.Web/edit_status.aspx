@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -53,8 +53,8 @@ void Page_Load(Object sender, EventArgs e)
 
 			// Get this entry's data from the db and fill in the form
 
-			sql = @"select st_name, st_sort_seq, isnull(st_style,'') [st_style], st_default from statuses where st_id = $1";
-			sql = sql.Replace("$1", Convert.ToString(id));
+			sql = new SQLString(@"select st_name, st_sort_seq, isnull(st_style,'') [st_style], st_default from statuses where st_id = @id");
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -121,25 +121,25 @@ void on_update()
 	{
 		if (id == 0)  // insert new
 		{
-			sql = "insert into statuses (st_name, st_sort_seq, st_style, st_default) values (N'$na', $ss, N'$st', $df)";
+			sql = new SQLString("insert into statuses (st_name, st_sort_seq, st_style, st_default) values (@na, @ss, @st, @df)");
 		}
 		else // edit existing
 		{
 
-			sql = @"update statuses set
-				st_name = N'$na',
-				st_sort_seq = $ss,
-				st_style = N'$st',
-				st_default = $df
-				where st_id = $id";
+			sql = new SQLString(@"update statuses set
+				st_name = @na,
+				st_sort_seq = @ss,
+				st_style = @st,
+				st_default = @df
+				where st_id = @id");
 
-			sql = sql.Replace("$id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("$id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("$na", name.Value.Replace("'","''"));
-		sql = sql.Replace("$ss", sort_seq.Value);
-		sql = sql.Replace("$st", style.Value.Replace("'","''"));
-		sql = sql.Replace("$df", Util.bool_to_string(default_selection.Checked));
+		sql = sql.AddParameterWithValue("na", name.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("st", style.Value);
+		sql = sql.AddParameterWithValue("df", Util.bool_to_string(default_selection.Checked));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("statuses.aspx");
 

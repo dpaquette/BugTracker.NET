@@ -89,11 +89,11 @@ void Page_Load(Object sender, EventArgs e)
 		string date = changeset.GetElementsByTagName("date")[0].InnerText;
 
 
-	    string sql = @"
+	    var sql = new SQLString(@"
 declare @cnt int
 select @cnt = count(1) from hg_revisions 
-where hgrev_revision = '$hgrev_revision'
-and hgrev_repository = N'$hgrev_repository'
+where hgrev_revision = @hgrev_revision
+and hgrev_repository = @hgrev_repository
 
 if @cnt = 0 
 BEGIN
@@ -109,27 +109,27 @@ insert into hg_revisions
 )
 values
 (
-	$hgrev_revision,
-	$hgrev_bug,
-	N'$hgrev_repository',
-	N'$hgrev_author',
-	N'$hgrev_hg_date',
+	@hgrev_revision,
+	@hgrev_bug,
+	@hgrev_repository,
+	@hgrev_author,
+	@hgrev_hg_date,
 	getdate(),
-	N'$hgrev_desc'
+	@hgrev_desc'
 )
 
 select scope_identity()
 END	
 ELSE
 select 0
-";
+");
 
-		sql = sql.Replace("$hgrev_revision",revision.Replace("'","''"));
-		sql = sql.Replace("$hgrev_bug", Convert.ToString(bug));
-		sql = sql.Replace("$hgrev_repository",repo.Replace("'","''"));
-		sql = sql.Replace("$hgrev_author",author.Replace("'","''"));
-		sql = sql.Replace("$hgrev_hg_date",date.Replace("'","''"));
-		sql = sql.Replace("$hgrev_desc",desc.Replace("'","''"));
+		sql = sql.AddParameterWithValue("hgrev_revision",revision);
+		sql = sql.AddParameterWithValue("hgrev_bug", Convert.ToString(bug));
+		sql = sql.AddParameterWithValue("hgrev_repository",repo);
+		sql = sql.AddParameterWithValue("hgrev_author",author);
+		sql = sql.AddParameterWithValue("hgrev_hg_date",date);
+		sql = sql.AddParameterWithValue("hgrev_desc",desc);
 
 		int hgrev_id =  Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -146,7 +146,7 @@ select 0
 				string file_path = path_element.InnerText;
 
 
-				sql = @"
+				sql = new SQLString(@"
 insert into hg_affected_paths
 (
 hgap_hgrev_id,
@@ -155,14 +155,14 @@ hgap_path
 )
 values
 (
-$hgap_hgrev_id,
-N'$hgap_action',
-N'$hgap_path'
-)";		
+@hgap_hgrev_id,
+@hgap_action,
+@hgap_path
+)");		
 
-				sql = sql.Replace("$hgap_hgrev_id", Convert.ToString(hgrev_id));
-				sql = sql.Replace("$hgap_action", action.Replace("'","''"));
-				sql = sql.Replace("$hgap_path", file_path.Replace("'","''"));
+				sql = sql.AddParameterWithValue("hgap_hgrev_id", Convert.ToString(hgrev_id));
+				sql = sql.AddParameterWithValue("hgap_action", action);
+				sql = sql.AddParameterWithValue("hgap_path", file_path);
 
 				btnet.DbUtil.execute_nonquery(sql);
 

@@ -154,12 +154,12 @@ void update_db(int bug, string repo, string commit, string author, string date, 
 	
 	*/
 
-	string sql = @"
+	SQLString sql = new SQLString(@"
 
 declare @cnt int
 select @cnt = count(1) from git_commits 
-where gitcom_commit = '$gitcom_commit'
-and gitcom_repository = N'$gitcom_repository'
+where gitcom_commit = @gitcom_commit
+and gitcom_repository = @gitcom_repository
 
 if @cnt = 0 
 BEGIN
@@ -175,13 +175,13 @@ BEGIN
 	)
 	values
 	(
-		'$gitcom_commit',
-		$gitcom_bug,
-		N'$gitcom_repository',
-		N'$gitcom_author',
-		N'$gitcom_git_date',
+		@gitcom_commit,
+		@gitcom_bug,
+		@gitcom_repository,
+		@gitcom_author,
+		@gitcom_git_date,
 		getdate(),
-		N'$gitcom_msg'
+		@gitcom_msg
 	)
 
 	select scope_identity()
@@ -189,14 +189,14 @@ END
 ELSE
 	select 0
 
-";
+");
 	
-	sql = sql.Replace("$gitcom_commit",commit.Replace("'","''"));
-	sql = sql.Replace("$gitcom_bug", Convert.ToString(bug));
-	sql = sql.Replace("$gitcom_repository",repo.Replace("'","''"));
-	sql = sql.Replace("$gitcom_author",author.Replace("'","''"));
-	sql = sql.Replace("$gitcom_git_date",date.Replace("'","''"));
-	sql = sql.Replace("$gitcom_msg",msg.Replace("'","''"));
+	sql = sql.AddParameterWithValue("gitcom_commit",commit);
+	sql = sql.AddParameterWithValue("gitcom_bug", Convert.ToString(bug));
+	sql = sql.AddParameterWithValue("gitcom_repository",repo);
+	sql = sql.AddParameterWithValue("gitcom_author",author);
+	sql = sql.AddParameterWithValue("gitcom_git_date",date);
+	sql = sql.AddParameterWithValue("gitcom_msg",msg);
 
 	int gitcom_id =  Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));	
 
@@ -208,7 +208,7 @@ ELSE
 
 		for (int i = 0; i < actions.Count; i++)
 		{
-			sql = @"
+			sql = new SQLString(@"
 insert into git_affected_paths
 (
 gitap_gitcom_id,
@@ -217,15 +217,15 @@ gitap_path
 )
 values
 (
-$gitap_gitcom_id,
-N'$gitap_action',
-N'$gitap_path'
+@gitap_gitcom_id,
+@gitap_action,
+@gitap_path
 )
-	";		
+	");		
 
-			sql = sql.Replace("$gitap_gitcom_id", gitcom_id_string);
-			sql = sql.Replace("$gitap_action", actions[i]);
-			sql = sql.Replace("$gitap_path", paths[i].Replace("'","''"));
+			sql = sql.AddParameterWithValue("gitap_gitcom_id", gitcom_id_string);
+			sql = sql.AddParameterWithValue("gitap_action", actions[i]);
+			sql = sql.AddParameterWithValue("gitap_path", paths[i]);
 
 			btnet.DbUtil.execute_nonquery(sql);
 		}

@@ -751,7 +751,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 + char(10) + ' bg_reported_date [reported on], isnull(pr_name,'''') [priority], isnull(asg.us_username,'''') [assigned to],'
 + char(10) + ' isnull(st_name,'''') [status], isnull(lu.us_username,'''') [last updated by], bg_last_updated_date [last updated on]'
 + char(10) + ' from bugs '
-+ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = $ME '
++ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = @ME '
 + char(10) + ' left outer join users rpt on rpt.us_id = bg_reported_user'
 + char(10) + ' left outer join users asg on asg.us_id = bg_assigned_to_user'
 + char(10) + ' left outer join users lu on lu.us_id = bg_last_updated_user'
@@ -770,7 +770,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 + char(10) + ' bg_reported_date [reported on], isnull(pr_name,'''') [priority], isnull(asg.us_username,'''') [assigned to],'
 + char(10) + ' isnull(st_name,'''') [status], isnull(lu.us_username,'''') [last updated by], bg_last_updated_date [last updated on]'
 + char(10) + ' from bugs '
-+ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = $ME '
++ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = @ME '
 + char(10) + ' left outer join users rpt on rpt.us_id = bg_reported_user'
 + char(10) + ' left outer join users asg on asg.us_id = bg_assigned_to_user'
 + char(10) + ' left outer join users lu on lu.us_id = bg_last_updated_user'
@@ -789,7 +789,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 + char(10) + ' bg_reported_date [reported on], isnull(pr_name,'''') [priority], isnull(asg.us_username,'''') [assigned to],'
 + char(10) + ' isnull(st_name,'''') [status], isnull(lu.us_username,'''') [last updated by], bg_last_updated_date [last updated on]'
 + char(10) + ' from bugs '
-+ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = $ME '
++ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = @ME '
 + char(10) + ' left outer join users rpt on rpt.us_id = bg_reported_user'
 + char(10) + ' left outer join users asg on asg.us_id = bg_assigned_to_user'
 + char(10) + ' left outer join users lu on lu.us_id = bg_last_updated_user'
@@ -798,7 +798,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 + char(10) + ' left outer join categories on ct_id = bg_category'
 + char(10) + ' left outer join priorities on pr_id = bg_priority'
 + char(10) + ' left outer join statuses on st_id = bg_status'
-+ char(10) + ' where bg_status <> 5 and bg_assigned_to_user = $ME order by bg_id desc',
++ char(10) + ' where bg_status <> 5 and bg_assigned_to_user = @ME order by bg_id desc',
 0)
 
 insert into queries (qu_desc, qu_sql, qu_default) values (
@@ -808,7 +808,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 + char(10) + ' bg_reported_date [reported on], isnull(pr_name,'''') [priority], isnull(asg.us_username,'''') [assigned to],'
 + char(10) + ' isnull(st_name,'''') [status], isnull(lu.us_username,'''') [last updated by], bg_last_updated_date [last updated on]'
 + char(10) + ' from bugs '
-+ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = $ME '
++ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = @ME '
 + char(10) + ' left outer join users rpt on rpt.us_id = bg_reported_user'
 + char(10) + ' left outer join users asg on asg.us_id = bg_assigned_to_user'
 + char(10) + ' left outer join users lu on lu.us_id = bg_last_updated_user'
@@ -825,7 +825,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 'demo use of css classes',
 'select isnull(pr_style + st_style,''datad''), bg_id [id], isnull(bu_flag,0) [$FLAG], bg_short_desc [desc], isnull(pr_name,'''') [priority], isnull(st_name,'''') [status]'
 + char(10) + ' from bugs '
-+ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = $ME '
++ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = @ME '
 + char(10) + ' left outer join priorities on pr_id = bg_priority '
 + char(10) + ' left outer join statuses on st_id = bg_status '
 + char(10) + ' order by bg_id desc',
@@ -902,7 +902,7 @@ insert into queries (qu_desc, qu_sql, qu_default) values (
 + char(10) + ' (isnull(vote_total,0) * 10000) + isnull(bu_vote,0) [$VOTE], '
 + char(10) + ' bg_short_desc [desc], isnull(st_name,'''') [status] '
 + char(10) + ' from bugs '
-+ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = $ME '
++ char(10) + ' left outer join bug_user on bu_bug = bg_id and bu_user = @ME '
 + char(10) + ' left outer join votes_view on vote_bug = bg_id '
 + char(10) + ' left outer join statuses on st_id = bg_status '
 + char(10) + ' order by 3 desc ',

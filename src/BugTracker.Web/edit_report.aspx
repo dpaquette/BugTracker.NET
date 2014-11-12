@@ -7,7 +7,7 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 int id;
-String sql;
+SQLString sql;
 
 Security security;
 
@@ -58,10 +58,10 @@ void Page_Load(Object sender, EventArgs e) {
 			sub.Value = "Update";
 
 			// Get this entry's data from the db and fill in the form
-			sql = @"select
+			sql = new SQLString(@"select
 				rp_desc, rp_sql, rp_chart_type
-				from reports where rp_id = $1";
-			sql = sql.Replace("$1", Convert.ToString(id));
+				from reports where rp_id = @rpid");
+			sql = sql.AddParameterWithValue("rpid", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -129,22 +129,22 @@ void on_update()
 	if (good)
 	{
 		if (id == 0) {  // insert new
-			sql = @"insert into reports
+			sql = new SQLString(@"insert into reports
 				(rp_desc, rp_sql, rp_chart_type)
-				values (N'$de', N'$sq', N'$ct')";
+				values (@de, @sq, @ct)");
 		}
 		else
 		{	// edit existing
-			sql = @"update reports set
-				rp_desc = N'$de',
-				rp_sql = N'$sq',
-				rp_chart_type = N'$ct'
-				where rp_id = $id";
-			sql = sql.Replace("$id", Convert.ToString(id));
+			sql = new SQLString(@"update reports set
+				rp_desc = @de,
+				rp_sql = @sq,
+				rp_chart_type = @ct
+				where rp_id = @id");
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 		}
 
-		sql = sql.Replace("$de", desc.Value.Replace("'","''"));
-		sql = sql.Replace("$sq", Server.HtmlDecode(sql_text.Value.Replace("'", "''")));
+		sql = sql.AddParameterWithValue("$de", desc.Value.Replace("'","''"));
+		sql = sql.AddParameterWithValue("$sq", Server.HtmlDecode(sql_text.Value.Replace("'", "''")));
 
 		if (pie.Checked) {
 			ct = "pie";
@@ -156,7 +156,7 @@ void on_update()
 			ct = "table";
 		}
 
-		sql = sql.Replace("$ct", ct);
+		sql = sql.AddParameterWithValue("$ct", ct);
 
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer("reports.aspx");

@@ -10,7 +10,7 @@ namespace btnet
 {
     public partial class send_email : BasePage
     {
-        protected String sql;
+        protected SQLString sql;
         protected Security security;
         
         protected int project = -1;
@@ -56,7 +56,7 @@ namespace btnet
 
                     string_bp_id = btnet.Util.sanitize_integer(string_bp_id);
 
-                    sql = @"select
+                    sql = new SQLString(@"select
 				bp_parent,
                 bp_file,
                 bp_id,
@@ -77,13 +77,13 @@ namespace btnet
 				isnull(us_lastname,'') [us_lastname]				
 				from bug_posts
 				inner join bugs on bp_bug = bg_id
-				inner join users on us_id = $us
+				inner join users on us_id = @us
 				left outer join projects on bg_project = pj_id
-				where bp_id = $id
-				or (bp_parent = $id and bp_type='file')";
+				where bp_id = @id
+				or (bp_parent = @id and bp_type='file')");
 
-                    sql = sql.Replace("$id", string_bp_id);
-                    sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("id", string_bp_id);
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
 
                     DataView dv = btnet.DbUtil.get_dataview(sql);
                     dr = null;
@@ -279,7 +279,7 @@ namespace btnet
                         Response.End();
                     }
 
-                    sql = @"select
+                    sql = new SQLString(@"select
 				bg_short_desc,
 				bg_project,
 				isnull(us_signature,'') [us_signature],
@@ -288,12 +288,12 @@ namespace btnet
 				isnull(us_lastname,'') [us_lastname],
 				isnull(pj_pop3_email_from,'') [pj_pop3_email_from]
 				from bugs
-				inner join users on us_id = $us
+				inner join users on us_id = @us
 				left outer join projects on bg_project = pj_id
-				where bg_id = $bg";
+				where bg_id = @bg");
 
-                    sql = sql.Replace("$us", Convert.ToString(security.user.usid));
-                    sql = sql.Replace("$bg", string_bg_id);
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("bg", string_bg_id);
 
                     dr = btnet.DbUtil.get_datarow(sql);
 
@@ -506,40 +506,39 @@ namespace btnet
 
             if (!validate()) return;
 
-            sql = @"
+            sql = new SQLString(@"
 insert into bug_posts
 	(bp_bug, bp_user, bp_date, bp_comment, bp_comment_search, bp_email_from, bp_email_to, bp_type, bp_content_type, bp_email_cc)
-	values($id, $us, getdate(), N'$cm', N'$cs', N'$fr',  N'$to', 'sent', N'$ct', N'$cc');
+	values(@id, @us, getdate(), @cm, @cs, @fr,  @to, 'sent', @ct, @cc);
 select scope_identity()
 update bugs set
-	bg_last_updated_user = $us,
+	bg_last_updated_user = @us,
 	bg_last_updated_date = getdate()
-	where bg_id = $id";
+	where bg_id = @id");
 
-            sql = sql.Replace("$id", bg_id.Value);
-            sql = sql.Replace("$us", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("id", bg_id.Value);
+            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
             if (security.user.use_fckeditor)
             {
                 string adjusted_body = "Subject: " + subject.Value + "<br><br>";
                 adjusted_body += btnet.Util.strip_dangerous_tags(body.Value);
 
-                sql = sql.Replace("$cm", adjusted_body.Replace("'", "&#39;"));
-                sql = sql.Replace("$cs", adjusted_body.Replace("'", "''"));
-                sql = sql.Replace("$ct", "text/html");
+                sql = sql.AddParameterWithValue("cm", adjusted_body);
+                sql = sql.AddParameterWithValue("cs", adjusted_body);
+                sql = sql.AddParameterWithValue("ct", "text/html");
             }
             else
             {
                 string adjusted_body = "Subject: " + subject.Value + "\n\n";
                 adjusted_body += HttpUtility.HtmlDecode(body.Value);
-                adjusted_body = adjusted_body.Replace("'", "''");
 
-                sql = sql.Replace("$cm", adjusted_body);
-                sql = sql.Replace("$cs", adjusted_body);
-                sql = sql.Replace("$ct", "text/plain");
+                sql = sql.AddParameterWithValue("cm", adjusted_body);
+                sql = sql.AddParameterWithValue("cs", adjusted_body);
+                sql = sql.AddParameterWithValue("ct", "text/plain");
             }
-            sql = sql.Replace("$fr", from.SelectedItem.Value.Replace("'", "''"));
-            sql = sql.Replace("$to", to.Value.Replace("'", "''"));
-            sql = sql.Replace("$cc", cc.Value.Replace("'", "''"));
+            sql = sql.AddParameterWithValue("fr", from.SelectedItem.Value);
+            sql = sql.AddParameterWithValue("to", to.Value);
+            sql = sql.AddParameterWithValue("cc", cc.Value);
 
             int comment_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 

@@ -32,20 +32,20 @@ void Page_Load(Object sender, EventArgs e)
 
 	string action = Request["actn"];
 
-	string sql = "";
+	SQLString sql = new SQLString("");
 
 	if (action == "add")
 	{
 		int rp_id = Convert.ToInt32(Util.sanitize_integer(Request["rp_id"]));
 		int rp_col = Convert.ToInt32(Util.sanitize_integer(Request["rp_col"]));
 
-		sql = @"
+		sql = new SQLString(@"
 declare @last_row int
 set @last_row = -1
 
 select @last_row = max(ds_row) from dashboard_items
-where ds_user = $user
-and ds_col = $col
+where ds_user = @user
+and ds_col = @col
 
 if @last_row = -1 or @last_row is null
 	set @last_row = 1
@@ -54,26 +54,26 @@ else
 
 insert into dashboard_items
 (ds_user, ds_report, ds_chart_type, ds_col, ds_row)
-values ($user, $report, '$chart_type', $col, @last_row)";
+values (@user, @report, @chart_type, @col, @last_row)");
 
-		sql = sql.Replace("$user", Convert.ToString(security.user.usid));
-		sql = sql.Replace("$report", Convert.ToString(rp_id));
-		sql = sql.Replace("$chart_type", ((string)Request["rp_chart_type"]).Replace("'","''"));
-		sql = sql.Replace("$col", Convert.ToString(rp_col));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("report", Convert.ToString(rp_id));
+		sql = sql.AddParameterWithValue("chart_type", ((string)Request["rp_chart_type"]));
+		sql = sql.AddParameterWithValue("col", Convert.ToString(rp_col));
 
 	}
 	else if (action == "delete")
 	{
 		int ds_id = Convert.ToInt32(Util.sanitize_integer(Request["ds_id"]));
-		sql = "delete from dashboard_items where ds_id = $ds_id and ds_user = $user";
-		sql = sql.Replace("$ds_id", Convert.ToString(ds_id));
-		sql = sql.Replace("$user", Convert.ToString(security.user.usid));
+		sql = new SQLString("delete from dashboard_items where ds_id = @ds_id and ds_user = @user");
+		sql = sql.AddParameterWithValue("ds_id", Convert.ToString(ds_id));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
 	}
 	else if (action == "moveup" || action == "movedown")
 	{
 		int ds_id = Convert.ToInt32(Util.sanitize_integer(Request["ds_id"]));
 
-		sql = @"
+		sql = new SQLString(@"
 /* swap positions */
 declare @other_row int
 declare @this_row int
@@ -81,32 +81,32 @@ declare @col int
 
 select @this_row = ds_row, @col = ds_col
 from dashboard_items
-where ds_id = $ds_id and ds_user = $user
+where ds_id = @ds_id and ds_user = @user
 
-set @other_row = @this_row + $delta
+set @other_row = @this_row + @delta
 
 update dashboard_items
 set ds_row = @this_row
-where ds_user = $user
+where ds_user = @user
 and ds_col = @col
 and ds_row = @other_row
 
 update dashboard_items
 set ds_row = @other_row
-where ds_user = $user
-and ds_id = $ds_id
-";
+where ds_user = @user
+and ds_id = @ds_id
+");
 
 		if (action == "moveup")
 		{
-			sql = sql.Replace("$delta", "-1");
+			sql = sql.AddParameterWithValue("delta", "-1");
 		}
 		else
 		{
-			sql = sql.Replace("$delta", "1");
+			sql = sql.AddParameterWithValue("delta", "1");
 		}
-		sql = sql.Replace("$ds_id", Convert.ToString(ds_id));
-		sql = sql.Replace("$user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("ds_id", Convert.ToString(ds_id));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
 	}
 
 	if (action != "")

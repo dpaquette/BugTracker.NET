@@ -20,14 +20,14 @@ void Page_Load(Object sender, EventArgs e)
 	security = new Security();
 	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
-	string sql = @"
+	var sql = new SQLString(@"
 select hgrev_revision, hgrev_bug, hgrev_repository, hgap_path 
 from hg_revisions
 inner join hg_affected_paths on hgap_hgrev_id = hgrev_id
-where hgap_id = $id";
+where hgap_id = @id");
 
     int hgap_id = Convert.ToInt32(Util.sanitize_integer(Request["revpathid"]));
-	sql = sql.Replace("$id", Convert.ToString(hgap_id));
+	sql = sql.AddParameterWithValue("id", Convert.ToString(hgap_id));
 
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 

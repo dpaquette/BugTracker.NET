@@ -23,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "organizations";
 
-	ds = btnet.DbUtil.get_dataset(
+	ds = btnet.DbUtil.get_dataset(new SQLString(
 		@"select og_id [id],
 		'<a href=edit_org.aspx?id=' + convert(varchar,og_id) + '>edit</a>' [$no_sort_edit],
 		'<a href=delete_org.aspx?id=' + convert(varchar,og_id) + '>delete</a>' [$no_sort_delete],
@@ -51,7 +51,7 @@ void Page_Load(Object sender, EventArgs e)
 			when og_priority_field_permission_level = 1 then 'Read Only'
 			else 'Add/Edit' end [priority<br>permission<br>level],
 		isnull(og_domain,'')[domain]
-		from orgs order by og_name");
+		from orgs order by og_name"));
 
 }
 

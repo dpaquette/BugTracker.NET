@@ -24,7 +24,7 @@ namespace btnet.Search
         ///////////////////////////////////////////////////////////////////////
         private static DataSet get_text_custom_cols()
         {
-            DataSet ds_custom_fields = DbUtil.get_dataset(@"
+            DataSet ds_custom_fields = DbUtil.get_dataset(new SQLString(@"
 /* get searchable cols */					
 select sc.name
 from syscolumns sc
@@ -51,7 +51,7 @@ and sc.name not in ('rowguid',
 'bg_project_custom_dropdown_value3',
 'bg_tags')
 and st.[name] in ('nvarchar','varchar')
-and sc.length > 30");
+and sc.length > 30"));
 
             return ds_custom_fields;
         }
@@ -79,7 +79,7 @@ and sc.length > 30");
             {
                 Util.write_to_log("started creating search index for all bugs");
 
-                DataSet ds = DbUtil.get_dataset("select bg_id from bugs");
+                DataSet ds = DbUtil.get_dataset(new SQLString("select bg_id from bugs"));
 
                 foreach (DataRow dr in ds.Tables[0].Rows)
                 {
@@ -146,7 +146,7 @@ and sc.length > 30");
             //      This method filters the list of hits based on the list of bugs that the user has access to in the system.
             //      This is not an optimal solution but was considered the best approach given the current security filtering approach in bug tracker
             //TODO: Change this once the security approach has been redesigned.
-            string sql = @"SELECT bg_id FROM bugs WHERE $ALTER_HERE";
+            var sql = new SQLString(@"SELECT bg_id FROM bugs WHERE $ALTER_HERE");
             sql = Util.alter_sql_per_project_permissions(sql, security);
 
             DataSet ds = DbUtil.get_dataset(sql);
@@ -168,7 +168,7 @@ and sc.length > 30");
 
                 Util.write_to_log("started updating search index");
 
-                string sql = @"
+                var sql = new SQLString(@"
 select bg_id, 
 $custom_cols
 isnull(bg_tags,'') tags,
@@ -177,24 +177,26 @@ isnull(st_name,'') status,
 bg_short_desc  as [desc]
 from bugs 
 left outer join statuses on st_id = bg_status
-where bg_id = $bugid";
+where bg_id = @bugid");
 
-                sql = sql.Replace("$bugid", Convert.ToString(bugId));
+                sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugId));
 
                 DataSet ds_text_custom_cols = get_text_custom_cols();
 
-                sql = sql.Replace("$custom_cols", get_text_custom_cols_names(ds_text_custom_cols));
+                sql = sql.AddParameterWithValue("$custom_cols", get_text_custom_cols_names(ds_text_custom_cols));
                 
                 DataRow bugRow = DbUtil.get_datarow(sql);
-                
-                DataSet bugPosts = DbUtil.get_dataset(@"
-select bp_id, 
-isnull(bp_comment_search,bp_comment) [text] ,
-bp_date
-from bug_posts 
-where bp_type <> 'update'
-and bp_hidden_from_external_users = 0
-and bp_bug = " + Convert.ToString(bugId));
+               
+                sql = new SQLString(@"
+                select bp_id, 
+                isnull(bp_comment_search,bp_comment) [text] ,
+                bp_date
+                from bug_posts 
+                where bp_type <> 'update'
+                and bp_hidden_from_external_users = 0
+                and bp_bug = @bugId");
+                sql.AddParameterWithValue("bugId", bugId.ToString());
+                DataSet bugPosts = DbUtil.get_dataset(sql);
 
                 IndexBug(bugRow, bugPosts.Tables[0]);
 

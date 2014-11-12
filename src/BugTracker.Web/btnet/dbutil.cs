@@ -7,23 +7,25 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using System.Linq;
 
 namespace btnet
 {
     public class DbUtil
     {
         ///////////////////////////////////////////////////////////////////////
-        public static object execute_scalar(string sql)
+        public static object execute_scalar(SQLString sql)
         {
             if (Util.get_setting("LogSqlEnabled", "1") == "1")
             {
                 Util.write_to_log("sql=\n" + sql);
             }
 
-            using (SqlConnection conn = get_sqlconnection())
+            using (SqlConnection conn = GetConnection())
             {
                 object returnValue;
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
+                cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                 returnValue = cmd.ExecuteScalar();
                 conn.Close(); // redundant, but just to be clear
                 return returnValue;
@@ -31,11 +33,12 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void execute_nonquery_without_logging(string sql)
+        public static void execute_nonquery_without_logging(SQLString sql)
         {
-            using (SqlConnection conn = get_sqlconnection())
+            using (SqlConnection conn = GetConnection())
             {
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
+                cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                 cmd.ExecuteNonQuery();
                 conn.Close(); // redundant, but just to be clear
             }
@@ -43,7 +46,7 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void execute_nonquery(string sql)
+        public static void execute_nonquery(SQLString sql)
         {
 
             if (Util.get_setting("LogSqlEnabled", "1") == "1")
@@ -51,9 +54,10 @@ namespace btnet
                 Util.write_to_log("sql=\n" + sql);
             }
 
-            using (SqlConnection conn = get_sqlconnection())
+            using (SqlConnection conn = GetConnection())
             {
-                SqlCommand cmd = new SqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
+                cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                 cmd.ExecuteNonQuery();
                 conn.Close(); // redundant, but just to be clear
             } 
@@ -64,7 +68,7 @@ namespace btnet
         {
             log_command(cmd);
 
-            using (SqlConnection conn = get_sqlconnection())
+            using (SqlConnection conn = GetConnection())
             {
                 try
                 {
@@ -81,18 +85,19 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static SqlDataReader execute_reader(string sql, CommandBehavior behavior)
+        public static SqlDataReader execute_reader(SQLString sql, CommandBehavior behavior)
         {
             if (Util.get_setting("LogSqlEnabled", "1") == "1")
             {
                 Util.write_to_log("sql=\n" + sql);
             }
 
-            SqlConnection conn = get_sqlconnection();
+            SqlConnection conn = GetConnection();
             try
             {
-                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SqlCommand cmd = new SqlCommand(sql.ToString(), conn))
                 {
+                    cmd.Parameters.AddRange(sql.GetParameters().ToArray());
                     return cmd.ExecuteReader(behavior | CommandBehavior.CloseConnection);
                 }
             }
@@ -108,7 +113,7 @@ namespace btnet
         {
             log_command(cmd);
 
-            SqlConnection conn = get_sqlconnection();
+            SqlConnection conn = GetConnection();
             try
             {
                 cmd.Connection = conn;
@@ -126,7 +131,7 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static DataSet get_dataset(string sql)
+        public static DataSet get_dataset(SQLString sql)
         {
 
             if (Util.get_setting("LogSqlEnabled", "1") == "1")
@@ -135,10 +140,12 @@ namespace btnet
             }
 
             DataSet ds = new DataSet();
-            using (SqlConnection conn = get_sqlconnection())
+            using (SqlConnection conn = GetConnection())
             {
-                using (SqlDataAdapter da = new SqlDataAdapter(sql, conn))
+                using (SqlDataAdapter da = new SqlDataAdapter( sql.ToString(), conn))
                	{
+                   
+                    da.SelectCommand.Parameters.AddRange(sql.GetParameters().ToArray());
                     System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
                     stopwatch.Start();
                     da.Fill(ds);
@@ -161,7 +168,7 @@ namespace btnet
 
 
         ///////////////////////////////////////////////////////////////////////
-        public static DataView get_dataview(string sql)
+        public static DataView get_dataview(SQLString sql)
         {
             DataSet ds = get_dataset(sql);
             return new DataView(ds.Tables[0]);
@@ -169,7 +176,7 @@ namespace btnet
 
 
         ///////////////////////////////////////////////////////////////////////
-        public static DataRow get_datarow(string sql)
+        public static DataRow get_datarow(SQLString sql)
         {
             DataSet ds = get_dataset(sql);
             if (ds.Tables[0].Rows.Count != 1)
@@ -183,7 +190,7 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static SqlConnection get_sqlconnection()
+        public static SqlConnection GetConnection()
         {
 
             string connection_string = Util.get_setting("ConnectionString", "MISSING CONNECTION STRING");

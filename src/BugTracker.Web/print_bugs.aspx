@@ -8,7 +8,7 @@
 //Distributed under the terms of the GNU General Public License
 
 
-String sql;
+SQLString sql;
 
 Security security;
 DataSet ds;
@@ -41,12 +41,12 @@ void Page_Load(Object sender, EventArgs e)
 
 		// use sql specified in query string
 		int qu_id = Convert.ToInt32(qu_id_string);
-		sql = @"select qu_sql from queries where qu_id = $1";
-		sql = sql.Replace("$1", qu_id_string);
-		string bug_sql = (string)btnet.DbUtil.execute_scalar(sql);
+		sql = new SQLString(@"select qu_sql from queries where qu_id = @id");
+		sql = sql.AddParameterWithValue("id", qu_id_string);
+		var bug_sql = new SQLString((string)btnet.DbUtil.execute_scalar(sql));
 
 		// replace magic variables
-		bug_sql = bug_sql.Replace("$ME", Convert.ToString(security.user.usid));
+		bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
 
 		bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
 

@@ -682,8 +682,8 @@ function on_change()
 	{
 %>
 		var search_sql = "<% Response.Write(search_sql.Replace("\r\n","")); %>";
-		search_sql = search_sql.replace(/\[br\]/g,"\n");
-		frm.query.value =  search_sql.replace(/\$WHERE\$/, where);
+		search_sql = search_sql.AddParameterWithValue(/\[br\]/g,"\n");
+		frm.query.value =  search_sql.AddParameterWithValue(/\$WHERE\$/, where);
 <%
 	}
 %>

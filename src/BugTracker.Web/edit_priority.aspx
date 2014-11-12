@@ -8,7 +8,7 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int id;
-String sql;
+SQLString sql;
 
 
 Security security;
@@ -54,11 +54,11 @@ void Page_Load(Object sender, EventArgs e)
 
 			// Get this entry's data from the db and fill in the form
 
-			sql = @"select
+			sql = new SQLString(@"select
 				pr_name, pr_sort_seq, pr_background_color, isnull(pr_style,'') [pr_style], pr_default
-				from priorities where pr_id = $1";
+				from priorities where pr_id = @id");
 
-			sql = sql.Replace("$1", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 			// Fill in this form
@@ -139,29 +139,29 @@ void on_update()
 	{
 		if (id == 0)  // insert new
 		{
-			sql = @"insert into priorities
+			sql = new SQLString(@"insert into priorities
 				(pr_name, pr_sort_seq, pr_background_color, pr_style, pr_default)
-				values (N'$na', $ss, N'$co', N'$st', $df)";
+				values (@na, @ss, @co, @st, @df)");
 		}
 		else // edit existing
 		{
 
-			sql = @"update priorities set
-				pr_name = N'$na',
-				pr_sort_seq = $ss,
-				pr_background_color = N'$co',
-				pr_style = N'$st',
-				pr_default = $df
-				where pr_id = $id";
+			sql = new SQLString(@"update priorities set
+				pr_name = @na,
+				pr_sort_seq = @ss,
+				pr_background_color = @co,
+				pr_style = @st,
+				pr_default = @df
+				where pr_id = @id");
 
-			sql = sql.Replace("$id", Convert.ToString(id));
+			sql = sql.AddParameterWithValue("$id", Convert.ToString(id));
 
 		}
-		sql = sql.Replace("$na", name.Value.Replace("'","''"));
-		sql = sql.Replace("$ss", sort_seq.Value);
-		sql = sql.Replace("$co", color.Value.Replace("'","''"));
-		sql = sql.Replace("$st", style.Value.Replace("'","''"));
-		sql = sql.Replace("$df", Util.bool_to_string(default_selection.Checked));
+		sql = sql.AddParameterWithValue("na", name.Value);
+		sql = sql.AddParameterWithValue("ss", sort_seq.Value);
+		sql = sql.AddParameterWithValue("co", color.Value);
+		sql = sql.AddParameterWithValue("st", style.Value);
+		sql = sql.AddParameterWithValue("df", Util.bool_to_string(default_selection.Checked));
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("priorities.aspx");
 

@@ -22,7 +22,7 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "projects";
 
-	ds = btnet.DbUtil.get_dataset(
+	ds = btnet.DbUtil.get_dataset(new SQLString(
 		@"select
 		pj_id [id],
 		'<a href=edit_project.aspx?&id=' + convert(varchar,pj_id) + '>edit</a>' [$no_sort_edit],
@@ -39,7 +39,7 @@ void Page_Load(Object sender, EventArgs e)
 		case when pj_default = 1 then 'Y' else 'N' end [default]
 		from projects
 		left outer join users on us_id = pj_default_user
-		order by pj_name");
+		order by pj_name"));
 
 }
 
