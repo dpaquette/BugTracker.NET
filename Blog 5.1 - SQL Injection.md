@@ -183,7 +183,7 @@ Another big problem was the use of custom columns in the database. See BugTracke
 
 This poses a difficult problem: I'd like to keep the custom column functionality but I don't want to complicate the SQL and introduce the possibility of more injection attacks. After some discussion we decided to rip out the custom columns for now. Eventually we'll put them back in using a properties table pattern. In effect each custom column would become a row in a key value store style table.
 
-![Properties Table](images/PropertiesTablePattern.png)
+![Properties Table](Images/PropertiesTablePattern.png)
 
 When querying for a bug we can look for all the entires in this table to find the properties. It makes some filtering queries a bit harder but we will have a search engine in place for that.
 
