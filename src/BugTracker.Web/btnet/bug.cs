@@ -874,12 +874,11 @@ where bg_id = @bg");
 					bg_user_defined_attribute,
 					bg_project_custom_dropdown_value1,
 					bg_project_custom_dropdown_value2,
-					bg_project_custom_dropdown_value3
-					@custom_cols_placeholder1)
+					bg_project_custom_dropdown_value3)
 					values (@short_desc, @tags, @reported_user,  @reported_user, getdate(), getdate(),
 					@project, @org,
 					@category, @priority, @status, @assigned_user, @udf,
-					@pcd1, @pcd2, @pcd3, @custom_cols_placeholder2)");
+					@pcd1, @pcd2, @pcd3)");
 
 			sql = sql.AddParameterWithValue("@short_desc", short_desc);
 			sql = sql.AddParameterWithValue("@tags", tags);
@@ -894,45 +893,7 @@ where bg_id = @bg");
 			sql = sql.AddParameterWithValue("@pcd1", project_custom_dropdown_value1);
 			sql = sql.AddParameterWithValue("@pcd2", project_custom_dropdown_value2);
 			sql = sql.AddParameterWithValue("@pcd3", project_custom_dropdown_value3);
-
-			if (hash_custom_cols == null)
-			{
-				sql = sql.AddParameterWithValue("@custom_cols_placeholder1", "");
-				sql = sql.AddParameterWithValue("@custom_cols_placeholder2", "");
-			}
-			else
-			{
-
-				string custom_cols_sql1 = "";
-				string custom_cols_sql2 = "";
-
-				DataSet ds_custom_cols = btnet.Util.get_custom_columns();
-
-				foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-				{
-
-					string column_name = (string) drcc["name"];
-
-					// skip if no permission to update
-					if (security.user.dict_custom_field_permission_level[column_name] != Security.PERMISSION_ALL)
-					{
-						continue;
-					}
-
-					custom_cols_sql1 += ",[" + column_name + "]";
-					
-					string datatype = (string) drcc["datatype"];
-					
-					string custom_col_val = btnet.Util.request_to_string_for_sql(
-						hash_custom_cols[column_name],
-						datatype);
-					
-					custom_cols_sql2 += "," + custom_col_val;
-					
-				}
-				sql = sql.AddParameterWithValue("@custom_cols_placeholder1", custom_cols_sql1);
-				sql = sql.AddParameterWithValue("@custom_cols_placeholder2", custom_cols_sql2);
-			}
+//TODO: Add custom columns
 
 
 
