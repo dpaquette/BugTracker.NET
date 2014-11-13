@@ -617,6 +617,8 @@
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.mobile-1.4.4.min.js" />
+    <Content Include="Scripts\r.js" />
+    <Content Include="Scripts\require.js" />
     <Content Include="search.aspx" />
     <Content Include="search_text.aspx" />
     <Content Include="seen.aspx" />
