@@ -124,7 +124,7 @@ That broke everything.
 
 ![Oh noeses, 178 errors](Images/Errors.jpg)
 
-This is actually exactly what I want. By putting this new class in place we've got the compiler to do the hard work of finding every single SQL query in the project. If you've read Michael Feather's excelent book [Working Effectively with Legacy Code](http://www.informit.com/store/working-effectively-with-legacy-code-9780131177055?aid=15d186bd-1678-45e9-8ad3-fe53713e811b) then you'll know this technique as "leaning on the compiler".
+This is actually exactly what I want. By putting this new class in place we've got the compiler to do the hard work of finding every single SQL query in the project. If you've read Michael Feather's excellent book [Working Effectively with Legacy Code](http://www.informit.com/store/working-effectively-with-legacy-code-9780131177055?aid=15d186bd-1678-45e9-8ad3-fe53713e811b) then you'll know this technique as "leaning on the compiler".
 
 Now comes the long and arduous task of going through and replacing all the SQL strings. At least we have a pretty good list to watch ticking down. The general pattern for fixing up the string is
 
@@ -178,6 +178,14 @@ Of course we wouldn't be having fun if there weren't countless special cases. Fo
 sql += " select og_id, og_name from orgs where og_id = " + Convert.ToInt32(security.user.org) + " order by og_name;";
 ```
 In cases like this one we cut out the string concatenation and replaced it with a parameter. There were all sorts of interesting edge cases that required just a bit of thought to correct.
+
+Another big problem was the use of custom columns in the database. See BugTracker.NET allows you to add your own columns to table definitions. So if you want your bug to have a field in it called "Time for Monkeys to Fix This" then you can add it as a custom column definition and it will be appended to the table. This makes the SQL vastly more complicated because you are pretty much forced to concatenate strings: you cannot currently use parameters in the definition of a query.
+
+This poses a difficult problem: I'd like to keep the custom column functionality but I don't want to complicate the SQL and introduce the possibility of more injection attacks. After some discussion we decided to rip out the custom columns for now. Eventually we'll put them back in using a properties table pattern. In effect each custom column would become a row in a key value store style table.
+
+![Properties Table](images/PropertiesTablePattern.png)
+
+When querying for a bug we can look for all the entires in this table to find the properties. It makes some filtering queries a bit harder but we will have a search engine in place for that.
 
 I chugged along for some time fixing the various queries in the application. I spent a lot of time without a compiling application, which always makes me nervous. Eventually I got to the point where the application would compile. With baited breath I launched the application to see if it would work.
 
