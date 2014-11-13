@@ -259,6 +259,10 @@ and us_active = 1");
 
             Response.Write(@"
 <span id=debug style='position:absolute;top:0;left:0;'></span>
+
+
+
+<script type='text/javascript' src='scripts/require.js'></script>
 <script>
 function dbg(s)
 {
@@ -282,8 +286,16 @@ function on_submit_search()
 
 </script>
 <script type='text/javascript'>
-    $(function(){
-        $('a').filter(function() { return this.hostname && this.hostname !== location.hostname; }).addClass('external-link');
+    require.config({
+        baseUrl: 'scripts',
+        paths: {
+            jquery: 'jquery-1.11.1'
+        }
+    });
+    require(['jquery'], function( $ ) {
+        $(function(){
+            $('a').filter(function() { return this.hostname && this.hostname !== location.hostname; }).addClass('external-link');
+        });
     });
 </script>
 <table border=0 width=100% cellpadding=0 cellspacing=0 class=menubar><tr>");
