@@ -59,7 +59,7 @@ Another way to improve security is to warn the user when a link will forward the
 
 We like the approach that Wikipedia takes here. Any links that will take the user to a site outside of Wikipedia are highlighted with an external link icon.
 
-![External Links in Wikipedia](./Images/WikipediaExternalLinks.png)
+![External Links in Wikipedia](Images/WikipediaExternalLinks.png)
 
 This is actually relatively easy to accomplish using jQuery and CSS. First, we will add the following line of JavaScript to find all the external links and add the external-link class.
 
@@ -92,7 +92,13 @@ Note, we are using the [external link icon from Wikimedia Commons](http://common
 
 As you can see, external links in BugTracker.NET are now highlighted with the external link icon.
 
-![External Links in BugTracker](./Images/BugTrackerExternalLinks.png)
+![External Links in BugTracker](Images/BugTrackerExternalLinks.png)
+
+At this point, everything appears to be working as expected but after further testing we noticed that the jQuery code to highlight external links was crashing on a number of pages. As it turns out, jQuery is NOT loaded on all pages. Again, the lack of master pages means we have no centralized place to add a reference to all our pages. We are going to need to bump the 'master pages' feature up in our priority list.
+
+Unfortunately, we can't simply add the jQuery script reference to the write_menu method above. If we do that, we will break some of the pages that already have jQuery and jQuery UI loaded. As a work-around, we decided to introduce RequireJS to dynamically load jQuery if it has not already been loaded. You can read more about this technique in the [RequireJS  docs](http://requirejs.org/docs/jquery.html).
+
+[View the Commit >>](https://github.com/dpaquette/BugTracker.NET/commit/dcba3ce53539e084a691811cdc1c31fc7929833f)
 
 ###Optimizing the background images
 One final thing before we wrap this up. We can optimize our CSS by taking the external link background images and base64 encoding them directly into the stylesheet. For small images, this is more efficient because it eliminates the need for a separate HTTP request to retrieve the image.
