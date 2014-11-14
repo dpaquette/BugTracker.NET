@@ -454,9 +454,6 @@ Distributed under the terms of the GNU General Public License
             Convert.ToInt32(status.SelectedItem.Value),
             Convert.ToInt32(assigned_to.SelectedItem.Value),
             0, // Convert.ToInt32(udf.SelectedItem.Value),
-            "",
-            "",
-            "",
             comment_text,
             comment_text,
             null, // from

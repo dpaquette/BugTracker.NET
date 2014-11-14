@@ -692,21 +692,6 @@ left outer join project_user_xref on pj_id = pu_project
 and pu_user = @this_usid
 where bg_id = @id");
 
-			if (ds_custom_cols.Tables[0].Rows.Count == 0)
-			{
-				sql = sql.AddParameterWithValue("@custom_cols_placeholder", "");
-			}
-			else
-			{
-				string custom_cols_sql = "";
-
-				foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-				{
-					custom_cols_sql += ",[" + drcc["name"] + "]";
-
-				}
-				sql = sql.AddParameterWithValue("custom_cols_placeholder", custom_cols_sql);
-			}
 
 			sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
 			sql = sql.AddParameterWithValue("this_usid", Convert.ToString(security.user.usid));
@@ -835,9 +820,6 @@ where bg_id = @bg");
 			int statusid,
 			int assigned_to_userid,
 			int udfid,
-			string project_custom_dropdown_value1,
-			string project_custom_dropdown_value2,
-			string project_custom_dropdown_value3,
 			string comment_formated,
 			string comment_search,
 			string from,
@@ -877,8 +859,7 @@ where bg_id = @bg");
 					bg_project_custom_dropdown_value3)
 					values (@short_desc, @tags, @reported_user,  @reported_user, getdate(), getdate(),
 					@project, @org,
-					@category, @priority, @status, @assigned_user, @udf,
-					@pcd1, @pcd2, @pcd3)");
+					@category, @priority, @status, @assigned_user, @udf)");
 
 			sql = sql.AddParameterWithValue("@short_desc", short_desc);
 			sql = sql.AddParameterWithValue("@tags", tags);
@@ -890,9 +871,6 @@ where bg_id = @bg");
 			sql = sql.AddParameterWithValue("@status", Convert.ToString(statusid));
 			sql = sql.AddParameterWithValue("@assigned_user", Convert.ToString(assigned_to_userid));
 			sql = sql.AddParameterWithValue("@udf", Convert.ToString(udfid));
-			sql = sql.AddParameterWithValue("@pcd1", project_custom_dropdown_value1);
-			sql = sql.AddParameterWithValue("@pcd2", project_custom_dropdown_value2);
-			sql = sql.AddParameterWithValue("@pcd3", project_custom_dropdown_value3);
 //TODO: Add custom columns
 
 
@@ -968,25 +946,25 @@ select scope_identity();");
 						bg_last_updated_user = @us
 						where bg_id = @id");
 
-					sql = sql.AddParameterWithValue("@from", from.Replace("'", "''"));
+					sql = sql.AddParameterWithValue("@from", from);
 					sql = sql.AddParameterWithValue("@type", "received"); // received email
 				}
 				else
 				{
-					sql = sql.AddParameterWithValue("@from'", "null");
+					sql = sql.AddParameterWithValue("@from", "null");
 					sql = sql.AddParameterWithValue("@type", "comment"); // bug comment
 				}
 
 				sql = sql.AddParameterWithValue("@id", Convert.ToString(bugid));
 				sql = sql.AddParameterWithValue("@us", Convert.ToString(this_usid));
-				sql = sql.AddParameterWithValue("@comment_formatted", comment_formated.Replace("'", "''"));
-				sql = sql.AddParameterWithValue("@comment_search", comment_search.Replace("'", "''"));
+				sql = sql.AddParameterWithValue("@comment_formatted", comment_formated);
+				sql = sql.AddParameterWithValue("@comment_search", comment_search);
 				sql = sql.AddParameterWithValue("@content_type", content_type);
 				if (cc == null)
 				{
 					cc = "";
 				}
-				sql = sql.AddParameterWithValue("@cc", cc.Replace("'", "''"));
+				sql = sql.AddParameterWithValue("@cc", cc);
 				sql = sql.AddParameterWithValue("@internal", btnet.Util.bool_to_string(internal_only));
 
 

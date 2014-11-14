@@ -134,7 +134,6 @@ int create_new_bug(Security security)
         statusid,
         assignedid,
         udfid,
-        "", "", "", // project specific dropdown values
         "", // comment
         "", // comment
         "", // from_addr,
