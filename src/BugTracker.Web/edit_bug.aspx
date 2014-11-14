@@ -738,27 +738,7 @@ Distributed under the terms of the GNU General Public License
 
         get_comment_text_from_control();
 
-        // Project specific
-        string pcd1 = Request["pcd1"];
-        string pcd2 = Request["pcd2"];
-        string pcd3 = Request["pcd3"];
-
-        if (pcd1 == null)
-        {
-            pcd1 = "";
-        }
-        if (pcd2 == null)
-        {
-            pcd2 = "";
-        }
-        if (pcd3 == null)
-        {
-            pcd3 = "";
-        }
-
-        pcd1 = pcd1.Replace("'", "''");
-        pcd2 = pcd2.Replace("'", "''");
-        pcd3 = pcd3.Replace("'", "''");
+  
 
         btnet.Bug.NewIds new_ids = btnet.Bug.insert_bug(
             short_desc.Value,
@@ -771,9 +751,6 @@ Distributed under the terms of the GNU General Public License
             Convert.ToInt32(status.SelectedItem.Value),
             Convert.ToInt32(assigned_to.SelectedItem.Value),
             Convert.ToInt32(udf.SelectedItem.Value),
-            pcd1,
-            pcd2,
-            pcd3,
             comment_formated,
             comment_search,
             null, // from
@@ -863,8 +840,6 @@ Distributed under the terms of the GNU General Public License
             bg_last_updated_user = @lu,
             bg_last_updated_date = @now,
             bg_user_defined_attribute = @udf
-            @pcd_placeholder	
-            @custom_cols_placeholder
             where bg_id = @id
         end
         select @now");
@@ -881,82 +856,6 @@ Distributed under the terms of the GNU General Public License
         sql = sql.AddParameterWithValue("st", status.SelectedItem.Value);
         sql = sql.AddParameterWithValue("udf", udf.SelectedItem.Value);
         sql = sql.AddParameterWithValue("snapshot_datetime", snapshot_timestamp.Value);
-
-        if (permission_level == Security.PERMISSION_READONLY
-        || permission_level == Security.PERMISSION_REPORTER)
-        {
-            sql = sql.AddParameterWithValue("@pcd_placeholder", "");
-        }
-        else
-        {
-            sql = sql.AddParameterWithValue("@pcd_placeholder", @",
-bg_project_custom_dropdown_value1 = @pcd1,
-bg_project_custom_dropdown_value2 = @pcd2,
-bg_project_custom_dropdown_value3 = @pcd3
-");
-
-            string pcd1 = Request["pcd1"];
-            string pcd2 = Request["pcd2"];
-            string pcd3 = Request["pcd3"];
-
-            if (pcd1 == null)
-            {
-                pcd1 = "";
-            }
-            if (pcd2 == null)
-            {
-                pcd2 = "";
-            }
-            if (pcd3 == null)
-            {
-                pcd3 = "";
-            }
-
-            sql = sql.AddParameterWithValue("pcd1", pcd1);
-            sql = sql.AddParameterWithValue("pcd2", pcd2);
-            sql = sql.AddParameterWithValue("pcd3", pcd3);
-        }
-
-        if (ds_custom_cols.Tables[0].Rows.Count == 0 || permission_level != Security.PERMISSION_ALL)
-        {
-            sql = sql.AddParameterWithValue("@custom_cols_placeholder", "");
-        }
-        else
-        {
-            string custom_cols_sql = "";
-
-            foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-            {
-
-                string column_name = (string)drcc["name"];
-
-                // if we've made customizations that cause the field to not come back to us,
-                // don't replace something with null
-                string o = Request[column_name];
-                if (o == null)
-                {
-                    continue;
-                }
-
-                // skip if no permission to update
-                if (security.user.dict_custom_field_permission_level[column_name] != Security.PERMISSION_ALL)
-                {
-                    continue;
-                }
-
-                custom_cols_sql += ",[" + column_name + "]";
-                custom_cols_sql += " = ";
-
-                string datatype = (string)drcc["datatype"];
-
-                string custom_col_val = btnet.Util.request_to_string_for_sql(
-                    Request[column_name],
-                    datatype);
-
-                custom_cols_sql += custom_col_val;
-            }
-            sql = sql.AddParameterWithValue("custom_cols_placeholder", custom_cols_sql);
-        }
 
         DateTime last_update_date = (DateTime)btnet.DbUtil.execute_scalar(sql);
 

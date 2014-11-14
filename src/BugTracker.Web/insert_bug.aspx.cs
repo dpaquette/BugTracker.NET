@@ -209,7 +209,6 @@ namespace btnet
                     statusid,
                     assignedid,
                     udfid,
-                    "", "", "", // project specific dropdown values
                     comment,
                     comment,
                     from_addr,
