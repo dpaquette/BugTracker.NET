@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using NLog;
+using System.Security.Cryptography;
 
 namespace btnet
 {
@@ -483,25 +484,11 @@ namespace btnet
 
 
 		///////////////////////////////////////////////////////////////////////
-		public static string encrypt_string_using_MD5(string s)
+		public static string HashString(string password, string salt)
 		{
-
-			byte[] byte_array = System.Text.Encoding.Default.GetBytes(s);
-
-			System.Security.Cryptography.HashAlgorithm alg =
-				System.Security.Cryptography.HashAlgorithm.Create("MD5");
-
-			byte[] byte_array2 = alg.ComputeHash(byte_array);
-
-			System.Text.StringBuilder sb
-				= new System.Text.StringBuilder(byte_array2.Length);
-
-			foreach(byte b in byte_array2)
-			{
-				sb.AppendFormat("{0:X2}", b);
-			}
-
-			return sb.ToString();
+            Rfc2898DeriveBytes k2 = new Rfc2898DeriveBytes(password, System.Text.Encoding.UTF8.GetBytes(salt + salt));
+            var result = System.Text.Encoding.UTF8.GetString(k2.GetBytes(128));
+            return result;
 		}
 
         ///////////////////////////////////////////////////////////////////////
@@ -510,7 +497,7 @@ namespace btnet
             Random random = new Random();
             int salt = random.Next(10000, 99999);
 
-            string encrypted = Util.encrypt_string_using_MD5(unencypted + Convert.ToString(salt));
+            string encrypted = Util.HashString(unencypted, Convert.ToString(salt));
 
             var sql = new SQLString("update users set us_password = @en, us_salt = @salt where us_id = @id");
 

@@ -49,7 +49,7 @@ namespace btnet
                     // encrypt the password
                     Random random = new Random();
                     int salt = random.Next(10000, 99999);
-                    string encrypted = Util.encrypt_string_using_MD5(password.Value + Convert.ToString(salt));
+                    string encrypted = Util.HashString(password.Value, Convert.ToString(salt));
 
 
                     var sql = new SQLString(@"
