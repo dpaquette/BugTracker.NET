@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using NLog;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace btnet
 {
@@ -494,22 +495,48 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public static void update_user_password(int us_id, string unencypted)
         {
-            Random random = new Random();
-            int salt = random.Next(10000, 99999);
+            var salt = RandomString();
 
-            string encrypted = Util.HashString(unencypted, Convert.ToString(salt));
+            string hashed = Util.HashString(unencypted, Convert.ToString(salt));
 
-            var sql = new SQLString("update users set us_password = @en, us_salt = @salt where us_id = @id");
+            var sql = new SQLString("update users set us_password = @hashed, us_salt = @salt where us_id = @id");
 
-            sql = sql.AddParameterWithValue("en", encrypted);
+            sql = sql.AddParameterWithValue("hashed", hashed);
             sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
             sql = sql.AddParameterWithValue("id", Convert.ToString(us_id));
 
             btnet.DbUtil.execute_nonquery(sql);
         }
 
-		///////////////////////////////////////////////////////////////////////
-		public static string capitalize_first_letter(string s)
+        public static void update_user_password(string username, string unencypted)
+        {
+            var salt = RandomString();
+
+            string hashed = Util.HashString(unencypted, Convert.ToString(salt));
+
+            var sql = new SQLString("update users set us_password = @hashed, us_salt = @salt where us_username = @username");
+
+            sql = sql.AddParameterWithValue("hashed", hashed);
+            sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
+            sql = sql.AddParameterWithValue("username", Convert.ToString(username));
+
+            btnet.DbUtil.execute_nonquery(sql);
+        }
+
+        private static string RandomString()
+        {
+            var characters = "ABCDEFGHIJKLMNOPQURSTUVWXYZabcdefghijklmnopqurtuvwxyz1234567890".ToCharArray();
+            var random = new Random();
+            var builder = new StringBuilder();
+            for (int i = 0; i < random.Next(10, 100); i++)
+            {
+                builder.Append(characters[random.Next(characters.Length -1)]);
+            }
+            return builder.ToString();
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+        public static string capitalize_first_letter(string s)
 		{
 			if (s.Length > 0 && Util.get_setting("NoCapitalization","0") == "0")
 			{

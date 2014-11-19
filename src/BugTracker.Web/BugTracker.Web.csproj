@@ -616,6 +616,7 @@
     <Content Include="translate.aspx" />
     <Content Include="tropo_recording.aspx" />
     <Content Include="udfs.aspx" />
+    <Content Include="UpdatePassword.aspx" />
     <Content Include="update_dashboard.aspx" />
     <Content Include="upgrade_273_to_274.aspx" />
     <Content Include="users.aspx" />
@@ -1401,6 +1402,13 @@
     <Compile Include="udfs.aspx.designer.cs">
       <DependentUpon>udfs.aspx</DependentUpon>
     </Compile>
+    <Compile Include="UpdatePassword.aspx.cs">
+      <DependentUpon>UpdatePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UpdatePassword.aspx.designer.cs">
+      <DependentUpon>UpdatePassword.aspx</DependentUpon>
+    </Compile>
     <Compile Include="update_dashboard.aspx.cs">
       <DependentUpon>update_dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1554,12 +1562,6 @@
   -->
   <Target Name="PrecompileWeb" AfterTargets="build" Condition="'$(MvcBuildViews)'=='true'">
     <Message Text="Starting AspNetCompiler for $(ProjectDir)" Importance="high" />
-    <AspNetCompiler
-      VirtualPath="temp"
-      TargetPath="$(ProjectDir)/obj/precompiled"
-      Force="true"
-      PhysicalPath="$(WebProjectOutputDir)"
-        Debug="true"
-    />
+    <AspNetCompiler VirtualPath="temp" TargetPath="$(ProjectDir)/obj/precompiled" Force="true" PhysicalPath="$(WebProjectOutputDir)" Debug="true" />
   </Target>
 </Project>

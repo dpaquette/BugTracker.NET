@@ -176,7 +176,7 @@ where us_username = @username");
         public static bool check_password_with_db(string username, string enteredPassword, DataRow dr)
         {
 
-            int salt = (int)dr["us_salt"];
+            string salt = (string)dr["us_salt"];
             string hashedEnteredPassword = Util.HashString(enteredPassword, salt.ToString());
             string databasePassword = (string)dr["us_password"];
 

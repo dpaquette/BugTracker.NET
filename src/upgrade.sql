@@ -1077,4 +1077,5 @@ where bu_seen <> 0
 -----------------------------------------------------------------------
 -----------------------------------------------------------------------
 alter table users add password_reset_key nvarchar(200);
-alter table users alter column us_salt nvarchar(120);
+alter table users alter column us_salt nvarchar(200);
+alter table users alter column us_password nvarchar(200);
