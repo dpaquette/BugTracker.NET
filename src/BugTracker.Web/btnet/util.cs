@@ -4,12 +4,15 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
+using System.Security.Policy;
 using System.Web;
 using System.Data;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Web.Mvc;
+using System.Web.Routing;
 using NLog;
 using System.Security.Cryptography;
 using System.Text;
@@ -1093,12 +1096,12 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
         ///////////////////////////////////////////////////////////////////////
         public static void redirect(HttpRequest Request, HttpResponse Response)
         {
-
             // redirect to the page the user was going to or start off with bugs.aspx
             string url = Request.QueryString["url"];
             string qs = Request.QueryString["qs"];
 
-            if (String.IsNullOrEmpty(url))
+            UrlHelper urlHelper = new UrlHelper(Request.RequestContext);
+            if (String.IsNullOrEmpty(url) || !urlHelper.IsLocalUrl(url))
             {
                 string mobile = Request["mobile"];
                 if (String.IsNullOrEmpty(mobile))
@@ -1108,10 +1111,6 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
                 else {
                     Response.Redirect("mbugs.aspx");
                 }
-            }
-            else if (url == Request.ServerVariables["URL"])  // I can't remember what this code means...
-            {
-                Response.Redirect("bugs.aspx");
             }
             else
             {

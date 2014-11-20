@@ -34,13 +34,13 @@ However it possible to override this setting on a page by page basis in the unli
 ```
 validateRequest="false"
 ```
-Searching the project for these yeilds [quite a few examples](https://github.com/dpaquette/BugTracker.NET/search?p=2&q=validateRequest%3D%22false%22&type=Code&utf8=%E2%9C%93). The thing is that turning off request validation is not necessarily bad, unless we're printing the content back to the web browser unencoded. This is however difficult to find every case where unenced values can be written back out to the browser. The difficulty of tracking down possible cross site scripting vulnerabilites when request validation is disabled is half the problem.
+Searching the project for these yeilds [quite a few examples](https://github.com/dpaquette/BugTracker.NET/search?p=2&q=validateRequest%3D%22false%22&type=Code&utf8=%E2%9C%93). The thing is that turning off request validation is not necessarily bad, unless we're printing the content back to the web browser unencoded. This is however difficult to find every case where unescaped values can be written back out to the browser. The difficulty of tracking down possible cross site scripting vulnerabilities when request validation is disabled is half the problem.
 
 This topic is complicated enough to warrant an entire blog post as we investigate whether proper care has been taken to avoid cross site scripting attacks. We'll introduce some tricks to make it easier for future developers to know that cross site scripting attacks have been mitigated.
 
 ##Insecure Direct Object References
 
-Often there are parts of the system to which a user might have only partial access. In BugTracker.NET a great exampel woudl be a bug. A user from project A should not have access to a bug from project B. However the same screen is used for accessing each bug with the only difference being the bug ID. Checks have to be made in the code to avoid displaying bugs that users should not be able to see.  This is actually a pretty common exploit.
+Often there are parts of the system to which a user might have only partial access. In BugTracker.NET a great example woudl be a bug. A user from project A should not have access to a bug from project B. However the same screen is used for accessing each bug with the only difference being the bug ID. Checks have to be made in the code to avoid displaying bugs that users should not be able to see.  This is actually a pretty common exploit.
 
 Fortunately, it looks like there are extensive checks throughout the application for user permissions. The checks look something like
 
@@ -71,11 +71,11 @@ We'll skip over streamlining the configuration in this section on security. Simp
 
 ##Sensitive Data Exposure
 
-There is fequently some information in our system that we don't want to disclose to outside parties. This can be as minor as an error message revealing a stack trace or as serious as exposing SQL or even full database dumps on the web.
+There is frequently some information in our system that we don't want to disclose to outside parties. This can be as minor as an error message revealing a stack trace or as serious as exposing SQL or even full database dumps on the web.
 
 Weirdly, all three of these data exposures are present in BugTracker.NET. The default configuration in the web.config reveals full stack traces for any error, there are several places where SQL is displayed and there is a way to generate and download a full database dump.  The latter two are actual features in the application. They are, however, extremely high risk features. Being able to download a database dump in particular exposes the application passwords as well as pretty much everything else.
 
-We're going to drop these features. It is possible that we'll lose some customers as a result of this but we have a responsibility to deliver secure software. BugTracker.NET is open source so somebody is welcome to branch the application before we remove the features and release a competitor. They are welcome to take on the responsibility of distributing insecure softare, but I'm not interested in that.
+We're going to drop these features. It is possible that we'll lose some customers as a result of this but we have a responsibility to deliver secure software. BugTracker.NET is open source so somebody is able to branch the application before we remove the features and release a competitor. They are welcome to take on the responsibility of distributing insecure software; I'm not interested in that.
 
 ##Missing Function Level Access Control
 
@@ -131,4 +131,4 @@ So far we've looked at ten possible security issues in the application. Of them 
  - Sensitive data revealed
  - Unvalidated forwards
 
- Over the next couple of posts we'll address each of these in BugTracker.NET. 
+ Over the next couple of posts we'll address each of these in BugTracker.NET.
