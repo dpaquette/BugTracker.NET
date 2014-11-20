@@ -495,7 +495,7 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public static void update_user_password(int us_id, string unencypted)
         {
-            var salt = RandomString();
+            var salt = GenerateRandomString();
 
             string hashed = Util.HashString(unencypted, Convert.ToString(salt));
 
@@ -510,7 +510,7 @@ namespace btnet
 
         public static void update_user_password(string username, string unencypted)
         {
-            var salt = RandomString();
+            var salt = GenerateRandomString();
 
             string hashed = Util.HashString(unencypted, Convert.ToString(salt));
 
@@ -523,7 +523,7 @@ namespace btnet
             btnet.DbUtil.execute_nonquery(sql);
         }
 
-        private static string RandomString()
+        public static string GenerateRandomString()
         {
             var characters = "ABCDEFGHIJKLMNOPQURSTUVWXYZabcdefghijklmnopqurtuvwxyz1234567890".ToCharArray();
             var random = new Random();
