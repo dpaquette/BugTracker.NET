@@ -152,4 +152,4 @@ The final step in the process is to build ourselves a tool to send out the e-mai
 
 ##Strong New Hash
 
-With a minimum of effort we now have a very strong password hashing algorithm in place. The complexity of the hash should be enough to keep us safe for quite some time. Because the algorithm is tuneable we can increase the number of itterations from the default 1000 as computing power increases. 
+With a minimum of effort we now have a very strong password hashing algorithm in place. The complexity of the hash should be enough to keep us safe for quite some time. Because the algorithm is tuneable we can increase the number of iterations from the default 1000 as computing power increases. 
