@@ -92,7 +92,7 @@ Note, we are using the [external link icon from Wikimedia Commons](http://common
 
 As you can see, external links in BugTracker.NET are now highlighted with the external link icon.
 
-![External Links in BugTracker](Images/BugTrackerExternalLinks.png)
+![External Links in BugTracker](Images/BugTrackerExternalLinks.PNG)
 
 At this point, everything appears to be working as expected but after further testing we noticed that the jQuery code to highlight external links was crashing on a number of pages. As it turns out, jQuery is NOT loaded on all pages. Again, the lack of master pages means we have no centralized place to add a reference to all our pages. We are going to need to bump the 'master pages' feature up in our priority list.
 
