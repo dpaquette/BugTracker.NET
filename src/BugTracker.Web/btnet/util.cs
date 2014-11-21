@@ -526,14 +526,14 @@ namespace btnet
             btnet.DbUtil.execute_nonquery(sql);
         }
 
+        private static Random _random = new Random();
         public static string GenerateRandomString()
         {
             var characters = "ABCDEFGHIJKLMNOPQURSTUVWXYZabcdefghijklmnopqurtuvwxyz1234567890".ToCharArray();
-            var random = new Random();
             var builder = new StringBuilder();
-            for (int i = 0; i < random.Next(10, 100); i++)
+            for (int i = 0; i < _random.Next(10, 100); i++)
             {
-                builder.Append(characters[random.Next(characters.Length -1)]);
+                builder.Append(characters[_random.Next(characters.Length -1)]);
             }
             return builder.ToString();
         }
