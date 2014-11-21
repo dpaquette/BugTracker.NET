@@ -17,13 +17,13 @@ namespace btnet
                 while (reader.Read())
                 {
                     var id = reader.GetInt32(0);
-                    var updateQuery = new SQLString("update users set password_reset_key=@resetKey where id = @id");
-                    sql.AddParameterWithValue("@id", id);
-                    
-                    var resetKey = Util.GenerateRandomString();
-                    sql.AddParameterWithValue("@resetKey", resetKey);
+                    var updateQuery = new SQLString("update users set password_reset_key=@resetKey where us_id = @id");
+                    updateQuery.AddParameterWithValue("@id", id);
 
-                    var emailAddress = reader.GetString(1);
+                    var resetKey = Util.GenerateRandomString();
+                    updateQuery.AddParameterWithValue("@resetKey", resetKey);
+
+                    var emailAddress = reader.IsDBNull(1) ? "" : reader.GetString(1);
                     var username = reader.GetString(2);
                     DbUtil.execute_nonquery(updateQuery);
                     SendMail(emailAddress, resetKey, username);
@@ -33,13 +33,16 @@ namespace btnet
 
         private void SendMail(string emailAddress, string resetKey, string username)
         {
-            var message = new MailMessage();
-            message.To.Add(new MailAddress(emailAddress));
-            message.Subject = "BugTracker Password Reset";
-            message.IsBodyHtml = true;
-            message.Body = String.Format("Hi, we're resetting your password. Click <a href='{0}UpdatePassword.aspx?password_reset_key={1}&user_name={2}'>here</a>", System.Configuration.ConfigurationManager.AppSettings["AbsoluteUrlPrefix"], resetKey, username);
-            var client = new SmtpClient();
-            client.Send(message);
+            if (!String.IsNullOrWhiteSpace(emailAddress))
+            {
+                var message = new MailMessage();
+                message.To.Add(new MailAddress(emailAddress));
+                message.Subject = "BugTracker Password Reset";
+                message.IsBodyHtml = true;
+                message.Body = String.Format("Hi, we're resetting your password. Click <a href='{0}UpdatePassword.aspx?password_reset_key={1}&user_name={2}'>here</a>", System.Configuration.ConfigurationManager.AppSettings["AbsoluteUrlPrefix"], resetKey, username);
+                var client = new SmtpClient();
+                client.Send(message);
+            }
         }
     }
 }

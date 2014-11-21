@@ -625,6 +625,7 @@
     <Content Include="seen.aspx" />
     <Content Include="select_report.aspx" />
     <Content Include="send_email.aspx" />
+    <Content Include="send_password_resets.aspx" />
     <Content Include="server_variables.aspx" />
     <Content Include="setup.sql" />
     <Content Include="sortable.js" />
@@ -1314,6 +1315,13 @@
     </Compile>
     <Compile Include="send_email.aspx.designer.cs">
       <DependentUpon>send_email.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="send_password_resets.aspx.cs">
+      <DependentUpon>send_password_resets.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="send_password_resets.aspx.designer.cs">
+      <DependentUpon>send_password_resets.aspx</DependentUpon>
     </Compile>
     <Compile Include="server_variables.aspx.cs">
       <DependentUpon>server_variables.aspx</DependentUpon>
