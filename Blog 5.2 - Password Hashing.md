@@ -148,8 +148,36 @@ The page itself is pretty simple. We check the username and password reset key w
 
 The final step in the process is to build ourselves a tool to send out the e-mails to our users. This tool could be either a web page or a command line tool. BugTracker.net is a web application so let's stick with a web page. The page must be a protected admin page as we don't want regular folks triggering a massive password reset.
 
+The code to perform the updates is simple and looks like
+
+```
+ var sql = new SQLString("select us_id, us_email, us_username from users");
+ using (var reader = DbUtil.execute_reader(sql, System.Data.CommandBehavior.Default))
+            {
+                while (reader.Read())
+                {
+                    var id = reader.GetInt32(0);
+                    var updateQuery = new SQLString("update users set password_reset_key=@resetKey where us_id = @id");
+                    updateQuery.AddParameterWithValue("@id", id);
+
+                    var resetKey = Util.GenerateRandomString();
+                    updateQuery.AddParameterWithValue("@resetKey", resetKey);
+
+                    var emailAddress = reader.GetString(1);
+                    var username = reader.GetString(2);
+                    DbUtil.execute_nonquery(updateQuery);
+                    SendMail(emailAddress, resetKey, username);
+                }
+            }
+```
+We don't need to actively invalidate the existing passwords as we've changed the hashing algorithm so no old password hashes will continue to be valid.
+
+A>This code is not the most efficient piece of programming. We hit the database with at least as many queries as we have users. If you had a very large user base this script would take a long time to run during which time users who were not e-mailed would not be able to log in. In this scenario you might shift the e-mail sending to when a user actually tries to log in. The workflow might look like:
+
+A>Attempt login -> Get Email -> Reset Password -> Login
+
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/d321a268c7c5abea4f046d7da8b3a4e3edba9af9)
 
 ##Strong New Hash
 
-With a minimum of effort we now have a very strong password hashing algorithm in place. The complexity of the hash should be enough to keep us safe for quite some time. Because the algorithm is tuneable we can increase the number of iterations from the default 1000 as computing power increases. 
+With a minimum of effort we now have a very strong password hashing algorithm in place. The complexity of the hash should be enough to keep us safe for quite some time. Because the algorithm is tuneable we can increase the number of iterations from the default 1000 as computing power increases.
