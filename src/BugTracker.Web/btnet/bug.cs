@@ -853,10 +853,7 @@ where bg_id = @bg");
                     bg_priority,
                     bg_status,
                     bg_assigned_to_user,
-                    bg_user_defined_attribute,
-                    bg_project_custom_dropdown_value1,
-                    bg_project_custom_dropdown_value2,
-                    bg_project_custom_dropdown_value3)
+                    bg_user_defined_attribute)
                     values (@short_desc, @tags, @reported_user,  @reported_user, getdate(), getdate(),
                     @project, @org,
                     @category, @priority, @status, @assigned_user, @udf)");

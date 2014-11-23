@@ -744,16 +744,29 @@ namespace btnet
 		{
 			SQLString sql;
 
+            const string limitUsernameDropdownSql = @"
+
+select isnull(bg_assigned_to_user,0) keep_me
+into #temp2
+from bugs
+union
+select isnull(bg_reported_user,0) from bugs
+
+delete from #temp
+where us_id not in (select keep_me from #temp2)
+drop table #temp2
+";
+
 			if (Util.get_setting("DefaultPermissionLevel","2") == "0")
 			{
 				// only show users who have explicit permission
 				// for projects that this user has permissions for
 
-				sql = new SQLString(@"
+			    sql = new SQLString(@"
 /* get related users 1 */
 
 select us_id,
-case when @fullnames then
+case when @fullnames = 1 then
     case when len(isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')) > 1
 	then isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')
     else us_username end
@@ -779,15 +792,18 @@ and @og_other_orgs_permission_level = 0 -- other orgs
 begin
 	delete from #temp where og_external_user = 1 and us_org <> @userorg 
 end
+");
 
-@limit_users
 
+                if (Util.get_setting("LimitUsernameDropdownsInSearch", "0") == "1")
+                {
+                    sql.Append(limitUsernameDropdownSql);
+                }
+
+sql.Append(@"
 select us_id, us_username, us_email from #temp order by us_username
 
 drop table #temp");
-
-
-
 			}
 			else
 			{
@@ -799,7 +815,7 @@ drop table #temp");
 				sql= new SQLString(@"
 /* get related users 2 */
 select  pj_id, us_id,
-case when @fullnames then
+case when @fullnames = 1 then
     case when len(isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')) > 1
 	then isnull(us_firstname,'') + ' ' + isnull(us_lastname,'')
     else us_username end
@@ -813,9 +829,13 @@ where pj_id not in
 	where pu_permission_level = 0 and pu_user = @userid
 )
 
+");
+			    if (Util.get_setting("LimitUsernameDropdownsInSearch", "0") == "1")
+			    {			      
+			        sql.Append(limitUsernameDropdownSql);
+			    }
 
-@limit_users
-
+			    sql.Append(@"
 
 if @og_external_user = 1 -- external
 and @og_other_orgs_permission_level = 0 -- other orgs
@@ -824,7 +844,7 @@ begin
 	from #temp a
 	inner join users b on a.us_id = b.us_id
 	inner join orgs on b.us_org = og_id
-	where og_external_user = 0 or b.us_org = @user.org
+	where og_external_user = 0 or b.us_org = @userorg
 	order by a.us_username
 end
 else
@@ -841,45 +861,22 @@ end
 drop table #temp");
 
 			}
-
-			if (Util.get_setting("LimitUsernameDropdownsInSearch","0") == "1")
-			{
-				var sql_limit_user_names = @"
-
-select isnull(bg_assigned_to_user,0) keep_me
-into #temp2
-from bugs
-union
-select isnull(bg_reported_user,0) from bugs
-
-delete from #temp
-where us_id not in (select keep_me from #temp2)
-drop table #temp2";
-
-				sql = sql.AddParameterWithValue("limit_users",sql_limit_user_names);
-			}
-			else
-			{
-				sql = sql.AddParameterWithValue("limit_users","");
-			}
-
-
-
+            
             if (force_full_names || Util.get_setting("UseFullNames", "0") == "1")
 			{
                 // true condition
-                sql = sql.AddParameterWithValue("@fullnames", "1 = 1");
+                sql = sql.AddParameterWithValue("fullnames", 1);
             }
 			else
 			{
                 // false condition
-                sql = sql.AddParameterWithValue("@fullnames", "0 = 1");
+                sql = sql.AddParameterWithValue("fullnames", 0);
 			}
 
-			sql = sql.AddParameterWithValue("@userid",Convert.ToString(security.user.usid));
-			sql = sql.AddParameterWithValue("@userorg",Convert.ToString(security.user.org));
-			sql = sql.AddParameterWithValue("@og_external_user",Convert.ToString(security.user.external_user ? 1 : 0));
-			sql = sql.AddParameterWithValue("@og_other_orgs_permission_level",Convert.ToString(security.user.other_orgs_permission_level));
+			sql = sql.AddParameterWithValue("userid",security.user.usid);
+			sql = sql.AddParameterWithValue("userorg",security.user.org);
+			sql = sql.AddParameterWithValue("og_external_user",security.user.external_user ? 1 : 0);
+			sql = sql.AddParameterWithValue("og_other_orgs_permission_level",security.user.other_orgs_permission_level);
 
 			return btnet.DbUtil.get_dataset(sql).Tables[0];
 
