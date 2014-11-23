@@ -173,43 +173,20 @@ where us_username = @username");
             return false;
         }
 
-        public static bool check_password_with_db(string username, string password, DataRow dr)
+        public static bool check_password_with_db(string username, string enteredPassword, DataRow dr)
         {
 
-            int us_salt = (int)dr["us_salt"];
+            string salt = (string)dr["us_salt"];
+            string hashedEnteredPassword = Util.HashString(enteredPassword, salt.ToString());
+            string databasePassword = (string)dr["us_password"];
 
-            string encrypted;
-
-            string us_password = (string)dr["us_password"];
-
-            if (us_password.Length < 32) // if password in db is unencrypted
+            if (hashedEnteredPassword == databasePassword)
             {
-                encrypted = password; // in other words, unecrypted
-            }
-            else if (us_salt == 0)
-            {
-                encrypted = Util.encrypt_string_using_MD5(password);
-            }
-            else
-            {
-                encrypted = Util.encrypt_string_using_MD5(password + Convert.ToString(us_salt));
-            }
-
-
-            if (encrypted == us_password)
-            {
-                // Authenticated, but let's do a better job encrypting the password.
-                // If it is not encrypted, or, if it is encrypted without salt, then
-                // update it so that it is encrypted WITH salt.
-                if (us_salt == 0 || us_password.Length < 32)
-                {
-                    btnet.Util.update_user_password((int)dr["us_id"], password);
-                }
                 return true;
             }
             else
             {
-                Util.write_to_log("User " + username + " entered an incorrect password.");
+                Util.write_to_log(String.Format("User {0} entered an incorrect password.", username));
                 return false;
             }
         }

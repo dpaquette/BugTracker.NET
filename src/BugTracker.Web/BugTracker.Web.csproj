@@ -625,6 +625,7 @@
     <Content Include="seen.aspx" />
     <Content Include="select_report.aspx" />
     <Content Include="send_email.aspx" />
+    <Content Include="send_password_resets.aspx" />
     <Content Include="server_variables.aspx" />
     <Content Include="setup.sql" />
     <Content Include="sortable.js" />
@@ -648,6 +649,7 @@
     <Content Include="translate.aspx" />
     <Content Include="tropo_recording.aspx" />
     <Content Include="udfs.aspx" />
+    <Content Include="UpdatePassword.aspx" />
     <Content Include="update_dashboard.aspx" />
     <Content Include="upgrade_273_to_274.aspx" />
     <Content Include="users.aspx" />
@@ -1314,6 +1316,13 @@
     <Compile Include="send_email.aspx.designer.cs">
       <DependentUpon>send_email.aspx</DependentUpon>
     </Compile>
+    <Compile Include="send_password_resets.aspx.cs">
+      <DependentUpon>send_password_resets.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="send_password_resets.aspx.designer.cs">
+      <DependentUpon>send_password_resets.aspx</DependentUpon>
+    </Compile>
     <Compile Include="server_variables.aspx.cs">
       <DependentUpon>server_variables.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1432,6 +1441,13 @@
     </Compile>
     <Compile Include="udfs.aspx.designer.cs">
       <DependentUpon>udfs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="UpdatePassword.aspx.cs">
+      <DependentUpon>UpdatePassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UpdatePassword.aspx.designer.cs">
+      <DependentUpon>UpdatePassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="update_dashboard.aspx.cs">
       <DependentUpon>update_dashboard.aspx</DependentUpon>
@@ -1586,12 +1602,6 @@
   -->
   <Target Name="PrecompileWeb" AfterTargets="build" Condition="'$(MvcBuildViews)'=='true'">
     <Message Text="Starting AspNetCompiler for $(ProjectDir)" Importance="high" />
-    <AspNetCompiler
-      VirtualPath="temp"
-      TargetPath="$(ProjectDir)/obj/precompiled"
-      Force="true"
-      PhysicalPath="$(WebProjectOutputDir)"
-        Debug="true"
-    />
+    <AspNetCompiler VirtualPath="temp" TargetPath="$(ProjectDir)/obj/precompiled" Force="true" PhysicalPath="$(WebProjectOutputDir)" Debug="true" />
   </Target>
 </Project>

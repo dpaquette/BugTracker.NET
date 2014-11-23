@@ -1068,3 +1068,14 @@ create view bug_user_seen as
 select bu_bug [sn_bug], bu_user [sn_user], bu_seen [sn_seen]
 from bug_user
 where bu_seen <> 0
+
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-- upgrade from 3.3.1 to 4.0.0
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------
+alter table users add password_reset_key nvarchar(200);
+alter table users alter column us_salt nvarchar(200);
+alter table users alter column us_password nvarchar(200);

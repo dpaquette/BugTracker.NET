@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
 using NLog;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace btnet
 {
@@ -486,46 +488,58 @@ namespace btnet
 
 
 		///////////////////////////////////////////////////////////////////////
-		public static string encrypt_string_using_MD5(string s)
+		public static string HashString(string password, string salt)
 		{
-
-			byte[] byte_array = System.Text.Encoding.Default.GetBytes(s);
-
-			System.Security.Cryptography.HashAlgorithm alg =
-				System.Security.Cryptography.HashAlgorithm.Create("MD5");
-
-			byte[] byte_array2 = alg.ComputeHash(byte_array);
-
-			System.Text.StringBuilder sb
-				= new System.Text.StringBuilder(byte_array2.Length);
-
-			foreach(byte b in byte_array2)
-			{
-				sb.AppendFormat("{0:X2}", b);
-			}
-
-			return sb.ToString();
+            Rfc2898DeriveBytes k2 = new Rfc2898DeriveBytes(password, System.Text.Encoding.UTF8.GetBytes(salt + salt));
+            var result = System.Text.Encoding.UTF8.GetString(k2.GetBytes(128));
+            return result;
 		}
 
         ///////////////////////////////////////////////////////////////////////
         public static void update_user_password(int us_id, string unencypted)
         {
-            Random random = new Random();
-            int salt = random.Next(10000, 99999);
+            var salt = GenerateRandomString();
 
-            string encrypted = Util.encrypt_string_using_MD5(unencypted + Convert.ToString(salt));
+            string hashed = Util.HashString(unencypted, Convert.ToString(salt));
 
-            var sql = new SQLString("update users set us_password = @en, us_salt = @salt where us_id = @id");
+            var sql = new SQLString("update users set us_password = @hashed, us_salt = @salt where us_id = @id");
 
-            sql = sql.AddParameterWithValue("en", encrypted);
+            sql = sql.AddParameterWithValue("hashed", hashed);
             sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
             sql = sql.AddParameterWithValue("id", Convert.ToString(us_id));
 
             btnet.DbUtil.execute_nonquery(sql);
         }
 
-		///////////////////////////////////////////////////////////////////////
-		public static string capitalize_first_letter(string s)
+        public static void update_user_password(string username, string unencypted)
+        {
+            var salt = GenerateRandomString();
+
+            string hashed = Util.HashString(unencypted, Convert.ToString(salt));
+
+            var sql = new SQLString("update users set us_password = @hashed, us_salt = @salt where us_username = @username");
+
+            sql = sql.AddParameterWithValue("hashed", hashed);
+            sql = sql.AddParameterWithValue("salt", Convert.ToString(salt));
+            sql = sql.AddParameterWithValue("username", Convert.ToString(username));
+
+            btnet.DbUtil.execute_nonquery(sql);
+        }
+
+        private static Random _random = new Random();
+        public static string GenerateRandomString()
+        {
+            var characters = "ABCDEFGHIJKLMNOPQURSTUVWXYZabcdefghijklmnopqurtuvwxyz1234567890".ToCharArray();
+            var builder = new StringBuilder();
+            for (int i = 0; i < _random.Next(10, 100); i++)
+            {
+                builder.Append(characters[_random.Next(characters.Length -1)]);
+            }
+            return builder.ToString();
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+        public static string capitalize_first_letter(string s)
 		{
 			if (s.Length > 0 && Util.get_setting("NoCapitalization","0") == "0")
 			{
