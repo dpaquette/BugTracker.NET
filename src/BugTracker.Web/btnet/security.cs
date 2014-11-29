@@ -203,7 +203,7 @@ and us_active = 1");
         public static void SignIn(HttpRequest request, string username)
         {
             SQLString sql = new SQLString(@"
-select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page,
+select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page, u.us_enable_bug_list_popups,
        o.og_can_only_see_own_reported,
        o.og_other_orgs_permission_level
 from users u
@@ -219,7 +219,9 @@ where us_username = @us");
                 new Claim(BtnetClaimTypes.OrganizationId, Convert.ToString(dr["us_org"])),
                 new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(dr["us_bugs_per_page"])),
                 new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["og_can_only_see_own_reported"])),
-                new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"]))
+                new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"])),
+                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["us_enable_bug_list_popups"])),
+
             };
 
             var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);

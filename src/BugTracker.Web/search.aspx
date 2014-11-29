@@ -1114,7 +1114,7 @@ function do_doc_ready()
 <input type=hidden name="tags" id="tags" value="">
 
 <script>
-    var enable_popups = <% Response.Write(security.user.enable_popups ? "1" : "0"); %>;
+    var enable_popups = <% Response.Write(User.Identity.GetEnablePopups() ? "1" : "0"); %>;
     var asp_form_id = '<% Response.Write(Util.get_form_name()); %>';
 </script>
 

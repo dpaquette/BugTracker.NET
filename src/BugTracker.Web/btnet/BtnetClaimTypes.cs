@@ -12,5 +12,6 @@ namespace btnet
         public const string BugsPerPage = "us_bugs_per_page";
         public const string CanOnlySeeOwnReportedBugs = "og_can_only_see_own_reported";
         public const string OtherOrgsPermissionLevel = "og_other_orgs_permission_level";
+        public const string EnablePopUps = "us_enable_bug_list_popups";
     }
 }
