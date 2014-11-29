@@ -126,34 +126,26 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         void on_logon()
         {
-
+            var username = user.Value;
             string auth_mode = Util.get_setting("WindowsAuthentication", "0");
             if (auth_mode != "0")
             {
-                if (user.Value.Trim() == "")
+                if (username.Trim() == "")
                 {
                     btnet.Util.redirect("loginNT.aspx", Request, Response);
                 }
             }
 
-            bool authenticated = btnet.Authenticate.check_password(user.Value, pw.Value);
+            bool authenticated = btnet.Authenticate.check_password(username, pw.Value);
 
             if (authenticated)
             {
-                sql = new SQLString("select us_id from users where us_username = @us");
-                sql = sql.AddParameterWithValue("us", user.Value);
+                sql = new SQLString("select us_id, us_username, us_org from users where us_username = @us");
+                sql = sql.AddParameterWithValue("us", username);
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {
-                    int us_id = (int)dr["us_id"];
-
-                    btnet.Security.create_session(
-                        Request,
-                        Response,
-                        us_id,
-                        user.Value,
-                        "0");
-
+                    btnet.Security.SignIn(Request, username);
                     btnet.Util.redirect(Request, Response);
                 }
                 else

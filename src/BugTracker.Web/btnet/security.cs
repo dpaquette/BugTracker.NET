@@ -10,6 +10,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace btnet
 {
@@ -198,6 +199,24 @@ and us_active = 1");
 				auth_method = "plain";
 			}
 		}
+
+        public static void SignIn(HttpRequest request, string username)
+        {
+            SQLString sql = new SQLString("select us_id, us_username, us_org from users where us_username = @us");
+            sql = sql.AddParameterWithValue("us", username);
+            DataRow dr = btnet.DbUtil.get_datarow(sql);
+
+            var claims = new List<Claim>
+            {
+                new Claim(BtnetClaimTypes.UserId, Convert.ToString(dr["us_id"])),
+                new Claim(ClaimTypes.Name, Convert.ToString(dr["us_username"])),
+                new Claim(BtnetClaimTypes.OrganizationId, Convert.ToString(dr["us_org"]))
+            };
+
+            var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);
+            var owinContext = request.GetOwinContext();
+            owinContext.Authentication.SignIn(identity);
+        }
 
 		///////////////////////////////////////////////////////////////////////
 		public static void create_session(HttpRequest Request, HttpResponse Response, int userid, string username, string NTLM)
