@@ -34,7 +34,7 @@ void Page_Load(Object sender, EventArgs e)
 		Response.End();
 	}
 	
-	ds_tasks = btnet.Util.get_all_tasks(security,0);
+	ds_tasks = btnet.Util.get_all_tasks(User.Identity, security, 0);
 }
 
 </script>

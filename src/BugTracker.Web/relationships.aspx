@@ -217,7 +217,7 @@ order by bg_id desc");
 
 
 	sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
-	sql = Util.alter_sql_per_project_permissions(sql, security);
+	sql = Util.alter_sql_per_project_permissions(sql, User.Identity);
 
 	ds = btnet.DbUtil.get_dataset(sql);
 	

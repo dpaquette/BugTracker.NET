@@ -65,7 +65,7 @@ order by bg_last_updated_date desc";
             bug_sql = bug_sql.Replace("$WHERE$", "");
         }
 
-        var sql = Util.alter_sql_per_project_permissions(new SQLString(bug_sql), security);
+        var sql = Util.alter_sql_per_project_permissions(new SQLString(bug_sql), User.Identity);
 
         ds = btnet.DbUtil.get_dataset(sql);
 

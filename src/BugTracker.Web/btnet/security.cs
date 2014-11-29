@@ -202,7 +202,13 @@ and us_active = 1");
 
         public static void SignIn(HttpRequest request, string username)
         {
-            SQLString sql = new SQLString("select us_id, us_username, us_org, us_bugs_per_page from users where us_username = @us");
+            SQLString sql = new SQLString(@"
+select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page,
+       o.og_can_only_see_own_reported,
+       o.og_other_orgs_permission_level
+from users u
+inner join orgs org on u.us_org = org.og_id
+where us_username = @us");
             sql = sql.AddParameterWithValue("us", username);
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -211,7 +217,9 @@ and us_active = 1");
                 new Claim(BtnetClaimTypes.UserId, Convert.ToString(dr["us_id"])),
                 new Claim(ClaimTypes.Name, Convert.ToString(dr["us_username"])),
                 new Claim(BtnetClaimTypes.OrganizationId, Convert.ToString(dr["us_org"])),
-                new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(dr["us_bugs_per_page"]))
+                new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(dr["us_bugs_per_page"])),
+                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["og_can_only_see_own_reported"])),
+                new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"]))
             };
 
             var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);

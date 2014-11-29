@@ -25,6 +25,16 @@ namespace btnet
             return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.BugsPerPage));
         }
 
+        public static bool GetCanOnlySeeOwnReportedBugs(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanOnlySeeOwnReportedBugs));
+        }
+
+        public static int GetOtherOrgsPermissionLevels(this IIdentity identity)
+        {
+            return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.OtherOrgsPermissionLevel));
+        }
+
         private static string GetClaimsValue(IIdentity identity, string claimType)
         {
             if (identity is ClaimsIdentity)

@@ -246,7 +246,7 @@ namespace btnet
             // replace magic variables
             bug_sql = bug_sql.AddParameterWithValue("ME", User.Identity.GetUserId());
 
-            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
+            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, User.Identity);
 
             if (Util.get_setting("UseFullNames", "0") == "0")
             {

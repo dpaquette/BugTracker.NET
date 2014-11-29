@@ -48,7 +48,7 @@ void Page_Load(Object sender, EventArgs e)
 		// replace magic variables
 		bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
 
-		bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
+		bug_sql = Util.alter_sql_per_project_permissions(bug_sql, User.Identity);
 
 		ds = btnet.DbUtil.get_dataset(bug_sql);
 		dv = new DataView(ds.Tables[0]);

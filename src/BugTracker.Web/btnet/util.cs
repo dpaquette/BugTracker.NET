@@ -5,6 +5,7 @@ Distributed under the terms of the GNU General Public License
 
 using System;
 using System.Security.Policy;
+using System.Security.Principal;
 using System.Web;
 using System.Data;
 using System.Collections.Specialized;
@@ -376,9 +377,11 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static SQLString alter_sql_per_project_permissions(SQLString sql, Security security)
+		public static SQLString alter_sql_per_project_permissions(SQLString sql, IIdentity identity)
 		{
-
+		    int userId = identity.GetUserId();
+		    int organizationId = identity.GetOrganizationId();
+		    
 			string project_permissions_sql;
 
 			string dpl = Util.get_setting("DefaultPermissionLevel","2");
@@ -400,7 +403,7 @@ namespace btnet
 					and pu_permission_level = 0)) ";
 			}
 
-            if (security.user.can_only_see_own_reported)
+            if (identity.GetCanOnlySeeOwnReportedBugs())
             {
                 project_permissions_sql += @"
 					    and bugs.bg_reported_user = $user ";
@@ -408,19 +411,18 @@ namespace btnet
             }
             else
             {
-                if (security.user.other_orgs_permission_level == 0)
+                if (identity.GetOtherOrgsPermissionLevels() == 0)
                 {
                     project_permissions_sql += @"
 					    and bugs.bg_org = $user.org ";
-
                 }
             }
 
 			project_permissions_sql
-				= project_permissions_sql.Replace("$user.org",Convert.ToString(security.user.org));
+				= project_permissions_sql.Replace("$user.org",Convert.ToString(organizationId));
 
 			project_permissions_sql
-				= project_permissions_sql.Replace("$user",Convert.ToString(security.user.usid));
+				= project_permissions_sql.Replace("$user",Convert.ToString(userId));
 
 
 			// Figure out where to alter sql for project permissions
@@ -1290,7 +1292,7 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
 
 		
 		///////////////////////////////////////////////////////////////////////
-		public static DataSet get_all_tasks(Security security, int bugid)
+		public static DataSet get_all_tasks(IIdentity identity, Security security, int bugid)
 		{
             var sql = new SQLString("select ");
             
@@ -1374,7 +1376,7 @@ where tsk_bug in
 
 			if (bugid == 0)
 			{
-				sql.Append(btnet.Util.alter_sql_per_project_permissions(new SQLString("select bg_id from bugs"), security));
+				sql.Append(btnet.Util.alter_sql_per_project_permissions(new SQLString("select bg_id from bugs"), identity));
 			}
 			else
 			{

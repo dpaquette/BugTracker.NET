@@ -45,7 +45,7 @@ Distributed under the terms of the GNU General Public License
 
             // replace magic variables
             bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
-            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
+            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, User.Identity);
 
             // all we really need is the bugid, but let's do the same query as print_bugs.aspx
             ds = btnet.DbUtil.get_dataset(bug_sql);

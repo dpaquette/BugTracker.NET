@@ -750,7 +750,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
                 sql = new SQLString(search_sql.Replace("$WHERE$", where));
             }
 
-            sql = Util.alter_sql_per_project_permissions(sql, security);
+            sql = Util.alter_sql_per_project_permissions(sql, User.Identity);
 
             DataSet ds = btnet.DbUtil.get_dataset(sql);
             dv = new DataView(ds.Tables[0]);

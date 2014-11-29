@@ -295,7 +295,7 @@ namespace btnet
 		protected static void write_tasks(HttpResponse Response, int bugid)
 		{
 			
-			DataSet ds_tasks = btnet.Util.get_all_tasks(null, bugid);
+			DataSet ds_tasks = btnet.Util.get_all_tasks(HttpContext.Current.User.Identity, null, bugid);
 
             if (ds_tasks.Tables[0].Rows.Count > 0)
             {

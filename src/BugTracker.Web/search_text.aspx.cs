@@ -37,7 +37,7 @@ namespace btnet
             }
 
             var search = BugSearchFactory.CreateBugSearch();
-            var results = search.Search(Request["Query"], security);
+            var results = search.Search(Request["Query"], User.Identity);
 
             Session["bugs_unfiltered"] = results.Tables[0];
             Session["bugs"] = new DataView(results.Tables[0]);

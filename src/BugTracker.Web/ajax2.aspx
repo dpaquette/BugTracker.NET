@@ -26,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 			order by 1");
 
 		// if you don't use permissions, comment out this line for speed?
-		sql = Util.alter_sql_per_project_permissions(sql, security);
+		sql = Util.alter_sql_per_project_permissions(sql, User.Identity);
 
 		string text = Request["q"];
 		sql = sql.AddParameterWithValue("str","%" + text + "%");
