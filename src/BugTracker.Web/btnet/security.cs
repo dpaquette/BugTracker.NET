@@ -205,10 +205,16 @@ and us_active = 1");
             SQLString sql = new SQLString(@"
 select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page, u.us_enable_bug_list_popups,
        o.og_can_only_see_own_reported,
-       o.og_other_orgs_permission_level
+       o.og_other_orgs_permission_level,
+       isnull(u.us_forced_project, 0 ) us_forced_project,
+       proj.pu_permission_level
 from users u
-inner join orgs org on u.us_org = org.og_id
-where us_username = @us");
+inner join orgs org 
+    on u.us_org = org.og_id
+left outer join project_user_xref proj
+	on proj.pu_project = u.us_forced_project
+	and proj.pu_user = u.us_id
+where us_username = @us and u.us_active = 1");
             sql = sql.AddParameterWithValue("us", username);
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 
@@ -220,9 +226,24 @@ where us_username = @us");
                 new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(dr["us_bugs_per_page"])),
                 new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["og_can_only_see_own_reported"])),
                 new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"])),
-                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["us_enable_bug_list_popups"])),
-
+                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["us_enable_bug_list_popups"]))
             };
+
+            bool canAdd = true;
+            int permssionLevel = dr["pu_permission_level"] == DBNull.Value
+                ? Convert.ToInt32(Util.get_setting("DefaultPermissionLevel", "2"))
+                : (int) dr["pu_permission_level"];
+            // if user is forced to a specific project, and doesn't have
+            // at least reporter permission on that project, than user
+            // can't add bugs
+            if ((int)dr["us_forced_project"] != 0)
+            {
+                if (permssionLevel == Security.PERMISSION_READONLY || permssionLevel  == Security.PERMISSION_NONE)
+                {
+                    canAdd = false;
+                }
+            }
+            claims.Add(new Claim(BtnetClaimTypes.CanAddBugs, Convert.ToString(canAdd)));
 
             var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);
             var owinContext = request.GetOwinContext();

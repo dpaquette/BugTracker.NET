@@ -35,6 +35,11 @@ namespace btnet
             return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.EnablePopUps));
         }
 
+        public static bool GetCanAddBugs(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanAddBugs));
+        }
+
         public static int GetOtherOrgsPermissionLevels(this IIdentity identity)
         {
             return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.OtherOrgsPermissionLevel));

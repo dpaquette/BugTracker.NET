@@ -184,7 +184,7 @@ Distributed under the terms of the GNU General Public License
     void prepare_for_insert()
     {
 
-        if (security.user.adds_not_allowed)
+        if (!User.Identity.GetCanAddBugs())
         {
             btnet.Util.display_bug_not_found(Response, security, id); // TODO wrong message
             return;
@@ -2764,7 +2764,7 @@ where us_id = @us_id");
 
     <div class="align">
 
-        <%  if (!security.user.adds_not_allowed && id > 0)
+        <%  if (User.Identity.GetCanAddBugs() && id > 0)
             { %>
         <a class="warn" href="edit_bug.aspx?id=0">
             <img src="add.png" border="0" align="top">&nbsp;add new <% Response.Write(btnet.Util.get_setting("SingularBugLabel", "bug")); %></a>

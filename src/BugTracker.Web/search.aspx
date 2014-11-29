@@ -750,7 +750,7 @@ function do_doc_ready()
 
 <div class=align>
 
-<% if (!security.user.adds_not_allowed) { %>
+<% if (User.Identity.GetCanAddBugs()) { %>
 <a href=edit_bug.aspx><img src=add.png border=0 align=top>&nbsp;add new <% Response.Write(Util.get_setting("SingularBugLabel","bug")); %></a>
 <% } %>
 
