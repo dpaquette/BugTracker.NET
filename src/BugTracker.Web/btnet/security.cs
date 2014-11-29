@@ -204,11 +204,11 @@ and us_active = 1");
         {
             SQLString sql = new SQLString(@"
 select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page, u.us_enable_bug_list_popups,
-       o.og_can_only_see_own_reported,
-       o.og_other_orgs_permission_level,
-       o.og_tags_field_permission_level,
+       org.*,
        isnull(u.us_forced_project, 0 ) us_forced_project,
-       proj.pu_permission_level
+       proj.pu_permission_level,
+       isnull(proj.pu_admin, 0) pu_admin,
+       u.us_admin
 from users u
 inner join orgs org 
     on u.us_org = org.og_id
@@ -219,15 +219,22 @@ where us_username = @us and u.us_active = 1");
             sql = sql.AddParameterWithValue("us", username);
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 
+            var bugsPerPage = string.IsNullOrEmpty(dr["us_bugs_per_page"] as string) ? 10 : (int) dr["us_bugs_per_page"];
+            
             var claims = new List<Claim>
             {
                 new Claim(BtnetClaimTypes.UserId, Convert.ToString(dr["us_id"])),
                 new Claim(ClaimTypes.Name, Convert.ToString(dr["us_username"])),
                 new Claim(BtnetClaimTypes.OrganizationId, Convert.ToString(dr["us_org"])),
-                new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(dr["us_bugs_per_page"])),
-                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["og_can_only_see_own_reported"])),
+                new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(bugsPerPage)),
+                new Claim(BtnetClaimTypes.EnablePopUps, Convert.ToString((int) dr["us_enable_bug_list_popups"] == 1)),
+                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString((int) dr["og_can_only_see_own_reported"] == 1)),
+                new Claim(BtnetClaimTypes.CanUseReports, Convert.ToString((int) dr["og_can_use_reports"] == 1)),
+                new Claim(BtnetClaimTypes.CanEditReports, Convert.ToString((int) dr["og_can_edit_reports"] == 1)),
                 new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"])),
-                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["us_enable_bug_list_popups"]))
+                new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString((int) dr["us_enable_bug_list_popups"] == 1)),
+                new Claim(BtnetClaimTypes.CanSearch, Convert.ToString((int) dr["og_can_search"] == 1))
+
             };
 
             bool canAdd = true;
@@ -258,6 +265,18 @@ where us_username = @us and u.us_active = 1");
 
             claims.Add(new Claim(BtnetClaimTypes.TagsPermissionLevel, Convert.ToString(tagsPermissionLevel)));
 
+
+            if ((int) dr["us_admin"] == 1)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, BtnetRoles.Admin));
+            }
+            else
+            {
+                if ((int) dr["project_admin"] > 0)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, BtnetRoles.ProjectAdmin));
+                }
+            }
 
             var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);
             var owinContext = request.GetOwinContext();

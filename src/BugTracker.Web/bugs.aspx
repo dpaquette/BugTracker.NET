@@ -1,6 +1,8 @@
 <%@ Page language="C#" CodeBehind="bugs.aspx.cs" Inherits="btnet.bugs" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="btnet" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -34,7 +36,7 @@ function on_query_changed()
 
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+    <uc1:MainMenu runat="server" id="MainMenu" />
 
 <form method="POST" runat="server">
 

@@ -59,7 +59,6 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {
-
             Util.do_not_cache(Response);
 
             if (!User.Identity.IsAuthenticated)

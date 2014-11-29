@@ -145,6 +145,7 @@
     <Content Include="Content\style\jquery.mobile.custom.structure.min.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.min.css" />
+    <Content Include="Controls\MainMenu.ascx" />
     <Content Include="edit_area\edit_area_full.gz" />
     <Content Include="packages.config" />
     <Content Include="Scripts\ckeditor\adapters\jquery.js" />
@@ -732,6 +733,7 @@
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="btnet\BtnetRoles.cs" />
     <Compile Include="btnet\ClaimsIdentityExtensions.cs" />
     <Compile Include="btnet\BtnetClaimTypes.cs" />
     <Compile Include="btnet\SQLString.cs" />
@@ -755,6 +757,13 @@
     </Compile>
     <Compile Include="complete_registration.aspx.designer.cs">
       <DependentUpon>complete_registration.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MainMenu.ascx.cs">
+      <DependentUpon>MainMenu.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MainMenu.ascx.designer.cs">
+      <DependentUpon>MainMenu.ascx</DependentUpon>
     </Compile>
     <Compile Include="customfields.aspx.cs">
       <DependentUpon>customfields.aspx</DependentUpon>
