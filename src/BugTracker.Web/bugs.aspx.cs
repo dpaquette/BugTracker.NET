@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -61,8 +62,10 @@ namespace btnet
 
             Util.do_not_cache(Response);
 
-            security = new Security();
-            security.check_security(HttpContext.Current, Security.ANY_USER_OK);
+            if (!User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("default.aspx");
+            }
 
             titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + Util.get_setting("PluralBugLabel", "bugs");
@@ -194,7 +197,7 @@ namespace btnet
                 // Use sql associated with user
                 sql = new SQLString(@"select qu_id, qu_sql from queries where qu_id in
 			(select us_default_query from users where us_id = @us)");
-                sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("us", User.Identity.GetUserId());
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {
@@ -241,7 +244,7 @@ namespace btnet
 
 
             // replace magic variables
-            bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
+            bug_sql = bug_sql.AddParameterWithValue("ME", User.Identity.GetUserId());
 
             bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
 
@@ -300,8 +303,9 @@ or isnull(qu_user,0) = @us
 or isnull(qu_org,0) = @org
 order by qu_desc");
 
-            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
-            sql = sql.AddParameterWithValue("org", Convert.ToString(security.user.org));
+            
+            sql = sql.AddParameterWithValue("us", User.Identity.GetUserId());
+            sql = sql.AddParameterWithValue("org", User.Identity.GetOrganizationId());
 
             query.DataSource = btnet.DbUtil.get_dataview(sql);
 
