@@ -206,6 +206,7 @@ and us_active = 1");
 select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page, u.us_enable_bug_list_popups,
        o.og_can_only_see_own_reported,
        o.og_other_orgs_permission_level,
+       o.og_tags_field_permission_level,
        isnull(u.us_forced_project, 0 ) us_forced_project,
        proj.pu_permission_level
 from users u
@@ -244,6 +245,19 @@ where us_username = @us and u.us_active = 1");
                 }
             }
             claims.Add(new Claim(BtnetClaimTypes.CanAddBugs, Convert.ToString(canAdd)));
+
+            int tagsPermissionLevel;
+            if (Util.get_setting("EnableTags", "0") == "1")
+            {
+                tagsPermissionLevel = (int)dr["og_tags_field_permission_level"];
+            }
+            else
+            {
+                tagsPermissionLevel = Security.PERMISSION_NONE;
+            }
+
+            claims.Add(new Claim(BtnetClaimTypes.TagsPermissionLevel, Convert.ToString(tagsPermissionLevel)));
+
 
             var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);
             var owinContext = request.GetOwinContext();

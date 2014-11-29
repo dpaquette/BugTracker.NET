@@ -45,6 +45,11 @@ namespace btnet
             return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.OtherOrgsPermissionLevel));
         }
 
+        public static int GetTagsPermissionLevel(this IIdentity identity)
+        {
+            return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.TagsPermissionLevel));
+        }
+
         private static string GetClaimsValue(IIdentity identity, string claimType)
         {
             if (identity is ClaimsIdentity)

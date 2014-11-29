@@ -426,9 +426,9 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void display_buglist_tags_line(HttpResponse Response, Security security)
+        public static void display_buglist_tags_line(HttpResponse Response, IIdentity identity)
         {
-            if (security.user.tags_field_permission_level == Security.PERMISSION_NONE)
+            if (identity.GetTagsPermissionLevel() == Security.PERMISSION_NONE)
             {
                 return;
             }

@@ -14,5 +14,6 @@ namespace btnet
         public const string OtherOrgsPermissionLevel = "og_other_orgs_permission_level";
         public const string EnablePopUps = "us_enable_bug_list_popups";
         public const string CanAddBugs = "us_add_allowed";
+        public const string TagsPermissionLevel = "og_tags_field_permission_level";
     }
 }

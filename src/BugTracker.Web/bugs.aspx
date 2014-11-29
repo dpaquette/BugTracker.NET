@@ -68,7 +68,7 @@ if (dv != null)
     {
         if (btnet.Util.get_setting("EnableTags","0") == "1")
         {
-            btnet.BugList.display_buglist_tags_line(Response, security);
+            btnet.BugList.display_buglist_tags_line(Response, User.Identity);
         }
         display_bugs(false);
     }
