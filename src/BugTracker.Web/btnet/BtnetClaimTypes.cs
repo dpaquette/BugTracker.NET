@@ -9,6 +9,7 @@ namespace btnet
     {
         public const string UserId = "us_id";
         public const string OrganizationId = "us_org";
-       
+        public const string BugsPerPage = "us_bugs_per_page";
+
     }
 }

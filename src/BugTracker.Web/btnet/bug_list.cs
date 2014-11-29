@@ -4,6 +4,7 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
+using System.Security.Principal;
 using System.Web;
 using System.Data;
 //using System.Data.SqlClient;
@@ -64,7 +65,7 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        static string get_buglist_paging_string(DataView dv, Security security, bool IsPostBack, string new_page, ref int this_page)
+        static string get_buglist_paging_string(DataView dv, int bugsPerPage, bool IsPostBack, string new_page, ref int this_page)
         {
 
             // format the text "page N of N:  1 2..."
@@ -83,7 +84,7 @@ namespace btnet
             }
 
             // how many pages to show all the rows?
-            int total_pages = (dv.Count - 1) / security.user.bugs_per_page + 1;
+            int total_pages = (dv.Count - 1) / bugsPerPage + 1;
 
             if (this_page > total_pages - 1)
             {
@@ -482,7 +483,7 @@ namespace btnet
             bool show_checkbox,
             DataView dv,
             HttpResponse Response,
-            Security security,
+            IIdentity identity,
             string new_page_val,
             bool IsPostBack,
             DataSet ds_custom_cols,
@@ -490,9 +491,11 @@ namespace btnet
             )
         {
             int this_page = 0;
+            int bugsPerPage = identity.GetBugsPerPage();
+    
             string paging_string = get_buglist_paging_string(
                 dv,
-                security,
+                bugsPerPage,
                 IsPostBack,
                 new_page_val,
                 ref this_page);
@@ -706,7 +709,7 @@ namespace btnet
             {
 
                 // skip over rows prior to this page
-                if (j < security.user.bugs_per_page * this_page)
+                 if (j < bugsPerPage * this_page)
                 {
                     j++;
                     continue;
@@ -715,11 +718,10 @@ namespace btnet
 
                 // do not show rows beyond this page
                 rows_this_page++;
-                if (rows_this_page > security.user.bugs_per_page)
+                if (rows_this_page > bugsPerPage)
                 {
                     break;
                 }
-
 
                 DataRow dr = drv.Row;
 

@@ -23,7 +23,7 @@ namespace btnet
                 show_checkboxes,
                 dv,
                 Response,
-                security,
+                User.Identity,
                 new_page.Value,
                 IsPostBack,
                 ds_custom_cols,

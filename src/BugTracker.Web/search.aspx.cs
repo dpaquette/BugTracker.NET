@@ -1132,7 +1132,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
                 show_checkboxes,
                 dv,
                 Response,
-                security,
+                User.Identity,
                 new_page.Value,
                 IsPostBack,
                 ds_custom_cols,
