@@ -266,7 +266,7 @@ Distributed under the terms of the GNU General Public License
 		and isnull(pu_permission_level,@dpl) not in (0, 1)
 		order by pj_name;");
 
-        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
         sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
         //1
@@ -318,7 +318,7 @@ Distributed under the terms of the GNU General Public License
         sql = sql.AddParameterWithValue("pj", project.SelectedItem.Value);
         sql = sql.AddParameterWithValue("au", assigned_to.SelectedItem.Value);
         sql = sql.AddParameterWithValue("st", status.SelectedItem.Value);
-        sql = sql.AddParameterWithValue("lu", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("lu", Convert.ToString(User.Identity.GetUserId()));
         sql = sql.AddParameterWithValue("sd", short_desc.Value.Replace("'", "''"));
         sql = sql.AddParameterWithValue("id", Convert.ToString(id));
 
@@ -330,7 +330,7 @@ Distributed under the terms of the GNU General Public License
 
         bool bugpost_fields_have_changed = (btnet.Bug.insert_comment(
             id,
-            security.user.usid,
+            User.Identity.GetUserId(),
             comment_text,
             comment_text,
             null, // from
@@ -380,7 +380,7 @@ Distributed under the terms of the GNU General Public License
         {
 
             do_update = true;
-            SaveChangeLogEntry(id, security.user.usid, "desc", prev_short_desc.Value, short_desc.Value);
+            SaveChangeLogEntry(id, User.Identity.GetUserId(), "desc", prev_short_desc.Value, short_desc.Value);
             prev_short_desc.Value = short_desc.Value;
         }
 
@@ -391,7 +391,7 @@ Distributed under the terms of the GNU General Public License
             //from = get_dropdown_text_from_value(project, prev_project.Value);
 
             do_update = true;
-            SaveChangeLogEntry(id, security.user.usid, "project", prev_project_name.Value, project.SelectedItem.Text);
+            SaveChangeLogEntry(id, User.Identity.GetUserId(), "project", prev_project_name.Value, project.SelectedItem.Text);
             prev_project.Value = project.SelectedItem.Value;
             prev_project_name.Value = project.SelectedItem.Text;
 
@@ -403,7 +403,7 @@ Distributed under the terms of the GNU General Public License
             assigned_to_changed = true; // for notifications
 
             do_update = true;
-            SaveChangeLogEntry(id, security.user.usid, "assigned_to", prev_assigned_to_username.Value, assigned_to.SelectedItem.Text);
+            SaveChangeLogEntry(id, User.Identity.GetUserId(), "assigned_to", prev_assigned_to_username.Value, assigned_to.SelectedItem.Text);
             prev_assigned_to.Value = assigned_to.SelectedItem.Value;
             prev_assigned_to_username.Value = assigned_to.SelectedItem.Text;
         }
@@ -416,7 +416,7 @@ Distributed under the terms of the GNU General Public License
             from = get_dropdown_text_from_value(status, prev_status.Value);
 
             do_update = true;
-            SaveChangeLogEntry(id, security.user.usid, "status", from, status.SelectedItem.Text);
+            SaveChangeLogEntry(id, User.Identity.GetUserId(), "status", from, status.SelectedItem.Text);
             
             prev_status.Value = status.SelectedItem.Value;
 

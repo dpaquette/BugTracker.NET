@@ -10,10 +10,6 @@ Distributed under the terms of the GNU General Public License
 
 String sql;
 
-
-Security security;
-
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {

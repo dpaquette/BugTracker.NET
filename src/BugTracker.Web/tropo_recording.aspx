@@ -85,7 +85,7 @@ void Page_Load(Object sender, EventArgs e)
                 // Add a comment to existing bug.
                 int postid = btnet.Bug.insert_comment(
                     bugid,
-                    security.user.usid, // (int) dr["us_id"],
+                    User.Identity.GetUserId(), // (int) dr["us_id"],
                     comment,
                     comment,
                     null, //from_addr,

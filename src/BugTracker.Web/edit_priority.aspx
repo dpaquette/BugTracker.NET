@@ -13,8 +13,6 @@ int id;
 SQLString sql;
 
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 

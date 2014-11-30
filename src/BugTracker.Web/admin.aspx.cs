@@ -7,7 +7,6 @@ namespace btnet
 {
     public partial class admin : BasePage
     {
-        protected Security security;
         protected bool nag = false;
 
         public override string[] AuthorizedRoles

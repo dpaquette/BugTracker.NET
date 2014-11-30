@@ -4,6 +4,7 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
+using System.Security.Principal;
 using System.Web;
 using System.Data;
 using System.IO;
@@ -199,7 +200,7 @@ delete from bugs where bg_id = @bg");
 
         ///////////////////////////////////////////////////////////////////////
         public static int insert_post_attachment_copy(
-            btnet.Security security,
+            IIdentity identity,
             int bugid,
             int copy_bpid,
             string comment,
@@ -208,7 +209,7 @@ delete from bugs where bg_id = @bg");
             bool send_notifications)
         {
             return insert_post_attachment_impl(
-                security,
+                identity,
                 bugid,
                 null,
                 -1,
@@ -223,7 +224,7 @@ delete from bugs where bg_id = @bg");
 
         ///////////////////////////////////////////////////////////////////////
         public static int insert_post_attachment(
-            btnet.Security security,
+            IIdentity identity,
             int bugid,
             Stream content,
             int content_length,
@@ -235,7 +236,7 @@ delete from bugs where bg_id = @bg");
             bool send_notifications)
         {
             return insert_post_attachment_impl(
-                security,
+                identity,
                 bugid,
                 content,
                 content_length,
@@ -250,7 +251,7 @@ delete from bugs where bg_id = @bg");
 
         ///////////////////////////////////////////////////////////////////////
         private static int insert_post_attachment_impl(
-            btnet.Security security,
+            IIdentity identity,
             int bugid,
             Stream content,
             int content_length,
@@ -318,7 +319,7 @@ insert into bug_posts
                 sql = sql.AddParameterWithValue("fi", effective_file);
                 sql = sql.AddParameterWithValue("de", comment);
                 sql = sql.AddParameterWithValue("si", Convert.ToString(effective_content_length));
-                sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("us", Convert.ToString(identity.GetUserId()));
 
                 // Sometimes, somehow, content type is null.  Not sure how.
                 sql = sql.AddParameterWithValue("ct",
@@ -409,7 +410,7 @@ insert into bug_posts
 
                 if (send_notifications)
                 {
-                    btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
+                    btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, identity);
                 }
                 return bp_id;
             }
@@ -524,20 +525,7 @@ insert into bug_posts
         ///////////////////////////////////////////////////////////////////////
         public static DataRow get_bug_datarow(
             int bugid,
-            Security security)
-        {
-
-            
-            DataSet ds_custom_cols = btnet.Util.get_custom_columns();
-            return get_bug_datarow(bugid, security, ds_custom_cols);
-        }
-
-
-        ///////////////////////////////////////////////////////////////////////
-        public static DataRow get_bug_datarow(
-            int bugid,
-            Security security,
-            DataSet ds_custom_cols)
+            IIdentity identity)
         {
             var sql = new SQLString(@" /* get_bug_datarow */");
 
@@ -694,8 +682,8 @@ where bg_id = @id");
 
 
             sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
-            sql = sql.AddParameterWithValue("this_usid", Convert.ToString(security.user.usid));
-            sql = sql.AddParameterWithValue("this_org", Convert.ToString(security.user.org));
+            sql = sql.AddParameterWithValue("this_usid", Convert.ToString(identity.GetUserId()));
+            sql = sql.AddParameterWithValue("this_org", Convert.ToString(identity.GetOrganizationId()));
             sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
 
             
@@ -741,7 +729,7 @@ select @pj pj, @ct ct, @pr pr, @st st, @udf udf");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static int get_bug_permission_level(int bugid, Security security)
+        public static int get_bug_permission_level(int bugid, IIdentity identity)
         {
             /*
                     public const int PERMISSION_NONE = 0;
@@ -765,13 +753,13 @@ where bg_id = @bg");
 
             sql = sql.AddParameterWithValue("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
             sql = sql.AddParameterWithValue("@bg", Convert.ToString(bugid));
-            sql = sql.AddParameterWithValue("@us", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("@us", Convert.ToString(identity.GetUserId()));
             
             DataRow dr = btnet.DbUtil.get_datarow(sql);
             
             if (dr == null)
             {
-                return Security.PERMISSION_NONE;
+                return PermissionLevel.None;
                 
             }
             
@@ -780,14 +768,16 @@ where bg_id = @bg");
 
 
             // maybe reduce permissions
-            if (bg_org != security.user.org)
+            var organizationId = identity.GetOrganizationId();
+            if (bg_org != organizationId)
             {
-                if (security.user.other_orgs_permission_level == Security.PERMISSION_NONE
-                || security.user.other_orgs_permission_level == Security.PERMISSION_READONLY)
+                var otherOrgsPermissionLevel = identity.GetOtherOrgsPermissionLevels();
+                if (otherOrgsPermissionLevel == PermissionLevel.None
+                 || otherOrgsPermissionLevel == PermissionLevel.ReadOnly)
                 {
-                    if (security.user.other_orgs_permission_level < pl)
+                    if (otherOrgsPermissionLevel < pl)
                     {
-                        pl = security.user.other_orgs_permission_level;
+                        pl = otherOrgsPermissionLevel;
                     }
                 }
             }
@@ -809,25 +799,7 @@ where bg_id = @bg");
         };
 
         ///////////////////////////////////////////////////////////////////////
-        public static NewIds insert_bug(
-            string short_desc,
-            Security security,
-            string tags,
-            int projectid,
-            int orgid,
-            int categoryid,
-            int priorityid,
-            int statusid,
-            int assigned_to_userid,
-            int udfid,
-            string comment_formated,
-            string comment_search,
-            string from,
-            string cc,
-            string content_type,
-            bool internal_only,
-            SortedDictionary<string,string> hash_custom_cols,
-            bool send_notifications)
+        public static NewIds insert_bug(string short_desc, IIdentity identity, string tags, int projectid, int orgid, int categoryid, int priorityid, int statusid, int assigned_to_userid, int udfid, string comment_formated, string comment_search, string @from, string cc, string content_type, bool internal_only, SortedDictionary<string, string> hash_custom_cols, bool send_notifications)
         {
 
             if (short_desc.Trim() == "")
@@ -860,7 +832,7 @@ where bg_id = @bg");
 
             sql = sql.AddParameterWithValue("@short_desc", short_desc);
             sql = sql.AddParameterWithValue("@tags", tags);
-            sql = sql.AddParameterWithValue("@reported_user", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("@reported_user", Convert.ToString(identity.GetUserId()));
             sql = sql.AddParameterWithValue("@project", Convert.ToString(projectid));
             sql = sql.AddParameterWithValue("@org", Convert.ToString(orgid));
             sql = sql.AddParameterWithValue("@category", Convert.ToString(categoryid));
@@ -878,7 +850,7 @@ where bg_id = @bg");
             int bugid = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
             int postid = btnet.Bug.insert_comment(
                 bugid,
-                security.user.usid,
+                identity.GetUserId(),
                 comment_formated,
                 comment_search,
                 from,
@@ -890,7 +862,7 @@ where bg_id = @bg");
 
             if (send_notifications)
             {
-                btnet.Bug.send_notifications(btnet.Bug.INSERT, bugid, security);
+                btnet.Bug.send_notifications(btnet.Bug.INSERT, bugid, identity);
             }
 
             return new NewIds(bugid, postid);
@@ -977,11 +949,11 @@ select scope_identity();");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void send_notifications(int insert_or_update, int bugid, Security security, int just_to_this_user_id)
+        public static void send_notifications(int insert_or_update, int bugid, IIdentity identity, int just_to_this_user_id)
         {
             send_notifications(insert_or_update,
                 bugid,
-                security,
+                identity,
                 just_to_this_user_id,
                 false,  // status changed
                 false,  // assigend to changed
@@ -989,11 +961,11 @@ select scope_identity();");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void send_notifications(int insert_or_update, int bugid, Security security)
+        public static void send_notifications(int insert_or_update, int bugid, IIdentity identity)
         {
             send_notifications(insert_or_update,
                 bugid,
-                security,
+                identity,
                 0,  // just to this
                 false,  // status changed
                 false,  // assigend to changed
@@ -1006,7 +978,7 @@ select scope_identity();");
         // the emails to be sent, then spawns a thread to send them.
         public static void send_notifications(int insert_or_update,  // The implementation
             int bugid,
-            Security security,
+            IIdentity identity,
             int just_to_this_userid,
             bool status_changed,
             bool assigned_to_changed,
@@ -1119,7 +1091,7 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
             sql = sql.AddParameterWithValue("@pau", prev_assigned_to_user.ToString());
             sql = sql.AddParameterWithValue("@id", Convert.ToString(bugid));
             sql = sql.AddParameterWithValue("@dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
-            sql = sql.AddParameterWithValue("@us", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("@us", Convert.ToString(identity.GetUserId()));
 
 
             DataSet ds_subscribers = btnet.DbUtil.get_dataset(sql);
@@ -1131,7 +1103,7 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
 
 
                 // Get bug html
-                DataRow bug_dr = btnet.Bug.get_bug_datarow(bugid, security);
+                DataRow bug_dr = btnet.Bug.get_bug_datarow(bugid, identity);
 
                 string from = btnet.Util.get_setting("NotificationEmailFrom", "");
 
@@ -1196,25 +1168,7 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
                     sec2.user.org_field_permission_level = (int)dr["og_org_field_permission_level"];
                     sec2.user.udf_field_permission_level = (int)dr["og_udf_field_permission_level"];
 
-                    DataSet ds_custom = Util.get_custom_columns();
-                    foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-                    {
-                        string bg_name = (string)dr_custom["name"];
-                        string og_name = "og_"
-                            + (string)dr_custom["name"]
-                            + "_field_permission_level";
-
-                        object obj = dr[og_name];
-                        if (Convert.IsDBNull(obj))
-                        {
-                            sec2.user.dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
-                        }
-                        else
-                        {
-                            sec2.user.dict_custom_field_permission_level[bg_name] = (int) dr[og_name];
-                        }
-
-                    }
+                
 
                     PrintBug.print_bug(
                         my_response,

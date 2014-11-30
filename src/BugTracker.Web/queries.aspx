@@ -23,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	SQLString sql;
 
-	if (security.user.is_admin || security.user.can_edit_sql)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
 	{
 		// allow admin to edit all queries
 
@@ -89,7 +89,7 @@ void Page_Load(Object sender, EventArgs e)
 
 <div class=align>
 
-<% if (security.user.is_admin || security.user.can_edit_sql) { %>
+<% if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql) { %>
 	<table border=0 width=80%><tr>
 		<td align=left valign=top>
 			<a href=edit_query.aspx>add new query</a>

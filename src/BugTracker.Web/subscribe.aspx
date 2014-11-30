@@ -19,7 +19,7 @@ void Page_Load(Object sender, EventArgs e)
 	
 	int bugid = Convert.ToInt32(Request["id"]);
 	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+	if (permission_level ==PermissionLevel.None)
 	{
 		Response.End();
 	}
@@ -42,7 +42,7 @@ void Page_Load(Object sender, EventArgs e)
 	}
 
 	sql = sql.AddParameterWithValue("bg", Util.sanitize_integer(Request["id"]));
-	sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 	btnet.DbUtil.execute_nonquery(sql);
 
 }

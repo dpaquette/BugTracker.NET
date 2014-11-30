@@ -6,8 +6,6 @@
 //Copyright 2002-2011 Corey Trager
 //Distributed under the terms of the GNU General Public License
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {

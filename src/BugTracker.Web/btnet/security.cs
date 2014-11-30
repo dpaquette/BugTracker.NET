@@ -13,10 +13,6 @@ namespace btnet
 {
 
 	public class Security {
-        public const int PERMISSION_NONE = 0;
-        public const int PERMISSION_READONLY = 1;
-        public const int PERMISSION_REPORTER = 3;
-        public const int PERMISSION_ALL = 2;
 
         public User user = new User();
         public string auth_method = "";
@@ -56,8 +52,8 @@ where us_username = @us and u.us_active = 1");
                 new Claim(BtnetClaimTypes.CanEditReports, Convert.ToString((int) dr["og_can_edit_reports"] == 1)),
                 new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"])),
                 new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString((int) dr["us_enable_bug_list_popups"] == 1)),
-                new Claim(BtnetClaimTypes.CanSearch, Convert.ToString((int) dr["og_can_search"] == 1))
-
+                new Claim(BtnetClaimTypes.CanSearch, Convert.ToString((int) dr["og_can_search"] == 1)),
+                new Claim(BtnetClaimTypes.IsExternalUser, Convert.ToString((int) dr["og_external_user"] == 1))
             };
 
             bool canAdd = true;
@@ -69,7 +65,7 @@ where us_username = @us and u.us_active = 1");
             // can't add bugs
             if ((int)dr["us_forced_project"] != 0)
             {
-                if (permssionLevel == Security.PERMISSION_READONLY || permssionLevel  == Security.PERMISSION_NONE)
+                if (permssionLevel == PermissionLevel.ReadOnly || permssionLevel  == PermissionLevel.None)
                 {
                     canAdd = false;
                 }
@@ -83,7 +79,7 @@ where us_username = @us and u.us_active = 1");
             }
             else
             {
-                tagsPermissionLevel = Security.PERMISSION_NONE;
+                tagsPermissionLevel = PermissionLevel.None;
             }
 
             claims.Add(new Claim(BtnetClaimTypes.TagsPermissionLevel, Convert.ToString(tagsPermissionLevel)));

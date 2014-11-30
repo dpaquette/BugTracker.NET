@@ -11,9 +11,7 @@ Distributed under the terms of the GNU General Public License
 
     int id;
 
-
-    Security security;
-
+    
     void Page_Init(object sender, EventArgs e) { ViewStateUserKey = Session.SessionID; }
 
 

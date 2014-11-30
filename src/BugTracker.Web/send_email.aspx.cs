@@ -78,7 +78,7 @@ namespace btnet
 				or (bp_parent = @id and bp_type='file')");
 
                     sql = sql.AddParameterWithValue("id", string_bp_id);
-                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 
                     DataView dv = btnet.DbUtil.get_dataview(sql);
                     dr = null;
@@ -92,8 +92,8 @@ namespace btnet
                     }
 
                     int int_bg_id = (int)dr["bg_id"];
-                    int permission_level = btnet.Bug.get_bug_permission_level(int_bg_id, security);
-                    if (permission_level == Security.PERMISSION_NONE)
+                    int permission_level = btnet.Bug.get_bug_permission_level(int_bg_id, User.Identity);
+                    if (permission_level == PermissionLevel.None)
                     {
                         Response.Write("You are not allowed to view this item");
                         Response.End();
@@ -266,9 +266,9 @@ namespace btnet
 
                     string_bg_id = btnet.Util.sanitize_integer(string_bg_id);
 
-                    int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), security);
-                    if (permission_level == Security.PERMISSION_NONE
-                    || permission_level == Security.PERMISSION_READONLY)
+                    int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), User.Identity);
+                    if (permission_level == PermissionLevel.None
+                    || permission_level == PermissionLevel.ReadOnly)
                     {
                         Response.Write("You are not allowed to edit this item");
                         Response.End();
@@ -287,7 +287,7 @@ namespace btnet
 				left outer join projects on bg_project = pj_id
 				where bg_id = @bg");
 
-                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
                     sql = sql.AddParameterWithValue("bg", string_bg_id);
 
                     dr = btnet.DbUtil.get_datarow(sql);
@@ -478,7 +478,7 @@ namespace btnet
         {
             // Get bug html
 
-            DataRow bug_dr = btnet.Bug.get_bug_datarow(bugid, security);
+            DataRow bug_dr = btnet.Bug.get_bug_datarow(bugid, User.Identity);
 
             // Create a fake response and let the code
             // write the html to that response
@@ -512,7 +512,7 @@ update bugs set
 	where bg_id = @id");
 
             sql = sql.AddParameterWithValue("id", bg_id.Value);
-            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+            sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
             if (security.user.use_fckeditor)
             {
                 string adjusted_body = "Subject: " + subject.Value + "<br><br>";
@@ -601,7 +601,7 @@ update bugs set
                 attachments,
                 return_receipt.Checked);
 
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(bg_id.Value), security);
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(bg_id.Value), User.Identity);
             btnet.WhatsNew.add_news(Convert.ToInt32(bg_id.Value), short_desc.Value, "email sent", security);
 
             if (result == "")
@@ -642,7 +642,7 @@ update bugs set
                 }
 
                 int bp_id = Bug.insert_post_attachment(
-                    security,
+                    User.Identity,
                     Convert.ToInt32(bg_id.Value),
                     attached_file.PostedFile.InputStream,
                     content_length,
@@ -663,7 +663,7 @@ update bugs set
                 {
                     int bp_id = Convert.ToInt32(item_attachment.Value);
 
-                    Bug.insert_post_attachment_copy(security, Convert.ToInt32(bg_id.Value), bp_id, "email attachment", comment_id, false, false);
+                    Bug.insert_post_attachment_copy(User.Identity, Convert.ToInt32(bg_id.Value), bp_id, "email attachment", comment_id, false, false);
                     attachments.Add(bp_id);
                 }
             }

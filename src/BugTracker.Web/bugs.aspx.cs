@@ -26,7 +26,6 @@ namespace btnet
                 User.Identity,
                 new_page.Value,
                 IsPostBack,
-                ds_custom_cols,
                 filter.Value);
         }
 
@@ -52,7 +51,6 @@ namespace btnet
 
         }
 
-        protected Security security;
         string qu_id_string = null;
         protected string sql_error = "";
 

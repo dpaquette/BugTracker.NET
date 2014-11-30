@@ -35,7 +35,7 @@ void Page_Load(Object sender, EventArgs e)
 			from project_user_xref
 			where pu_user = us
 			and pu_admin = 1");
-		sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 		DataSet ds_projects = btnet.DbUtil.get_dataset(sql);
 
 		if (ds_projects.Tables[0].Rows.Count == 0)
@@ -100,7 +100,7 @@ void Page_Load(Object sender, EventArgs e)
 				order by pj_name;");
 
 
-			sql = sql.AddParameterWithValue("this_usid",Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("this_usid",Convert.ToString(User.Identity.GetUserId()));
 
 		}
 		else // user is a real admin
@@ -146,7 +146,7 @@ void Page_Load(Object sender, EventArgs e)
 		}
 		else
 		{
-			if (security.user.other_orgs_permission_level == Security.PERMISSION_ALL)
+			if (security.user.other_orgs_permission_level == PermissionLevel.All)
 			{
 				sql.Append( @"/* populate org dropdown 2 */
 					select og_id, og_name
@@ -218,7 +218,7 @@ void Page_Load(Object sender, EventArgs e)
 
 		// org dropdown
 		if (security.user.is_admin
-		|| security.user.other_orgs_permission_level == Security.PERMISSION_ALL)
+		|| security.user.other_orgs_permission_level == PermissionLevel.All)
 		{
 			org.DataSource = ds.Tables[2].DefaultView;
 			org.DataTextField = "og_name";
@@ -269,7 +269,7 @@ void Page_Load(Object sender, EventArgs e)
 			// check if project admin is allowed to edit this user
 			if (!security.user.is_admin)
 			{
-				if (security.user.usid != (int) dr["us_created_user"])
+				if (User.Identity.GetUserId() != (int) dr["us_created_user"])
 				{
 					Response.Write ("You not allowed to edit this user, because you didn't create it.");
 					Response.End();
@@ -579,7 +579,7 @@ values (
 select scope_identity()");
 
 				sql = replace_vars_in_sql_statement(sql);
-				sql = sql.AddParameterWithValue("createdby", Convert.ToString(security.user.usid));
+				sql = sql.AddParameterWithValue("createdby", Convert.ToString(User.Identity.GetUserId()));
 
 				// only admins can create admins.
 				if (security.user.is_admin)

@@ -11,9 +11,6 @@ Distributed under the terms of the GNU General Public License
 int id;
 SQLString sql;
 
-
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -28,7 +25,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	msg.InnerText = "";
 
-	id = security.user.usid;
+	id = User.Identity.GetUserId();
 
 	if (!IsPostBack)
 	{
@@ -44,7 +41,7 @@ void Page_Load(Object sender, EventArgs e)
 			or isnull(qu_org,0) = @org
 			order by qu_desc");
 
-		sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us",Convert.ToString(User.Identity.GetUserId()));
 
 		query.DataSource = btnet.DbUtil.get_dataview(sql);
 		query.DataTextField = "qu_desc";
@@ -58,7 +55,7 @@ void Page_Load(Object sender, EventArgs e)
 			where isnull(pu_permission_level,@dpl) <> 0
 			order by pj_name");
 
-		sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 		sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
 		DataView projects_dv = btnet.DbUtil.get_dataview(sql);

@@ -17,7 +17,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	if (security.user.is_admin || security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports)
 	{
 		//
 	}
@@ -56,7 +56,7 @@ void Page_Load(Object sender, EventArgs e)
     string desc = (string)dr["rp_desc"];
 
 	// replace the magic pseudo variable
-	rp_sql = rp_sql.Replace("$ME", Convert.ToString(security.user.usid));
+	rp_sql = rp_sql.Replace("$ME", Convert.ToString(User.Identity.GetUserId()));
 
 	DataSet ds = btnet.DbUtil.get_dataset (new SQLString(rp_sql));
 

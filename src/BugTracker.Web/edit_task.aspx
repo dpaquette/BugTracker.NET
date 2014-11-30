@@ -30,13 +30,13 @@ void Page_Load(Object sender, EventArgs e)
 
 	int permission_level = Bug.get_bug_permission_level(bugid, security);
 
-	if (permission_level != Security.PERMISSION_ALL)
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit tasks for this item");
 		Response.End();
 	}		
 	
-	if (security.user.is_admin || security.user.can_edit_tasks)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_tasks)
 	{
 		// allowed	
 	}
@@ -524,7 +524,7 @@ insert into bug_posts
 values(@tsk_bug, @tsk_last_updated_user, getdate(), N'added task ' + convert(varchar, @tsk_id), 'update')");
 
 
-			sql = sql.AddParameterWithValue("tsk_created_user", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("tsk_created_user", Convert.ToString(User.Identity.GetUserId()));
 		
 
 		}
@@ -558,7 +558,7 @@ values(@tsk_bug, @tsk_last_updated_user, getdate(), N'updated task ' + @tsk_id, 
 		}
 
         sql = sql.AddParameterWithValue("tsk_bug", Convert.ToString(bugid));
-        sql = sql.AddParameterWithValue("tsk_last_updated_user", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("tsk_last_updated_user", Convert.ToString(User.Identity.GetUserId()));
 		
 		sql = sql.AddParameterWithValue("tsk_planned_start_date", format_date_hour_min(
 			planned_start_date.Value,

@@ -28,7 +28,7 @@ void Page_Load(Object sender, EventArgs e)
     btnet.Util.do_not_cache(Response);
     
 
-    if (security.user.is_admin || security.user.can_edit_and_delete_posts)
+    if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_and_delete_posts)
     {
         //
     }
@@ -67,8 +67,8 @@ void Page_Load(Object sender, EventArgs e)
     bugid = (int) dr["bp_bug"];
 
     int permission_level = btnet.Bug.get_bug_permission_level(bugid, security);
-    if (permission_level == Security.PERMISSION_NONE
-    || permission_level == Security.PERMISSION_READONLY
+    if (permission_level ==PermissionLevel.None
+    || permission_level == PermissionLevel.ReadOnly
     || (string) dr["bp_type"] != "comment")
     {
         Response.Write("You are not allowed to edit this item");

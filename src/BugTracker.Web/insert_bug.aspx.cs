@@ -200,7 +200,7 @@ namespace btnet
 
                 btnet.Bug.NewIds new_ids = btnet.Bug.insert_bug(
                     short_desc,
-                    security,
+                    User.Identity,
                     "", // tags
                     projectid,
                     orgid,
@@ -236,7 +236,7 @@ namespace btnet
                     Stream stream = new MemoryStream(byte_array);
 
                     Bug.insert_post_attachment(
-                        security,
+                        User.Identity,
                         new_ids.bugid,
                         stream,
                         byte_array.Length,
@@ -251,7 +251,7 @@ namespace btnet
                 // your customizations
                 Bug.apply_post_insert_rules(new_ids.bugid);
 
-                btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, security);
+                btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, User.Identity);
                 btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", security);
 
                 Response.AddHeader("BTNET", "OK:" + Convert.ToString(new_ids.bugid));
@@ -288,7 +288,7 @@ namespace btnet
                 // Add a comment to existing bug.
                 int postid = btnet.Bug.insert_comment(
                     bugid,
-                    security.user.usid, // (int) dr["us_id"],
+                    User.Identity.GetUserId(), // (int) dr["us_id"],
                     comment,
                     comment,
                     from_addr,
@@ -311,7 +311,7 @@ namespace btnet
                     Stream stream = new MemoryStream(byte_array);
 
                     Bug.insert_post_attachment(
-                        security,
+                        User.Identity,
                         bugid,
                         stream,
                         byte_array.Length,
@@ -323,7 +323,7 @@ namespace btnet
                         false); // don't send notification yet
                 }
 
-                btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
+                btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
                 btnet.WhatsNew.add_news(bugid, (string)dr2["bg_short_desc"], "updated", security);
 
                 Response.AddHeader("BTNET", "OK:" + Convert.ToString(bugid));

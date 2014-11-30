@@ -42,7 +42,7 @@ void Page_Load(Object sender, EventArgs e)
 	if (!IsPostBack)
 	{
 
-		if (security.user.is_admin || security.user.can_edit_sql)
+		if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
 		{
 			// these guys can do everything
 			vis_everybody.Checked = true;
@@ -113,9 +113,9 @@ select us_id, us_username from users order by us_username");
 			sql = sql.AddParameterWithValue("$1", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-			if ((int) dr["qu_user"] != security.user.usid)
+			if ((int) dr["qu_user"] != User.Identity.GetUserId())
 			{
-				if (security.user.is_admin || security.user.can_edit_sql)
+				if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
 				{
 					// these guys can do everything
 				}
@@ -194,7 +194,7 @@ Boolean validate()
 	}
 
 
-	if (security.user.is_admin || security.user.can_edit_sql)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
 	{
 		if (vis_org.Checked)
 		{
@@ -296,7 +296,7 @@ void on_update()
 			sql = sql.AddParameterWithValue("sq", sql_text.Value);
 //		}
 
-		if (security.user.is_admin || security.user.can_edit_sql)
+		if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
 		{
 			if (vis_everybody.Checked)
 			{
@@ -316,7 +316,7 @@ void on_update()
 		}
 		else
 		{
-			sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 			sql = sql.AddParameterWithValue("rl", "0");
 		}
 		

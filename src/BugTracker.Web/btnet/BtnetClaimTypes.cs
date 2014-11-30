@@ -18,5 +18,6 @@ namespace btnet
         public const string CanAddBugs = "us_add_allowed";
         public const string TagsPermissionLevel = "og_tags_field_permission_level";
         public const string CanSearch = "og_can_search";
+        public const string IsExternalUser = "og_external_user";
     }
 }

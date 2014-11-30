@@ -21,7 +21,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	if (security.user.is_admin || security.user.can_delete_bug)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_delete_bug)
 	{
 		//
 	}
@@ -34,7 +34,7 @@ void Page_Load(Object sender, EventArgs e)
 	string id = Util.sanitize_integer(Request["id"]);
 
 	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(id), security);
-	if (permission_level != Security.PERMISSION_ALL)
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");
 		Response.End();

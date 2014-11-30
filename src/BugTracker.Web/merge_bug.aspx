@@ -21,7 +21,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	if (security.user.is_admin || security.user.can_merge_bugs)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_merge_bugs)
 	{
 		//
 	}
@@ -249,7 +249,7 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 
 		sql = sql.AddParameterWithValue("@from",prev_from_bug.Value);
 		sql = sql.AddParameterWithValue("@into",prev_into_bug.Value);
-		sql = sql.AddParameterWithValue("@us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("@us",Convert.ToString(User.Identity.GetUserId()));
 
 		int comment_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 

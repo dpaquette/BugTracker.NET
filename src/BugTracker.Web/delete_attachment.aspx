@@ -23,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 
     this.MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");	
 
-	if (security.user.is_admin || security.user.can_edit_and_delete_posts)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_and_delete_posts)
 	{
 		//
 	}
@@ -37,7 +37,7 @@ void Page_Load(Object sender, EventArgs e)
 	string bug_id_string = Util.sanitize_integer(Request["bug_id"]);
 
 	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(bug_id_string), security);
-	if (permission_level != Security.PERMISSION_ALL)
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");
 		Response.End();

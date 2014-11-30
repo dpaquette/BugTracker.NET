@@ -17,7 +17,7 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit dashboard";
 
-	if (security.user.is_admin || security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports)
 	{
 		//
 	}
@@ -37,7 +37,7 @@ inner join reports on rp_id = ds_report
 where ds_user = @user
 order by ds_col, ds_row");
 
-	sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("user", Convert.ToString(User.Identity.GetUserId()));
 
 	ds = btnet.DbUtil.get_dataset(sql);
 

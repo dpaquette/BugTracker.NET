@@ -20,7 +20,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	if (security.user.is_admin || security.user.can_use_reports || security.user.can_edit_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports || security.user.can_edit_reports)
 	{
 		//
 	}
@@ -34,7 +34,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "reports";
 
 	SQLString sql;
-    	if (security.user.is_admin || security.user.can_edit_reports)
+    	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_reports)
 	{
 sql = new SQLString(@"
 select
@@ -90,7 +90,7 @@ from reports order by rp_desc");
 <div class=align>
 </p>
 
-<% if (security.user.is_admin || security.user.can_edit_reports) { %>
+<% if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_reports) { %>
 <a href='edit_report.aspx'>add new report</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <% } %>
 

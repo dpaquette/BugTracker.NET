@@ -59,6 +59,11 @@ namespace btnet
             return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanSearch));
         }
 
+        public static bool GetIsExternalUser(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.IsExternalUser));
+        }
+
         public static int GetTagsPermissionLevel(this IIdentity identity)
         {
             return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.TagsPermissionLevel));

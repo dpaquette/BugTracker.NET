@@ -742,7 +742,7 @@ namespace btnet
 
 
 		///////////////////////////////////////////////////////////////////////
-		public static DataTable get_related_users(Security security, bool force_full_names)
+		public static DataTable get_related_users(IIdentity identity, bool force_full_names)
 		{
 			SQLString sql;
 
@@ -875,10 +875,10 @@ drop table #temp");
                 sql = sql.AddParameterWithValue("fullnames", 0);
 			}
 
-			sql = sql.AddParameterWithValue("userid",security.user.usid);
-			sql = sql.AddParameterWithValue("userorg",security.user.org);
-			sql = sql.AddParameterWithValue("og_external_user",security.user.external_user ? 1 : 0);
-			sql = sql.AddParameterWithValue("og_other_orgs_permission_level",security.user.other_orgs_permission_level);
+			sql = sql.AddParameterWithValue("userid",identity.GetUserId());
+			sql = sql.AddParameterWithValue("userorg",identity.GetOrganizationId());
+			sql = sql.AddParameterWithValue("og_external_user", identity.GetIsExternalUser() ? 1 : 0);
+			sql = sql.AddParameterWithValue("og_other_orgs_permission_level",identity.GetOtherOrgsPermissionLevels());
 
 			return btnet.DbUtil.get_dataset(sql).Tables[0];
 

@@ -7,8 +7,6 @@
 // Updated to support new 1.8+ version of btnetsc -WER
 
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {

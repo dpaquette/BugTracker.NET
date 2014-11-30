@@ -14,7 +14,6 @@ Distributed under the terms of the GNU General Public License
     int id;
     SQLString sql;
 
-    DataSet ds_custom_cols;
     DataRow dr_bug;
     DataTable dt_users = null;
     DataSet ds_posts = null;
@@ -70,11 +69,6 @@ Distributed under the terms of the GNU General Public License
 
         }
 
-
-        // Get list of custom fields
-
-        ds_custom_cols = btnet.Util.get_custom_columns();
-
         if (!IsPostBack)
         {
             // Fetch stuff from db and put on page
@@ -88,7 +82,7 @@ Distributed under the terms of the GNU General Public License
                 get_cookie_values_for_show_hide_toggles();
 
                 // Get this entry's data from the db and fill in the form
-                dr_bug = btnet.Bug.get_bug_datarow(id, security, ds_custom_cols);
+                dr_bug = btnet.Bug.get_bug_datarow(id, User.Identity);
 
                 prepare_for_update();
             }
@@ -110,7 +104,7 @@ Distributed under the terms of the GNU General Public License
             {
 
                 // Get this entry's data from the db and fill in the form
-                dr_bug = btnet.Bug.get_bug_datarow(id, security, ds_custom_cols);
+                dr_bug = btnet.Bug.get_bug_datarow(id, User.Identity);
 
                 good = validate();
 
@@ -202,19 +196,8 @@ Distributed under the terms of the GNU General Public License
 
         load_dropdowns_for_insert();
 
-        // Prepare for custom columns
-        foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-        {
-            string column_name = (string)drcc["name"];
-            if (security.user.dict_custom_field_permission_level[column_name] != Security.PERMISSION_NONE)
-            {
-                string defaultval = get_custom_col_default_value(drcc["default value"]);
-                hash_custom_cols.Add(column_name, defaultval);
-            }
-        }
-
         // We don't know the project yet, so all permissions
-        set_controls_field_permission(Security.PERMISSION_ALL);
+        set_controls_field_permission(PermissionLevel.All);
 
         // Execute code not written by me
         Workflow.custom_adjust_controls(null, security.user, this);
@@ -254,21 +237,13 @@ Distributed under the terms of the GNU General Public License
         // look at permission level and react accordingly
         permission_level = (int)dr_bug["pu_permission_level"];
 
-        if (permission_level == Security.PERMISSION_NONE)
+        if (permission_level == PermissionLevel.None)
         {
             btnet.Util.display_you_dont_have_permission(Response, security);
             return;
         }
 
-        foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-        {
-            string column_name = (string)drcc["name"];
-            if (security.user.dict_custom_field_permission_level[column_name] != Security.PERMISSION_NONE)
-            {
-                string val = btnet.Util.format_db_value(dr_bug[column_name]);
-                hash_custom_cols.Add(column_name, val);
-            }
-        }
+        
 
         // move stuff to the page
 
@@ -354,7 +329,7 @@ Distributed under the terms of the GNU General Public License
             + "</span></a>";
         toggle_history.InnerHtml = toggle_history_link;
 
-        if (permission_level == Security.PERMISSION_ALL)
+        if (permission_level == PermissionLevel.All)
         {
             string clone_link = "<a class=warn href=\"javascript:clone()\" "
                 + " title='Create a copy of this item'><img src=paste_plain.png border=0 align=top>&nbsp;create copy</a>";
@@ -362,7 +337,7 @@ Distributed under the terms of the GNU General Public License
         }
 
 
-        if (permission_level != Security.PERMISSION_READONLY)
+        if (permission_level != PermissionLevel.ReadOnly)
         {
             string attachment_link = "<img src=attach.gif align=top>&nbsp;<a href=\"javascript:open_popup_window('add_attachment.aspx','add attachment ',"
                 + Convert.ToString(id)
@@ -377,7 +352,7 @@ Distributed under the terms of the GNU General Public License
 
         if (!security.user.is_guest)
         {
-            if (permission_level != Security.PERMISSION_READONLY)
+            if (permission_level != PermissionLevel.ReadOnly)
             {
                 string send_email_link = "<a href='javascript:send_email("
                     + Convert.ToString(id)
@@ -395,7 +370,7 @@ Distributed under the terms of the GNU General Public License
             send_email.Visible = false;
         }
 
-        if (permission_level != Security.PERMISSION_READONLY)
+        if (permission_level != PermissionLevel.ReadOnly)
         {
             string subscribers_link = "<a target=_blank href=view_subscribers.aspx?id="
                 + Convert.ToString(id)
@@ -476,7 +451,7 @@ Distributed under the terms of the GNU General Public License
         }
 
 
-        if (security.user.is_admin || security.user.can_view_tasks)
+        if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_view_tasks)
         {
             if (btnet.Util.get_setting("EnableTasks", "0") == "1")
             {
@@ -720,15 +695,7 @@ Distributed under the terms of the GNU General Public License
     {
         // Fetch the values of the custom columns from the Request and stash them in a hash table.
 
-        foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-        {
-            string column_name = (string)drcc["name"];
-
-            if (security.user.dict_custom_field_permission_level[column_name] != Security.PERMISSION_NONE)
-            {
-                hash_custom_cols.Add(column_name, Request[column_name]);
-            }
-        }
+     
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -741,7 +708,7 @@ Distributed under the terms of the GNU General Public License
 
         btnet.Bug.NewIds new_ids = btnet.Bug.insert_bug(
             short_desc.Value,
-            security,
+            User.Identity,
             tags.Value,
             Convert.ToInt32(project.SelectedItem.Value),
             Convert.ToInt32(org.SelectedItem.Value),
@@ -799,8 +766,8 @@ Distributed under the terms of the GNU General Public License
         {
             new_project = project.SelectedItem.Value;
             int permission_level_on_new_project = fetch_permission_level(new_project);
-            if (Security.PERMISSION_NONE == permission_level_on_new_project
-            || Security.PERMISSION_READONLY == permission_level_on_new_project)
+            if (PermissionLevel.None == permission_level_on_new_project
+            || PermissionLevel.ReadOnly == permission_level_on_new_project)
             {
                 set_msg(btnet.Util.capitalize_first_letter(btnet.Util.get_setting("SingularBugLabel", "bug"))
                     + " was not updated. You do not have the necessary permissions to change this "
@@ -845,7 +812,7 @@ Distributed under the terms of the GNU General Public License
 
         sql = sql.AddParameterWithValue("sd", short_desc.Value);
         sql = sql.AddParameterWithValue("tags", tags.Value);
-        sql = sql.AddParameterWithValue("lu", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("lu", Convert.ToString(User.Identity.GetUserId()));
         sql = sql.AddParameterWithValue("id", Convert.ToString(id));
         sql = sql.AddParameterWithValue("pj", new_project);
         sql = sql.AddParameterWithValue("og", org.SelectedItem.Value);
@@ -884,7 +851,7 @@ Distributed under the terms of the GNU General Public License
 
         bugpost_fields_have_changed = (btnet.Bug.insert_comment(
             id,
-            security.user.usid,
+            User.Identity.GetUserId(),
             comment_formated,
             comment_search,
             null, // from
@@ -910,7 +877,7 @@ Distributed under the terms of the GNU General Public License
         if (bug_fields_have_changed)
         {
             // Fetch again from database
-            DataRow updated_bug = btnet.Bug.get_bug_datarow(id, security, ds_custom_cols);
+            DataRow updated_bug = btnet.Bug.get_bug_datarow(id, User.Identity);
 
             // Allow for customization not written by me
             Workflow.custom_adjust_controls(updated_bug, security.user, this);
@@ -1345,7 +1312,7 @@ order by us_username; ");
                 // so be prepared to format the link even if this isn't the first time in.
                 sql = new SQLString("select count(1) from bug_subscriptions where bs_bug = @bg and bs_user = @us");
                 sql = sql.AddParameterWithValue("@bg", Convert.ToString(id));
-                sql = sql.AddParameterWithValue("@us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("@us", Convert.ToString(User.Identity.GetUserId()));
                 subscribed = (int)btnet.DbUtil.execute_scalar(sql);
             }
 
@@ -1384,13 +1351,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.org_field_permission_level
             ? bug_permission_level : security.user.org_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             org_label.Visible = false;
             org.Visible = false;
             prev_org.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             org.Visible = false;
             static_org.InnerText = org.SelectedItem.Text;
@@ -1426,7 +1393,7 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.tags_field_permission_level
             ? bug_permission_level : security.user.tags_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             static_tags.Visible = false;
             tags_label.Visible = false;
@@ -1435,7 +1402,7 @@ order by us_username; ");
             prev_tags.Visible = false;
             //tags_row.Style.display = "none";
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             if (id != 0)
             {
@@ -1466,13 +1433,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.category_field_permission_level
             ? bug_permission_level : security.user.category_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             category_label.Visible = false;
             category.Visible = false;
             prev_category.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             category.Visible = false;
             static_category.InnerText = category.SelectedItem.Text;
@@ -1491,13 +1458,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.priority_field_permission_level
             ? bug_permission_level : security.user.priority_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             priority_label.Visible = false;
             priority.Visible = false;
             prev_priority.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             priority.Visible = false;
             static_priority.InnerText = priority.SelectedItem.Text;
@@ -1516,13 +1483,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.status_field_permission_level
             ? bug_permission_level : security.user.status_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             status_label.Visible = false;
             status.Visible = false;
             prev_status.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             status.Visible = false;
             static_status.InnerText = status.SelectedItem.Text;
@@ -1541,13 +1508,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.project_field_permission_level
             ? bug_permission_level : security.user.project_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             project_label.Visible = false;
             project.Visible = false;
             prev_project.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             project.Visible = false;
             static_project.InnerText = project.SelectedItem.Text;
@@ -1566,13 +1533,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.assigned_to_field_permission_level
             ? bug_permission_level : security.user.assigned_to_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             assigned_to_label.Visible = false;
             assigned_to.Visible = false;
             prev_assigned_to.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             assigned_to.Visible = false;
             static_assigned_to.InnerText = assigned_to.SelectedItem.Text;
@@ -1586,13 +1553,13 @@ order by us_username; ");
         int perm_level = bug_permission_level < security.user.udf_field_permission_level
             ? bug_permission_level : security.user.udf_field_permission_level;
 
-        if (perm_level == Security.PERMISSION_NONE)
+        if (perm_level == PermissionLevel.None)
         {
             udf_label.Visible = false;
             udf.Visible = false;
             prev_udf.Visible = false;
         }
-        else if (perm_level == Security.PERMISSION_READONLY)
+        else if (perm_level == PermissionLevel.ReadOnly)
         {
             udf.Visible = false;
             static_udf.InnerText = udf.SelectedItem.Text;
@@ -1607,11 +1574,11 @@ order by us_username; ");
     void set_controls_field_permission(int bug_permission_level)
     {
 
-        if (bug_permission_level == Security.PERMISSION_READONLY
-        || bug_permission_level == Security.PERMISSION_REPORTER)
+        if (bug_permission_level == PermissionLevel.ReadOnly
+        || bug_permission_level == PermissionLevel.Reporter)
         {
             // even turn off commenting updating for read only
-            if (permission_level == Security.PERMISSION_READONLY)
+            if (permission_level == PermissionLevel.ReadOnly)
             {
                 submit_button.Disabled = true;
                 submit_button.Visible = false;
@@ -1625,14 +1592,14 @@ order by us_username; ");
                 comment.Visible = false;
             }
 
-            set_project_field_permission(Security.PERMISSION_READONLY);
-            set_org_field_permission(Security.PERMISSION_READONLY);
-            set_category_field_permission(Security.PERMISSION_READONLY);
-            set_tags_field_permission(Security.PERMISSION_READONLY);
-            set_priority_field_permission(Security.PERMISSION_READONLY);
-            set_status_field_permission(Security.PERMISSION_READONLY);
-            set_assigned_field_permission(Security.PERMISSION_READONLY);
-            set_udf_field_permission(Security.PERMISSION_READONLY);
+            set_project_field_permission(PermissionLevel.ReadOnly);
+            set_org_field_permission(PermissionLevel.ReadOnly);
+            set_category_field_permission(PermissionLevel.ReadOnly);
+            set_tags_field_permission(PermissionLevel.ReadOnly);
+            set_priority_field_permission(PermissionLevel.ReadOnly);
+            set_status_field_permission(PermissionLevel.ReadOnly);
+            set_assigned_field_permission(PermissionLevel.ReadOnly);
+            set_udf_field_permission(PermissionLevel.ReadOnly);
             set_shortdesc_field_permission();
 
             internal_only_label.Visible = false;
@@ -1643,27 +1610,27 @@ order by us_username; ");
             // Call these functions so that the field level permissions can kick in
             if (security.user.forced_project != 0)
             {
-                set_project_field_permission(Security.PERMISSION_READONLY);
+                set_project_field_permission(PermissionLevel.ReadOnly);
             }
             else
             {
-                set_project_field_permission(Security.PERMISSION_ALL);
+                set_project_field_permission(PermissionLevel.All);
             }
 
             if (security.user.other_orgs_permission_level == 0)
             {
-                set_org_field_permission(Security.PERMISSION_READONLY);
+                set_org_field_permission(PermissionLevel.ReadOnly);
             }
             else
             {
-                set_org_field_permission(Security.PERMISSION_ALL);
+                set_org_field_permission(PermissionLevel.All);
             }
-            set_category_field_permission(Security.PERMISSION_ALL);
-            set_tags_field_permission(Security.PERMISSION_ALL);
-            set_priority_field_permission(Security.PERMISSION_ALL);
-            set_status_field_permission(Security.PERMISSION_ALL);
-            set_assigned_field_permission(Security.PERMISSION_ALL);
-            set_udf_field_permission(Security.PERMISSION_ALL);
+            set_category_field_permission(PermissionLevel.All);
+            set_tags_field_permission(PermissionLevel.All);
+            set_priority_field_permission(PermissionLevel.All);
+            set_status_field_permission(PermissionLevel.All);
+            set_assigned_field_permission(PermissionLevel.All);
+            set_udf_field_permission(PermissionLevel.All);
         }
 
     }
@@ -1764,7 +1731,7 @@ order by us_username; ");
         and isnull(pu_permission_level,@dpl) not in (0, 1)
         order by pj_name;");
 
-        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
         sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
         // 1
@@ -1912,7 +1879,7 @@ order by us_username; ");
         values(@id, @us, getdate(), 'Changed ' + @field + ' from ' + @oldValue + ' to ' + @newValue, 'update'");
 
         sql.AddParameterWithValue("id", Convert.ToString(id));
-        sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
         sql.AddParameterWithValue("field", field);
         sql.AddParameterWithValue("oldValue", oldValue);
         sql.AddParameterWithValue("newValue", newValue);
@@ -2022,63 +1989,7 @@ order by us_username; ");
     }
 
 
-    // Record changes in custom columns
-    
-    foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-    {
-        string column_name = (string)drcc["name"];
-
-        if (security.user.dict_custom_field_permission_level[column_name] != Security.PERMISSION_ALL)
-        {
-            continue;
-        }
-
-        string before = btnet.Util.format_db_value(dr_bug[column_name]);
-        string after = hash_custom_cols[column_name];
-
-        if (before == "0")
-        {
-            before = "";
-        }
-        
-        if (after == "0")
-        {
-            after = "";
-        }
-
-        if (before.Trim() != after.Trim())
-        {
-
-            if ((string)drcc["dropdown type"] == "users")
-            {
-
-                SQLString sql_get_username;
-                if (before == "")
-                {
-                    before = "";
-                }
-                else
-                {
-                    sql_get_username = new SQLString("select us_username from users where us_id = @userId");
-                    before = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", btnet.Util.sanitize_integer(before)));
-                }
-
-
-                if (after == "")
-                {
-                    after = "";
-                }
-                else
-                {
-                    sql_get_username = new SQLString("select us_username from users where us_id = @userId");
-                    after = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", btnet.Util.sanitize_integer(after)));
-                }
-            }
-            AddChange(column_name, before, after);
-            areChanges = true;
-        }
-    }
-
+  
 
     // Handle project custom dropdowns
     if (Request["label_pcd1"] != null && Request["pcd1"] != null && prev_pcd1.Value != Request["pcd1"])
@@ -2125,13 +2036,13 @@ order by us_username; ");
 
         sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
         sql = sql.AddParameterWithValue("pj", projectToCheck);
-        sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
         int pl = (int)btnet.DbUtil.execute_scalar(sql);
 
         // reduce permissions for guest
-        //if (security.user.is_guest && permission_level == Security.PERMISSION_ALL)
+        //if (security.user.is_guest && permission_level == PermissionLevel.All)
         //{
-        //	pl = Security.PERMISSION_REPORTER;
+        //	pl = PermissionLevel.Reporter;
         //}
 
         return pl;
@@ -2158,74 +2069,6 @@ order by us_username; ");
         if (!did_something_change())
         {
             return false;
-        }
-
-
-        // validate custom columns
-        foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-        {
-
-            string name = (string)drcc["name"];
-
-            if (security.user.dict_custom_field_permission_level[name] != Security.PERMISSION_ALL)
-            {
-                continue;
-            }
-
-            string val = Request[name];
-
-            if (val == null) continue;
-
-            val = val.Replace("'", "''");
-
-            // if a date was entered, convert to db format
-            if (val.Length > 0)
-            {
-                string datatype = drcc["datatype"].ToString();
-
-                if (datatype == "datetime")
-                {
-                    try
-                    {
-                        DateTime.Parse(val, btnet.Util.get_culture_info());
-                    }
-                    catch (FormatException)
-                    {
-                        append_custom_field_msg("\"" + name + "\" not in a valid date format.<br>");
-                        good = false;
-                    }
-                }
-                else if (datatype == "int")
-                {
-                    if (!btnet.Util.is_int(val))
-                    {
-                        append_custom_field_msg("\"" + name + "\" must be an integer.<br>");
-                        good = false;
-                    }
-
-                }
-                else if (datatype == "decimal")
-                {
-                    int xprec = Convert.ToInt32(drcc["xprec"]);
-                    int xscale = Convert.ToInt32(drcc["xscale"]);
-
-                    string decimal_error = btnet.Util.is_valid_decimal(name, val, xprec - xscale, xscale);
-                    if (decimal_error != "")
-                    {
-                        append_custom_field_msg(decimal_error + "<br>");
-                        good = false;
-                    }
-                }
-            }
-            else
-            {
-                int nullable = (int)drcc["isnullable"];
-                if (nullable == 0)
-                {
-                    append_custom_field_msg("\"" + name + "\" is required.<br>");
-                    good = false;
-                }
-            }
         }
 
         // validate assigned to user versus 
@@ -2316,209 +2159,6 @@ where us_id = @us_id");
     }
 
     ///////////////////////////////////////////////////////////////////////
-    void display_custom_fields()
-    {
-
-        int minTextAreaSize = int.Parse(btnet.Util.get_setting("TextAreaThreshold", "100"));
-        int maxTextAreaRows = int.Parse(btnet.Util.get_setting("MaxTextAreaRows", "5"));
-
-        // Create the custom column INPUT elements
-        foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-        {
-            string column_name = (string)drcc["name"];
-
-            int field_permission_level = security.user.dict_custom_field_permission_level[column_name];
-            if (field_permission_level == Security.PERMISSION_NONE)
-            {
-                continue;
-            }
-
-            string field_id = column_name.Replace(" ", "");
-
-            Response.Write("\n<tr id=\"" + field_id + "_row\">");
-            Response.Write("<td nowrap><span id=\"" + field_id + "_label\">");
-            Response.Write(column_name);
-
-            int permission_on_original = permission_level;
-
-            if ((prev_project.Value != string.Empty)
-            && (project.SelectedItem == null || project.SelectedItem.Value != prev_project.Value))
-            {
-                permission_on_original = fetch_permission_level(prev_project.Value);
-            }
-
-            if (permission_on_original == Security.PERMISSION_READONLY
-            || permission_on_original == Security.PERMISSION_REPORTER)
-            {
-                Response.Write(":</span><td align=left width=600px>");
-            }
-            else
-            {
-                Response.Write(":</span><td align=left>");
-            }
-
-            //20040413 WWR - If a custom database field is over the defined character length, use a TextArea control
-            int fieldLength = int.Parse(drcc["length"].ToString());
-            string datatype = drcc["datatype"].ToString();
-
-            string dropdown_type = Convert.ToString(drcc["dropdown type"]);
-
-            if (permission_on_original == Security.PERMISSION_READONLY
-            || field_permission_level == Security.PERMISSION_READONLY)
-            {
-                string text;
-
-                if (id == 0) // add
-                {
-                    text = get_custom_col_default_value(drcc["default value"]);
-                }
-                else
-                {
-                    text = Convert.ToString(dr_bug[column_name]);
-                }
-
-                if (fieldLength > minTextAreaSize && !string.IsNullOrEmpty(text))
-                {
-                    // more readable if there is a lot of text
-                    Response.Write("<div class='short_desc_static'  id=\"" + field_id + "_static\"><pre>");
-                    Response.Write(HttpUtility.HtmlEncode(text));
-                    Response.Write("</pre></div>");
-                }
-                else
-                {
-
-                    Response.Write("<span class='stat' id=\"" + field_id + "_static\">");
-                    if (dropdown_type == "users")
-                    {
-                        if (!string.IsNullOrEmpty(text))
-                        {
-                            int view_only_user_id = Convert.ToInt32(text);
-                            DataView dv_users = new DataView(dt_users);
-                            foreach (DataRowView drv in dv_users)
-                            {
-                                if (view_only_user_id == (int)drv[0])
-                                {
-                                    Response.Write(Convert.ToString(drv[1]));
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Response.Write(HttpUtility.HtmlEncode(text));
-                    }
-
-                    Response.Write("</span>");
-                }
-            }
-            else
-            {
-
-                if (fieldLength > minTextAreaSize
-                && dropdown_type != "normal"
-                && dropdown_type != "users")
-                {
-                    Response.Write("<textarea class='txt resizable'");
-                    Response.Write(" onkeydown=\"return count_chars('" + field_id + "'," + fieldLength + ")\" ");
-                    Response.Write(" onkeyup=\"return count_chars('" + field_id + "'," + fieldLength + ")\" ");
-                    Response.Write(" cols=\"" + minTextAreaSize + "\" rows=\"" + (((fieldLength / minTextAreaSize) > maxTextAreaRows) ? maxTextAreaRows : (fieldLength / minTextAreaSize)) + "\" ");
-                    Response.Write(" name=\"" + column_name + "\"");
-                    Response.Write(" id=\"" + field_id + "\" >");
-                    Response.Write(HttpUtility.HtmlEncode(hash_custom_cols[column_name]));
-                    Response.Write("</textarea><div class=smallnote id=\"" + field_id + "_cnt\">&nbsp;</div>");
-                }
-                else
-                {
-                    string dropdown_vals = Convert.ToString(drcc["vals"]);
-
-                    if (dropdown_type != "" || dropdown_vals != "")
-                    {
-                        string selected_value = hash_custom_cols[column_name].Trim();
-
-                        Response.Write("<select ");
-
-                        Response.Write(" id=\"" + field_id + "\"");
-                        Response.Write(" name=\"" + column_name + "\"");
-                        Response.Write(">");
-
-                        if (dropdown_type != "users")
-                        {
-                            string[] options = btnet.Util.split_dropdown_vals(dropdown_vals);
-                            string decoded_selected_value = HttpUtility.HtmlDecode(selected_value);
-                            for (int j = 0; j < options.Length; j++)
-                            {
-                                Response.Write("<option");
-                                string decoded_option = HttpUtility.HtmlDecode(options[j]);
-                                if (decoded_option == decoded_selected_value)
-                                {
-                                    Response.Write(" selected ");
-                                }
-                                Response.Write(">");
-                                Response.Write(decoded_option);
-                                Response.Write("</option>");
-                            }
-                        }
-                        else
-                        {
-                            Response.Write("<option value=0>[not selected]</option>");
-
-                            DataView dv_users = new DataView(dt_users);
-                            foreach (DataRowView drv in dv_users)
-                            {
-                                string user_id = Convert.ToString(drv[0]);
-                                string user_name = Convert.ToString(drv[1]);
-
-                                Response.Write("<option value=");
-                                Response.Write(user_id);
-
-                                if (user_id == selected_value)
-                                {
-                                    Response.Write(" selected ");
-                                }
-                                Response.Write(">");
-                                Response.Write(user_name);
-                                Response.Write("</option>");
-                            }
-                        }
-                        Response.Write("</select>");
-                    }
-                    else
-                    {
-                        Response.Write("<input type=text onkeydown=\"mark_dirty()\" onkeyup=\"mark_dirty()\" ");
-
-                        // match the size of the text field to the size of the database field
-
-                        if (datatype.IndexOf("char") > -1)
-                        {
-                            Response.Write(" size=" + Convert.ToString(fieldLength));
-                            Response.Write(" maxlength=" + Convert.ToString(fieldLength));
-                        }
-
-                        Response.Write(" name=\"" + column_name + "\"");
-                        Response.Write(" id=\"" + field_id + "\"");
-                        Response.Write(" value=\"");
-                        Response.Write(hash_custom_cols[column_name].Replace("\"", "&quot;"));
-
-                        if (datatype == "datetime")
-                        {
-                            Response.Write("\" class='txt date'  >");
-                            Response.Write("<a style=\"font-size: 8pt;\"href=\"javascript:show_calendar('"
-                                + field_id
-                                + "');\">[select]</a>");
-                        }
-                        else
-                        {
-                            Response.Write("\" class='txt' >");
-                        }
-                    }
-                }
-            } // end if readonly or editable
-        } // end loop through custom fields
-
-    }
-
-
     ///////////////////////////////////////////////////////////////////////
     void display_project_specific_custom_fields()
     {
@@ -2567,8 +2207,8 @@ where us_id = @us_id");
                             permission_on_original = fetch_permission_level(prev_project.Value);
                         }
 
-                        if (permission_on_original == Security.PERMISSION_READONLY
-                        || permission_on_original == Security.PERMISSION_REPORTER)
+                        if (permission_on_original == PermissionLevel.ReadOnly
+                        || permission_on_original == PermissionLevel.Reporter)
                         {
                             // GC: 20-Feb-08: Modified to add an ID to the SPAN as well for easier CSS customisation
                             //Response.Write ("<span class="stat">");
@@ -2850,7 +2490,7 @@ where us_id = @us_id");
                                         <td nowrap>
                                             <span runat="server" id="reported_by"></span>
 
-                                            <% if (id == 0 || permission_level == Security.PERMISSION_ALL)
+                                            <% if (id == 0 || permission_level == PermissionLevel.All)
                                                { %>
                                         <td nowrap align="right" id="presets">Presets:
            
@@ -2931,7 +2571,7 @@ where us_id = @us_id");
 
 
                                                                             <%
-                                                                                display_custom_fields();
+                                                                                
                                                                                 display_project_specific_custom_fields();    
 %>
                                 </table>
@@ -2945,7 +2585,7 @@ where us_id = @us_id");
 
                                             <span class="smallnote" style="margin-left: 170px">
                                                 <% 
-                                                    if (permission_level != Security.PERMISSION_READONLY)
+                                                    if (permission_level != PermissionLevel.ReadOnly)
                                                     {
 
                                                         Response.Write("Entering \""

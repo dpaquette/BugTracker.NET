@@ -54,9 +54,9 @@ order by bg_last_updated_date desc";
         {
             bug_sql = bug_sql.Replace("$WHERE$",
                 "where bg_reported_user = "
-                + Convert.ToString(security.user.usid)
+                + Convert.ToString(User.Identity.GetUserId())
                 + " or bg_assigned_to_user = "
-                + Convert.ToString(security.user.usid));
+                + Convert.ToString(User.Identity.GetUserId()));
         }
         else
         {

@@ -12,8 +12,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +28,7 @@ void Page_Load(Object sender, EventArgs e)
 		sql = sql.AddParameterWithValue("us", id);
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-		if (security.user.usid != (int) dr["us_created_user"])
+		if (User.Identity.GetUserId() != (int) dr["us_created_user"])
 		{
 			Response.Write ("You not allowed to delete this user, because you didn't create it.");
 			Response.End();

@@ -10,8 +10,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +38,9 @@ void Page_Load(Object sender, EventArgs e)
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-		if ((int) dr["qu_user"] != security.user.usid)
+		if ((int) dr["qu_user"] != User.Identity.GetUserId())
 		{
-			if (security.user.is_admin || security.user.can_edit_sql)
+			if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
 			{
 				// can do anything
 			}

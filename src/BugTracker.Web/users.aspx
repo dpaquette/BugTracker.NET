@@ -146,7 +146,7 @@ void Page_Load(Object sender, EventArgs e)
         sql = sql.Replace("$filter_users", "");
     }
     var filteredSQL = new SQLString(sql);
-    filteredSQL.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+    filteredSQL.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
     ds = btnet.DbUtil.get_dataset(filteredSQL);
 
     // cookies

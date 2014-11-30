@@ -288,7 +288,7 @@ function my_on_load()
 		}
 
 
-		DataTable dt_related_users = btnet.Util.get_related_users(security, true); // force full names
+		DataTable dt_related_users = btnet.Util.get_related_users(User.Identity, true); // force full names
 		// let's sort by email
 		DataView dv_related_users = new DataView(dt_related_users);
 		dv_related_users.Sort = "us_email";

@@ -11,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 int id;
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -20,7 +18,7 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 void Page_Load(Object sender, EventArgs e) {
 	Util.do_not_cache(Response);
 	
-	if (security.user.is_admin || security.user.can_edit_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditReports())
 	{
 		//
 	}

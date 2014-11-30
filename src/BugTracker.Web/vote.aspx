@@ -32,7 +32,7 @@ void Page_Load(Object sender, EventArgs e)
 	int bugid = Convert.ToInt32(Util.sanitize_integer(Request["bugid"]));
 
 	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+	if (permission_level ==PermissionLevel.None)
 	{
 		Response.End();
 	}
@@ -65,7 +65,7 @@ update bug_user set bu_vote = @vote, bu_vote_datetime = getdate() where bu_bug =
 				
 			sql = sql.AddParameterWithValue("vote", Convert.ToString(vote));
 			sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
-			sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 
 			btnet.DbUtil.execute_nonquery(sql);
 
