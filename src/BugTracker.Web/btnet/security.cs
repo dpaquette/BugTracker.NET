@@ -285,6 +285,12 @@ where us_username = @us and u.us_active = 1");
             owinContext.Authentication.SignIn(identity);
         }
 
+	    public static void SignOut(HttpRequest request)
+	    {
+            var owinContext = request.GetOwinContext();
+	        owinContext.Authentication.SignOut();
+	    }
+
 		///////////////////////////////////////////////////////////////////////
 		public static void create_session(HttpRequest Request, HttpResponse Response, int userid, string username, string NTLM)
 		{
