@@ -7,7 +7,10 @@ namespace btnet
 {
     public partial class forgot : BasePage
     {
-
+        public override bool AllowAnonymous
+        {
+            get { return true; }
+        }
 
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
