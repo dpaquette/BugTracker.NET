@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="merge_bug.aspx.cs" Inherits="btnet.merge_bug" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -315,7 +317,7 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <p>
 <div class=align><table border=0><tr><td>
 

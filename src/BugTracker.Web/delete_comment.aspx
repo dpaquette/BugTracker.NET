@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_comment.aspx.cs" Inherits="btnet.delete_comment" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -18,6 +20,7 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 void Page_Load(Object sender, EventArgs e)
 {
 
+    MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 	Util.do_not_cache(Response);
 	
 	if (security.user.is_admin || security.user.can_edit_and_delete_posts)
@@ -87,7 +90,7 @@ void Page_Load(Object sender, EventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="delete_report.aspx.cs" Inherits="btnet.delete_report" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -66,7 +67,7 @@ delete dashboard_items where ds_report = @reportId");
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "reports"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

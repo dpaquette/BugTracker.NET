@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_styles.aspx.cs" Inherits="btnet.edit_styles" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <%@ Import Namespace="System.IO" %>
 
 <!--
@@ -83,7 +85,7 @@ void Page_Load(Object sender, EventArgs e)
 </head>
 
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
 <div class=align>

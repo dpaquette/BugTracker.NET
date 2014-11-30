@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="translate.aspx.cs" Inherits="btnet.translate" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 
 <!--
 
@@ -19,7 +20,7 @@ Distributed under the terms of the GNU General Public License
     void Page_Load(Object sender, EventArgs e)
     {
     	Util.do_not_cache(Response);
-		
+        MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 			+ "translate";
 
@@ -126,7 +127,7 @@ Distributed under the terms of the GNU General Public License
     <link href="btnet.css" type="text/css" rel="StyleSheet" />
 </head>
 <body>
-    <% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+    <uc1:MainMenu runat="server" ID="MainMenu"/>
     <div class="align">
         <table border="0">
             <tbody>

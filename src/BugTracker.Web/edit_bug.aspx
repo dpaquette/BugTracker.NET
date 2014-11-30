@@ -1,5 +1,8 @@
 <%@ Page Language="C#" CodeBehind="edit_bug.aspx.cs" Inherits="btnet.edit_bug" ValidateRequest="false" AutoEventWireup="True" %>
 
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -34,7 +37,7 @@ Distributed under the terms of the GNU General Public License
     ///////////////////////////////////////////////////////////////////////
     void Page_Load(Object sender, EventArgs e)
     {
-
+        MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
         btnet.Util.do_not_cache(Response);
 
         set_msg("");
@@ -673,7 +676,6 @@ Distributed under the terms of the GNU General Public License
         // Display an error because the bugid must be an integer
 
         Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
-        security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel", "bugs"));
         Response.Write("<p>&nbsp;</p><div class=align>");
         Response.Write("<div class=err>Error: ");
         Response.Write(btnet.Util.capitalize_first_letter(btnet.Util.get_setting("SingularBugLabel", "bug")));
@@ -2757,7 +2759,7 @@ where us_id = @us_id");
 </head>
 
 <body onload='on_body_load()' onunload='on_body_unload()'>
-    <% security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel", "bugs")); %>
+    <uc1:MainMenu runat="server" ID="MainMenu" />
 
     <div class="align">
 

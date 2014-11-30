@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_comment.aspx.cs" Inherits="btnet.edit_comment" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -22,7 +24,7 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
-
+    MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
     btnet.Util.do_not_cache(Response);
     
 
@@ -215,7 +217,7 @@ function do_doc_ready()
 </script>
 </head>
 <body>
-<% security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel","bugs")); %>
+    <uc1:MainMenu runat="server" ID="MainMenu"/>
 
 
 <div class=align>
@@ -246,7 +248,8 @@ function do_doc_ready()
     </table>
 </form>
 </td></tr></table></div>
-<% Response.Write(Application["custom_footer"]); %></body>
+<% Response.Write(Application["custom_footer"]); %>
+</body>
 </html>
 
 

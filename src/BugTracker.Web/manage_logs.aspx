@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="manage_logs.aspx.cs" Inherits="btnet.manage_logs" validateRequest="false" enableEventValidation="false" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 
 <!--
 Copyright 2002-2011 Corey Trager
@@ -94,7 +95,7 @@ void my_button_click(object sender, DataGridCommandEventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div class=align><table border=0><tr><td>
 

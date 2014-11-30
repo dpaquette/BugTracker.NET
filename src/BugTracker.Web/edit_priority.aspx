@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_priority.aspx.cs" Inherits="btnet.edit_priority" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -208,7 +210,7 @@ function change_sample_color()
 
 </head>
 <body onload="change_sample_color()">
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
 <div class=align><table border=0><tr><td>

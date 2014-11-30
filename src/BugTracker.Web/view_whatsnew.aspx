@@ -1,4 +1,5 @@
 <!-- #include file = "inc.aspx" -->
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 
 <script language="C#" runat="server">
 
@@ -204,7 +205,7 @@ $(document).ready(function()
 
 <body>
 
-<% security.write_menu(Response, "news"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="news"/>
 
 <table border=0 cellspacing=0 cellpadding=10>
 <tr>

@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="notifications.aspx.cs" Inherits="btnet.notifications" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -46,7 +48,7 @@ void Page_Load(Object sender, EventArgs e)
 </head>
 
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div style="width: 600px;"
 class=smallnote>

@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="send_email.aspx.cs" Inherits="btnet.send_email" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 <%@ Import Namespace="System.IO" %>
 <!--
 Copyright 2002-2011 Corey Trager
@@ -115,7 +116,7 @@ function my_on_load()
 
 </head>
 <body onload="my_on_load()">
-<% security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu"/>
 <div class=align><table border=0><tr><td>
 
 <a id="back_href" runat="server" href="">back to <% Response.Write(btnet.Util.get_setting("SingularBugLabel","bug")); %></a>

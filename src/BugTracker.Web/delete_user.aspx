@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_user.aspx.cs" Inherits="btnet.delete_user" AutoEventWireup="True" %>
+
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -105,7 +107,7 @@ select us_username, @cnt [cnt] from users where us_id = @us");
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

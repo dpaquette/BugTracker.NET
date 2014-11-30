@@ -19,9 +19,8 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {
-
             btnet.Util.do_not_cache(Response);
-
+            MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
             titl.InnerText = btnet.Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "send email";
 

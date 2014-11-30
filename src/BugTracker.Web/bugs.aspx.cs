@@ -59,6 +59,7 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {
+            MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
             Util.do_not_cache(Response);
 
             titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "

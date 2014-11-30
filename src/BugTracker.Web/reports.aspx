@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="reports.aspx.cs" Inherits="btnet.reports" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -83,7 +85,7 @@ from reports order by rp_desc");
 </head>
 
 <body>
-<% security.write_menu(Response, "reports"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 
 <div class=align>
 </p>

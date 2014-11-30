@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="priorities.aspx.cs" Inherits="btnet.priorities" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -42,7 +44,7 @@ void Page_Load(Object sender, EventArgs e)
 </head>
 
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div class=align>
 <a href=edit_priority.aspx>add new priority</a>

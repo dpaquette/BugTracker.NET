@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_attachment.aspx.cs" Inherits="btnet.delete_attachment" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -18,7 +20,8 @@ void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
-	
+
+    this.MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");	
 
 	if (security.user.is_admin || security.user.can_edit_and_delete_posts)
 	{
@@ -104,7 +107,7 @@ void Page_Load(Object sender, EventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu" />
 <p>
 <div class=align>
 

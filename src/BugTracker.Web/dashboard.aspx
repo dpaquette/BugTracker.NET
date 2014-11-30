@@ -1,4 +1,5 @@
 <!-- #include file = "inc.aspx" -->
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 
 <script language="C#" runat="server">
 
@@ -94,7 +95,7 @@ iframe {
 
 </style>
 <body>
-<% security.write_menu(Response, "reports"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 
 <% if (security.user.is_guest) /* no dashboard */{ %>
 <span class="disabled_link">edit dashboard not available to "guest" user</span>

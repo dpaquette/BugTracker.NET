@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_report.aspx.cs" Inherits="btnet.edit_report" AutoEventWireup="True" %>
+
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -193,7 +195,7 @@ void on_update()
 </head>
 
 <body>
-<% security.write_menu(Response, "reports"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 <div class='align'>
 <a href='reports.aspx'>back to reports</a>
 <br><br>

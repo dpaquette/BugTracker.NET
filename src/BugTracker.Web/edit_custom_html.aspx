@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_custom_html.aspx.cs" Inherits="btnet.edit_custom_html" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -139,7 +141,7 @@ string get_file_name(string which_file)
 
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div class=align><table border=0 style="margin-left:20px; margin-top:20px; width:80%;"><tr><td>
 <form runat="server">

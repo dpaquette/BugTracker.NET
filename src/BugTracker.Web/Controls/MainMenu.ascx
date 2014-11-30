@@ -30,6 +30,8 @@
     require(['jquery'], function ($) {
         $(function () {
             $('a').filter(function () { return this.hostname && this.hostname !== location.hostname; }).addClass('external-link');
+
+            $('td.menu_td span:contains("<%:SelectedItem%>")').addClass("selected_menu_item");
         });
     });
 </script>

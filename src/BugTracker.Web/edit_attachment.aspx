@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="edit_attachment.aspx.cs" Inherits="btnet.edit_attachment" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -21,6 +22,7 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 void Page_Load(Object sender, EventArgs e)
 {
 
+    MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 	Util.do_not_cache(Response);
 	
 
@@ -135,7 +137,7 @@ void on_update()
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu"/>
 
 
 <div class=align><table border=0><tr><td>

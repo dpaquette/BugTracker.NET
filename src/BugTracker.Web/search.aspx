@@ -1,4 +1,5 @@
 <%@ Page language="C#" ValidateRequest="false" CodeBehind="search.aspx.cs" Inherits="btnet.search" AutoEventWireup="True" %>
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -744,7 +745,7 @@ function do_doc_ready()
 
 </head>
 <body onload="on_change()">
-<% security.write_menu(Response, "search"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="search"/>
 
 <div id="suggest_popup" style="position:absolute; display:none; z-index:1000;"></div>
 

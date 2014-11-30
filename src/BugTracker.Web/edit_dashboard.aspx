@@ -1,4 +1,5 @@
 <!-- #include file = "inc.aspx" -->
+<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
 
 <script language="C#" runat="server">
 
@@ -160,7 +161,7 @@ function add_selected_report(chart_type, id)
 
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <a href=dashboard.aspx>back to dashboard</a>
 <table border=0 cellspacing=0 cellpadding=10>
 <tr>

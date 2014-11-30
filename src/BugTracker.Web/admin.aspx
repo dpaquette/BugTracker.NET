@@ -1,4 +1,7 @@
 <%@ Page language="C#" CodeBehind="admin.aspx.cs" Inherits="btnet.admin" AutoEventWireup="True" %>
+
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -57,7 +60,7 @@ function timer_callback()
 </script>
 </head>
 <body  <% if (nag) Response.Write("onload='start_animation()'"); %>>
-<% security.write_menu(Response, "admin"); %>
+    <uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <% if (nag) { %>
 

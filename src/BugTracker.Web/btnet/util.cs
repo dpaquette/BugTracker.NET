@@ -1397,7 +1397,6 @@ order by tsk_sort_sequence, tsk_id");
         public static void display_bug_not_found(HttpResponse Response, Security security, int id)
         {
             Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
-            security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel", "bugs"));
             Response.Write("<p>&nbsp;</p><div class=align>");
             Response.Write("<div class=err>");
             Response.Write(btnet.Util.capitalize_first_letter(btnet.Util.get_setting("SingularBugLabel", "bug")));
@@ -1412,7 +1411,6 @@ order by tsk_sort_sequence, tsk_id");
         public static void display_you_dont_have_permission(HttpResponse Response, Security security)
         {
             Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
-            security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel", "bugs"));
             Response.Write("<p>&nbsp;</p><div class=align>");
             Response.Write("<div class=err>You are not allowed to view this "
                 + btnet.Util.get_setting("SingularBugLabel", "bug")
