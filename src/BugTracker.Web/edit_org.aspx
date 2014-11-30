@@ -13,10 +13,6 @@ int id;
 SQLString sql;
 
 
-Security security;
-Dictionary<string,int> dict_custom_field_permission_level = new Dictionary<string, int>();
-DataSet ds_custom;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 string radio_template = @"
@@ -61,7 +57,6 @@ void Page_Load(Object sender, EventArgs e)
 		id = Convert.ToInt32(var);
 	}
 
-	ds_custom = Util.get_custom_columns();
 
 	if (!IsPostBack)
 	{
@@ -85,12 +80,6 @@ void Page_Load(Object sender, EventArgs e)
 			assigned_to_field.SelectedValue = "2";
 			udf_field.SelectedValue = "2";
 			
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-				dict_custom_field_permission_level[bg_name] = 2;
-			}
-
 			
 		}
 		else
@@ -133,32 +122,13 @@ void Page_Load(Object sender, EventArgs e)
 			status_field.SelectedValue = Convert.ToString((int)dr["og_status_field_permission_level"]);
 			assigned_to_field.SelectedValue = Convert.ToString((int)dr["og_assigned_to_field_permission_level"]);
 			udf_field.SelectedValue = Convert.ToString((int)dr["og_udf_field_permission_level"]);
-			
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-				object obj = dr["og_" + bg_name + "_field_permission_level"];
-				int permission;
-				if (Convert.IsDBNull(obj))
-				{
-					permission = Security.PERMISSION_ALL;
-				}
-				else
-				{
-					permission = (int) obj;
-				}
-				dict_custom_field_permission_level[bg_name] = permission;
-			}			
+		
 
 		}
 	}
 	else
 	{
-		foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-		{
-			string bg_name = (string)dr_custom["name"];
-			dict_custom_field_permission_level[bg_name] = Convert.ToInt32(Request[bg_name]);
-		}
+		
 		
 		on_update();
 	}
@@ -323,39 +293,7 @@ update orgs set
 		sql = sql.AddParameterWithValue("flp_assigned_to", assigned_to_field.SelectedValue);
 		sql = sql.AddParameterWithValue("flp_udf", udf_field.SelectedValue);
 
-		if (id == 0)  // insert new
-		{
-			string custom1 = "";
-			string custom2 = "";
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-				string og_col_name = "og_" 
-					+ bg_name
-					+ "_field_permission_level";
-
-                custom1 += ",[" + og_col_name + "]";
-				custom2 += "," + btnet.Util.sanitize_integer(Request[bg_name]);
-
-			}
-			sqlTemplate = sqlTemplate.Replace("$custom1$",custom1);
-			sqlTemplate = sqlTemplate.Replace("$custom2$",custom2);
-		}
-		else
-		{
-			string custom3 = "";
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-                string og_col_name = "og_" 
-					+ bg_name
-					+ "_field_permission_level";
-
-                custom3 += ",[" + og_col_name + "]=" + btnet.Util.sanitize_integer(Request[bg_name]);
-
-			}
-			sqlTemplate = sqlTemplate.Replace("$custom3$",custom3);
-		}
+		
         sql.Append(sqlTemplate);
 		btnet.DbUtil.execute_nonquery(sql);
 		Server.Transfer ("orgs.aspx");
@@ -558,25 +496,6 @@ update orgs set
 				<asp:ListItem text="edit"      value="2" ID="tags2" runat="server"/>
 			</asp:RadioButtonList>
 
-<%
-			foreach (DataRow dr_custom in ds_custom.Tables[0].Rows)
-			{
-				string bg_name = (string)dr_custom["name"];
-				string og_name = "og_" 
-					+ bg_name
-					+ "_field_permission_level";
-
-
-                string radio = radio_template;
-                int selected_val = dict_custom_field_permission_level[bg_name];
-                radio = radio.Replace("$name$", bg_name);
-                radio = radio.Replace("$checked0$", selected_val == 0 ? "checked=true" : "");
-                radio = radio.Replace("$checked1$", selected_val == 1 ? "checked=true" : "");
-                radio = radio.Replace("$checked2$", selected_val == 2 ? "checked=true" : "");
-				Response.Write(radio);
-                				
-			}
-%>
 
 	</table>
 	<table border=0>

@@ -26,14 +26,14 @@ void Page_Load(Object sender, EventArgs e)
 	
 	bugid = Convert.ToInt32(Util.sanitize_integer(Request["bugid"]));
 
-	permission_level = Bug.get_bug_permission_level(bugid, security);
+	permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view tasks for this item");
 		Response.End();
 	}
-	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_view_tasks)
+
+    if (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanViewTasks())
 	{
 		// allowed
 	}
@@ -48,7 +48,7 @@ void Page_Load(Object sender, EventArgs e)
 	
 	SQLString sql = new SQLString("select tsk_id [id],");
 
-	if (permission_level == PermissionLevel.All && !security.user.is_guest && (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_tasks))
+	if (permission_level == PermissionLevel.All && !security.user.is_guest && (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditTasks()))
 	{
 		sql.Append(@"
 '<a   href=edit_task.aspx?bugid=' + @bugid + '&id=' + convert(varchar,tsk_id) + '>edit</a>'   [$no_sort_edit],
@@ -158,7 +158,7 @@ Tasks for
 %>
 <p>
 
-<% if (permission_level == PermissionLevel.All && (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_tasks)) { %>
+<% if (permission_level == PermissionLevel.All && (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditTasks())) { %>
 <a href=edit_task.aspx?id=0&bugid=<% Response.Write(Convert.ToString(bugid)); %>>add new task</a>
 &nbsp;&nbsp;&nbsp;&nbsp;
 <a target=_blank href=tasks_all.aspx>view all tasks</a>

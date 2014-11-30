@@ -12,9 +12,6 @@ int id;
 int bugid;
 SQLString sql;
 
-
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -26,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_and_delete_posts)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditAndDeletePosts())
 	{
 		//
 	}
@@ -48,7 +45,7 @@ void Page_Load(Object sender, EventArgs e)
 	var = Request.QueryString["bug_id"];
 	bugid = Convert.ToInt32(var);
 
-	int permission_level = btnet.Bug.get_bug_permission_level(bugid, security);
+	int permission_level = btnet.Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");
@@ -56,7 +53,7 @@ void Page_Load(Object sender, EventArgs e)
 	}
 
 
-	if (security.user.external_user || Util.get_setting("EnableInternalOnlyPosts","0") == "0")
+	if (User.Identity.GetIsExternalUser()|| Util.get_setting("EnableInternalOnlyPosts","0") == "0")
 	{
 		internal_only.Visible = false;
 		internal_only_label.Visible = false;
@@ -116,7 +113,7 @@ void on_update()
 
 		if (!internal_only.Checked)
 		{
-			btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
+			btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
 		}
 
 		Response.Redirect ("edit_bug.aspx?id=" + Convert.ToString(bugid));

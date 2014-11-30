@@ -5,6 +5,7 @@ Distributed under the terms of the GNU General Public License
 
 using System;
 using System.Data;
+using System.Security.Principal;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -26,7 +27,7 @@ namespace btnet
 		///////////////////////////////////////////////////////////////////////
         public static void custom_adjust_controls(
             DataRow bug,  // null if a new bug, otherwise the state of the bug now in the db
-            User user, // the currently logged in user
+            IIdentity identity, // the currently logged in user
             Page page) // the whole page, so that you can customize other stuff
         {
 
@@ -51,7 +52,7 @@ namespace btnet
 		///////////////////////////////////////////////////////////////////////
         public static bool custom_validations(
             DataRow bug,  // null if a new bug, otherwise the state of the bug now in the db
-            User user, // the currently logged in user
+            IIdentity identity, // the currently logged in user
             Page page,
             HtmlContainerControl custom_validation_err_msg) 
         {

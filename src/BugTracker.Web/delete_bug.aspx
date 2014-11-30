@@ -11,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +19,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_delete_bug)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanDeleteBugs())
 	{
 		//
 	}
@@ -33,7 +31,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	string id = Util.sanitize_integer(Request["id"]);
 
-	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(id), security);
+	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(id), User.Identity);
 	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");

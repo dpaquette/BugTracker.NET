@@ -11,7 +11,8 @@ Distributed under the terms of the GNU General Public License
 <head>
 <title id="titl" runat="server">btnet send email</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
-<%  if (security.user.use_fckeditor) { %>
+<%  if (User.Identity.GetUseFCKEditor())
+    { %>
 <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 
@@ -99,7 +100,7 @@ function include_bug_click()
 function my_on_load()
 {
 	<%
-	if (security.user.use_fckeditor)	
+    if (User.Identity.GetUseFCKEditor())	
 	{
 		Response.Write ("CKEDITOR.replace( 'body' )");
 	}

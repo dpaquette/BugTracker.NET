@@ -30,7 +30,7 @@ void Page_Load(Object sender, EventArgs e)
 void print_tags()
 {
 
-    if (security.user.category_field_permission_level == Security.PERMISSION_NONE)
+    if (security.user.category_field_permission_level ==PermissionLevel.None)
     {
 		return;
 	}

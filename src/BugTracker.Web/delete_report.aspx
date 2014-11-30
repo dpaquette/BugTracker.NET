@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-Security security;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
@@ -18,7 +17,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditReports())
 	{
 		//
 	}

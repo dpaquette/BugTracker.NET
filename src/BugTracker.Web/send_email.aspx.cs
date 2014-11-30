@@ -159,7 +159,7 @@ namespace btnet
 
                     if (dr["us_signature"].ToString() != "")
                     {
-                        if (security.user.use_fckeditor)
+                        if (User.Identity.GetUseFCKEditor())
                         {
                             body.Value += "<br><br><br>";
                             body.Value += dr["us_signature"].ToString().Replace("\r\n", "<br>");
@@ -181,7 +181,7 @@ namespace btnet
 
                         if (dr["bp_type"].ToString() == "received")
                         {
-                            if (security.user.use_fckeditor)
+                            if (User.Identity.GetUseFCKEditor())
                             {
                                 body.Value += "<br><br><br>";
                                 body.Value += "&#62;From: " + dr["bp_email_from"].ToString().Replace("<", "&#60;").Replace(">", "&#62;") + "<br>";
@@ -199,7 +199,7 @@ namespace btnet
                             if (i < 4 && (lines[i].IndexOf("To:") == 0 || lines[i].IndexOf("Cc:") == 0))
                             {
                                 next_line_is_date = true;
-                                if (security.user.use_fckeditor)
+                                if (User.Identity.GetUseFCKEditor())
                                 {
                                     body.Value += "&#62;" + lines[i].Replace("<", "&#60;").Replace(">", "&#62;") + "<br>";
                                 }
@@ -211,7 +211,7 @@ namespace btnet
                             else if (next_line_is_date)
                             {
                                 next_line_is_date = false;
-                                if (security.user.use_fckeditor)
+                                if (User.Identity.GetUseFCKEditor())
                                 {
                                     body.Value += "&#62;Date: " + Convert.ToString(dr["bp_date"]) + "<br>&#62;<br>";
                                 }
@@ -222,7 +222,7 @@ namespace btnet
                             }
                             else
                             {
-                                if (security.user.use_fckeditor)
+                                if (User.Identity.GetUseFCKEditor())
                                 {
                                     if (Convert.ToString(dr["bp_content_type"]) != "text/html")
                                     {
@@ -311,7 +311,7 @@ namespace btnet
 
                     if (dr["us_signature"].ToString() != "")
                     {
-                        if (security.user.use_fckeditor)
+                        if (User.Identity.GetUseFCKEditor())
                         {
                             body.Value += "<br><br><br>";
                             body.Value += dr["us_signature"].ToString().Replace("\r\n", "<br>");
@@ -513,7 +513,7 @@ update bugs set
 
             sql = sql.AddParameterWithValue("id", bg_id.Value);
             sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
-            if (security.user.use_fckeditor)
+            if (User.Identity.GetUseFCKEditor())
             {
                 string adjusted_body = "Subject: " + subject.Value + "<br><br>";
                 adjusted_body += btnet.Util.strip_dangerous_tags(body.Value);
@@ -560,7 +560,7 @@ update bugs set
             {
 
                 // white space isn't handled well, I guess.
-                if (security.user.use_fckeditor)
+                if (User.Identity.GetUseFCKEditor())
                 {
                     body_text = body.Value;
                     body_text += "<br><br>";
@@ -577,7 +577,7 @@ update bugs set
             }
             else
             {
-                if (security.user.use_fckeditor)
+                if (User.Identity.GetUseFCKEditor())
                 {
                     body_text = body.Value;
                     format = MailFormat.Html;
@@ -602,7 +602,7 @@ update bugs set
                 return_receipt.Checked);
 
             btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(bg_id.Value), User.Identity);
-            btnet.WhatsNew.add_news(Convert.ToInt32(bg_id.Value), short_desc.Value, "email sent", security);
+            btnet.WhatsNew.add_news(Convert.ToInt32(bg_id.Value), short_desc.Value, "email sent", User.Identity);
 
             if (result == "")
             {

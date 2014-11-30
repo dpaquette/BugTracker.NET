@@ -252,7 +252,7 @@ namespace btnet
                 Bug.apply_post_insert_rules(new_ids.bugid);
 
                 btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, User.Identity);
-                btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", security);
+                btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", User.Identity);
 
                 Response.AddHeader("BTNET", "OK:" + Convert.ToString(new_ids.bugid));
                 Response.Write("OK:" + Convert.ToString(new_ids.bugid));
@@ -324,7 +324,7 @@ namespace btnet
                 }
 
                 btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
-                btnet.WhatsNew.add_news(bugid, (string)dr2["bg_short_desc"], "updated", security);
+                btnet.WhatsNew.add_news(bugid, (string)dr2["bg_short_desc"], "updated", User.Identity);
 
                 Response.AddHeader("BTNET", "OK:" + Convert.ToString(bugid));
                 Response.Write("OK:" + Convert.ToString(bugid));

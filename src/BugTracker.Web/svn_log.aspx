@@ -40,7 +40,7 @@ order by svnrev_revision desc, svnap_path");
 
 	// check if user has permission for this bug
 	int permission_level = Bug.get_bug_permission_level((int) dr["svnrev_bug"], security);
-	if (permission_level == Security.PERMISSION_NONE) {
+	if (permission_level ==PermissionLevel.None) {
 		Response.Write("You are not allowed to view this item");
 		Response.End();
 	}

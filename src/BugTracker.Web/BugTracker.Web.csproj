@@ -736,6 +736,7 @@
     <Compile Include="btnet\BtnetRoles.cs" />
     <Compile Include="btnet\ClaimsIdentityExtensions.cs" />
     <Compile Include="btnet\BtnetClaimTypes.cs" />
+    <Compile Include="btnet\PermissionLevel.cs" />
     <Compile Include="btnet\SQLString.cs" />
     <Compile Include="categories.aspx.cs">
       <DependentUpon>categories.aspx</DependentUpon>

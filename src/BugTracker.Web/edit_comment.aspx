@@ -13,8 +13,6 @@ int id;
 SQLString sql;
 
 
-Security security;
-
 bool use_fckeditor = false;
 int bugid;
 
@@ -28,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
     btnet.Util.do_not_cache(Response);
     
 
-    if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_and_delete_posts)
+    if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditAndDeletePosts())
     {
         //
     }
@@ -66,7 +64,7 @@ void Page_Load(Object sender, EventArgs e)
 
     bugid = (int) dr["bp_bug"];
 
-    int permission_level = btnet.Bug.get_bug_permission_level(bugid, security);
+    int permission_level = btnet.Bug.get_bug_permission_level(bugid, User.Identity);
     if (permission_level ==PermissionLevel.None
     || permission_level == PermissionLevel.ReadOnly
     || (string) dr["bp_type"] != "comment")
@@ -77,7 +75,7 @@ void Page_Load(Object sender, EventArgs e)
 
     string content_type = (string)dr["bp_content_type"];
 
-    if (security.user.use_fckeditor && content_type == "text/html" && btnet.Util.get_setting("DisableFCKEditor","0") == "0")
+    if (User.Identity.GetUseFCKEditor() && content_type == "text/html" && btnet.Util.get_setting("DisableFCKEditor", "0") == "0")
     {
         use_fckeditor = true;
     }
@@ -86,7 +84,7 @@ void Page_Load(Object sender, EventArgs e)
         use_fckeditor = false;
     }
 
-    if (security.user.external_user || btnet.Util.get_setting("EnableInternalOnlyPosts","0") == "0")
+    if (User.Identity.GetIsExternalUser() || btnet.Util.get_setting("EnableInternalOnlyPosts","0") == "0")
     {
         internal_only.Visible = false;
         internal_only_label.Visible = false;
@@ -170,8 +168,8 @@ void on_update()
         // easier for them to accidently get forwarded to the "wrong" people...
         if (!internal_only.Checked)
         {
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
-            btnet.WhatsNew.add_news(bugid, (string) dr["bg_short_desc"], "updated", security);
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
+            btnet.WhatsNew.add_news(bugid, (string) dr["bg_short_desc"], "updated", User.Identity);
         }
 
 
@@ -189,7 +187,8 @@ void on_update()
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
-<%  if (security.user.use_fckeditor) { %>
+<%  if (User.Identity.GetUseFCKEditor())
+    { %>
 <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 

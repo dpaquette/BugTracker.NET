@@ -45,7 +45,7 @@ void Page_Load(Object sender, EventArgs e)
 	int bugid2 = 0;
 
 	permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+	if (permission_level == PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
 		Response.End();
@@ -62,7 +62,7 @@ void Page_Load(Object sender, EventArgs e)
 			Response.End();		
 		}
 		
-		if (permission_level == Security.PERMISSION_READONLY)
+		if (permission_level == PermissionLevel.ReadOnly)
 		{
 			Response.Write("You are not allowed to edit this item");
 			Response.End();
@@ -137,7 +137,7 @@ void Page_Load(Object sender, EventArgs e)
 							{
 								// check permission of related bug
 								int permission_level2 = Bug.get_bug_permission_level(bugid2, security);
-								if (permission_level2 == Security.PERMISSION_NONE)
+								if (permission_level2 == PermissionLevel.None)
 								{
 									add_err.InnerText = "You are not allowed to view the related item.";
 								}
@@ -198,7 +198,7 @@ select bg_id [id],
 	end as [parent or child],
 	'<a target=_blank href=edit_bug.aspx?id=' + convert(varchar,bg_id) + '>view</a>' [view]");
 
-		if (!security.user.is_guest && permission_level == Security.PERMISSION_ALL)
+		if (!security.user.is_guest && permission_level == PermissionLevel.All)
 		{
 
 			sql.Append( @"
@@ -342,7 +342,7 @@ Relationships for
 <table border=0><tr><td>
 
 <%
-if (permission_level != Security.PERMISSION_READONLY)
+if (permission_level != PermissionLevel.ReadOnly)
 {
 %>
 <p>

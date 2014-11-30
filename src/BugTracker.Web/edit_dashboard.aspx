@@ -3,8 +3,6 @@
 
 <script language="C#" runat="server">
 
-
-Security security;
 DataSet ds = null;
 string ses = "";
 
@@ -17,7 +15,7 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit dashboard";
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports())
 	{
 		//
 	}

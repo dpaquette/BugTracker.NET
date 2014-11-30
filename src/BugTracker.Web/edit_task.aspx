@@ -13,8 +13,6 @@ int bugid;
 SQLString sql;
 
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +26,7 @@ void Page_Load(Object sender, EventArgs e)
 	string string_bugid = btnet.Util.sanitize_integer(Request["bugid"]);
 	bugid = Convert.ToInt32(string_bugid);
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 
 	if (permission_level != PermissionLevel.All)
 	{
@@ -36,7 +34,7 @@ void Page_Load(Object sender, EventArgs e)
 		Response.End();
 	}		
 	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_tasks)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditTasks())
 	{
 		// allowed	
 	}
@@ -266,9 +264,9 @@ order by us_username; ");
 
 	sql.Append("\nselect isnull(@assigned_to,0) ");
 
-    sql = sql.AddParameterWithValue("og_id", Convert.ToString(security.user.org));
-    sql = sql.AddParameterWithValue("og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
-    sql = sql.AddParameterWithValue("bg_id", Convert.ToString(bugid));
+    sql = sql.AddParameterWithValue("og_id", User.Identity.GetOrganizationId());
+    sql = sql.AddParameterWithValue("og_other_orgs_permission_level", User.Identity.GetOtherOrgsPermissionLevels());
+    sql = sql.AddParameterWithValue("bg_id", bugid);
 	
 	if (Util.get_setting("UseFullNames","0") == "0")
 	{
@@ -591,7 +589,7 @@ values(@tsk_bug, @tsk_last_updated_user, getdate(), N'updated task ' + @tsk_id, 
 
 		btnet.DbUtil.execute_nonquery(sql);
         
-        btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
+        btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
         
         
 		Response.Redirect ("tasks.aspx?bugid=" + Convert.ToString(bugid));

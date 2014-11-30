@@ -38,7 +38,7 @@ and bp_bug = @bug_id");
 	}
 	
 	int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(bug_id), security);
-	if (permission_level == Security.PERMISSION_NONE)
+	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
 		Response.End();

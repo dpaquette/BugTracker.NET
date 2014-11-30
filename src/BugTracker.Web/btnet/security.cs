@@ -23,6 +23,7 @@ namespace btnet
         {
             SQLString sql = new SQLString(@"
 select u.us_id, u.us_username, u.us_org, u.us_bugs_per_page, u.us_enable_bug_list_popups,
+       u.us_use_fckeditor,
        org.*,
        isnull(u.us_forced_project, 0 ) us_forced_project,
        proj.pu_permission_level,
@@ -50,10 +51,21 @@ where us_username = @us and u.us_active = 1");
                 new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString((int) dr["og_can_only_see_own_reported"] == 1)),
                 new Claim(BtnetClaimTypes.CanUseReports, Convert.ToString((int) dr["og_can_use_reports"] == 1)),
                 new Claim(BtnetClaimTypes.CanEditReports, Convert.ToString((int) dr["og_can_edit_reports"] == 1)),
+                new Claim(BtnetClaimTypes.CanEditAndDeleteBugs, Convert.ToString((int) dr["og_can_edit_and_delete_posts"] == 1)), 
+                new Claim(BtnetClaimTypes.CanDeleteBugs, Convert.ToString((int) dr["og_can_delete_bug"] == 1)), 
+                new Claim(BtnetClaimTypes.CanMergeBugs, Convert.ToString((int) dr["og_can_merge_bugs"] == 1)), 
+                new Claim(BtnetClaimTypes.CanEditAndDeletePosts, Convert.ToString((int) dr["og_can_edit_and_delete_posts"] == 1)), 
+                
+                new Claim(BtnetClaimTypes.CanEditTasks, Convert.ToString((int) dr["og_can_edit_tasks"] == 1)), 
+                new Claim(BtnetClaimTypes.CanViewTasks, Convert.ToString((int) dr["og_can_view_tasks"] == 1)), 
+                
+
                 new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"])),
                 new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString((int) dr["us_enable_bug_list_popups"] == 1)),
                 new Claim(BtnetClaimTypes.CanSearch, Convert.ToString((int) dr["og_can_search"] == 1)),
-                new Claim(BtnetClaimTypes.IsExternalUser, Convert.ToString((int) dr["og_external_user"] == 1))
+                new Claim(BtnetClaimTypes.IsExternalUser, Convert.ToString((int) dr["og_external_user"] == 1)),
+                new Claim(BtnetClaimTypes.UseFCKEditor, Convert.ToString((int) dr["us_use_fckeditor"] == 1))
+                
             };
 
             bool canAdd = true;

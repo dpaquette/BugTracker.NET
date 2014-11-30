@@ -24,7 +24,7 @@ void Page_Load(Object sender, EventArgs e)
 	bugid = Convert.ToInt32(Util.sanitize_integer(Request["id"]));
 
 	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
 		Response.End();
@@ -40,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (action != "")
 	{
-		if (permission_level == Security.PERMISSION_READONLY)
+		if (permission_level == PermissionLevel.ReadOnly)
 		{
 			Response.Write("You are not allowed to edit this item");
 			Response.End();

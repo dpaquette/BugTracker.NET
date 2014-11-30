@@ -12,8 +12,6 @@ int id;
 SQLString sql;
 
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -42,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 	if (!IsPostBack)
 	{
 
-		if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+		if (User.IsInRole(BtnetRoles.Admin))
 		{
 			// these guys can do everything
 			vis_everybody.Checked = true;
@@ -115,7 +113,7 @@ select us_id, us_username from users order by us_username");
 
 			if ((int) dr["qu_user"] != User.Identity.GetUserId())
 			{
-				if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+				if (User.IsInRole(BtnetRoles.Admin))
 				{
 					// these guys can do everything
 				}
@@ -194,7 +192,7 @@ Boolean validate()
 	}
 
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+	if (User.IsInRole(BtnetRoles.Admin))
 	{
 		if (vis_org.Checked)
 		{
@@ -296,7 +294,7 @@ void on_update()
 			sql = sql.AddParameterWithValue("sq", sql_text.Value);
 //		}
 
-		if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+		if (User.IsInRole(BtnetRoles.Admin))
 		{
 			if (vis_everybody.Checked)
 			{

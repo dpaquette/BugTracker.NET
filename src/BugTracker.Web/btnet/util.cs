@@ -1394,7 +1394,7 @@ order by tsk_sort_sequence, tsk_id");
 
         
         ///////////////////////////////////////////////////////////////////////
-        public static void display_bug_not_found(HttpResponse Response, Security security, int id)
+        public static void display_bug_not_found(HttpResponse Response, int id)
         {
             Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
             Response.Write("<p>&nbsp;</p><div class=align>");

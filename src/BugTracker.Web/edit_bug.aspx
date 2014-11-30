@@ -87,7 +87,7 @@ Distributed under the terms of the GNU General Public License
                 prepare_for_update();
             }
 
-            if (security.user.external_user || btnet.Util.get_setting("EnableInternalOnlyPosts", "0") == "0")
+            if (User.Identity.GetIsExternalUser()|| btnet.Util.get_setting("EnableInternalOnlyPosts", "0") == "0")
             {
                 internal_only.Visible = false;
                 internal_only_label.Visible = false;
@@ -180,7 +180,7 @@ Distributed under the terms of the GNU General Public License
 
         if (!User.Identity.GetCanAddBugs())
         {
-            btnet.Util.display_bug_not_found(Response, security, id); // TODO wrong message
+            btnet.Util.display_bug_not_found(Response, id); // TODO wrong message
             return;
         }
 
@@ -200,14 +200,14 @@ Distributed under the terms of the GNU General Public License
         set_controls_field_permission(PermissionLevel.All);
 
         // Execute code not written by me
-        Workflow.custom_adjust_controls(null, security.user, this);
+        Workflow.custom_adjust_controls(null, User.Identity, this);
 
     }
 
     ///////////////////////////////////////////////////////////////////////
     void load_dropdowns_for_insert()
     {
-        load_dropdowns(security.user);
+        load_dropdowns();
 
         // Get the defaults
         sql = new SQLString("\nselect top 1 pj_id from projects where pj_default = 1 order by pj_name;"); // 0
@@ -230,7 +230,7 @@ Distributed under the terms of the GNU General Public License
 
         if (dr_bug == null)
         {
-            btnet.Util.display_bug_not_found(Response, security, id);
+            btnet.Util.display_bug_not_found(Response, id);
             return;
         }
 
@@ -350,7 +350,7 @@ Distributed under the terms of the GNU General Public License
         }
 
 
-        if (!security.user.is_guest)
+        if (!User.IsInRole(BtnetRoles.Guest))
         {
             if (permission_level != PermissionLevel.ReadOnly)
             {
@@ -484,10 +484,10 @@ Distributed under the terms of the GNU General Public License
 
 
         // merge
-        if (!security.user.is_guest)
+        if (!User.IsInRole(BtnetRoles.Guest))
         {
-            if (security.user.is_admin
-            || security.user.can_merge_bugs)
+            if (User.IsInRole(BtnetRoles.Admin)
+            || User.Identity.GetCanMergeBugs())
             {
                 string merge_bug_link = "<a href=merge_bug.aspx?id="
                     + Convert.ToString(id)
@@ -506,10 +506,10 @@ Distributed under the terms of the GNU General Public License
         }
 
         // delete 
-        if (!security.user.is_guest)
+        if (!User.IsInRole(BtnetRoles.Guest))
         {
-            if (security.user.is_admin
-            || security.user.can_delete_bug)
+            if (User.IsInRole(BtnetRoles.Admin)
+            || User.Identity.GetCanDeleteBugs())
             {
                 string delete_bug_link = "<a href=delete_bug.aspx?id="
                     + Convert.ToString(id)
@@ -551,7 +551,7 @@ Distributed under the terms of the GNU General Public License
     void load_dropdowns_for_update()
     {
 
-        load_dropdowns(security.user);
+        load_dropdowns();
 
         // select the dropdowns
 
@@ -674,7 +674,7 @@ Distributed under the terms of the GNU General Public License
 
     void get_comment_text_from_control()
     {
-        if (security.user.use_fckeditor)
+        if (User.Identity.GetUseFCKEditor())
         {
             comment_formated = btnet.Util.strip_dangerous_tags(comment.Value);
             comment_search = btnet.Util.strip_html(comment.Value);
@@ -733,7 +733,7 @@ Distributed under the terms of the GNU General Public License
 
         id = new_ids.bugid;
 
-        btnet.WhatsNew.add_news(id, short_desc.Value, "added", security);
+        btnet.WhatsNew.add_news(id, short_desc.Value, "added", User.Identity);
 
         new_id.Value = Convert.ToString(id);
         set_msg(btnet.Util.capitalize_first_letter(btnet.Util.get_setting("SingularBugLabel", "bug")) + " was created.");
@@ -825,7 +825,7 @@ Distributed under the terms of the GNU General Public License
 
         DateTime last_update_date = (DateTime)btnet.DbUtil.execute_scalar(sql);
 
-        btnet.WhatsNew.add_news(id, short_desc.Value, "updated", security);
+        btnet.WhatsNew.add_news(id, short_desc.Value, "updated", User.Identity);
 
         string date_from_db = last_update_date.ToString("yyyyMMdd HH\\:mm\\:ss\\:fff");
         string date_from_webpage = snapshot_timestamp.Value;
@@ -861,7 +861,7 @@ Distributed under the terms of the GNU General Public License
 
         if (bug_fields_have_changed || (bugpost_fields_have_changed && !internal_only.Checked))
         {
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, id, security, 0,
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, id, User.Identity, 0,
                 status_changed,
                 assigned_to_changed,
                 Convert.ToInt32(assigned_to.SelectedItem.Value));
@@ -880,7 +880,7 @@ Distributed under the terms of the GNU General Public License
             DataRow updated_bug = btnet.Bug.get_bug_datarow(id, User.Identity);
 
             // Allow for customization not written by me
-            Workflow.custom_adjust_controls(updated_bug, security.user, this);
+            Workflow.custom_adjust_controls(updated_bug, User.Identity, this);
         }
 
         load_user_dropdown();
@@ -895,7 +895,7 @@ Distributed under the terms of the GNU General Public License
         // org
         string default_value;
 
-        default_value = Convert.ToString((int)security.user.org);
+        default_value = Convert.ToString(User.Identity.GetOrganizationId());
         foreach (ListItem li in org.Items)
         {
             if (li.Value == default_value)
@@ -1170,8 +1170,8 @@ order by us_username; ");
     }
 
 
-    sql = sql.AddParameterWithValue("@og_id", Convert.ToString(security.user.org));
-    sql = sql.AddParameterWithValue("@og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
+    sql = sql.AddParameterWithValue("@og_id", User.Identity.GetOrganizationId());
+    sql = sql.AddParameterWithValue("@og_other_orgs_permission_level", User.Identity.GetOtherOrgsPermissionLevels());
 
     if (security.user.can_assign_to_internal_users)
     {
@@ -1316,7 +1316,7 @@ order by us_username; ");
                 subscribed = (int)btnet.DbUtil.execute_scalar(sql);
             }
 
-            if (security.user.is_guest) // wouldn't make sense to share an email address
+            if (User.IsInRole(BtnetRoles.Guest)) // wouldn't make sense to share an email address
             {
                 subscriptions.InnerHtml = "";
             }
@@ -1718,7 +1718,7 @@ order by us_username; ");
 
 
     ///////////////////////////////////////////////////////////////////////
-    void load_dropdowns(User user)
+    void load_dropdowns()
     {
 
         // only show projects where user has permissions
@@ -2089,7 +2089,7 @@ order by us_username; ");
         // custom validations go here
         if (!Workflow.custom_validations(
             dr_bug,
-            security.user,
+            User.Identity,
             this,
             custom_validation_err_msg))
         {
@@ -2311,7 +2311,7 @@ where us_id = @us_id");
     void display_bug_relationships()
     {
 
-        ds_posts = PrintBug.get_bug_posts(id, security.user.external_user, history_inline);
+        ds_posts = PrintBug.get_bug_posts(id, User.Identity.GetIsExternalUser(), history_inline);
         string link_marker = Util.get_setting("BugLinkMarker", "bugid#");
         Regex reLinkMarker = new Regex(link_marker + "([0-9]+)");
         SortedDictionary<int, int> dict_linked_bugs = new SortedDictionary<int, int>();
@@ -2364,7 +2364,7 @@ where us_id = @us_id");
     <script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" language="JavaScript" src="edit_bug.js"></script>
-    <%  if (security.user.use_fckeditor)
+    <%  if (User.Identity.GetUseFCKEditor())
         { %>
     <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
     <% } %>
@@ -2382,7 +2382,7 @@ where us_id = @us_id");
 
     <% 
     
-        if (security.user.use_fckeditor)
+        if (User.Identity.GetUseFCKEditor())
         {
             Response.Write("CKEDITOR.replace( 'comment' )");
         }

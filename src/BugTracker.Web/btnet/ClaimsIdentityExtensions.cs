@@ -35,6 +35,21 @@ namespace btnet
             return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.EnablePopUps));
         }
 
+        public static bool GetUseFCKEditor(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.UseFCKEditor));
+        }
+
+        public static bool GetCanEditTasks(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanEditTasks));
+        }
+
+        public static bool GetCanViewTasks(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanViewTasks));
+        }
+
         public static bool GetCanAddBugs(this IIdentity identity)
         {
             return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanAddBugs));
@@ -50,13 +65,34 @@ namespace btnet
             return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanEditReports));
         }
 
+        public static bool GetCanMergeBugs(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanMergeBugs));
+        }
+
         public static int GetOtherOrgsPermissionLevels(this IIdentity identity)
         {
             return Convert.ToInt32(GetClaimsValue(identity, BtnetClaimTypes.OtherOrgsPermissionLevel));
         }
+        
         public static bool GetCanSearch(this IIdentity identity)
         {
             return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanSearch));
+        }
+
+        public static bool GetCanEditAndDeleteBugs(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanEditAndDeleteBugs));
+        }
+
+        public static bool GetCanEditAndDeletePosts(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanEditAndDeletePosts));
+        }
+
+        public static bool GetCanDeleteBugs(this IIdentity identity)
+        {
+            return Convert.ToBoolean(GetClaimsValue(identity, BtnetClaimTypes.CanDeleteBugs));
         }
 
         public static bool GetIsExternalUser(this IIdentity identity)

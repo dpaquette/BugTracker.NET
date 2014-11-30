@@ -146,8 +146,8 @@ int create_new_bug(Security security)
     // your customizations
     Bug.apply_post_insert_rules(new_ids.bugid);
 
-    btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, security);
-    btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", security);        
+    btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, User.Identity);
+    btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", User.Identity);        
     
     return new_ids.bugid;    
 }

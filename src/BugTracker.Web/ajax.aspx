@@ -15,8 +15,8 @@ void Page_Load(Object sender, EventArgs e)
 	string bugid = Util.sanitize_integer(Request["bugid"]);
 
 	// check permission
-	int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(bugid), security);
-	if (permission_level != Security.PERMISSION_NONE)
+	int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(bugid), User.Identity);
+	if (permission_level !=PermissionLevel.None)
 	{
 
 		Response.Write(@"
@@ -34,7 +34,7 @@ font-size: 7pt;
 </style>");
 
         int int_bugid = Convert.ToInt32(bugid);
-        DataSet ds_posts = PrintBug.get_bug_posts(int_bugid, security.user.external_user, false);
+        DataSet ds_posts = PrintBug.get_bug_posts(int_bugid, User.Identity.GetIsExternalUser(), false);
 		int post_cnt = PrintBug.write_posts(
             ds_posts,
 			Response,

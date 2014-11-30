@@ -20,8 +20,8 @@ void Page_Load(Object sender, EventArgs e)
 	
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 			+ "all tasks";
-	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_view_tasks)
+
+    if (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanViewTasks())
 	{
 		// allowed
 	}

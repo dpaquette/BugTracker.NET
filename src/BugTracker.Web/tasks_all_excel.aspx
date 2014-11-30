@@ -13,8 +13,8 @@ void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
-	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_view_tasks)
+
+    if (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanViewTasks())
 	{
 		// allowed
 	}

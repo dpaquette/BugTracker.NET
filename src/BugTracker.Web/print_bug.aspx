@@ -28,7 +28,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (dr == null)
 	{
-        btnet.Util.display_bug_not_found(Response, security, bugid);
+        btnet.Util.display_bug_not_found(Response, bugid);
         return;
 	}
 
