@@ -10,6 +10,11 @@ namespace btnet
     {
         private SQLString sql;
 
+        public override bool AllowAnonymous
+        {
+            get { return true; }
+        }
+
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {

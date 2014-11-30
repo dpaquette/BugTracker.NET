@@ -277,6 +277,8 @@ where us_username = @us and u.us_active = 1");
                     claims.Add(new Claim(ClaimTypes.Role, BtnetRoles.ProjectAdmin));
                 }
             }
+            claims.Add(new Claim(ClaimTypes.Role, BtnetRoles.User));
+            
 
             var identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, ClaimTypes.Role);
             var owinContext = request.GetOwinContext();

@@ -61,11 +61,6 @@ namespace btnet
         {
             Util.do_not_cache(Response);
 
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("default.aspx");
-            }
-
             titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + Util.get_setting("PluralBugLabel", "bugs");
 
