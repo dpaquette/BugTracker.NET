@@ -6,9 +6,6 @@ Distributed under the terms of the GNU General Public License
 using System;
 using System.Web;
 using System.Data;
-using System.Collections.Specialized;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Security.Claims;
 
@@ -25,14 +22,7 @@ namespace btnet
         public string auth_method = "";
         public HttpContext context = null;
 
-        static string goto_form = @"
-<td nowrap valign=middle>
-    <form style='margin: 0px; padding: 0px;' action=edit_bug.aspx method=get>
-        <input class=menubtn type=submit value='go to ID'>
-        <input class=menuinput size=4 type=text class=txt name=id accesskey=g>
-    </form>
-</td>";
-
+   
         public static void SignIn(HttpRequest request, string username)
         {
             SQLString sql = new SQLString(@"
@@ -123,39 +113,5 @@ where us_username = @us and u.us_active = 1");
             var owinContext = request.GetOwinContext();
 	        owinContext.Authentication.SignOut();
 	    }
-
-		///////////////////////////////////////////////////////////////////////
-		public static void create_session(HttpRequest Request, HttpResponse Response, int userid, string username, string NTLM)
-		{
-
-			// Generate a random session id
-			// Don't use a regularly incrementing identity
-			// column because that can be guessed.
-			string guid = Guid.NewGuid().ToString();
-
-			btnet.Util.write_to_log("guid=" + guid);
-			
-			var sql = new SQLString(@"insert into sessions (se_id, se_user) values(@gu, @us)");
-			sql = sql.AddParameterWithValue("gu", guid);
-			sql = sql.AddParameterWithValue("us", Convert.ToString(userid));
-
-			btnet.DbUtil.execute_nonquery(sql);			
-
-			HttpContext.Current.Session[guid] = userid;
-			
-			string sAppPath = Request.Url.AbsolutePath;
-			sAppPath = sAppPath.Substring(0, sAppPath.LastIndexOf('/'));
-			Util.write_to_log("AppPath:" + sAppPath);
-
-			Response.Cookies["se_id"].Value = guid;
-			Response.Cookies["se_id"].Path = sAppPath;
-			Response.Cookies["user"]["name"] = username;
-			Response.Cookies["user"]["NTLM"] = NTLM;
-			Response.Cookies["user"].Path = sAppPath;
-			DateTime dt = DateTime.Now;
-			TimeSpan ts = new TimeSpan(365, 0, 0, 0);
-			Response.Cookies["user"].Expires = dt.Add(ts);
-		}
-
-	} // end Security
+	} 
 }

@@ -52,12 +52,7 @@ Distributed under the terms of the GNU General Public License
             {
                 int us_id = (int)dr["us_id"];
 
-                btnet.Security.create_session(
-                    Request,
-                    Response,
-                    us_id,
-                    user.Value,
-                    "0");
+                btnet.Security.SignIn(Request, user.Value);
 
                 btnet.Util.redirect(Request, Response);
             }
