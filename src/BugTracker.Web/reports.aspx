@@ -17,8 +17,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 	if (security.user.is_admin || security.user.can_use_reports || security.user.can_edit_reports)
 	{

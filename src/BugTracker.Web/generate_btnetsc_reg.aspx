@@ -13,10 +13,6 @@ Security security;
 void Page_Load(Object sender, EventArgs e)
 {
 
-
-security = new Security();
-security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 Response.ContentType = "text/reg";
 Response.AddHeader ("content-disposition","attachment; filename=\"btnetsc.reg\"");
 Response.Write ("Windows Registry Editor Version 5.00");

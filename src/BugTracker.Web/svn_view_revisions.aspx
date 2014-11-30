@@ -16,9 +16,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
     bugid = Convert.ToInt32(Util.sanitize_integer(Request["id"]));
 
     int permission_level = Bug.get_bug_permission_level(bugid, security);

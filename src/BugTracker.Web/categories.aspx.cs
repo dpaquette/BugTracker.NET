@@ -8,5 +8,10 @@ namespace btnet
 {
     public partial class categories : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin, BtnetRoles.ProjectAdmin }; }
+        }
+
     }
 }

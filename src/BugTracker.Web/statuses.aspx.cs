@@ -8,5 +8,9 @@ namespace btnet
 {
     public partial class statuses : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin }; }
+        }
     }
 }

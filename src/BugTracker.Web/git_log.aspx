@@ -19,10 +19,6 @@ void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
-
 	// get info about commit
 
 	var sql = new SQLString(@"

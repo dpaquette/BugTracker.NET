@@ -8,5 +8,9 @@ namespace btnet
 {
     public partial class edit_org : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin }; }
+        }
     }
 }

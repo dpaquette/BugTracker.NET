@@ -17,8 +17,6 @@ void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 	var sql = new SQLString(@"
 select gitcom_commit, gitcom_bug, gitcom_repository, gitap_path 

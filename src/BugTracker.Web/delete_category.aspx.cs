@@ -8,5 +8,10 @@ namespace btnet
 {
     public partial class delete_category : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin}; }
+        }
+
     }
 }

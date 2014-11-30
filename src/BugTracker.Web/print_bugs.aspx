@@ -25,10 +25,6 @@ void Page_Load(Object sender, EventArgs e)
 	}
 
 
-	security = new Security();
-
-	security.check_security(HttpContext.Current, Security.ANY_USER_OK);
-
 
 	// fetch the sql
 	string qu_id_string = Util.sanitize_integer(Request["qu_id"]);

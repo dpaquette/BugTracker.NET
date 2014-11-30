@@ -8,5 +8,9 @@ namespace btnet
 {
     public partial class udfs : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin }; }
+        }
     }
 }

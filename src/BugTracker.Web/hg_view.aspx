@@ -17,9 +17,6 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	Response.ContentType = "text/plain";
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	var sql = new SQLString(@"
 select hgrev_revision, hgrev_bug, hgrev_repository, hgap_path 
 from hg_revisions

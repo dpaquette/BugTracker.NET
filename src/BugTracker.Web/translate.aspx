@@ -20,9 +20,6 @@ Distributed under the terms of the GNU General Public License
     {
     	Util.do_not_cache(Response);
 		
-		security = new Security();
-		security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 			+ "translate";
 

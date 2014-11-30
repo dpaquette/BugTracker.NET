@@ -8,5 +8,9 @@ namespace btnet
 {
     public partial class delete_task : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin }; }
+        }
     }
 }

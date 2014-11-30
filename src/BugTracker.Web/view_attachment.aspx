@@ -18,9 +18,6 @@ void Page_Load(Object sender, EventArgs e)
         Response.End();
     }
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	string bp_id = btnet.Util.sanitize_integer(Request["id"]);
 	string bug_id = btnet.Util.sanitize_integer(Request["bug_id"]);
 

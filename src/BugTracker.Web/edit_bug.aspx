@@ -37,9 +37,6 @@ Distributed under the terms of the GNU General Public License
 
         btnet.Util.do_not_cache(Response);
 
-        security = new Security();
-        security.check_security(HttpContext.Current, Security.ANY_USER_OK);
-
         set_msg("");
         set_custom_field_msg("");
 

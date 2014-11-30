@@ -12,9 +12,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	string bugid = Util.sanitize_integer(Request["bugid"]);
 
 	// check permission

@@ -21,9 +21,6 @@ namespace btnet
         {
 
 
-            security = new Security();
-            security.check_security(HttpContext.Current, Security.ANY_USER_OK);
-
             try
             {
                 if (string.IsNullOrEmpty(Request["query"]))

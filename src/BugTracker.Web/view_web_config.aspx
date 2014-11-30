@@ -15,8 +15,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
 
 	// create path
 	string path = Request.MapPath(Request.Path);

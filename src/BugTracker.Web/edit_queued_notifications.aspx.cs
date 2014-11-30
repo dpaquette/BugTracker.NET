@@ -8,5 +8,9 @@ namespace btnet
 {
     public partial class edit_queued_notifications : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin }; }
+        }
     }
 }

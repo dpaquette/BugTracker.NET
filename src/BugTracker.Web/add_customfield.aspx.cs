@@ -8,5 +8,10 @@ namespace btnet
 {
     public partial class add_customfield : BasePage
     {
+        public override string[] AuthorizedRoles
+        {
+            get { return new[] { BtnetRoles.Admin }; }
+        }
+
     }
 }

@@ -17,8 +17,6 @@ Distributed under the terms of the GNU General Public License
 
         Util.do_not_cache(Response);
 
-        security = new Security();
-        security.check_security(HttpContext.Current, Security.ANY_USER_OK);
         if (btnet.Util.get_setting("EnableMobile", "0") == "0")
         {
             Response.Write("BugTracker.NET EnableMobile is not set to 1 in Web.config");

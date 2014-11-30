@@ -12,9 +12,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	// will this be too slow?
 
 	// we could index on bg_short_desc and then do '$str%' rather than '%$str%'

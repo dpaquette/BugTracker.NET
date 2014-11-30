@@ -24,8 +24,7 @@ void Page_Load(Object sender, EventArgs e)
 	try
 	{
 		btnet.DbUtil.execute_nonquery(new SQLString("select count(1) from users"));
-		security = new Security();
-		security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
+
 	}
 	catch (Exception)
 	{

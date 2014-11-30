@@ -12,9 +12,6 @@ Security security;
 void Page_Load(Object sender, EventArgs e)
 {
 
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 
     string which = Request["which"];        
     string filename = Request["filename"];
