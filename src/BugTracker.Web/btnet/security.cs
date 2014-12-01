@@ -13,12 +13,7 @@ namespace btnet
 {
 
 	public class Security {
-
-        public User user = new User();
-        public string auth_method = "";
-        public HttpContext context = null;
-
-   
+  
         public static void SignIn(HttpRequest request, string username)
         {
             var identity = GetIdentity(username);
