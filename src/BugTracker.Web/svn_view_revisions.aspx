@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
 int bugid;
 
 void Page_Load(Object sender, EventArgs e)
@@ -18,7 +17,7 @@ void Page_Load(Object sender, EventArgs e)
 	
     bugid = Convert.ToInt32(Util.sanitize_integer(Request["id"]));
 
-    int permission_level = Bug.get_bug_permission_level(bugid, security);
+    int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
     if (permission_level ==PermissionLevel.None)
     {
         Response.Write("You are not allowed to view this item");

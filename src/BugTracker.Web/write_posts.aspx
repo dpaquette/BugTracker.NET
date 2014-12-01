@@ -4,7 +4,6 @@
 <script language="C#" runat="server">
 
 
-Security security;
 
 void Page_Load(Object sender, EventArgs e)
 {
@@ -14,14 +13,14 @@ void Page_Load(Object sender, EventArgs e)
 	bool images_inline = (Request["images_inline"] == "1");
 	bool history_inline = (Request["history_inline"] == "1");
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
 		Response.End();
 	}
     
-    DataSet ds_posts = PrintBug.get_bug_posts(bugid, security.user.external_user, history_inline);
+    DataSet ds_posts = PrintBug.get_bug_posts(bugid, User.Identity.GetIsExternalUser(), history_inline);
     
 	PrintBug.write_posts(
         ds_posts,
@@ -31,8 +30,7 @@ void Page_Load(Object sender, EventArgs e)
 		true, // write links
 		images_inline,
 		history_inline,
-        true, // internal_posts
-		security.user);
+        true, User.Identity);
 
 }
 

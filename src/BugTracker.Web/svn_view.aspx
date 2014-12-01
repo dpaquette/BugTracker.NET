@@ -6,9 +6,6 @@
 // *****>>>>>> Intentionally not putting copyright in HTML comment, because of text/plain content type.
 //Copyright 2002-2011 Corey Trager
 //Distributed under the terms of the GNU General Public License
-
-
-Security security;
 string repo;
 
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +31,7 @@ order by svnrev_revision desc, svnap_path");
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 	// check if user has permission for this bug
-	int permission_level = Bug.get_bug_permission_level((int) dr["svnrev_bug"], security);
+    int permission_level = Bug.get_bug_permission_level((int)dr["svnrev_bug"], User.Identity);
 	if (permission_level ==PermissionLevel.None) {
 		Response.Write("You are not allowed to view this item");
 		Response.End();

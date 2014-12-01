@@ -429,7 +429,7 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public static void display_buglist_tags_line(HttpResponse Response, IIdentity identity)
         {
-            if (identity.GetTagsPermissionLevel() == PermissionLevel.None)
+            if (identity.GetTagsFieldPermissionLevel() == PermissionLevel.None)
             {
                 return;
             }

@@ -21,8 +21,8 @@ string url = "http://" + Request.ServerVariables["SERVER_NAME"] + Request.Server
 url = url.Replace("generate_btnetsc_reg","insert_bug");
 write_variable_value("Url", url);
 write_variable_value("Project", "0");
-write_variable_value("Email", security.user.email);
-write_variable_value("Username", security.user.username);
+write_variable_value("Email", User.Identity.GetEmail());
+write_variable_value("Username", User.Identity.Name);
 
 
 NameValueCollection NVCSrvElements = Request.ServerVariables;

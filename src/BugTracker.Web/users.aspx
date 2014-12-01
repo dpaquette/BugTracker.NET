@@ -11,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
-
 void Page_Load(Object sender, EventArgs e)
 {
 
@@ -24,7 +22,7 @@ void Page_Load(Object sender, EventArgs e)
 
     string sql;
     
-    if (security.user.is_admin)
+    if (User.IsInRole(BtnetRoles.Admin))
     {
         sql = @"
             select distinct pu_user

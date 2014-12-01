@@ -11,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 
     SQLString sql;
 
-
-    Security security;
     DataSet ds = null;
     DataView dv = null;
     bool images_inline;
@@ -116,9 +114,9 @@ Distributed under the terms of the GNU General Public License
 
             DataRow dr = btnet.Bug.get_bug_datarow(
                 (int)drv[1],
-                security);
+                User.Identity);
 
-            PrintBug.print_bug(Response, dr, security,
+            PrintBug.print_bug(Response, dr, User.Identity,
                 false /* include style */,
                 images_inline,
                 history_inline,
@@ -142,9 +140,9 @@ Distributed under the terms of the GNU General Public License
 
                 DataRow dr = btnet.Bug.get_bug_datarow(
                     (int)dr2[1],
-                    security);
+                    User.Identity);
 
-                PrintBug.print_bug(Response, dr, security,
+                PrintBug.print_bug(Response, dr, User.Identity,
                     false, // include style
                     images_inline,
                     history_inline,

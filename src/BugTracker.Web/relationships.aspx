@@ -11,7 +11,6 @@ int bugid;
 int previd;
 DataSet ds;
 
-Security security;
 int permission_level;
 string ses;
 
@@ -44,7 +43,7 @@ void Page_Load(Object sender, EventArgs e)
 	
 	int bugid2 = 0;
 
-	permission_level = Bug.get_bug_permission_level(bugid, security);
+	permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level == PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
@@ -70,7 +69,7 @@ void Page_Load(Object sender, EventArgs e)
 
 		if (action == "remove") // remove
 		{
-			if (security.user.is_guest)
+			if (User.IsInRole(BtnetRoles.Guest))
 			{
 				Response.Write("You are not allowed to delete a relationship");
 				Response.End();
@@ -86,7 +85,7 @@ void Page_Load(Object sender, EventArgs e)
 						values(@bg, @us, getdate(), N'deleted relationship to @bg2', 'update')");
 			sql = sql.AddParameterWithValue("bg2",Convert.ToString(bugid2));
 			sql = sql.AddParameterWithValue("bg",Convert.ToString(bugid));
-			sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("us",User.Identity.GetUserId());
 			btnet.DbUtil.execute_nonquery(sql);
 		}
 		else
@@ -136,7 +135,7 @@ void Page_Load(Object sender, EventArgs e)
 							else
 							{
 								// check permission of related bug
-								int permission_level2 = Bug.get_bug_permission_level(bugid2, security);
+								int permission_level2 = Bug.get_bug_permission_level(bugid2, User.Identity);
 								if (permission_level2 == PermissionLevel.None)
 								{
 									add_err.InnerText = "You are not allowed to view the related item.";
@@ -154,7 +153,7 @@ insert into bug_posts
 
 									sql = sql.AddParameterWithValue("bg2",Convert.ToString(bugid2));
 									sql = sql.AddParameterWithValue("bg",Convert.ToString(bugid));
-									sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+									sql = sql.AddParameterWithValue("us",User.Identity.GetUserId());
 									sql = sql.AddParameterWithValue("ty",Request["type"].Replace("'","''"));
 
 
@@ -198,7 +197,7 @@ select bg_id [id],
 	end as [parent or child],
 	'<a target=_blank href=edit_bug.aspx?id=' + convert(varchar,bg_id) + '>view</a>' [view]");
 
-		if (!security.user.is_guest && permission_level == PermissionLevel.All)
+		if (!User.IsInRole(BtnetRoles.Guest) && permission_level == PermissionLevel.All)
 		{
 
 			sql.Append( @"

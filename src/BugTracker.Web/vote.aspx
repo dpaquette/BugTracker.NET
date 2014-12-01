@@ -7,14 +7,12 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
 	
-	if (!security.user.is_guest)
+	if (!User.IsInRole(BtnetRoles.Guest))
 	{
 		if (Request.QueryString["ses"] != (string) Session["session_cookie"])
 		{
@@ -31,7 +29,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	int bugid = Convert.ToInt32(Util.sanitize_integer(Request["bugid"]));
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+    int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level ==PermissionLevel.None)
 	{
 		Response.End();

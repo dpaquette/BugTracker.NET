@@ -11,8 +11,6 @@ namespace btnet
     public partial class send_email : BasePage
     {
         protected SQLString sql;
-        protected Security security;
-        
         protected int project = -1;
         protected bool enable_internal_posts = false;
 
@@ -101,7 +99,7 @@ namespace btnet
 
                     if ((int)dr["bp_hidden_from_external_users"] == 1)
                     {
-                        if (security.user.external_user)
+                        if (User.Identity.GetIsExternalUser())
                         {
                             Response.Write("You are not allowed to view this post");
                             Response.End();
@@ -485,8 +483,7 @@ namespace btnet
             System.IO.StringWriter writer = new System.IO.StringWriter();
             HttpResponse my_response = new HttpResponse(writer);
             PrintBug.print_bug(my_response,
-                bug_dr,
-                security,
+                bug_dr, User.Identity,
                 true,  // include style
                 false, // images_inline
                 true,  // history_inline

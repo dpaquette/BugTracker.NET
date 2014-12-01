@@ -15,7 +15,7 @@ void Page_Load(Object sender, EventArgs e)
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "dashboard";
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports())
 	{
 		//
 	}
@@ -96,7 +96,7 @@ iframe {
 <body>
 <uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 
-<% if (security.user.is_guest) /* no dashboard */{ %>
+<% if (User.IsInRole(BtnetRoles.Guest)) /* no dashboard */{ %>
 <span class="disabled_link">edit dashboard not available to "guest" user</span>
 <% } else { %>
 <a href=edit_dashboard.aspx>edit dashboard</a>

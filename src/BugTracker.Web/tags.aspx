@@ -3,8 +3,6 @@
 
 <script language="C#" runat="server">
 
-Security security;
-
 class TagLabel : IComparable<TagLabel>
 {
 	public int count;
@@ -30,7 +28,7 @@ void Page_Load(Object sender, EventArgs e)
 void print_tags()
 {
 
-    if (security.user.category_field_permission_level ==PermissionLevel.None)
+    if (User.Identity.GetCategoryFieldPermissionLevel()==PermissionLevel.None)
     {
 		return;
 	}

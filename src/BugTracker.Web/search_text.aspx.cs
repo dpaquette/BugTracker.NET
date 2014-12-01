@@ -14,8 +14,6 @@ namespace btnet
 
 #pragma warning disable 618
 
-        Security security;
-
         ///////////////////////////////////////////////////////////////////////
         void Page_Load(Object sender, EventArgs e)
         {

@@ -5,7 +5,6 @@
 
 DataSet ds_tasks;
 
-Security security;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
@@ -24,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 		Response.End();
 	}
 	
-	ds_tasks = btnet.Util.get_all_tasks(User.Identity, security,0);
+	ds_tasks = btnet.Util.get_all_tasks(User.Identity,0);
 	DataView dv = new DataView(ds_tasks.Tables[0]);
 	
 	btnet.Util.print_as_excel(Response, dv);

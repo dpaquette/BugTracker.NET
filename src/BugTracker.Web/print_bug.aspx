@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-Security security;
 DataRow dr;
 bool images_inline;
 bool history_inline;
@@ -24,7 +23,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	int bugid = Convert.ToInt32(string_bugid);
 
-	dr = btnet.Bug.get_bug_datarow(bugid, security);
+	dr = btnet.Bug.get_bug_datarow(bugid, User.Identity);
 
 	if (dr == null)
 	{
@@ -40,7 +39,7 @@ void Page_Load(Object sender, EventArgs e)
 	// don't allow user to view a bug he is not allowed to view
 	if ((int)dr["pu_permission_level"] == 0)
 	{
-        btnet.Util.display_you_dont_have_permission(Response, security);
+        btnet.Util.display_you_dont_have_permission(Response);
 		return;
 	}
 
@@ -84,8 +83,7 @@ a:hover {text-decoration: underline; }
 
 <% 
 	PrintBug.print_bug(Response,
-       dr,
-       security,
+       dr, User.Identity,
        false, // include style
        images_inline,
        history_inline,

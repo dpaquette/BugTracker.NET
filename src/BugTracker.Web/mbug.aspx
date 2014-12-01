@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-    Security security;
     int id;
     DataSet ds_posts;
 
@@ -74,7 +73,7 @@ Distributed under the terms of the GNU General Public License
             else
             {
 
-                load_dropdowns(security.user);
+                load_dropdowns();
 
                 sql = new SQLString("select top 1 pj_id from projects where pj_default = 1 order by pj_name;"); // 0
                 sql.Append("\nselect top 1 st_id from statuses where st_default = 1 order by st_name;"); // 1
@@ -111,9 +110,10 @@ Distributed under the terms of the GNU General Public License
                 string initial_project = (string)Session["project"];
 
                 // project
-                if (security.user.forced_project != 0)
+                int forcedProjectId = User.Identity.GetForcedProjectId();
+                if (forcedProjectId != 0)
                 {
-                    initial_project = Convert.ToString(security.user.forced_project);
+                    initial_project = Convert.ToString(forcedProjectId);
                 }
 
                 if (initial_project != null && initial_project != "0")
@@ -189,7 +189,7 @@ Distributed under the terms of the GNU General Public License
 
             }
 
-            DataRow dr = btnet.Bug.get_bug_datarow(id, security);
+            DataRow dr = btnet.Bug.get_bug_datarow(id, User.Identity);
 
             titl.InnerText += " #" + string_bugid;
             my_header.InnerText = titl.InnerText;
@@ -198,7 +198,7 @@ Distributed under the terms of the GNU General Public License
             short_desc.Value = Convert.ToString(dr["short_desc"]);
 
             // load dropdowns
-            load_dropdowns(security.user);
+            load_dropdowns();
 
             // project
             foreach (ListItem li in project.Items)
@@ -241,7 +241,7 @@ Distributed under the terms of the GNU General Public License
 
             // Posts
             permission_level = (int)dr["pu_permission_level"];
-            ds_posts = PrintBug.get_bug_posts(id, security.user.external_user, true);
+            ds_posts = PrintBug.get_bug_posts(id, User.Identity.GetIsExternalUser(), true);
 
             // save current values in previous, so that later we can write the audit trail when things change
             prev_short_desc.Value = (string)dr["short_desc"];
@@ -253,7 +253,7 @@ Distributed under the terms of the GNU General Public License
         }
     }
 
-    void load_dropdowns(User user)
+    void load_dropdowns()
     {
 
         // only show projects where user has permissions
@@ -340,7 +340,7 @@ Distributed under the terms of the GNU General Public License
 
         if (bug_fields_have_changed || bugpost_fields_have_changed)
         {
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, id, security, 0,
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, id, User.Identity, 0,
                 status_changed,
                 assigned_to_changed,
                 0); // Convert.ToInt32(assigned_to.SelectedItem.Value));
@@ -443,7 +443,7 @@ Distributed under the terms of the GNU General Public License
 
         btnet.Bug.NewIds new_ids = btnet.Bug.insert_bug(
             short_desc.Value,
-            security,
+            User.Identity,
             "", //tags.Value,
             Convert.ToInt32(project.SelectedItem.Value),
             0, //Convert.ToInt32(org.SelectedItem.Value),
@@ -567,8 +567,7 @@ Distributed under the terms of the GNU General Public License
                             false, // write links
                             false, // images inline
                             true, // history inline
-                            false, // internal_posts
-                            security.user);
+                            false, User.Identity);
                     }
 
                 %>

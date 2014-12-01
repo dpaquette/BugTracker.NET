@@ -12,7 +12,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
 
 void Page_Load(Object sender, EventArgs e)
 {
@@ -20,7 +19,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports || security.user.can_edit_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports()|| User.Identity.GetCanEditReports())
 	{
 		//
 	}
@@ -34,7 +33,7 @@ void Page_Load(Object sender, EventArgs e)
 		+ "reports";
 
 	SQLString sql;
-    	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_reports)
+    	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditReports())
 	{
 sql = new SQLString(@"
 select
@@ -90,7 +89,7 @@ from reports order by rp_desc");
 <div class=align>
 </p>
 
-<% if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_reports) { %>
+<% if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditReports()) { %>
 <a href='edit_report.aspx'>add new report</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <% } %>
 

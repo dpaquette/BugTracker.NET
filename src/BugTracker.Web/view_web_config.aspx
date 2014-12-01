@@ -6,9 +6,6 @@ Distributed under the terms of the GNU General Public License
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 
-
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {

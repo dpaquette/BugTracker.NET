@@ -11,7 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
 string ses;
 
 void Page_Load(Object sender, EventArgs e)

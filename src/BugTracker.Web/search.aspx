@@ -27,7 +27,8 @@ search_suggest_min_chars = <% Response.Write(Util.get_setting("SearchSuggestMinC
 
 
 // start of mass edit javascript
-<% if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_mass_edit_bugs) { %>
+<% if (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanMassEditBugs())
+   { %>
 
 function select_all(sel)
 {
@@ -311,7 +312,7 @@ function on_change()
 		frm.project_custom_dropdown3.options, "bg_project_custom_dropdown_value3");
 
 <%
-	if (security.user.other_orgs_permission_level != 0)
+	if (User.Identity.GetOtherOrgsPermissionLevels() != 0)
 	{
 %>
 		var org_clause = build_clause_from_options (frm.org.options, "bg_org");
@@ -365,7 +366,7 @@ function on_change()
 	if (frm.like2.value != "") {
 		comments_clause = " bg_id in (select bp_bug from bug_posts where bp_type in ('comment','received','sent') and isnull(bp_comment_search,bp_comment) like";
 		comments_clause += " N'%" + like2_string + "%'";
-		<% if (security.user.external_user) { %>
+		<% if (User.Identity.GetIsExternalUser()) { %>
 		comments_clause += " and bp_hidden_from_external_users = 0"
 		<% } %>
 		comments_clause += ")\n";
@@ -463,7 +464,7 @@ function on_change()
 		select += ",\nbg_last_updated_date [last updated on]"
 
 <%
-		if (security.user.tags_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetTagsFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(bg_tags,'') [tags]";
@@ -471,35 +472,35 @@ function on_change()
 		}
 
 
-		if (security.user.project_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetProjectFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(pj_name,'') [project]"
 <%
 		}
 
-		if (security.user.org_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetOrgFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(og_name,'') [organization]"
 <%
 		}
 
-		if (security.user.category_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetCategoryFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(ct_name,'') [category]";
 <%
 		}
 
-		if (security.user.priority_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetPriorityFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(pr_name,'') [priority]"
 <%
 		}
 
-		if (security.user.assigned_to_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetAssignedToFieldPermissionLevel() != PermissionLevel.None)
 		{
 			if (use_full_names)
 			{
@@ -515,14 +516,14 @@ function on_change()
 			}
 		}
 
-		if (security.user.status_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetStatusFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(st_name,'') [status]";
 <%
 		}
 
-		if (security.user.udf_field_permission_level != PermissionLevel.None)
+		if (User.Identity.GetUdfFieldPermissionLevel() != PermissionLevel.None)
 		{
 			if (show_udf)
 			{
@@ -816,7 +817,7 @@ function do_doc_ready()
 				frm2.submit();
 			}
 			</script>
-<% if (security.user.is_guest) /* can't save search */ { %>
+<% if (!User.IsInRole(BtnetRoles.Guest)) /* can't save search */ { %>
             <span style="color:Gray; font-size: 7pt;">Save Search not available to "guest" user</span>
 <% } else { %>
 			<a href="javascript:on_save_query()">Save search criteria as query</a>
@@ -867,7 +868,7 @@ else
 		}
 
 
-		if (!security.user.is_guest && (User.IsInRole(BtnetRoles.Admin)|| security.user.can_mass_edit_bugs))
+        if (!User.IsInRole(BtnetRoles.Guest) && (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanMassEditBugs()))
 		{
 			Response.Write ("<form id=massform onsubmit='return validate_mass()' method=get action=massedit.aspx>");
 			display_bugs(true);

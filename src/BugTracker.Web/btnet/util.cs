@@ -1292,7 +1292,7 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
 
 		
 		///////////////////////////////////////////////////////////////////////
-		public static DataSet get_all_tasks(IIdentity identity, Security security, int bugid)
+		public static DataSet get_all_tasks(IIdentity identity, int bugid)
 		{
             var sql = new SQLString("select ");
             
@@ -1408,7 +1408,7 @@ order by tsk_sort_sequence, tsk_id");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void display_you_dont_have_permission(HttpResponse Response, Security security)
+        public static void display_you_dont_have_permission(HttpResponse Response)
         {
             Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
             Response.Write("<p>&nbsp;</p><div class=align>");

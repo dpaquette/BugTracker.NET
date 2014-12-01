@@ -22,7 +22,7 @@ void Page_Load(Object sender, EventArgs e)
 	
 	string id = Util.sanitize_integer(Request["id"]);
 
-	if (!security.user.is_admin)
+    if (!User.IsInRole(BtnetRoles.Admin))
 	{
 		sql = new SQLString(@"select us_created_user, us_admin from users where us_id = @us");
 		sql = sql.AddParameterWithValue("us", id);

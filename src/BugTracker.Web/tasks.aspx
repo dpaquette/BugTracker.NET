@@ -10,7 +10,6 @@ Distributed under the terms of the GNU General Public License
 int bugid;
 DataSet ds;
 
-Security security;
 int permission_level;
 string ses;
 
@@ -48,7 +47,7 @@ void Page_Load(Object sender, EventArgs e)
 	
 	SQLString sql = new SQLString("select tsk_id [id],");
 
-	if (permission_level == PermissionLevel.All && !security.user.is_guest && (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditTasks()))
+	if (permission_level == PermissionLevel.All && !User.IsInRole(BtnetRoles.Guest) && (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditTasks()))
 	{
 		sql.Append(@"
 '<a   href=edit_task.aspx?bugid=' + @bugid + '&id=' + convert(varchar,tsk_id) + '>edit</a>'   [$no_sort_edit],

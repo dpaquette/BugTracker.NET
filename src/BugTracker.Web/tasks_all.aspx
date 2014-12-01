@@ -9,8 +9,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds_tasks;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 void Page_Load(Object sender, EventArgs e)
@@ -31,7 +29,7 @@ void Page_Load(Object sender, EventArgs e)
 		Response.End();
 	}
 	
-	ds_tasks = btnet.Util.get_all_tasks(User.Identity, security, 0);
+	ds_tasks = btnet.Util.get_all_tasks(User.Identity, 0);
 }
 
 </script>

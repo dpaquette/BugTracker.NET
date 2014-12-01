@@ -18,7 +18,6 @@ Distributed under the terms of the GNU General Public License
     DataTable dt_users = null;
     DataSet ds_posts = null;
 
-    Security security;
     SortedDictionary<string, string> hash_custom_cols = new SortedDictionary<string, string>();
 
     int permission_level;
@@ -239,7 +238,7 @@ Distributed under the terms of the GNU General Public License
 
         if (permission_level == PermissionLevel.None)
         {
-            btnet.Util.display_you_dont_have_permission(Response, security);
+            btnet.Util.display_you_dont_have_permission(Response);
             return;
         }
 
@@ -308,7 +307,7 @@ Distributed under the terms of the GNU General Public License
         }
 
         // Execute code not written by me
-        Workflow.custom_adjust_controls(dr_bug, security.user, this);
+        Workflow.custom_adjust_controls(dr_bug, User.Identity, this);
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -451,7 +450,7 @@ Distributed under the terms of the GNU General Public License
         }
 
 
-        if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_view_tasks)
+        if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanViewTasks())
         {
             if (btnet.Util.get_setting("EnableTasks", "0") == "1")
             {
@@ -1008,9 +1007,11 @@ Distributed under the terms of the GNU General Public License
         string initial_project = (string)Session["project"];
 
         // project
-        if (security.user.forced_project != 0)
+        int forcedProjectId = User.Identity.GetForcedProjectId();
+
+        if (forcedProjectId != 0)
         {
-            initial_project = Convert.ToString(security.user.forced_project);
+            initial_project = Convert.ToString(forcedProjectId);
         }
 
         if (initial_project != null && initial_project != "0")
@@ -1173,13 +1174,13 @@ order by us_username; ");
     sql = sql.AddParameterWithValue("@og_id", User.Identity.GetOrganizationId());
     sql = sql.AddParameterWithValue("@og_other_orgs_permission_level", User.Identity.GetOtherOrgsPermissionLevels());
 
-    if (security.user.can_assign_to_internal_users)
+    if (User.Identity.GetCanAssignToInternalUsers())
     {
-        sql = sql.AddParameterWithValue("@og_can_assign_to_internal_users", "1");
+        sql = sql.AddParameterWithValue("@og_can_assign_to_internal_users", 1);
     }
     else
     {
-        sql = sql.AddParameterWithValue("@og_can_assign_to_internal_users", "0");
+        sql = sql.AddParameterWithValue("@og_can_assign_to_internal_users", 0);
     }
 
     dt_users = btnet.DbUtil.get_dataset(sql).Tables[0];
@@ -1348,8 +1349,9 @@ order by us_username; ");
     void set_org_field_permission(int bug_permission_level)
     {
         // pick the most restrictive permission
-        int perm_level = bug_permission_level < security.user.org_field_permission_level
-            ? bug_permission_level : security.user.org_field_permission_level;
+        int orgFieldPermissionLevel = User.Identity.GetOrgFieldPermissionLevel();
+        int perm_level = bug_permission_level < orgFieldPermissionLevel
+            ? bug_permission_level : orgFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1390,8 +1392,9 @@ order by us_username; ");
 
         /// JUNK testing using cat permission
         // pick the most restrictive permission
-        int perm_level = bug_permission_level < security.user.tags_field_permission_level
-            ? bug_permission_level : security.user.tags_field_permission_level;
+        int tagsFieldPermissionLevel = User.Identity.GetTagsFieldPermissionLevel();
+        int perm_level = bug_permission_level < tagsFieldPermissionLevel
+            ? bug_permission_level : tagsFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1430,8 +1433,9 @@ order by us_username; ");
     void set_category_field_permission(int bug_permission_level)
     {
         // pick the most restrictive permission
-        int perm_level = bug_permission_level < security.user.category_field_permission_level
-            ? bug_permission_level : security.user.category_field_permission_level;
+        var categoryFieldPermissionLevel = User.Identity.GetCategoryFieldPermissionLevel();
+        int perm_level = bug_permission_level < categoryFieldPermissionLevel
+            ? bug_permission_level : categoryFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1455,8 +1459,9 @@ order by us_username; ");
     void set_priority_field_permission(int bug_permission_level)
     {
         // pick the most restrictive permission
-        int perm_level = bug_permission_level < security.user.priority_field_permission_level
-            ? bug_permission_level : security.user.priority_field_permission_level;
+        int priorityFieldPermissionLevel = User.Identity.GetPriorityFieldPermissionLevel();
+        int perm_level = bug_permission_level < priorityFieldPermissionLevel
+            ? bug_permission_level : priorityFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1480,8 +1485,9 @@ order by us_username; ");
     void set_status_field_permission(int bug_permission_level)
     {
         // pick the most restrictive permission
-        int perm_level = bug_permission_level < security.user.status_field_permission_level
-            ? bug_permission_level : security.user.status_field_permission_level;
+        int statusFieldPermissionLevel = User.Identity.GetStatusFieldPermissionLevel();
+        int perm_level = bug_permission_level < statusFieldPermissionLevel
+            ? bug_permission_level : statusFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1504,9 +1510,9 @@ order by us_username; ");
     ///////////////////////////////////////////////////////////////////////
     void set_project_field_permission(int bug_permission_level)
     {
-
-        int perm_level = bug_permission_level < security.user.project_field_permission_level
-            ? bug_permission_level : security.user.project_field_permission_level;
+        int projectFieldPermissionLevel = User.Identity.GetProjectFieldPermissionLevel();
+        int perm_level = bug_permission_level < projectFieldPermissionLevel
+            ? bug_permission_level : projectFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1529,9 +1535,9 @@ order by us_username; ");
     ///////////////////////////////////////////////////////////////////////
     void set_assigned_field_permission(int bug_permission_level)
     {
-
-        int perm_level = bug_permission_level < security.user.assigned_to_field_permission_level
-            ? bug_permission_level : security.user.assigned_to_field_permission_level;
+        int assignedToFieldPermissionLevel = User.Identity.GetAssignedToFieldPermissionLevel();
+        int perm_level = bug_permission_level < assignedToFieldPermissionLevel
+            ? bug_permission_level : assignedToFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1550,8 +1556,9 @@ order by us_username; ");
     void set_udf_field_permission(int bug_permission_level)
     {
         // pick the most restrictive permission
-        int perm_level = bug_permission_level < security.user.udf_field_permission_level
-            ? bug_permission_level : security.user.udf_field_permission_level;
+        int udfFieldPermissionLevel = User.Identity.GetUdfFieldPermissionLevel();
+        int perm_level = bug_permission_level < udfFieldPermissionLevel
+            ? bug_permission_level : udfFieldPermissionLevel;
 
         if (perm_level == PermissionLevel.None)
         {
@@ -1608,7 +1615,7 @@ order by us_username; ");
         else
         {
             // Call these functions so that the field level permissions can kick in
-            if (security.user.forced_project != 0)
+            if (User.Identity.GetForcedProjectId() != 0)
             {
                 set_project_field_permission(PermissionLevel.ReadOnly);
             }
@@ -1617,7 +1624,7 @@ order by us_username; ");
                 set_project_field_permission(PermissionLevel.All);
             }
 
-            if (security.user.other_orgs_permission_level == 0)
+            if (User.Identity.GetOtherOrgsPermissionLevels() == 0)
             {
                 set_org_field_permission(PermissionLevel.ReadOnly);
             }
@@ -2668,8 +2675,7 @@ where us_id = @us_id");
                         true, // write links
                         images_inline,
                         history_inline,
-                        true, // internal_posts
-                        security.user);
+                        true, User.Identity);
                 }
 
 %>

@@ -13,9 +13,6 @@ Distributed under the terms of the GNU General Public License
 
     SQLString sql;
     
-    Security security;
-
-
     ///////////////////////////////////////////////////////////////////////
     void Page_Load(Object sender, EventArgs e)
     {
@@ -67,7 +64,7 @@ Distributed under the terms of the GNU General Public License
 			}
 
             // added check for permission level - corey
-            int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), security);
+            int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), User.Identity);
             if (permission_level ==PermissionLevel.None) {
                 Response.Write("You are not allowed to view this item");
                 Response.End();

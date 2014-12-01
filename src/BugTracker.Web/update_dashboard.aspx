@@ -3,15 +3,13 @@
 <script language="C#" runat="server">
 
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports())
 	{
 		//
 	}

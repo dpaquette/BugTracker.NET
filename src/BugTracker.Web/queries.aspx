@@ -10,7 +10,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
 
 void Page_Load(Object sender, EventArgs e)
 {
@@ -23,7 +22,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	SQLString sql;
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+	if (User.IsInRole(BtnetRoles.Admin))
 	{
 		// allow admin to edit all queries
 
@@ -70,7 +69,7 @@ void Page_Load(Object sender, EventArgs e)
 			order by qu_desc");
 	}
 
-	sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("us",User.Identity.GetUserId());
 	ds = btnet.DbUtil.get_dataset(sql);
 
 }
@@ -89,7 +88,7 @@ void Page_Load(Object sender, EventArgs e)
 
 <div class=align>
 
-<% if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql) { %>
+<% if (User.IsInRole(BtnetRoles.Admin)) { %>
 	<table border=0 width=80%><tr>
 		<td align=left valign=top>
 			<a href=edit_query.aspx>add new query</a>

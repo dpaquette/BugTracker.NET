@@ -9,8 +9,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
-
 string exception_message;
 
 ///////////////////////////////////////////////////////////////////////

@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-Security security;
 SQLString sql;
 int bugid;
 DataSet ds;
@@ -23,7 +22,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	bugid = Convert.ToInt32(Util.sanitize_integer(Request["id"]));
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+    int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
@@ -56,7 +55,7 @@ void Page_Load(Object sender, EventArgs e)
 			btnet.DbUtil.execute_nonquery(sql);
 
 			// send a notification to this user only
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security, new_subscriber_userid);
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity, new_subscriber_userid);
 		}
 	}
 
@@ -67,7 +66,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	// show who is subscribed
 
-	if (security.user.is_admin)
+	if (User.IsInRole(BtnetRoles.Admin))
 	{
 		sql = new SQLString(@"
 select

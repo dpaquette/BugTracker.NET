@@ -10,9 +10,6 @@ namespace btnet
 {
     public partial class search : BasePage
     {
-
-
-        protected Security security;
         protected bool show_udf;
         protected bool use_full_names = false;
 
@@ -40,7 +37,7 @@ namespace btnet
         {
             Util.do_not_cache(Response);
             
-            if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_search)
+            if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanSearch())
             {
                 //
             }
@@ -165,7 +162,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
             hit_submit_button.Value = "0";
             project_changed.Value = "0";
 
-            if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+            if (User.IsInRole(BtnetRoles.Admin))
             {
 
             }
@@ -343,7 +340,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
             {
                 comments_clause = " bg_id in (select bp_bug from bug_posts where bp_type in ('comment','received','sent') and isnull(bp_comment_search,bp_comment) like";
                 comments_clause += " N'%" + like2_string + "%'";
-                if (security.user.external_user)
+                if (User.Identity.GetIsExternalUser())
                 {
                     comments_clause += " and bp_hidden_from_external_users = 0";
                 }
@@ -467,32 +464,32 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
                 select += "\n,bg_last_updated_date [last updated on]";
 
 
-                if (security.user.tags_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetTagsFieldPermissionLevel() != PermissionLevel.None)
                 {
                     select += ",\nisnull(bg_tags,'') [tags]";
                 }
 
-                if (security.user.project_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetProjectFieldPermissionLevel() != PermissionLevel.None)
                 {
                     select += ",\nisnull(pj_name,'') [project]";
                 }
 
-                if (security.user.org_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetOrgFieldPermissionLevel()!= PermissionLevel.None)
                 {
                     select += ",\nisnull(og_name,'') [organization]";
                 }
 
-                if (security.user.category_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetCategoryFieldPermissionLevel() != PermissionLevel.None)
                 {
                     select += ",\nisnull(ct_name,'') [category]";
                 }
 
-                if (security.user.priority_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetPriorityFieldPermissionLevel() != PermissionLevel.None)
                 {
                     select += ",\nisnull(pr_name,'') [priority]";
                 }
 
-                if (security.user.assigned_to_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetAssignedToFieldPermissionLevel() != PermissionLevel.None)
                 {
                     if (use_full_names)
                     {
@@ -504,12 +501,12 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
                     }
                 }
 
-                if (security.user.status_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetStatusFieldPermissionLevel() != PermissionLevel.None)
                 {
                     select += ",\nisnull(st_name,'') [status]";
                 }
 
-                if (security.user.udf_field_permission_level != PermissionLevel.None)
+                if (User.Identity.GetUdfFieldPermissionLevel() != PermissionLevel.None)
                 {
                     if (show_udf)
                     {
@@ -839,7 +836,7 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
 
 
             // only show projects where user has permissions
-            if (security.user.is_admin)
+            if (User.IsInRole(BtnetRoles.Admin))
             {
                 sql = new SQLString( "/* drop downs */ select pj_id, pj_name from projects order by pj_name;");
             }
@@ -857,14 +854,14 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
             }
 
 
-            if (security.user.other_orgs_permission_level != 0)
+            if (User.Identity.GetOtherOrgsPermissionLevels() != 0)
             {
                 sql.Append(" select og_id, og_name from orgs order by og_name;");
             }
             else
             {
                 sql.Append(" select og_id, og_name from orgs where og_id = @ogId order by og_name;");
-                sql.AddParameterWithValue("ogId", security.user.org.ToString());
+                sql.AddParameterWithValue("ogId", User.Identity.GetOrganizationId());
                 org.Visible = false;
                 org_label.Visible = false;
             }
@@ -922,37 +919,37 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
                 udf.Items.Insert(0, new ListItem("[none]", "0"));
             }
 
-            if (security.user.project_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetProjectFieldPermissionLevel()== PermissionLevel.None)
             {
                 project_label.Style["display"] = "none";
                 project.Style["display"] = "none";
             }
-            if (security.user.org_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetOrgFieldPermissionLevel() == PermissionLevel.None)
             {
                 org_label.Style["display"] = "none";
                 org.Style["display"] = "none";
             }
-            if (security.user.category_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetCategoryFieldPermissionLevel() == PermissionLevel.None)
             {
                 category_label.Style["display"] = "none";
                 category.Style["display"] = "none";
             }
-            if (security.user.priority_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetPriorityFieldPermissionLevel() == PermissionLevel.None)
             {
                 priority_label.Style["display"] = "none";
                 priority.Style["display"] = "none";
             }
-            if (security.user.status_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetStatusFieldPermissionLevel() == PermissionLevel.None)
             {
                 status_label.Style["display"] = "none";
                 status.Style["display"] = "none";
             }
-            if (security.user.assigned_to_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetAssignedToFieldPermissionLevel() == PermissionLevel.None)
             {
                 assigned_to_label.Style["display"] = "none";
                 assigned_to.Style["display"] = "none";
             }
-            if (security.user.udf_field_permission_level == PermissionLevel.None)
+            if (User.Identity.GetUdfFieldPermissionLevel() == PermissionLevel.None)
             {
                 udf_label.Style["display"] = "none";
                 udf.Style["display"] = "none";

@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-    Security security;
     DataSet ds;
 
     ///////////////////////////////////////////////////////////////////////

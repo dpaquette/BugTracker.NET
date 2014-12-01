@@ -10,7 +10,6 @@
 
 SQLString sql;
 
-Security security;
 DataSet ds;
 DataView dv;
 

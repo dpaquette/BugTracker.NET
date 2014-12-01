@@ -4,8 +4,6 @@
 <script runat="server">
 
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
@@ -43,8 +41,7 @@ font-size: 7pt;
 			false, // write links
 			false, // images inline
 			false, // history inline
-            true, // internal posts
-			security.user);		
+            true, User.Identity);		
 	
 		// We can't unwrite what we wrote, but let's tell javascript to ignore it.
 		if (post_cnt == 0)

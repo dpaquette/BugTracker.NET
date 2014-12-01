@@ -40,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 
 		if ((int) dr["qu_user"] != User.Identity.GetUserId())
 		{
-			if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_edit_sql)
+			if (User.IsInRole(BtnetRoles.Admin))
 			{
 				// can do anything
 			}

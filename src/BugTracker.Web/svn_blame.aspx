@@ -7,9 +7,6 @@ Distributed under the terms of the GNU General Public License
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 
-
-Security security;
-
 string blame_text;
 string raw_text;
 string path;
@@ -38,7 +35,7 @@ order by svnrev_revision desc, svnap_path");
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 	// check if user has permission for this bug
-	int permission_level = Bug.get_bug_permission_level((int) dr["svnrev_bug"], security);
+    int permission_level = Bug.get_bug_permission_level((int)dr["svnrev_bug"], User.Identity);
 	if (permission_level ==PermissionLevel.None) {
 		Response.Write("You are not allowed to view this item");
 		Response.End();

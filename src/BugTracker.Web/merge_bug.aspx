@@ -11,7 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
 DataRow dr;
 
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +20,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	if (User.IsInRole(BtnetRoles.Admin)|| security.user.can_merge_bugs)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanMergeBugs())
 	{
 		//
 	}
@@ -285,7 +284,7 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 			}
 		}
 
-		btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(prev_into_bug.Value), security);
+		btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(prev_into_bug.Value), User.Identity);
 
 		Response.Redirect ("edit_bug.aspx?id=" + prev_into_bug.Value);
 

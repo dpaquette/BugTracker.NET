@@ -1058,7 +1058,7 @@ and us_id = @just_this_usid");
                 // MAW -- 2006/01/27 -- Added different notifications if reported or assigned-to
                 sql = new SQLString(@"
 /* get notification emails for all subscribers */
-select us_email, us_id, us_admin, og.*
+select us_email, us_id, us_name, us_admin, og.*
 from bug_subscriptions
 inner join users on bs_user = us_id
 inner join orgs og on us_org = og_id
@@ -1154,26 +1154,12 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
                     btnet.Util.get_setting("AbsoluteUrlPrefix", "http://127.0.0.1/") + "\"/>");
 
                     // create a security rec for the user receiving the email
-                    Security sec2 = new Security();
-
-                    // fill in what we know is needed downstream
-                    sec2.user.is_admin = Convert.ToBoolean(dr["us_admin"]);
-                    sec2.user.external_user = Convert.ToBoolean(dr["og_external_user"]);
-                    sec2.user.tags_field_permission_level = (int)dr["og_tags_field_permission_level"];
-                    sec2.user.category_field_permission_level = (int)dr["og_category_field_permission_level"];
-                    sec2.user.priority_field_permission_level = (int)dr["og_priority_field_permission_level"];
-                    sec2.user.assigned_to_field_permission_level = (int)dr["og_assigned_to_field_permission_level"];
-                    sec2.user.status_field_permission_level = (int)dr["og_status_field_permission_level"];
-                    sec2.user.project_field_permission_level = (int)dr["og_project_field_permission_level"];
-                    sec2.user.org_field_permission_level = (int)dr["og_org_field_permission_level"];
-                    sec2.user.udf_field_permission_level = (int)dr["og_udf_field_permission_level"];
-
+                    IIdentity identity2 = Security.GetIdentity((string) dr["us_name"]);
                 
 
                     PrintBug.print_bug(
                         my_response,
-                        bug_dr,
-                        sec2,
+                        bug_dr, identity2,
                         true,  // include style 
                         false, // images_inline 
                         true,  // history_inline

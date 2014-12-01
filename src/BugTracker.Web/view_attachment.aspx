@@ -6,8 +6,6 @@
 //Copyright 2002-2011 Corey Trager
 //Distributed under the terms of the GNU General Public License
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
@@ -37,7 +35,7 @@ and bp_bug = @bug_id");
 		Response.End();
 	}
 	
-	int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(bug_id), security);
+	int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(bug_id), User.Identity);
 	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");

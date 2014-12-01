@@ -9,8 +9,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
@@ -18,7 +16,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 	int bugid = Convert.ToInt32(Request["id"]);
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 	if (permission_level ==PermissionLevel.None)
 	{
 		Response.End();
