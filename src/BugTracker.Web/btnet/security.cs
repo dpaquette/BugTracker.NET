@@ -49,7 +49,6 @@ where us_username = @us and u.us_active = 1");
                 new Claim(ClaimTypes.Name, Convert.ToString(dr["us_username"])),
                 new Claim(ClaimTypes.Email, Convert.ToString(dr["us_email"])),
                 new Claim(BtnetClaimTypes.OrganizationId, Convert.ToString(dr["us_org"])),
-                new Claim(BtnetClaimTypes.ForcedProjectId, Convert.ToString(dr["us_forced_project"])),
                 new Claim(BtnetClaimTypes.BugsPerPage, Convert.ToString(bugsPerPage)),
                 new Claim(BtnetClaimTypes.EnablePopUps, Convert.ToString((int) dr["us_enable_bug_list_popups"] == 1)),
                 new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString((int) dr["og_can_only_see_own_reported"] == 1)),
@@ -90,7 +89,8 @@ where us_username = @us and u.us_active = 1");
             // if user is forced to a specific project, and doesn't have
             // at least reporter permission on that project, than user
             // can't add bugs
-            if ((int)dr["us_forced_project"] != 0)
+            int forcedProjectId = dr["us_forced_project"] == DBNull.Value ? 0 : (int)dr["us_forced_project"];
+	        if (forcedProjectId != 0)
             {
                 if (permssionLevel == PermissionLevel.ReadOnly || permssionLevel == PermissionLevel.None)
                 {
@@ -98,7 +98,8 @@ where us_username = @us and u.us_active = 1");
                 }
             }
             claims.Add(new Claim(BtnetClaimTypes.CanAddBugs, Convert.ToString(canAdd)));
-
+	        claims.Add(new Claim(BtnetClaimTypes.ForcedProjectId, Convert.ToString(forcedProjectId)));
+                
             int tagsPermissionLevel;
             if (Util.get_setting("EnableTags", "0") == "1")
             {
