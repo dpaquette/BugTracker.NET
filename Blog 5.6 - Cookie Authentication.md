@@ -129,6 +129,20 @@ If we inspect the request headers after the user has signed in, we can see that 
 
 [View the commit - Signing in using Owin Cookie middleware](https://github.com/dpaquette/BugTracker.NET/commit/6fdd6bd350fd7e6020c0c098dd3b0dd760f0a2de)
 
+###Signing Out
+Signing a user out of the application is a simple process with Owin Authentication.
+
+     public static void SignOut(HttpRequest request)
+     {
+         var owinContext = request.GetOwinContext();
+		     owinContext.Authentication.SignOut();
+     }
+
+Now, on the logoff page we can simply call this SignOut method instead of manually deleting cookies.
+
+[View the commit - Sign Out using Owin Cookie Authentication]()
+
+
 ###Access User Claims
 Our next step will be to modify all the application pages to use the ClaimsIdentity to check for user information rather than the current approach of calling btnet.Security.check_security. For example, the bugs.aspx page starts out by doing the following:
 
@@ -238,3 +252,56 @@ Unfortunately, the current the write_menu method is located in btnet.security. T
 [View the commit - Added MainMenu User Control](https://github.com/dpaquette/BugTracker.NET/commit/42f054f0f2b6b73021d3f8ba948cfa08e0552c42)
 
 We now have a working Bugs.aspx page that no longer relies on the custom session logic and custom authentication cookies. Our new approach is more closely aligned with a standard Authentication and Authorization implementation ASP.NET, which means BugTracker.NET will play nice with MVC and WebAPI when we start using (which will be soon...very soon).
+
+###Restricting Page Access based on Roles
+We would like a convenient and consistent way to restrict access to a page based on whether or not the user is Authenticated and if the user has been granted. In classic Web Forms, this is done by configuring the [location and authorization](http://weblogs.asp.net/gurusarkar/setting-authorization-rules-for-a-particular-page-or-folder-in-web-config) elements of Web.config. I personally prefer to keep this type of logic in code versus configuration.
+
+A while back, we introduced a BasePage that all our pages inherit from. We can put this authorization logic in our base class, then override the specifics in each individual page if necessary.
+
+    public class BasePage : Page
+    {
+        protected override void OnLoad(EventArgs e)
+        {
+            if (!IsUserAuthorized())
+            {
+                Response.Redirect("default.aspx");
+            }
+            base.OnLoad(e);
+        }
+
+        public bool IsUserAuthorized()
+        {
+            return AllowAnonymous ||
+                (User.Identity.IsAuthenticated && AuthorizedRoles.Any(role => User.IsInRole(role)));
+        }
+
+        public virtual string[] AuthorizedRoles { get { return new[] {BtnetRoles.User}; } }
+
+        public virtual bool AllowAnonymous { get { return false; } }
+    }
+
+
+So, by default every page will require that the User is authenticated and has been granted the User role. User is a role that we will grant to all users who have a valid account. We also provide an option to allow anonymous access because some pages should be accessible by users who are not signed in. For example, in the login page (default.aspx) we simply override the AllowAnonymous property and return true:
+
+        public override bool AllowAnonymous
+        {
+            get { return true; }
+        }
+
+For the Bugs.aspx page, we don't need to override anything because the default behaviour is exactly what we want. If we wanted to restrict a page to only users who have either the Admin or ProjectAdmin role, we would simply override the AuthorizedRoles property on that page:
+
+    public override string[] AuthorizedRoles
+    {
+        get { return new[] {BtnetRoles.Admin, BtnetRoles.ProjectAdmin}; }
+    }
+
+- [View the commit - Added Authorization Rules to base page]()
+- [View the commit - Modified all pages to use Authorization rules from base page]()
+- [View the commit - Allow anonymous access to forgot password page]()
+
+##Wrapping it up
+Now that we have a framework in place for Authentication and Authorization, we need to replace all references to the old custom session based implementation. This is a big task as the security code is used everywhere.
+
+[View All Commits]
+
+Our new implementation makes use of the latest Owin Cookie Authentication middleware. As a result, our implementation is easier to understand and will work much better with newer technologies like MVC and WebApi. The new implementation is also arguably much more secure as it relies on a solid implementation from Microsoft rather than our own custom cookie authentication.
