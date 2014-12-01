@@ -610,7 +610,6 @@
     <Content Include="priorities.aspx" />
     <Content Include="projects.aspx" />
     <Content Include="queries.aspx" />
-    <Content Include="query.aspx" />
     <Content Include="register.aspx" />
     <Content Include="relationships.aspx" />
     <Content Include="reports.aspx" />
@@ -1257,13 +1256,6 @@
     </Compile>
     <Compile Include="queries.aspx.designer.cs">
       <DependentUpon>queries.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="query.aspx.cs">
-      <DependentUpon>query.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="query.aspx.designer.cs">
-      <DependentUpon>query.aspx</DependentUpon>
     </Compile>
     <Compile Include="register.aspx.cs">
       <DependentUpon>register.aspx</DependentUpon>
