@@ -1,5 +1,5 @@
 <%@ Page Language="C#" CodeBehind="edit_project.aspx.cs" Inherits="btnet.edit_project" AutoEventWireup="True" %>
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <!--
 Copyright 2002-2011 Corey Trager

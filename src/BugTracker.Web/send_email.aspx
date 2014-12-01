@@ -1,5 +1,5 @@
 <%@ Page language="C#" CodeBehind="send_email.aspx.cs" Inherits="btnet.send_email" validateRequest="false" AutoEventWireup="True" %>
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <%@ Import Namespace="System.IO" %>
 <!--
 Copyright 2002-2011 Corey Trager

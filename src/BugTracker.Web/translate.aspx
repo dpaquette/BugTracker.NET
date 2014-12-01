@@ -1,5 +1,5 @@
 <%@ Page language="C#" CodeBehind="translate.aspx.cs" Inherits="btnet.translate" validateRequest="false" AutoEventWireup="True" %>
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <!--
 

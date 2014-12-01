@@ -1058,7 +1058,7 @@ and us_id = @just_this_usid");
                 // MAW -- 2006/01/27 -- Added different notifications if reported or assigned-to
                 sql = new SQLString(@"
 /* get notification emails for all subscribers */
-select us_email, us_id, us_name, us_admin, og.*
+select us_email, us_id, us_username, us_admin, og.*
 from bug_subscriptions
 inner join users on bs_user = us_id
 inner join orgs og on us_org = og_id
@@ -1087,11 +1087,11 @@ and bs_bug = @id
 and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
             }
 
-            sql = sql.AddParameterWithValue("@cl", changeLevel.ToString());
-            sql = sql.AddParameterWithValue("@pau", prev_assigned_to_user.ToString());
-            sql = sql.AddParameterWithValue("@id", Convert.ToString(bugid));
-            sql = sql.AddParameterWithValue("@dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
-            sql = sql.AddParameterWithValue("@us", Convert.ToString(identity.GetUserId()));
+            sql = sql.AddParameterWithValue("@cl", changeLevel);
+            sql = sql.AddParameterWithValue("@pau", prev_assigned_to_user);
+            sql = sql.AddParameterWithValue("@id", bugid);
+            sql = sql.AddParameterWithValue("@dpl", Convert.ToInt32(btnet.Util.get_setting("DefaultPermissionLevel", "2")));
+            sql = sql.AddParameterWithValue("@us", identity.GetUserId());
 
 
             DataSet ds_subscribers = btnet.DbUtil.get_dataset(sql);
@@ -1154,7 +1154,7 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
                     btnet.Util.get_setting("AbsoluteUrlPrefix", "http://127.0.0.1/") + "\"/>");
 
                     // create a security rec for the user receiving the email
-                    IIdentity identity2 = Security.GetIdentity((string) dr["us_name"]);
+                    IIdentity identity2 = Security.GetIdentity((string) dr["us_username"]);
                 
 
                     PrintBug.print_bug(

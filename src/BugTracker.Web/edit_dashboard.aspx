@@ -1,5 +1,5 @@
 <!-- #include file = "inc.aspx" -->
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <script language="C#" runat="server">
 

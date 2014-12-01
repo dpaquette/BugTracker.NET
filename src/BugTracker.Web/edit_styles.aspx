@@ -1,5 +1,5 @@
 <%@ Page language="C#" CodeBehind="edit_styles.aspx.cs" Inherits="btnet.edit_styles" AutoEventWireup="True" %>
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <%@ Import Namespace="System.IO" %>
 

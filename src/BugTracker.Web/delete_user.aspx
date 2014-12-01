@@ -1,6 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_user.aspx.cs" Inherits="btnet.delete_user" AutoEventWireup="True" %>
 
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License

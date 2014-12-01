@@ -1,5 +1,5 @@
 <%@ Page language="C#" CodeBehind="backup_db.aspx.cs" Inherits="btnet.backup_db" validateRequest="false" enableEventValidation="false" AutoEventWireup="True" %>
-<%@ Register TagPrefix="uc1" Namespace="btnet.Controls" Assembly="BugTracker.Web" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <!--
 Copyright 2002-2011 Corey Trager
