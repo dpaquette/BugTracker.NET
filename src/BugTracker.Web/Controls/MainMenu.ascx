@@ -1,5 +1,6 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="MainMenu.ascx.cs" Inherits="btnet.Controls.MainMenu" %>
 <%@ Import Namespace="btnet" %>
+<%@ Import Namespace="btnet.Security" %>
 <%= Util.context.Application["custom_header"]%>
 
 <span id="debug" style='position: absolute; top: 0; left: 0;'></span>

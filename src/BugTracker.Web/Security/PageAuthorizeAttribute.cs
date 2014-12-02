@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
-using System.Web;
 
-namespace btnet
+namespace btnet.Security
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
     public class PageAuthorizeAttribute : Attribute

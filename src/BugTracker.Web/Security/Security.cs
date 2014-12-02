@@ -1,15 +1,10 @@
-/*
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
-*/
-
 using System;
-using System.Web;
-using System.Data;
 using System.Collections.Generic;
+using System.Data;
 using System.Security.Claims;
+using System.Web;
 
-namespace btnet
+namespace btnet.Security
 {
 
 	public class Security {

@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using btnet.Security;
 
 namespace btnet
 {

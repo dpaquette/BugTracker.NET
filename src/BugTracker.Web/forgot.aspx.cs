@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Web;
 using btnet.Mail;
+using btnet.Security;
 
 namespace btnet
 {

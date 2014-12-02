@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using btnet.Search;
+using btnet.Security;
 
 namespace btnet
 {

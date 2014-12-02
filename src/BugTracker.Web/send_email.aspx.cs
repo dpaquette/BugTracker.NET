@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 using btnet.Mail;
+using btnet.Security;
 
 namespace btnet
 {

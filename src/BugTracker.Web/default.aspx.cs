@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.UI;
+using btnet.Security;
 
 namespace btnet
 {
@@ -138,7 +139,7 @@ namespace btnet
                 }
             }
 
-            bool authenticated = btnet.Authenticate.check_password(username, pw.Value);
+            bool authenticated = Authenticate.check_password(username, pw.Value);
 
             if (authenticated)
             {
@@ -147,7 +148,7 @@ namespace btnet
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {
-                    btnet.Security.SignIn(Request, username);
+                    Security.Security.SignIn(Request, username);
                     btnet.Util.redirect(Request, Response);
                 }
                 else

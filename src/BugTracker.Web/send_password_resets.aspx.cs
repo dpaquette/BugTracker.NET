@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net.Mail;
 using System.Collections.Generic;
+using btnet.Security;
 
 namespace btnet
 {

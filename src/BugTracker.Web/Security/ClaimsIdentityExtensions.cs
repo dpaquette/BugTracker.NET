@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Web;
 
-namespace btnet
+namespace btnet.Security
 {
     public static class ClaimsIdentityExtensions
     {

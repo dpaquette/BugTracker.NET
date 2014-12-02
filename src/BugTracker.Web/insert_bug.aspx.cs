@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Principal;
 using System.Web;
 using btnet.Mail;
+using btnet.Security;
 using OpenPop.Mime;
 
 namespace btnet
@@ -85,7 +86,7 @@ namespace btnet
 
             // authenticate user
 
-            bool authenticated = btnet.Authenticate.check_password(username, password);
+            bool authenticated = Authenticate.check_password(username, password);
 
             if (!authenticated)
             {
@@ -93,7 +94,7 @@ namespace btnet
                 Response.Write("ERROR: invalid username or password");
                 Response.End();
             }
-            IIdentity identity = Security.GetIdentity(username);
+            IIdentity identity = Security.Security.GetIdentity(username);
             
 
             int projectid = 0;

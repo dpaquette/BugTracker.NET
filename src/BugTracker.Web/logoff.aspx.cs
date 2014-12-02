@@ -12,7 +12,7 @@ namespace btnet
         protected void Page_Load(Object sender, EventArgs e)
         {
             Util.do_not_cache(Response);
-            Security.SignOut(Request);
+            Security.Security.SignOut(Request);
             Response.Redirect("default.aspx?msg=logged+off");
         }
     }

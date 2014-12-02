@@ -1,6 +1,7 @@
 <%@ Page language="C#" CodeBehind="bugs.aspx.cs" Inherits="btnet.bugs" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="btnet" %>
+<%@ Import Namespace="btnet.Security" %>
 <%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <!--

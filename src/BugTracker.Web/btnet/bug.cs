@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using btnet.Mail;
 using btnet.Search;
+using btnet.Security;
 using Nest;
 
 namespace btnet
@@ -1154,7 +1155,7 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
                     btnet.Util.get_setting("AbsoluteUrlPrefix", "http://127.0.0.1/") + "\"/>");
 
                     // create a security rec for the user receiving the email
-                    IIdentity identity2 = Security.GetIdentity((string) dr["us_username"]);
+                    IIdentity identity2 = Security.Security.GetIdentity((string) dr["us_username"]);
                 
 
                     PrintBug.print_bug(

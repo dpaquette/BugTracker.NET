@@ -733,12 +733,12 @@
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="btnet\PageAllowAnonymous.cs" />
-    <Compile Include="btnet\PageAuthorizeAttribute.cs" />
-    <Compile Include="btnet\BtnetRoles.cs" />
-    <Compile Include="btnet\ClaimsIdentityExtensions.cs" />
-    <Compile Include="btnet\BtnetClaimTypes.cs" />
-    <Compile Include="btnet\PermissionLevel.cs" />
+    <Compile Include="Security\PageAllowAnonymous.cs" />
+    <Compile Include="Security\PageAuthorizeAttribute.cs" />
+    <Compile Include="Security\BtnetRoles.cs" />
+    <Compile Include="Security\ClaimsIdentityExtensions.cs" />
+    <Compile Include="Security\BtnetClaimTypes.cs" />
+    <Compile Include="Security\PermissionLevel.cs" />
     <Compile Include="btnet\SQLString.cs" />
     <Compile Include="categories.aspx.cs">
       <DependentUpon>categories.aspx</DependentUpon>
@@ -1550,7 +1550,7 @@
       <DependentUpon>write_posts.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="btnet\authenticate.cs" />
+    <Compile Include="Security\Authenticate.cs" />
     <Compile Include="btnet\bug.cs" />
     <Compile Include="btnet\bug_list.cs" />
     <Compile Include="btnet\dbutil.cs" />
@@ -1558,7 +1558,7 @@
     <Compile Include="Search\BugSearch.cs" />
     <Compile Include="Mail\Mime.cs" />
     <Compile Include="btnet\print_bug.cs" />
-    <Compile Include="btnet\security.cs" />
+    <Compile Include="Security\Security.cs" />
     <Compile Include="btnet\sortable_html_table.cs" />
     <Compile Include="btnet\tags.cs" />
     <Compile Include="btnet\TranslationService.cs" />
