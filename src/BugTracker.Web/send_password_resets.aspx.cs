@@ -5,12 +5,9 @@ using System.Collections.Generic;
 
 namespace btnet
 {
+    [PageAuthorize(BtnetRoles.Admin)]
     public partial class send_password_resets : BasePage
     {
-        public override string[] AuthorizedRoles
-        {
-            get { return new[] { BtnetRoles.Admin }; }
-        }
         protected void Page_Load(object sender, EventArgs e)
         {          
             var sql = new SQLString("select us_id, us_email, us_username from users");

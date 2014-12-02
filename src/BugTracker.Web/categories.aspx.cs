@@ -6,12 +6,8 @@ using System.Web.UI;
 
 namespace btnet
 {
+    [PageAuthorize(BtnetRoles.Admin, BtnetRoles.ProjectAdmin)]
     public partial class categories : BasePage
     {
-        public override string[] AuthorizedRoles
-        {
-            get { return new[] { BtnetRoles.Admin, BtnetRoles.ProjectAdmin }; }
-        }
-
     }
 }

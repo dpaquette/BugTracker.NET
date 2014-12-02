@@ -733,6 +733,8 @@
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="btnet\PageAllowAnonymous.cs" />
+    <Compile Include="btnet\PageAuthorizeAttribute.cs" />
     <Compile Include="btnet\BtnetRoles.cs" />
     <Compile Include="btnet\ClaimsIdentityExtensions.cs" />
     <Compile Include="btnet\BtnetClaimTypes.cs" />

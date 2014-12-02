@@ -5,15 +5,10 @@ using btnet.Search;
 
 namespace btnet
 {
+    [PageAuthorize(BtnetRoles.Admin)]
     public partial class admin : BasePage
     {
         protected bool nag = false;
-
-        public override string[] AuthorizedRoles
-        {
-            get { return new[] { BtnetRoles.Admin}; }
-        }
-
 
         ///////////////////////////////////////////////////////////////////////
         void Page_Load(Object sender, EventArgs e)

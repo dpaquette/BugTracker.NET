@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 
 namespace btnet
 {
+    [PageAuthorize]
     public partial class bugs : BasePage
     {
 

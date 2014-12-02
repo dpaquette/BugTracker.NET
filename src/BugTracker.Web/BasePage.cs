@@ -1,28 +1,32 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 
 namespace btnet
 {
+    [PageAuthorize(BtnetRoles.User)]
     public class BasePage : Page
     {
-        protected override void OnLoad(EventArgs e)
-        {            
+        protected override void OnPreInit(EventArgs e)
+        {
             if (!IsUserAuthorized())
             {
-                Response.Redirect("default.aspx");
+                Response.Redirect(string.Format("default.aspx?returnUrl={0}", HttpUtility.UrlEncode(Request.RawUrl)));
             }
-            base.OnLoad(e);
+            base.OnPreInit(e);
         }
-
-        public bool IsUserAuthorized()
+        
+        private bool IsUserAuthorized()
         {
-            return AllowAnonymous || 
-                (User.Identity.IsAuthenticated && AuthorizedRoles.Any(role => User.IsInRole(role)));
+            bool hasAnonymous = Attribute.GetCustomAttributes(GetType(), typeof (PageAllowAnonymous)).Any();
+            if (hasAnonymous)
+            {
+                return true;
+            }
+
+            var attributes = Attribute.GetCustomAttributes(GetType(), typeof (PageAuthorizeAttribute)).Cast<PageAuthorizeAttribute>();
+            return Page.User.Identity.IsAuthenticated && attributes.All(a => a.OnAuthorize(Page.User));
         }
-
-        public virtual string[] AuthorizedRoles { get { return new[] {BtnetRoles.User}; } }
-
-        public virtual bool AllowAnonymous { get { return false; } }
     }
 }
