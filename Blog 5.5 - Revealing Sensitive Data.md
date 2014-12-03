@@ -7,6 +7,8 @@ Deploying SSL certificates was once a very expensive proposition. In fact the fi
 Even with SSL properly deployed some programming mistakes can expose the application to attack. BugTracker.NET has a couple of rather interesting features that put it at a huge risk. The first of these is the Ad Hoc Query Tool. This tool is designed to allow administrators to run whatever query they would like agianst the database.
 ![](Images/adhoc.jpg)
 
+##Custom Queries
+
 From the warning on the page it is clear that the author knew that there was a security issue with the page. This is because any data from the database can be retrieved and displayed.
 
 ![Hashed passwords from the users table](Images/adhoc1.jpg)
@@ -21,6 +23,24 @@ So, for the good of mankind, let's rip this code out.
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/f578fb873677a2fe9ddd6908c4521a4ffd3f8f45)
 
+##Other Query Pages
+
 There are some other pages that allow for arbitrary queries to be run. The page called queries.aspx allows for the definition of queries that can then be run by non-admin users. This is scary as a mistake in a query by an admin can now be exploited by any user. This page, however, is how users create custom reports. If we take this out then the only way to do so will be for a programmer to create them.
 
-As it turns out there is a good reason not everybody is a programmer: it is pretty hard to get right. 
+As it turns out there is a good reason not everybody is a programmer: it is pretty hard to get right.
+
+A> There is a constant struggle to build tools for reporting that are so simple the average user can use them and so powerful that they provide real value. I've seen a lot of these tools come and go over the years. It is an impossible balence to strike. The only tool I've ever seen that even comes close is Microsoft Excel. All my applications just export to Excel to allow users to do whatever crazy things users do.
+
+Let's take the ability to edit queries but leave intact the actual query functionality. This means that people can still create the queries on the back end should they be needed.
+
+[View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/0b339846d85e948714e730c12ea16ba14daea8a6)
+
+##Web Config
+
+The final item of concern is the web.config file. Typically the web config is a well guarded secret. It contains applicaiton setting such as the connection string and encryption keys. There is a tool provided to allow editing of the web config file from within the tool. This is dangerous not only for security reasons but if an incorrect configuration is entered the application may no longer work to allow the change to be reverted.
+
+If users need to edit a web configuration file then they should either have login rights on the web server or some ability to manage the packages deployed. Let's drop this functionality also.
+
+[View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/892efdc2b92d4088964fa65e06dee1932a1bd615)
+
+With these three issues removed the application should be significantly safer to deploy if slightly less functional. Some will disagree with this approach as it could create hardship for some existing users. Whatever their hardship it would be magnified many times over should this information leak. We should make our best effort to ship code that is safe and responsible.
