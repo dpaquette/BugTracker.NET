@@ -558,7 +558,6 @@
     <Content Include="edit_udf.aspx" />
     <Content Include="edit_user.aspx" />
     <Content Include="edit_user_permissions2.aspx" />
-    <Content Include="edit_web_config.aspx" />
     <Content Include="email_edit.png" />
     <Content Include="email_open.png" />
     <Content Include="favicon.ico" />
@@ -979,13 +978,6 @@
     </Compile>
     <Compile Include="edit_user_permissions2.aspx.designer.cs">
       <DependentUpon>edit_user_permissions2.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="edit_web_config.aspx.cs">
-      <DependentUpon>edit_web_config.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="edit_web_config.aspx.designer.cs">
-      <DependentUpon>edit_web_config.aspx</DependentUpon>
     </Compile>
     <Compile Include="flag.aspx.cs">
       <DependentUpon>flag.aspx</DependentUpon>

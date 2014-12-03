@@ -98,12 +98,6 @@ Is BugTracker.NET helping you or your company?  Please consider <a href=javascri
 
 <li class=listitem><a href=edit_custom_html.aspx>Edit Custom Html</a></li>
 
-<li class=listitem><a href=edit_web_config.aspx>Edit Web.Config</a></li>
-    &nbsp;&nbsp;
-    <span style="border: solid red 1px; padding: 2px; margin: 3px; color: red; font-size: 9px;">
-    Many BugTracker.NET features are configurable by editing Web.config, but please be careful!  Web.config is easy to break!
-    </span><br></li>
-
 <li class=listitem><a href=backup_db.aspx>Backup Database</a></li>
 <li class=listitem><a href=manage_logs.aspx>Manage Logs</a></li>
     <li>
