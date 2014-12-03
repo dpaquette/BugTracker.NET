@@ -1,12 +1,13 @@
-We have already addressed how to securely hash a password and check username and password on login. In this section, we will explore what happens after a successful login.
+#Cookie Authentication
+We have already addressed how to securely hash a password and check username and password on login. In this section, we will explore how to authenticate and authorize requests after the user has successfully logged in.
 
-Once a user has Authenticated using their username and password, the user is issued a token that contains a session id. That token is stored as a cookie that accompanies every request the client makes. Traditionally, in an ASP.NET Web Forms application, generating and subsequently validating this cookie was the responsibility of the [Forms Authentication module](http://msdn.microsoft.com/en-us/library/system.web.security.formsauthentication). In the latest iterations of ASP.NET, this is done using [OWIN Cookie Authentication middleware](http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx).
+In many web applications, once a user has authenticated using their username and password, the user is issued a token that can be used to identify the user and validate that they have already been authenticated. That token is most often stored as a cookie that accompanies every request the client makes. Traditionally, in an ASP.NET Web Forms application, generating and subsequently validating this cookie was the responsibility of the [Forms Authentication module](http://msdn.microsoft.com/en-us/library/system.web.security.formsauthentication). In the latest versions of ASP.NET, this is done using [OWIN Cookie Authentication middleware](http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx).
 
-Based on our experience with the code-base so far, I was surprised to see that BugTracker.NET had implemented cookie authentication on its own. Generally speaking, the implementation is not that bad, but there are definitely some things could be done better. First of all, the contents of the authentication cookie are stored as plain text. A more secure implementation would encrypt all the values into a single string and store those as a single cookie that doesn't make sense to people looking at it.
+Based on our experience with the code-base so far, I was not surprised to see that BugTracker.NET had implemented cookie authentication on its own. Generally speaking, the implementation is not that bad, but there are definitely some things that could be done better. First of all, the contents of the authentication cookie are stored as plain text. A more secure implementation would encrypt all the values into a single string and store those as a single cookie that doesn't make sense to people looking at it.
 
 [View the current implementation](https://github.com/dpaquette/BugTracker.NET/blob/0846d1401c2b7db4f7810fcbc9ef180f403bbcc7/src/BugTracker.Web/btnet/security.cs)
 
-Another potential security risk is that the implementation is using a GUID as the random session id. As it turns out, GUIDs generators are [not  random and are actually predictable](http://blogs.msdn.com/b/oldnewthing/archive/2012/05/23/10309199.aspx).
+Another potential security risk is that the implementation is using a GUID as a random session id. As it turns out, GUIDs generators are [not  random and are actually predictable](http://blogs.msdn.com/b/oldnewthing/archive/2012/05/23/10309199.aspx).
 
 We could try to address these issues with the current implementation, but I really think it would be better to make use of a solid existing implementation. I just don't want to deal with this code in my application if I don't have to.
 
@@ -261,12 +262,40 @@ Unfortunately, the current the write_menu method is located in btnet.security. T
 
 We now have a working Bugs.aspx page that no longer relies on the custom session logic and custom authentication cookies. Our new approach is more closely aligned with a standard Authentication and Authorization implementation ASP.NET, which means BugTracker.NET will play nice with MVC and WebAPI when we start using them.
 
-###Authorization (Restricting Page Access)
+##Authorization (Restricting Page Access)
 Authorization refers to the process of checking whether or not a user should be granted access to a particular page or feature in the application. Previously, this was done by calling `btnet.Security.check_session` with some special parameters in Page_Load method of every single page in the application. Now that we are signing in using Owin cookie authentication middleware, we should be able to us a more standard approach to solving this problem.
 
-In classic Web Forms, this is done by configuring the [location and authorization](http://weblogs.asp.net/gurusarkar/setting-authorization-rules-for-a-particular-page-or-folder-in-web-config) elements of Web.config. I personally prefer to keep this type of logic in code versus configuration.
+In classic Web Forms, this is done by configuring the [location and authorization](http://weblogs.asp.net/gurusarkar/setting-authorization-rules-for-a-particular-page-or-folder-in-web-config) elements of Web.config. I prefer to keep this type of logic in code versus configuration.
 
-A while back, we introduced a BasePage that all our pages inherit from. By  placing the authorization logic in our base class, we can be certain that it will apply to all the pages in our application.
+In MVC and WebAPI, access to controllers and action methods can be restricted using the Authorize and AllowAnonymous attributes. Here is a simply example from [MSDN](http://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute.aspx).
+
+	[Authorize]
+	public class AccountController : Controller
+	{
+	    public AccountController () { . . . }
+
+	    [AllowAnonymous]
+	    public ActionResult Register() { . . . }
+
+	    public ActionResult Manage() { . . . }
+
+	    public ActionResult LogOff() { . . . }
+
+	}
+
+By adding the Authorize attribute to the controller, we are stating that users must be logged in before they can access any of the action methods and views associated with this controller. By adding the AllowAnonymous attribute to the Register method, we are saying that a user does not need to be authenticated to access the Register page.
+
+Using the Authorize attribute, we can also specify that a user must have a particular role in order to access an action method.
+
+	[Authorize(Roles="Admin")]
+	public class AdminController : Controller
+	{
+		...
+	}
+
+We really like the attribute based approach, but unfortunately this feature is not built in to Web Forms. We can't use the MVC attributes because they rely on ActionFilters which just don't exist in the Web Forms page life-cycle.
+
+Luckily, in one of our early changes we introduced a BasePage that all our pages inherit from. By creating our own attributes and  placing the authorization logic in our BasePage class, we can implement an authorization mechanism that is very similar to the MVC approach. We named our attribute PageAuthorize and PageAllowAnonymous to avoid confusion with the MVC attributes.
 
     [PageAuthorize(BtnetRoles.User)]
     public class BasePage : Page
@@ -298,13 +327,12 @@ A while back, we introduced a BasePage that all our pages inherit from. By  plac
         }
 			}
 
-
 By default every page will require that the User is authenticated and has been granted the User role. User is a role that we will grant to all users who have a valid account. We also provide an option to allow anonymous access because some pages should be accessible by users who are not signed in. For example, we can add the PageAllowAnonymous attribute to the login page (default.aspx):
 
     [PageAllowAnonymous]
     public partial class @default : BasePage
 
-For the Bugs.aspx page, we don't need to add any attributes because the default behaviour is exactly what we want. If we wanted to restrict a page to only users who have either the Admin or ProjectAdmin role, we would simply add a new PageAuthorize attribute to that specific page:
+For the Bugs.aspx page, we don't need to add any attributes because the default behaviour is exactly what we want. If we wanted to restrict a page to only users who have either the Admin or ProjectAdmin role, we would add a PageAuthorize attribute to that specific page:
 
     [PageAuthorize(BtnetRoles.Admin, BtnetRoles.ProjectAdmin)]
     public partial class categories : BasePage
@@ -318,8 +346,8 @@ Note: This design was the result of a discussion that happened during a code rev
 - [View the commit - Attribute based page authorization ](https://github.com/dpaquette/BugTracker.NET/commit/4bcb1bb2d32852205e05f693a2616c9dbf158463)
 
 ##Wrapping it up
-Now that we have a framework in place for Authentication and Authorization, we need to replace all references to the old custom session based implementation. This is a big task as the security code is used everywhere.
+Now that we have a framework in place for Authentication and Authorization, we need to replace all references to the old custom session based implementation. This is a big task as the security code is used everywhere. You can see all the change summarized in the pull request below.
 
-[View All Commits](https://github.com/dpaquette/BugTracker.NET/pull/17)
+[View Pull Request](https://github.com/dpaquette/BugTracker.NET/pull/17)
 
-Our new implementation makes use of the latest Owin Cookie Authentication middleware. As a result, our implementation is easier to understand and will work much better with newer technologies like MVC and WebApi. The new implementation is also arguably much more secure as it relies on a solid implementation from Microsoft rather than our own custom cookie authentication.
+Our new implementation makes use of the latest Owin Cookie Authentication middleware. As a result, our implementation is easier to understand and will work much better with newer technologies like MVC and WebApi. The new implementation is also arguably much more secure as it relies on a solid implementation from Microsoft rather than our own custom cookie authentication. Authorization has been simplified greatly as the developer is no longer required to call check_security on every page request: authorization behaviour is inherited automatically.
