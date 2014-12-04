@@ -5,6 +5,7 @@ Distributed under the terms of the GNU General Public License
 
 using System;
 using System.Security.Policy;
+using System.Security.Principal;
 using System.Web;
 using System.Data;
 using System.Collections.Specialized;
@@ -13,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Routing;
+using btnet.Security;
 using NLog;
 using System.Security.Cryptography;
 using System.Text;
@@ -376,9 +378,11 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static SQLString alter_sql_per_project_permissions(SQLString sql, Security security)
+		public static SQLString alter_sql_per_project_permissions(SQLString sql, IIdentity identity)
 		{
-
+		    int userId = identity.GetUserId();
+		    int organizationId = identity.GetOrganizationId();
+		    
 			string project_permissions_sql;
 
 			string dpl = Util.get_setting("DefaultPermissionLevel","2");
@@ -400,7 +404,7 @@ namespace btnet
 					and pu_permission_level = 0)) ";
 			}
 
-            if (security.user.can_only_see_own_reported)
+            if (identity.GetCanOnlySeeOwnReportedBugs())
             {
                 project_permissions_sql += @"
 					    and bugs.bg_reported_user = $user ";
@@ -408,19 +412,18 @@ namespace btnet
             }
             else
             {
-                if (security.user.other_orgs_permission_level == 0)
+                if (identity.GetOtherOrgsPermissionLevels() == 0)
                 {
                     project_permissions_sql += @"
 					    and bugs.bg_org = $user.org ";
-
                 }
             }
 
 			project_permissions_sql
-				= project_permissions_sql.Replace("$user.org",Convert.ToString(security.user.org));
+				= project_permissions_sql.Replace("$user.org",Convert.ToString(organizationId));
 
 			project_permissions_sql
-				= project_permissions_sql.Replace("$user",Convert.ToString(security.user.usid));
+				= project_permissions_sql.Replace("$user",Convert.ToString(userId));
 
 
 			// Figure out where to alter sql for project permissions
@@ -740,7 +743,7 @@ namespace btnet
 
 
 		///////////////////////////////////////////////////////////////////////
-		public static DataTable get_related_users(Security security, bool force_full_names)
+		public static DataTable get_related_users(IIdentity identity, bool force_full_names)
 		{
 			SQLString sql;
 
@@ -873,10 +876,10 @@ drop table #temp");
                 sql = sql.AddParameterWithValue("fullnames", 0);
 			}
 
-			sql = sql.AddParameterWithValue("userid",security.user.usid);
-			sql = sql.AddParameterWithValue("userorg",security.user.org);
-			sql = sql.AddParameterWithValue("og_external_user",security.user.external_user ? 1 : 0);
-			sql = sql.AddParameterWithValue("og_other_orgs_permission_level",security.user.other_orgs_permission_level);
+			sql = sql.AddParameterWithValue("userid",identity.GetUserId());
+			sql = sql.AddParameterWithValue("userorg",identity.GetOrganizationId());
+			sql = sql.AddParameterWithValue("og_external_user", identity.GetIsExternalUser() ? 1 : 0);
+			sql = sql.AddParameterWithValue("og_other_orgs_permission_level",identity.GetOtherOrgsPermissionLevels());
 
 			return btnet.DbUtil.get_dataset(sql).Tables[0];
 
@@ -1290,7 +1293,7 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
 
 		
 		///////////////////////////////////////////////////////////////////////
-		public static DataSet get_all_tasks(Security security, int bugid)
+		public static DataSet get_all_tasks(IIdentity identity, int bugid)
 		{
             var sql = new SQLString("select ");
             
@@ -1374,7 +1377,7 @@ where tsk_bug in
 
 			if (bugid == 0)
 			{
-				sql.Append(btnet.Util.alter_sql_per_project_permissions(new SQLString("select bg_id from bugs"), security));
+				sql.Append(btnet.Util.alter_sql_per_project_permissions(new SQLString("select bg_id from bugs"), identity));
 			}
 			else
 			{
@@ -1392,10 +1395,9 @@ order by tsk_sort_sequence, tsk_id");
 
         
         ///////////////////////////////////////////////////////////////////////
-        public static void display_bug_not_found(HttpResponse Response, Security security, int id)
+        public static void display_bug_not_found(HttpResponse Response, int id)
         {
             Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
-            security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel", "bugs"));
             Response.Write("<p>&nbsp;</p><div class=align>");
             Response.Write("<div class=err>");
             Response.Write(btnet.Util.capitalize_first_letter(btnet.Util.get_setting("SingularBugLabel", "bug")));
@@ -1407,10 +1409,9 @@ order by tsk_sort_sequence, tsk_id");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void display_you_dont_have_permission(HttpResponse Response, Security security)
+        public static void display_you_dont_have_permission(HttpResponse Response)
         {
             Response.Write("<link rel=StyleSheet href=btnet.css type=text/css>");
-            security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel", "bugs"));
             Response.Write("<p>&nbsp;</p><div class=align>");
             Response.Write("<div class=err>You are not allowed to view this "
                 + btnet.Util.get_setting("SingularBugLabel", "bug")

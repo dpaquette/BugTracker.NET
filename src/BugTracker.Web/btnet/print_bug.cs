@@ -4,9 +4,12 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Web;
 using System.Data;
 using System.Text.RegularExpressions;
+using btnet.Security;
 
 namespace btnet
 {
@@ -32,11 +35,7 @@ namespace btnet
 
 
 		///////////////////////////////////////////////////////////////////////
-		public static void print_bug (HttpResponse Response, DataRow dr, Security security, 
-            bool include_style, 
-            bool images_inline, 
-            bool history_inline,
-            bool internal_posts)
+		public static void print_bug (HttpResponse Response, DataRow dr, IIdentity identity, bool include_style, bool images_inline, bool history_inline, bool internal_posts)
 		{
 
 			int bugid = Convert.ToInt32(dr["id"]);
@@ -131,30 +130,30 @@ namespace btnet
 				+ "&nbsp;");
             Response.Write("\n<tr><td>Reported On<td>" + btnet.Util.format_db_date_and_time(dr["reported_date"]) + "&nbsp;");
 
-            if (security.user.tags_field_permission_level > 0)
+            if (identity.GetTagsFieldPermissionLevel() > 0)
 	            Response.Write("\n<tr><td>Tags<td>" + dr["bg_tags"] + "&nbsp;");
 
-            if (security.user.project_field_permission_level > 0)
+            if (identity.GetProjectFieldPermissionLevel() > 0)
 	            Response.Write("\n<tr><td>Project<td>" + dr["current_project"] + "&nbsp;");
 
-            if (security.user.org_field_permission_level > 0)
+            if (identity.GetOrgFieldPermissionLevel() > 0)
 	            Response.Write("\n<tr><td>Organization<td>" + dr["og_name"] + "&nbsp;");
 
-            if (security.user.category_field_permission_level > 0)
+            if (identity.GetCategoryFieldPermissionLevel()> 0)
 	            Response.Write("\n<tr><td>Category<td>" + dr["category_name"] + "&nbsp;");
 
-            if (security.user.priority_field_permission_level > 0)
+            if (identity.GetPriorityFieldPermissionLevel() > 0)
 	            Response.Write("\n<tr><td>Priority<td>" + dr["priority_name"] + "&nbsp;");
 
-            if (security.user.assigned_to_field_permission_level > 0)
+            if (identity.GetAssignedToFieldPermissionLevel() > 0)
 	            Response.Write("\n<tr><td>Assigned<td>"
 					+ format_username((string)dr["assigned_to_username"],(string)dr["assigned_to_fullname"])
 					+ "&nbsp;");
 
-            if (security.user.status_field_permission_level > 0)
+            if (identity.GetStatusFieldPermissionLevel() > 0)
             	Response.Write("\n<tr><td>Status<td>" + dr["status_name"] + "&nbsp;");
 
-			if (security.user.udf_field_permission_level > 0)
+			if (identity.GetUdfFieldPermissionLevel() > 0)
 				if (btnet.Util.get_setting("ShowUserDefinedBugAttribute","1") == "1")
 				{
 					Response.Write("\n<tr><td>"
@@ -164,64 +163,7 @@ namespace btnet
 				}
 
 			// Get custom column info  (There's an inefficiency here - we just did this
-			// same call in get_bug_datarow...)
-
-			
-			DataSet ds_custom_cols = btnet.Util.get_custom_columns();
-
-
-			// Show custom columns
-
-			foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-			{
-                string column_name = (string) drcc["name"];
-
-                if (security.user.dict_custom_field_permission_level[column_name] == Security.PERMISSION_NONE)
-                {
-                    continue;
-                }
-
-                Response.Write("\n<tr><td>");
-				Response.Write (column_name);
-				Response.Write ("<td>");
-
-				if ((string)drcc["datatype"] == "datetime")
-				{
-					object dt = dr[(string)drcc["name"]];
-
-					Response.Write (btnet.Util.format_db_date_and_time(dt));
-				}
-				else
-				{
-					string s = "";
-
-					if ((string)drcc["dropdown type"] == "users")
-					{
-						object obj = dr[(string)drcc["name"]];
-						if (obj.GetType() != typeof(System.DBNull))
-						{
-							int userid = Convert.ToInt32(obj);
-							if (userid != 0)
-							{
-								var sql_get_username = new SQLString("select us_username from users where us_id = @userId");
-								s = (string) btnet.DbUtil.execute_scalar(sql_get_username.AddParameterWithValue("userId", Convert.ToString(userid)));
-							}
-						}
-					}
-					else
-					{
-						s = Convert.ToString(dr[(string)drcc["name"]]);
-					}
-
-					s = HttpUtility.HtmlEncode(s);
-					s = s.Replace("\n","<br>");
-					s = s.Replace("  ","&nbsp; ");
-					s = s.Replace("\t","&nbsp;&nbsp;&nbsp;&nbsp;");
-					Response.Write (s);
-				}
-				Response.Write ("&nbsp;");
-			}
-
+			// same call in get_bug_datarow...)				
 
 			// create project custom dropdowns
 			if ((int)dr["project"] != 0)
@@ -274,7 +216,7 @@ namespace btnet
 			}
 
 
-            DataSet ds_posts = get_bug_posts(bugid, security.user.external_user, history_inline);
+            DataSet ds_posts = get_bug_posts(bugid, identity.GetIsExternalUser(), history_inline);
 			write_posts (
                 ds_posts,
                 Response, 
@@ -283,8 +225,7 @@ namespace btnet
                 false, /* don't write links */
                 images_inline, 
                 history_inline, 
-                internal_posts,
-                security.user);
+                internal_posts, identity);
 
 			Response.Write ("</body>");
 
@@ -295,7 +236,7 @@ namespace btnet
 		protected static void write_tasks(HttpResponse Response, int bugid)
 		{
 			
-			DataSet ds_tasks = btnet.Util.get_all_tasks(null, bugid);
+			DataSet ds_tasks = btnet.Util.get_all_tasks(HttpContext.Current.User.Identity, bugid);
 
             if (ds_tasks.Tables[0].Rows.Count > 0)
             {
@@ -361,16 +302,7 @@ namespace btnet
 		}
 
 		///////////////////////////////////////////////////////////////////////
-		public static int write_posts(
-			DataSet ds_posts,
-            HttpResponse Response,
-			int bugid,
-			int permission_level,
-			bool write_links,
-			bool images_inline,
-            bool history_inline,
-            bool internal_posts,
-			btnet.User user)
+		public static int write_posts(DataSet ds_posts, HttpResponse Response, int bugid, int permission_level, bool write_links, bool images_inline, bool history_inline, bool internal_posts, IIdentity identity)
 		{
 
 			if (Util.get_setting("ForceBordersInEmails","0") == "1")
@@ -406,55 +338,39 @@ namespace btnet
 
 					string comment = (string) dr["bp_comment"];
 
-					if (user.tags_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetTagsFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed tags from"))
 						continue;
 
-					if (user.project_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetProjectFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed project from"))
 						continue;
 
-					if (user.org_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetOrgFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed organization from"))
 						continue;
 
-					if (user.category_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetCategoryFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed category from"))
 						continue;
 
-					if (user.priority_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetPriorityFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed priority from"))
 						continue;
 
-					if (user.assigned_to_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetAssignedToFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed assigned_to from"))
 						continue;
 
-					if (user.status_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetStatusFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed status from"))
 						continue;
 
-					if (user.udf_field_permission_level == Security.PERMISSION_NONE
+					if (identity.GetUdfFieldPermissionLevel() == PermissionLevel.None
 					&& comment.StartsWith("changed " + Util.get_setting("UserDefinedBugAttributeName","YOUR ATTRIBUTE") + " from"))
 						continue;
 
-                    bool bSkip = false;
-                    foreach (string key in user.dict_custom_field_permission_level.Keys)
-                    { 
-                        int field_permission_level = user.dict_custom_field_permission_level[key];
-                        if (field_permission_level == Security.PERMISSION_NONE)
-                        {
-                            if (comment.StartsWith("changed " + key + " from"))
-                            {
-                                bSkip = true;
-                            }
-                        }
-                    }
-                    if (bSkip)
-                    {
-                        continue;
-                    }
-
+                    
 				}
 
 				if (bp_id == prev_bp_id)
@@ -469,10 +385,10 @@ namespace btnet
 						Response.Write ("\n</table>"); // end the previous table
 					}
 
-					write_post(Response, bugid, permission_level, dr, bp_id, write_links, images_inline,
-						user.is_admin,
-						user.can_edit_and_delete_posts,
-						user.external_user);
+                    write_post(Response, bugid, permission_level, dr, bp_id, write_links, images_inline,
+						identity.IsInRole(BtnetRoles.Admin),
+						identity.GetCanEditAndDeletePosts(),
+						identity.GetIsExternalUser());
 
 
 					if (Convert.ToString(dr["ba_file"]) != "") // intentially "ba"
@@ -675,7 +591,7 @@ namespace btnet
 
 				Response.Write ("<td align=right>&nbsp;");
 
-				if (permission_level != Security.PERMISSION_READONLY)
+				if (permission_level != PermissionLevel.ReadOnly)
 				{
 					if (type == "comment" || type == "sent" || type == "received")
 					{
@@ -690,13 +606,8 @@ namespace btnet
 				{
 					if (this_is_admin
 					|| (this_can_edit_and_delete_posts
-					&& permission_level == Security.PERMISSION_ALL))
+					&& permission_level == PermissionLevel.All))
 					{
-					// This doesn't just work.  Need to make changes in edit/delete pages.
-					//	Response.Write ("&nbsp;&nbsp;&nbsp;<a style='font-size: 8pt;'");
-					//	Response.Write (" href=edit_comment.aspx?id="
-					//		+ string_post_id + "&bug_id=" + string_bug_id);
-					//	Response.Write (">edit</a>");
 
 						// This delete leaves debris around, but it's better than nothing
 						Response.Write ("&nbsp;&nbsp;&nbsp;<a class=warn style='font-size: 8pt;'");
@@ -706,7 +617,7 @@ namespace btnet
 
 					}
 
-					if (permission_level != Security.PERMISSION_READONLY)
+					if (permission_level != PermissionLevel.ReadOnly)
 					{
 						Response.Write ("&nbsp;&nbsp;&nbsp;<a class=warn style='font-size: 8pt;'");
 						Response.Write (" href=send_email.aspx?quote=1&bp_id=" + string_post_id);
@@ -723,7 +634,7 @@ namespace btnet
 
 					if (this_is_admin
 					|| (this_can_edit_and_delete_posts
-					&& permission_level == Security.PERMISSION_ALL))
+					&& permission_level == PermissionLevel.All))
 					{
 						Response.Write ("&nbsp;&nbsp;&nbsp;<a class=warn style='font-size: 8pt;'");
 						Response.Write (" href=edit_attachment.aspx?id="
@@ -741,7 +652,7 @@ namespace btnet
 				{
 					if (this_is_admin
 					|| (this_can_edit_and_delete_posts
-					&& permission_level == Security.PERMISSION_ALL))
+					&& permission_level == PermissionLevel.All))
 					{
 						Response.Write ("&nbsp;&nbsp;&nbsp;<a class=warn style='font-size: 8pt;'");
 						Response.Write (" href=edit_comment.aspx?id="
@@ -952,7 +863,7 @@ namespace btnet
             string username,
             string fullname)
         {
-            if (email != null && email != "" && write_links && permission_level != Security.PERMISSION_READONLY)
+            if (email != null && email != "" && write_links && permission_level != PermissionLevel.ReadOnly)
             {
                 return "<a href="
                 + Util.get_setting("AbsoluteUrlPrefix", "http://127.0.0.1/")

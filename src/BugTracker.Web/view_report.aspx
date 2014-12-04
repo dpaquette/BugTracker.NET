@@ -6,7 +6,6 @@
 
 SQLString sql;
 
-Security security;
 int scale = 1;
 //string parent_iframe;
 
@@ -16,10 +15,8 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
-	if (security.user.is_admin || security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports())
 	{
 		//
 	}
@@ -58,7 +55,7 @@ void Page_Load(Object sender, EventArgs e)
     string desc = (string)dr["rp_desc"];
 
 	// replace the magic pseudo variable
-	rp_sql = rp_sql.Replace("$ME", Convert.ToString(security.user.usid));
+	rp_sql = rp_sql.Replace("$ME", Convert.ToString(User.Identity.GetUserId()));
 
 	DataSet ds = btnet.DbUtil.get_dataset (new SQLString(rp_sql));
 

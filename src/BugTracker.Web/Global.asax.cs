@@ -19,7 +19,7 @@ namespace btnet
             Exception exc = Server.GetLastError().GetBaseException();
             Logger logger = LogManager.GetCurrentClassLogger();
             logger.Fatal(exc);
-        }
+        }       
 
         public void Application_OnStart(Object sender, EventArgs e)
         {

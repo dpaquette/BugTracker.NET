@@ -1,9 +1,9 @@
 <!-- #include file = "inc.aspx" -->
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <script language="C#" runat="server">
 
 
-Security security;
 DataSet ds = null;
 
 ///////////////////////////////////////////////////////////////////////
@@ -12,13 +12,10 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "dashboard";
 
-	if (security.user.is_admin || security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports())
 	{
 		//
 	}
@@ -35,7 +32,7 @@ inner join reports on rp_id = ds_report
 where ds_user = @us
 order by ds_col, ds_row");
 
-    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+    sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 	ds = btnet.DbUtil.get_dataset(sql);
 
 }
@@ -97,9 +94,9 @@ iframe {
 
 </style>
 <body>
-<% security.write_menu(Response, "reports"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 
-<% if (security.user.is_guest) /* no dashboard */{ %>
+<% if (User.IsInRole(BtnetRoles.Guest)) /* no dashboard */{ %>
 <span class="disabled_link">edit dashboard not available to "guest" user</span>
 <% } else { %>
 <a href=edit_dashboard.aspx>edit dashboard</a>

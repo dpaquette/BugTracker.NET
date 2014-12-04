@@ -7,6 +7,7 @@ using System;
 using System.Data;
 using System.Collections.Generic;
 using System.Text;
+using btnet.Security;
 
 namespace btnet
 {
@@ -42,19 +43,19 @@ namespace btnet
         public bool can_search = true;
         public bool can_assign_to_internal_users = false;
 
-        public int other_orgs_permission_level = Security.PERMISSION_ALL;
+        public int other_orgs_permission_level = PermissionLevel.All;
         public int org = 0;
         public string org_name = "";
         public int forced_project = 0;
 
-        public int assigned_to_field_permission_level = Security.PERMISSION_ALL;
-        public int status_field_permission_level = Security.PERMISSION_ALL;
-        public int category_field_permission_level = Security.PERMISSION_ALL;
-        public int tags_field_permission_level = Security.PERMISSION_ALL;
-        public int priority_field_permission_level = Security.PERMISSION_ALL;
-        public int project_field_permission_level = Security.PERMISSION_ALL;
-        public int org_field_permission_level = Security.PERMISSION_ALL;
-        public int udf_field_permission_level = Security.PERMISSION_ALL;
+        public int assigned_to_field_permission_level = PermissionLevel.All;
+        public int status_field_permission_level = PermissionLevel.All;
+        public int category_field_permission_level = PermissionLevel.All;
+        public int tags_field_permission_level = PermissionLevel.All;
+        public int priority_field_permission_level = PermissionLevel.All;
+        public int project_field_permission_level = PermissionLevel.All;
+        public int org_field_permission_level = PermissionLevel.All;
+        public int udf_field_permission_level = PermissionLevel.All;
         
         public Dictionary<string,int> dict_custom_field_permission_level = new Dictionary<string, int>();
 
@@ -102,7 +103,7 @@ namespace btnet
             }
             else
             {
-                this.tags_field_permission_level = Security.PERMISSION_NONE;
+                this.tags_field_permission_level = PermissionLevel.None;
             }
             this.priority_field_permission_level = (int)dr["og_priority_field_permission_level"];
             this.assigned_to_field_permission_level = (int)dr["og_assigned_to_field_permission_level"];
@@ -125,7 +126,7 @@ namespace btnet
                     object obj = dr[og_name];
                     if (Convert.IsDBNull(obj))
                     {
-                        dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
+                        dict_custom_field_permission_level[bg_name] = PermissionLevel.All;
                     }
                     else
                     {
@@ -141,7 +142,7 @@ namespace btnet
                     SQLString sql = new SQLString("alter table orgs add [@name] int null");
                     sql.AddParameterWithValue("name", og_name);
                     btnet.DbUtil.execute_nonquery(sql);
-                    dict_custom_field_permission_level[bg_name] = Security.PERMISSION_ALL;
+                    dict_custom_field_permission_level[bg_name] = PermissionLevel.All;
                 }
 
             }
@@ -181,8 +182,8 @@ namespace btnet
             // can't add bugs
             if ((int)dr["us_forced_project"] != 0)
             {
-                if ((int)dr["pu_permission_level"] == Security.PERMISSION_READONLY
-                || (int)dr["pu_permission_level"] == Security.PERMISSION_NONE)
+                if ((int)dr["pu_permission_level"] == PermissionLevel.ReadOnly
+                || (int)dr["pu_permission_level"] == PermissionLevel.None)
                 {
                     this.adds_not_allowed = true;
                 }

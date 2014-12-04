@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_web_config.aspx.cs" Inherits="btnet.edit_web_config" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -7,8 +9,6 @@ Distributed under the terms of the GNU General Public License
 
 
 <script language="C#" runat="server">
-
-Security security;
     
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
@@ -17,9 +17,6 @@ void Page_Load(Object sender, EventArgs e)
     
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit Web.config";
 
@@ -85,7 +82,7 @@ void Page_Load(Object sender, EventArgs e)
 
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div class=align><table border=0 style="margin-left:20px; margin-top:20px; width:80%;"><tr><td>
 <form  runat="server">

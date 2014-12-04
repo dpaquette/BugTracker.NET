@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_comment.aspx.cs" Inherits="btnet.edit_comment" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -11,8 +13,6 @@ int id;
 SQLString sql;
 
 
-Security security;
-
 bool use_fckeditor = false;
 int bugid;
 
@@ -22,14 +22,11 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
-
+    MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
     btnet.Util.do_not_cache(Response);
     
-    security = new Security();
 
-    security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-    if (security.user.is_admin || security.user.can_edit_and_delete_posts)
+    if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditAndDeletePosts())
     {
         //
     }
@@ -67,9 +64,9 @@ void Page_Load(Object sender, EventArgs e)
 
     bugid = (int) dr["bp_bug"];
 
-    int permission_level = btnet.Bug.get_bug_permission_level(bugid, security);
-    if (permission_level == Security.PERMISSION_NONE
-    || permission_level == Security.PERMISSION_READONLY
+    int permission_level = btnet.Bug.get_bug_permission_level(bugid, User.Identity);
+    if (permission_level ==PermissionLevel.None
+    || permission_level == PermissionLevel.ReadOnly
     || (string) dr["bp_type"] != "comment")
     {
         Response.Write("You are not allowed to edit this item");
@@ -78,7 +75,7 @@ void Page_Load(Object sender, EventArgs e)
 
     string content_type = (string)dr["bp_content_type"];
 
-    if (security.user.use_fckeditor && content_type == "text/html" && btnet.Util.get_setting("DisableFCKEditor","0") == "0")
+    if (User.Identity.GetUseFCKEditor() && content_type == "text/html" && btnet.Util.get_setting("DisableFCKEditor", "0") == "0")
     {
         use_fckeditor = true;
     }
@@ -87,7 +84,7 @@ void Page_Load(Object sender, EventArgs e)
         use_fckeditor = false;
     }
 
-    if (security.user.external_user || btnet.Util.get_setting("EnableInternalOnlyPosts","0") == "0")
+    if (User.Identity.GetIsExternalUser() || btnet.Util.get_setting("EnableInternalOnlyPosts","0") == "0")
     {
         internal_only.Visible = false;
         internal_only_label.Visible = false;
@@ -171,8 +168,8 @@ void on_update()
         // easier for them to accidently get forwarded to the "wrong" people...
         if (!internal_only.Checked)
         {
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
-            btnet.WhatsNew.add_news(bugid, (string) dr["bg_short_desc"], "updated", security);
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
+            btnet.WhatsNew.add_news(bugid, (string) dr["bg_short_desc"], "updated", User.Identity);
         }
 
 
@@ -190,7 +187,8 @@ void on_update()
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
-<%  if (security.user.use_fckeditor) { %>
+<%  if (User.Identity.GetUseFCKEditor())
+    { %>
 <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 
@@ -218,7 +216,7 @@ function do_doc_ready()
 </script>
 </head>
 <body>
-<% security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel","bugs")); %>
+    <uc1:MainMenu runat="server" ID="MainMenu"/>
 
 
 <div class=align>
@@ -249,7 +247,8 @@ function do_doc_ready()
     </table>
 </form>
 </td></tr></table></div>
-<% Response.Write(Application["custom_footer"]); %></body>
+<% Response.Write(Application["custom_footer"]); %>
+</body>
 </html>
 
 

@@ -1,9 +1,7 @@
 <!-- #include file = "inc.aspx" -->
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <script language="C#" runat="server">
-
-
-Security security;
 
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
@@ -15,9 +13,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "news?";
 
@@ -207,7 +202,7 @@ $(document).ready(function()
 
 <body>
 
-<% security.write_menu(Response, "news"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="news"/>
 
 <table border=0 cellspacing=0 cellpadding=10>
 <tr>

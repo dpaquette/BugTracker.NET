@@ -7,17 +7,13 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-Security security;
 
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
-	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
-	if (!security.user.is_guest)
+	if (!User.IsInRole(BtnetRoles.Guest))
 	{
 		if (Request.QueryString["ses"] != (string) Session["session_cookie"])
 		{
@@ -34,8 +30,8 @@ void Page_Load(Object sender, EventArgs e)
 
 	int bugid = Convert.ToInt32(Util.sanitize_integer(Request["bugid"]));
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
+	if (permission_level == PermissionLevel.None)
 	{
 		Response.End();
 	}
@@ -53,7 +49,7 @@ if not exists (select bu_bug from bug_user where bu_bug = @bg and bu_user = @us)
 update bug_user set bu_flag = @fl, bu_flag_datetime = getdate() where bu_bug = @bg and bu_user = @us and bu_flag <> @fl");
 
 			sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
-			sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 			sql = sql.AddParameterWithValue("fl", Convert.ToString(flag));
 
 			btnet.DbUtil.execute_nonquery(sql);

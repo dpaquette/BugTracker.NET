@@ -61,12 +61,7 @@ void Page_Load(Object sender, EventArgs e)
 		{
 			// The user was found, so bake a cookie and redirect
 			int userid = (int) dr["us_id"];
-			btnet.Security.create_session (
-				Request,
-				Response,
-				userid,
-				(string) dr["us_username"],
-				"1");
+            Security.SignIn(Request, (string)dr["us_username"]);
 
             btnet.Util.update_most_recent_login_datetime(userid);
 				
@@ -156,12 +151,7 @@ void Page_Load(Object sender, EventArgs e)
 			if (new_user_id > 0) // automatically created the user
 			{
 				// The user was created, so bake a cookie and redirect
-				btnet.Security.create_session(
-					Request,
-					Response,
-					new_user_id,
-					windows_username.Replace("'", "''"),
-					"1");
+                Security.SignIn(Request, windows_username.Replace("'", "''"));
 					
 	            btnet.Util.update_most_recent_login_datetime(new_user_id);
 					
@@ -181,12 +171,7 @@ void Page_Load(Object sender, EventArgs e)
 		{
 			// The Guest user was found, so bake a cookie and redirect
 			int userid = (int) dr["us_id"];
-			btnet.Security.create_session (
-				Request,
-				Response,
-				userid,
-				(string) dr["us_username"],
-				"1");
+            Security.SignIn(Request, (string) dr["us_username"]);
 				
 			btnet.Util.update_most_recent_login_datetime(userid);				
 			

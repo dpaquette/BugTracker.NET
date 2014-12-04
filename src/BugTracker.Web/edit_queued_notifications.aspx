@@ -9,17 +9,12 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 	if (Request.QueryString["ses"] != (string) Session["session_cookie"])
 	{
 		Response.Write ("session in URL doesn't match session cookie");

@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="delete_query.aspx.cs" Inherits="btnet.delete_query" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,8 +10,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -19,10 +18,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	if (IsPostBack)
 	{
 		// do delete here
@@ -43,9 +38,9 @@ void Page_Load(Object sender, EventArgs e)
 
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-		if ((int) dr["qu_user"] != security.user.usid)
+		if ((int) dr["qu_user"] != User.Identity.GetUserId())
 		{
-			if (security.user.is_admin || security.user.can_edit_sql)
+			if (User.IsInRole(BtnetRoles.Admin))
 			{
 				// can do anything
 			}
@@ -73,7 +68,7 @@ void Page_Load(Object sender, EventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "queries"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="queries"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

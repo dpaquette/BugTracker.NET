@@ -2,12 +2,13 @@ using System;
 using System.Data;
 using System.Web;
 using btnet.Mail;
+using btnet.Security;
 
 namespace btnet
 {
+    [PageAllowAnonymous]
     public partial class forgot : BasePage
     {
-
 
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)

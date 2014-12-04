@@ -7,7 +7,6 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-Security security;
 string blame_text;
 string path;
 string commit;
@@ -17,8 +16,6 @@ void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 	var sql = new SQLString(@"
 select gitcom_commit, gitcom_bug, gitcom_repository, gitap_path 
@@ -32,8 +29,8 @@ where gitap_id = @id");
 	DataRow dr = btnet.DbUtil.get_datarow(sql);
 
 	// check if user has permission for this bug
-	int permission_level = Bug.get_bug_permission_level((int) dr["gitcom_bug"], security);
-	if (permission_level == Security.PERMISSION_NONE) {
+	int permission_level = Bug.get_bug_permission_level((int) dr["gitcom_bug"], User.Identity);
+	if (permission_level == PermissionLevel.None) {
 		Response.Write("You are not allowed to view this item");
 		Response.End();
 	}

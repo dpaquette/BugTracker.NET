@@ -6,17 +6,12 @@ Distributed under the terms of the GNU General Public License
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 
-
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
 
 	// create path
 	string path = Request.MapPath(Request.Path);

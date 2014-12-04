@@ -5,27 +5,21 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI.WebControls;
 using btnet.Mail;
+using btnet.Security;
 
 namespace btnet
 {
     public partial class send_email : BasePage
     {
         protected SQLString sql;
-        protected Security security;
-        
         protected int project = -1;
         protected bool enable_internal_posts = false;
 
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {
-
             btnet.Util.do_not_cache(Response);
-
-            security = new Security();
-            security.check_security(HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-
+            MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
             titl.InnerText = btnet.Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "send email";
 
@@ -83,7 +77,7 @@ namespace btnet
 				or (bp_parent = @id and bp_type='file')");
 
                     sql = sql.AddParameterWithValue("id", string_bp_id);
-                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 
                     DataView dv = btnet.DbUtil.get_dataview(sql);
                     dr = null;
@@ -97,8 +91,8 @@ namespace btnet
                     }
 
                     int int_bg_id = (int)dr["bg_id"];
-                    int permission_level = btnet.Bug.get_bug_permission_level(int_bg_id, security);
-                    if (permission_level == Security.PERMISSION_NONE)
+                    int permission_level = btnet.Bug.get_bug_permission_level(int_bg_id, User.Identity);
+                    if (permission_level == PermissionLevel.None)
                     {
                         Response.Write("You are not allowed to view this item");
                         Response.End();
@@ -106,7 +100,7 @@ namespace btnet
 
                     if ((int)dr["bp_hidden_from_external_users"] == 1)
                     {
-                        if (security.user.external_user)
+                        if (User.Identity.GetIsExternalUser())
                         {
                             Response.Write("You are not allowed to view this post");
                             Response.End();
@@ -164,7 +158,7 @@ namespace btnet
 
                     if (dr["us_signature"].ToString() != "")
                     {
-                        if (security.user.use_fckeditor)
+                        if (User.Identity.GetUseFCKEditor())
                         {
                             body.Value += "<br><br><br>";
                             body.Value += dr["us_signature"].ToString().Replace("\r\n", "<br>");
@@ -186,7 +180,7 @@ namespace btnet
 
                         if (dr["bp_type"].ToString() == "received")
                         {
-                            if (security.user.use_fckeditor)
+                            if (User.Identity.GetUseFCKEditor())
                             {
                                 body.Value += "<br><br><br>";
                                 body.Value += "&#62;From: " + dr["bp_email_from"].ToString().Replace("<", "&#60;").Replace(">", "&#62;") + "<br>";
@@ -204,7 +198,7 @@ namespace btnet
                             if (i < 4 && (lines[i].IndexOf("To:") == 0 || lines[i].IndexOf("Cc:") == 0))
                             {
                                 next_line_is_date = true;
-                                if (security.user.use_fckeditor)
+                                if (User.Identity.GetUseFCKEditor())
                                 {
                                     body.Value += "&#62;" + lines[i].Replace("<", "&#60;").Replace(">", "&#62;") + "<br>";
                                 }
@@ -216,7 +210,7 @@ namespace btnet
                             else if (next_line_is_date)
                             {
                                 next_line_is_date = false;
-                                if (security.user.use_fckeditor)
+                                if (User.Identity.GetUseFCKEditor())
                                 {
                                     body.Value += "&#62;Date: " + Convert.ToString(dr["bp_date"]) + "<br>&#62;<br>";
                                 }
@@ -227,7 +221,7 @@ namespace btnet
                             }
                             else
                             {
-                                if (security.user.use_fckeditor)
+                                if (User.Identity.GetUseFCKEditor())
                                 {
                                     if (Convert.ToString(dr["bp_content_type"]) != "text/html")
                                     {
@@ -271,9 +265,9 @@ namespace btnet
 
                     string_bg_id = btnet.Util.sanitize_integer(string_bg_id);
 
-                    int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), security);
-                    if (permission_level == Security.PERMISSION_NONE
-                    || permission_level == Security.PERMISSION_READONLY)
+                    int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), User.Identity);
+                    if (permission_level == PermissionLevel.None
+                    || permission_level == PermissionLevel.ReadOnly)
                     {
                         Response.Write("You are not allowed to edit this item");
                         Response.End();
@@ -292,7 +286,7 @@ namespace btnet
 				left outer join projects on bg_project = pj_id
 				where bg_id = @bg");
 
-                    sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                    sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
                     sql = sql.AddParameterWithValue("bg", string_bg_id);
 
                     dr = btnet.DbUtil.get_datarow(sql);
@@ -316,7 +310,7 @@ namespace btnet
 
                     if (dr["us_signature"].ToString() != "")
                     {
-                        if (security.user.use_fckeditor)
+                        if (User.Identity.GetUseFCKEditor())
                         {
                             body.Value += "<br><br><br>";
                             body.Value += dr["us_signature"].ToString().Replace("\r\n", "<br>");
@@ -483,15 +477,14 @@ namespace btnet
         {
             // Get bug html
 
-            DataRow bug_dr = btnet.Bug.get_bug_datarow(bugid, security);
+            DataRow bug_dr = btnet.Bug.get_bug_datarow(bugid, User.Identity);
 
             // Create a fake response and let the code
             // write the html to that response
             System.IO.StringWriter writer = new System.IO.StringWriter();
             HttpResponse my_response = new HttpResponse(writer);
             PrintBug.print_bug(my_response,
-                bug_dr,
-                security,
+                bug_dr, User.Identity,
                 true,  // include style
                 false, // images_inline
                 true,  // history_inline
@@ -517,8 +510,8 @@ update bugs set
 	where bg_id = @id");
 
             sql = sql.AddParameterWithValue("id", bg_id.Value);
-            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
-            if (security.user.use_fckeditor)
+            sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
+            if (User.Identity.GetUseFCKEditor())
             {
                 string adjusted_body = "Subject: " + subject.Value + "<br><br>";
                 adjusted_body += btnet.Util.strip_dangerous_tags(body.Value);
@@ -565,7 +558,7 @@ update bugs set
             {
 
                 // white space isn't handled well, I guess.
-                if (security.user.use_fckeditor)
+                if (User.Identity.GetUseFCKEditor())
                 {
                     body_text = body.Value;
                     body_text += "<br><br>";
@@ -582,7 +575,7 @@ update bugs set
             }
             else
             {
-                if (security.user.use_fckeditor)
+                if (User.Identity.GetUseFCKEditor())
                 {
                     body_text = body.Value;
                     format = MailFormat.Html;
@@ -606,8 +599,8 @@ update bugs set
                 attachments,
                 return_receipt.Checked);
 
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(bg_id.Value), security);
-            btnet.WhatsNew.add_news(Convert.ToInt32(bg_id.Value), short_desc.Value, "email sent", security);
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(bg_id.Value), User.Identity);
+            btnet.WhatsNew.add_news(Convert.ToInt32(bg_id.Value), short_desc.Value, "email sent", User.Identity);
 
             if (result == "")
             {
@@ -647,7 +640,7 @@ update bugs set
                 }
 
                 int bp_id = Bug.insert_post_attachment(
-                    security,
+                    User.Identity,
                     Convert.ToInt32(bg_id.Value),
                     attached_file.PostedFile.InputStream,
                     content_length,
@@ -668,7 +661,7 @@ update bugs set
                 {
                     int bp_id = Convert.ToInt32(item_attachment.Value);
 
-                    Bug.insert_post_attachment_copy(security, Convert.ToInt32(bg_id.Value), bp_id, "email attachment", comment_id, false, false);
+                    Bug.insert_post_attachment_copy(User.Identity, Convert.ToInt32(bg_id.Value), bp_id, "email attachment", comment_id, false, false);
                     attachments.Add(bp_id);
                 }
             }

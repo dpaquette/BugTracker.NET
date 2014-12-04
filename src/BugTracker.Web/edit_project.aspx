@@ -1,4 +1,5 @@
 <%@ Page Language="C#" CodeBehind="edit_project.aspx.cs" Inherits="btnet.edit_project" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <!--
 Copyright 2002-2011 Corey Trager
@@ -10,9 +11,7 @@ Distributed under the terms of the GNU General Public License
 
     int id;
 
-
-    Security security;
-
+    
     void Page_Init(object sender, EventArgs e) { ViewStateUserKey = Session.SessionID; }
 
 
@@ -22,8 +21,6 @@ Distributed under the terms of the GNU General Public License
 
         Util.do_not_cache(Response);
 
-        security = new Security();
-        security.check_security(HttpContext.Current, Security.MUST_BE_ADMIN);
 
         titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
             + "edit project";
@@ -317,7 +314,7 @@ Distributed under the terms of the GNU General Public License
     <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-    <% security.write_menu(Response, "admin"); %>
+    <uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
     <div class="align">

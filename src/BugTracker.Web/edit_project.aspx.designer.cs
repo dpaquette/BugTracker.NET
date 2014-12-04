@@ -22,6 +22,15 @@ namespace btnet {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl titl;
         
         /// <summary>
+        /// MainMenu control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::btnet.Controls.MainMenu MainMenu;
+        
+        /// <summary>
         /// permissions_href control.
         /// </summary>
         /// <remarks>

@@ -3,18 +3,13 @@
 <script language="C#" runat="server">
 
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	if (security.user.is_admin || security.user.can_use_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanUseReports())
 	{
 		//
 	}
@@ -56,7 +51,7 @@ insert into dashboard_items
 (ds_user, ds_report, ds_chart_type, ds_col, ds_row)
 values (@user, @report, @chart_type, @col, @last_row)");
 
-		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(User.Identity.GetUserId()));
 		sql = sql.AddParameterWithValue("report", Convert.ToString(rp_id));
 		sql = sql.AddParameterWithValue("chart_type", ((string)Request["rp_chart_type"]));
 		sql = sql.AddParameterWithValue("col", Convert.ToString(rp_col));
@@ -67,7 +62,7 @@ values (@user, @report, @chart_type, @col, @last_row)");
 		int ds_id = Convert.ToInt32(Util.sanitize_integer(Request["ds_id"]));
 		sql = new SQLString("delete from dashboard_items where ds_id = @ds_id and ds_user = @user");
 		sql = sql.AddParameterWithValue("ds_id", Convert.ToString(ds_id));
-		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(User.Identity.GetUserId()));
 	}
 	else if (action == "moveup" || action == "movedown")
 	{
@@ -106,7 +101,7 @@ and ds_id = @ds_id
 			sql = sql.AddParameterWithValue("delta", "1");
 		}
 		sql = sql.AddParameterWithValue("ds_id", Convert.ToString(ds_id));
-		sql = sql.AddParameterWithValue("user", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("user", Convert.ToString(User.Identity.GetUserId()));
 	}
 
 	if (action != "")

@@ -48,7 +48,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	// authenticate user
 
-    bool authenticated = btnet.Authenticate.check_password(username, password);
+    bool authenticated = Authenticate.check_password(username, password);
 
     if (!authenticated)
     {
