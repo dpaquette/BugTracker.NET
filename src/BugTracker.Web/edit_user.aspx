@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_user.aspx.cs" Inherits="btnet.edit_user" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -11,7 +13,6 @@ int id;
 SQLString sql;
 
 
-Security security;
 bool copy = false;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
@@ -23,20 +24,17 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN_OR_PROJECT_ADMIN);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit user";
 
-	if (!security.user.is_admin)
+    if (!User.IsInRole(BtnetRoles.Admin))
 	{
 		// Check if the current user is an admin for any project
 		sql = new SQLString(@"select pu_project
 			from project_user_xref
 			where pu_user = us
 			and pu_admin = 1");
-		sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 		DataSet ds_projects = btnet.DbUtil.get_dataset(sql);
 
 		if (ds_projects.Tables[0].Rows.Count == 0)
@@ -80,7 +78,7 @@ void Page_Load(Object sender, EventArgs e)
 	if (!IsPostBack)
 	{
 
-		if (!security.user.is_admin)
+        if (!User.IsInRole(BtnetRoles.Admin))
 		{
 
 			// logged in user is a project level admin
@@ -101,7 +99,7 @@ void Page_Load(Object sender, EventArgs e)
 				order by pj_name;");
 
 
-			sql = sql.AddParameterWithValue("this_usid",Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("this_usid",Convert.ToString(User.Identity.GetUserId()));
 
 		}
 		else // user is a real admin
@@ -138,7 +136,7 @@ void Page_Load(Object sender, EventArgs e)
 
 // Table 2
 
-		if (security.user.is_admin)
+        if (User.IsInRole(BtnetRoles.Admin))
 		{
 			sql.Append( @"/* populate org dropdown 1 */
 				select og_id, og_name
@@ -147,7 +145,7 @@ void Page_Load(Object sender, EventArgs e)
 		}
 		else
 		{
-			if (security.user.other_orgs_permission_level == Security.PERMISSION_ALL)
+			if (User.Identity.GetOtherOrgsPermissionLevels() == PermissionLevel.All)
 			{
 				sql.Append( @"/* populate org dropdown 2 */
 					select og_id, og_name
@@ -218,8 +216,8 @@ void Page_Load(Object sender, EventArgs e)
 		forced_project.Items.Insert(0, new ListItem("[no forced project]", "0"));
 
 		// org dropdown
-		if (security.user.is_admin
-		|| security.user.other_orgs_permission_level == Security.PERMISSION_ALL)
+        if (User.IsInRole(BtnetRoles.Admin)
+		|| User.Identity.GetOtherOrgsPermissionLevels() == PermissionLevel.All)
 		{
 			org.DataSource = ds.Tables[2].DefaultView;
 			org.DataTextField = "og_name";
@@ -228,11 +226,13 @@ void Page_Load(Object sender, EventArgs e)
 			org.Items.Insert(0, new ListItem("[select org]", "0"));
 		}
 		else
-		{
-			org.Items.Insert(0, new ListItem(security.user.org_name, Convert.ToString(security.user.org)));
-		}
+        {
+            int organizationId = User.Identity.GetOrganizationId();
+            int orgRow = ds.Tables[2].DefaultView.Find(organizationId);
+            org.Items.Insert(0, new ListItem((string)ds.Tables[2].Rows[orgRow]["og_name"], Convert.ToString(organizationId)));
+        }
 
-		// populate permissions grid
+	    // populate permissions grid
 		MyDataGrid.DataSource=ds.Tables[0].DefaultView;
 		MyDataGrid.DataBind();
 
@@ -268,9 +268,9 @@ void Page_Load(Object sender, EventArgs e)
 			DataRow dr = ds.Tables[3].Rows[0];
 
 			// check if project admin is allowed to edit this user
-			if (!security.user.is_admin)
+            if (!User.IsInRole(BtnetRoles.Admin))
 			{
-				if (security.user.usid != (int) dr["us_created_user"])
+				if (User.Identity.GetUserId() != (int) dr["us_created_user"])
 				{
 					Response.Write ("You not allowed to edit this user, because you didn't create it.");
 					Response.End();
@@ -512,7 +512,7 @@ SQLString replace_vars_in_sql_statement(SQLString sql)
 
 
 	// only admins can create admins.
-	if (security.user.is_admin)
+    if (User.IsInRole(BtnetRoles.Admin))
 	{
 		sql = sql.AddParameterWithValue("ad", Util.bool_to_string(admin.Checked));
 	}
@@ -580,10 +580,10 @@ values (
 select scope_identity()");
 
 				sql = replace_vars_in_sql_statement(sql);
-				sql = sql.AddParameterWithValue("createdby", Convert.ToString(security.user.usid));
+				sql = sql.AddParameterWithValue("createdby", Convert.ToString(User.Identity.GetUserId()));
 
 				// only admins can create admins.
-				if (security.user.is_admin)
+                if (User.IsInRole(BtnetRoles.Admin))
 				{
 					sql = sql.AddParameterWithValue("ad", Util.bool_to_string(admin.Checked));
 				}
@@ -832,7 +832,7 @@ void update_project_user_xref()
 		sql = sql.AddParameterWithValue("projects", projects);
 	}
 
-	if (security.user.is_admin)
+    if (User.IsInRole(BtnetRoles.Admin))
 	{
 		projects = "";
 		foreach (Project p in hash_projects.Values)
@@ -1055,7 +1055,7 @@ function show_permissions_settings()
 
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
 <div class=align><table border=0><tr><td>

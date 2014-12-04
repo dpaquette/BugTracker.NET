@@ -8,8 +8,6 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-Security security;
-
 string log_result;
 string repo;
 string file_path;
@@ -19,9 +17,6 @@ string string_affected_path_id;
 void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
-	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 
 	// get info about revision
@@ -43,9 +38,9 @@ order by hgrev_revision desc, hgap_path");
 	
 	// check if user has permission for this bug
 	int bugid = (int) dr["hgrev_bug"];
-	
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE) {
+
+    int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
+	if (permission_level ==PermissionLevel.None) {
 		Response.Write("You are not allowed to view this item");
 		Response.End();
 	}

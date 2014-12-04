@@ -10,8 +10,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +18,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
 
 	if (Request.QueryString["ses"] != (string) Session["session_cookie"])
 	{
@@ -33,9 +28,9 @@ void Page_Load(Object sender, EventArgs e)
 	string string_bugid = btnet.Util.sanitize_integer(Request["bugid"]);
 	int bugid = Convert.ToInt32(string_bugid);
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 
-	if (permission_level != Security.PERMISSION_ALL)
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");
 		Response.End();

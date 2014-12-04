@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="delete_org.aspx.cs" Inherits="btnet.delete_org" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,7 +10,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
@@ -19,9 +19,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 	if (IsPostBack)
 	{
 		// do delete here
@@ -77,7 +74,7 @@ void Page_Load(Object sender, EventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

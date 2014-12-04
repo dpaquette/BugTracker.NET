@@ -1,6 +1,9 @@
 <%@ Page language="C#" CodeBehind="bugs.aspx.cs" Inherits="btnet.bugs" AutoEventWireup="True" %>
 <%@ Import Namespace="System.Data" %>
 <%@ Import Namespace="btnet" %>
+<%@ Import Namespace="btnet.Security" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -34,7 +37,7 @@ function on_query_changed()
 
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+    <uc1:MainMenu runat="server" id="MainMenu" />
 
 <form method="POST" runat="server">
 
@@ -42,7 +45,7 @@ function on_query_changed()
 
 <table border=0><tr>
     <td  nowrap>
-    <% if (!security.user.adds_not_allowed) { %>
+    <% if (User.Identity.GetCanAddBugs()) { %>
     <a href=edit_bug.aspx><img src=add.png border=0 align=top>&nbsp;add new <% Response.Write(Util.get_setting("SingularBugLabel","bug")); %></a>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <% } %>
@@ -68,7 +71,7 @@ if (dv != null)
     {
         if (btnet.Util.get_setting("EnableTags","0") == "1")
         {
-            btnet.BugList.display_buglist_tags_line(Response, security);
+            btnet.BugList.display_buglist_tags_line(Response, User.Identity);
         }
         display_bugs(false);
     }
@@ -93,7 +96,7 @@ else
 <input type=hidden name="tags" id="tags" value="">
 
 <script>
-    var enable_popups = <% Response.Write(security.user.enable_popups ? "1" : "0"); %>;
+    var enable_popups = <% Response.Write(User.Identity.GetEnablePopups() ? "1" : "0"); %>;
     var asp_form_id = '<% Response.Write(Util.get_form_name()); %>';
 </script>
 

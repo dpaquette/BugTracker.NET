@@ -7,6 +7,7 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using OpenPop.Mime;
 
@@ -177,17 +178,17 @@ where us_username = @us");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void add_attachments(Message message, int bugid, int parent_postid, Security security)
+        public static void add_attachments(Message message, int bugid, int parent_postid, IIdentity identity)
         {
             foreach (MessagePart attachment in message.FindAllAttachments())
             {
-                add_attachment(attachment.FileName, attachment, bugid, parent_postid, security);                
+                add_attachment(attachment.FileName, attachment, bugid, parent_postid, identity);                
             }
         }
 
         ///////////////////////////////////////////////////////////////////////
 
-        public static void add_attachment(string filename, MessagePart part, int bugid, int parent_postid, Security security)
+        public static void add_attachment(string filename, MessagePart part, int bugid, int parent_postid, IIdentity identity)
         {
 
             Util.write_to_log("attachment:" + filename);
@@ -215,7 +216,7 @@ where us_username = @us");
 
             attachmentStream.Position = 0;
             Bug.insert_post_attachment(
-                security,
+                identity,
                 bugid,
                 attachmentStream,
                 (int)attachmentStream.Length,
@@ -253,24 +254,5 @@ where us_username = @us");
 
             return headers;
         }
-
-        public static Security get_synthesized_security(Message message, string from_addr, string username)
-        {
-            // Get the btnet user, which might actually be a user that corresonds with the email sender, not the username above
-            DataRow dr = Mime.get_user_datarow_maybe_using_from_addr(message, from_addr, username);
-
-            // simulate a user having logged in, for downstream code
-            Security security = new Security();
-            security.context = System.Web.HttpContext.Current;
-            security.user.username = username;
-            security.user.usid = (int)dr["us_id"];
-            security.user.is_admin = Convert.ToBoolean(dr["us_admin"]);
-            security.user.org = (int)dr["us_org"];
-            security.user.other_orgs_permission_level = (int)dr["og_other_orgs_permission_level"];
-            security.user.forced_project = (int)dr["us_forced_project"];
-
-            return security;
-        }
-
     }
 }

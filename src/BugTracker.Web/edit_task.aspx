@@ -13,8 +13,6 @@ int bugid;
 SQLString sql;
 
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -23,23 +21,20 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	msg.InnerText = "";
+    msg.InnerText = "";
 	
 	string string_bugid = btnet.Util.sanitize_integer(Request["bugid"]);
 	bugid = Convert.ToInt32(string_bugid);
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
 
-	if (permission_level != Security.PERMISSION_ALL)
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit tasks for this item");
 		Response.End();
 	}		
 	
-	if (security.user.is_admin || security.user.can_edit_tasks)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditTasks())
 	{
 		// allowed	
 	}
@@ -269,9 +264,9 @@ order by us_username; ");
 
 	sql.Append("\nselect isnull(@assigned_to,0) ");
 
-    sql = sql.AddParameterWithValue("og_id", Convert.ToString(security.user.org));
-    sql = sql.AddParameterWithValue("og_other_orgs_permission_level", Convert.ToString(security.user.other_orgs_permission_level));
-    sql = sql.AddParameterWithValue("bg_id", Convert.ToString(bugid));
+    sql = sql.AddParameterWithValue("og_id", User.Identity.GetOrganizationId());
+    sql = sql.AddParameterWithValue("og_other_orgs_permission_level", User.Identity.GetOtherOrgsPermissionLevels());
+    sql = sql.AddParameterWithValue("bg_id", bugid);
 	
 	if (Util.get_setting("UseFullNames","0") == "0")
 	{
@@ -527,7 +522,7 @@ insert into bug_posts
 values(@tsk_bug, @tsk_last_updated_user, getdate(), N'added task ' + convert(varchar, @tsk_id), 'update')");
 
 
-			sql = sql.AddParameterWithValue("tsk_created_user", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("tsk_created_user", Convert.ToString(User.Identity.GetUserId()));
 		
 
 		}
@@ -561,7 +556,7 @@ values(@tsk_bug, @tsk_last_updated_user, getdate(), N'updated task ' + @tsk_id, 
 		}
 
         sql = sql.AddParameterWithValue("tsk_bug", Convert.ToString(bugid));
-        sql = sql.AddParameterWithValue("tsk_last_updated_user", Convert.ToString(security.user.usid));
+        sql = sql.AddParameterWithValue("tsk_last_updated_user", Convert.ToString(User.Identity.GetUserId()));
 		
 		sql = sql.AddParameterWithValue("tsk_planned_start_date", format_date_hour_min(
 			planned_start_date.Value,
@@ -594,7 +589,7 @@ values(@tsk_bug, @tsk_last_updated_user, getdate(), N'updated task ' + @tsk_id, 
 
 		btnet.DbUtil.execute_nonquery(sql);
         
-        btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
+        btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
         
         
 		Response.Redirect ("tasks.aspx?bugid=" + Convert.ToString(bugid));

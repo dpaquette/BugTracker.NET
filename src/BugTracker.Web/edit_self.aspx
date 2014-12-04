@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="edit_self.aspx.cs" Inherits="btnet.edit_self" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -10,9 +11,6 @@ Distributed under the terms of the GNU General Public License
 int id;
 SQLString sql;
 
-
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -22,15 +20,12 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit your settings";
 
 	msg.InnerText = "";
 
-	id = security.user.usid;
+	id = User.Identity.GetUserId();
 
 	if (!IsPostBack)
 	{
@@ -46,7 +41,7 @@ void Page_Load(Object sender, EventArgs e)
 			or isnull(qu_org,0) = @org
 			order by qu_desc");
 
-		sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us",Convert.ToString(User.Identity.GetUserId()));
 
 		query.DataSource = btnet.DbUtil.get_dataview(sql);
 		query.DataTextField = "qu_desc";
@@ -60,7 +55,7 @@ void Page_Load(Object sender, EventArgs e)
 			where isnull(pu_permission_level,@dpl) <> 0
 			order by pj_name");
 
-		sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 		sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel","2"));
 
 		DataView projects_dv = btnet.DbUtil.get_dataview(sql);
@@ -387,8 +382,7 @@ function show_notification_settings()
 </script>
 </head>
 <body>
-<% security.write_menu(Response, "settings"); %>
-
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="settings"/>
 
 <div class=align><table border=0><tr><td>
 <br>

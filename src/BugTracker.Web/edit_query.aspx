@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="edit_query.aspx.cs" Inherits="btnet.edit_query"  validateRequest="false" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -11,8 +12,6 @@ int id;
 SQLString sql;
 
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -22,9 +21,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit query";
@@ -44,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 	if (!IsPostBack)
 	{
 
-		if (security.user.is_admin || security.user.can_edit_sql)
+		if (User.IsInRole(BtnetRoles.Admin))
 		{
 			// these guys can do everything
 			vis_everybody.Checked = true;
@@ -115,9 +111,9 @@ select us_id, us_username from users order by us_username");
 			sql = sql.AddParameterWithValue("$1", Convert.ToString(id));
 			DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-			if ((int) dr["qu_user"] != security.user.usid)
+			if ((int) dr["qu_user"] != User.Identity.GetUserId())
 			{
-				if (security.user.is_admin || security.user.can_edit_sql)
+				if (User.IsInRole(BtnetRoles.Admin))
 				{
 					// these guys can do everything
 				}
@@ -196,7 +192,7 @@ Boolean validate()
 	}
 
 
-	if (security.user.is_admin || security.user.can_edit_sql)
+	if (User.IsInRole(BtnetRoles.Admin))
 	{
 		if (vis_org.Checked)
 		{
@@ -298,7 +294,7 @@ void on_update()
 			sql = sql.AddParameterWithValue("sq", sql_text.Value);
 //		}
 
-		if (security.user.is_admin || security.user.can_edit_sql)
+		if (User.IsInRole(BtnetRoles.Admin))
 		{
 			if (vis_everybody.Checked)
 			{
@@ -318,7 +314,7 @@ void on_update()
 		}
 		else
 		{
-			sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+			sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 			sql = sql.AddParameterWithValue("rl", "0");
 		}
 		
@@ -365,7 +361,7 @@ void on_update()
 
 </head>
 <body>
-<% security.write_menu(Response, "queries"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="queries"/>
 
 <div class=align><table border=0><tr><td>
 <a href=queries.aspx>back to queries</a>

@@ -1,8 +1,10 @@
 using System;
 using System.Data;
 using System.IO;
+using System.Security.Principal;
 using System.Web;
 using btnet.Mail;
+using btnet.Security;
 using OpenPop.Mime;
 
 namespace btnet
@@ -84,7 +86,7 @@ namespace btnet
 
             // authenticate user
 
-            bool authenticated = btnet.Authenticate.check_password(username, password);
+            bool authenticated = Authenticate.check_password(username, password);
 
             if (!authenticated)
             {
@@ -92,8 +94,8 @@ namespace btnet
                 Response.Write("ERROR: invalid username or password");
                 Response.End();
             }
-
-            Security security = Mime.get_synthesized_security(mime_message, from_addr, username);
+            IIdentity identity = Security.Security.GetIdentity(username);
+            
 
             int projectid = 0;
             if (Util.is_int(projectid_string))
@@ -186,21 +188,21 @@ namespace btnet
 
                 // If you didn't set these from the query string, we'll give them default values
                 if (projectid == 0) { projectid = (int)defaults["pj"]; }
-                if (orgid == 0) { orgid = security.user.org; }
+                if (orgid == 0) { orgid = identity.GetOrganizationId(); }
                 if (categoryid == 0) { categoryid = (int)defaults["ct"]; }
                 if (priorityid == 0) { priorityid = (int)defaults["pr"]; }
                 if (statusid == 0) { statusid = (int)defaults["st"]; }
                 if (udfid == 0) { udfid = (int)defaults["udf"]; }
 
                 // but forced project always wins
-                if (security.user.forced_project != 0)
+                if (identity.GetForcedProjectId() != 0)
                 {
-                    projectid = security.user.forced_project;
+                    projectid = identity.GetForcedProjectId();
                 }
 
                 btnet.Bug.NewIds new_ids = btnet.Bug.insert_bug(
                     short_desc,
-                    security,
+                    identity,
                     "", // tags
                     projectid,
                     orgid,
@@ -220,7 +222,7 @@ namespace btnet
 
                 if (mime_message != null)
                 {
-                    Mime.add_attachments(mime_message, new_ids.bugid, new_ids.postid, security);
+                    Mime.add_attachments(mime_message, new_ids.bugid, new_ids.postid, identity);
 
                     Email.auto_reply(new_ids.bugid, from_addr, short_desc, projectid);
 
@@ -236,7 +238,7 @@ namespace btnet
                     Stream stream = new MemoryStream(byte_array);
 
                     Bug.insert_post_attachment(
-                        security,
+                        identity,
                         new_ids.bugid,
                         stream,
                         byte_array.Length,
@@ -251,8 +253,8 @@ namespace btnet
                 // your customizations
                 Bug.apply_post_insert_rules(new_ids.bugid);
 
-                btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, security);
-                btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", security);
+                btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, identity);
+                btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", identity);
 
                 Response.AddHeader("BTNET", "OK:" + Convert.ToString(new_ids.bugid));
                 Response.Write("OK:" + Convert.ToString(new_ids.bugid));
@@ -288,7 +290,7 @@ namespace btnet
                 // Add a comment to existing bug.
                 int postid = btnet.Bug.insert_comment(
                     bugid,
-                    security.user.usid, // (int) dr["us_id"],
+                    identity.GetUserId(), // (int) dr["us_id"],
                     comment,
                     comment,
                     from_addr,
@@ -298,7 +300,7 @@ namespace btnet
 
                 if (mime_message != null)
                 {
-                    Mime.add_attachments(mime_message, bugid, postid, security);
+                    Mime.add_attachments(mime_message, bugid, postid, identity);
                 }
                 else if (attachment_as_base64 != null && attachment_as_base64.Length > 0)
                 {
@@ -311,7 +313,7 @@ namespace btnet
                     Stream stream = new MemoryStream(byte_array);
 
                     Bug.insert_post_attachment(
-                        security,
+                        identity,
                         bugid,
                         stream,
                         byte_array.Length,
@@ -323,8 +325,8 @@ namespace btnet
                         false); // don't send notification yet
                 }
 
-                btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
-                btnet.WhatsNew.add_news(bugid, (string)dr2["bg_short_desc"], "updated", security);
+                btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, identity);
+                btnet.WhatsNew.add_news(bugid, (string)dr2["bg_short_desc"], "updated", identity);
 
                 Response.AddHeader("BTNET", "OK:" + Convert.ToString(bugid));
                 Response.Write("OK:" + Convert.ToString(bugid));

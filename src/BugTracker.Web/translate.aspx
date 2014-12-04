@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="translate.aspx.cs" Inherits="btnet.translate" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 
 <!--
 
@@ -12,17 +13,11 @@ Distributed under the terms of the GNU General Public License
 
     SQLString sql;
     
-    Security security;
-
-
     ///////////////////////////////////////////////////////////////////////
     void Page_Load(Object sender, EventArgs e)
     {
     	Util.do_not_cache(Response);
-		
-		security = new Security();
-		security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
+        MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 			+ "translate";
 
@@ -69,8 +64,8 @@ Distributed under the terms of the GNU General Public License
 			}
 
             // added check for permission level - corey
-            int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), security);
-            if (permission_level == Security.PERMISSION_NONE) {
+            int permission_level = Bug.get_bug_permission_level(Convert.ToInt32(string_bg_id), User.Identity);
+            if (permission_level ==PermissionLevel.None) {
                 Response.Write("You are not allowed to view this item");
                 Response.End();
             }
@@ -129,7 +124,7 @@ Distributed under the terms of the GNU General Public License
     <link href="btnet.css" type="text/css" rel="StyleSheet" />
 </head>
 <body>
-    <% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+    <uc1:MainMenu runat="server" ID="MainMenu"/>
     <div class="align">
         <table border="0">
             <tbody>

@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_category.aspx.cs" Inherits="btnet.edit_category" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,7 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 int id;
 
-Security security;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
@@ -20,9 +21,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "edit category";
 
@@ -164,7 +162,7 @@ void on_update ()
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
 <div class=align><table border=0><tr><td>

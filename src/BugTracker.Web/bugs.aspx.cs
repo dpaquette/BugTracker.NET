@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using btnet.Security;
 
 namespace btnet
 {
+    [PageAuthorize]
     public partial class bugs : BasePage
     {
 
@@ -22,10 +25,9 @@ namespace btnet
                 show_checkboxes,
                 dv,
                 Response,
-                security,
+                User.Identity,
                 new_page.Value,
                 IsPostBack,
-                ds_custom_cols,
                 filter.Value);
         }
 
@@ -51,18 +53,14 @@ namespace btnet
 
         }
 
-        protected Security security;
         string qu_id_string = null;
         protected string sql_error = "";
 
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {
-
+            MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
             Util.do_not_cache(Response);
-
-            security = new Security();
-            security.check_security(HttpContext.Current, Security.ANY_USER_OK);
 
             titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + Util.get_setting("PluralBugLabel", "bugs");
@@ -194,7 +192,7 @@ namespace btnet
                 // Use sql associated with user
                 sql = new SQLString(@"select qu_id, qu_sql from queries where qu_id in
 			(select us_default_query from users where us_id = @us)");
-                sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+                sql = sql.AddParameterWithValue("us", User.Identity.GetUserId());
                 DataRow dr = btnet.DbUtil.get_datarow(sql);
                 if (dr != null)
                 {
@@ -241,9 +239,9 @@ namespace btnet
 
 
             // replace magic variables
-            bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
+            bug_sql = bug_sql.AddParameterWithValue("ME", User.Identity.GetUserId());
 
-            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
+            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, User.Identity);
 
             if (Util.get_setting("UseFullNames", "0") == "0")
             {
@@ -300,8 +298,9 @@ or isnull(qu_user,0) = @us
 or isnull(qu_org,0) = @org
 order by qu_desc");
 
-            sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
-            sql = sql.AddParameterWithValue("org", Convert.ToString(security.user.org));
+            
+            sql = sql.AddParameterWithValue("us", User.Identity.GetUserId());
+            sql = sql.AddParameterWithValue("org", User.Identity.GetOrganizationId());
 
             query.DataSource = btnet.DbUtil.get_dataview(sql);
 

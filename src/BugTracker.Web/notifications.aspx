@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="notifications.aspx.cs" Inherits="btnet.notifications" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,7 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
 string ses;
 
 void Page_Load(Object sender, EventArgs e)
@@ -17,9 +18,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "queued notifications";
 
@@ -49,7 +47,7 @@ void Page_Load(Object sender, EventArgs e)
 </head>
 
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div style="width: 600px;"
 class=smallnote>

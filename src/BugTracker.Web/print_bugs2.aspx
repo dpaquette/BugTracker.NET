@@ -11,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 
     SQLString sql;
 
-
-    Security security;
     DataSet ds = null;
     DataView dv = null;
     bool images_inline;
@@ -24,8 +22,6 @@ Distributed under the terms of the GNU General Public License
 
         Util.do_not_cache(Response);
 
-        security = new Security();
-        security.check_security(HttpContext.Current, Security.ANY_USER_OK);
 
         titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
             + "print " + Util.get_setting("PluralBugLabel", "bugs");
@@ -44,8 +40,8 @@ Distributed under the terms of the GNU General Public License
             var bug_sql = new SQLString((string)btnet.DbUtil.execute_scalar(sql));
 
             // replace magic variables
-            bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(security.user.usid));
-            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, security);
+            bug_sql = bug_sql.AddParameterWithValue("ME", Convert.ToString(User.Identity.GetUserId()));
+            bug_sql = Util.alter_sql_per_project_permissions(bug_sql, User.Identity);
 
             // all we really need is the bugid, but let's do the same query as print_bugs.aspx
             ds = btnet.DbUtil.get_dataset(bug_sql);
@@ -118,9 +114,9 @@ Distributed under the terms of the GNU General Public License
 
             DataRow dr = btnet.Bug.get_bug_datarow(
                 (int)drv[1],
-                security);
+                User.Identity);
 
-            PrintBug.print_bug(Response, dr, security,
+            PrintBug.print_bug(Response, dr, User.Identity,
                 false /* include style */,
                 images_inline,
                 history_inline,
@@ -144,9 +140,9 @@ Distributed under the terms of the GNU General Public License
 
                 DataRow dr = btnet.Bug.get_bug_datarow(
                     (int)dr2[1],
-                    security);
+                    User.Identity);
 
-                PrintBug.print_bug(Response, dr, security,
+                PrintBug.print_bug(Response, dr, User.Identity,
                     false, // include style
                     images_inline,
                     history_inline,

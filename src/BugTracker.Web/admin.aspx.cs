@@ -2,12 +2,13 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using btnet.Search;
+using btnet.Security;
 
 namespace btnet
 {
+    [PageAuthorize(BtnetRoles.Admin)]
     public partial class admin : BasePage
     {
-        protected Security security;
         protected bool nag = false;
 
         ///////////////////////////////////////////////////////////////////////
@@ -15,10 +16,7 @@ namespace btnet
         {
 
             Util.do_not_cache(Response);
-
-            security = new Security();
-            security.check_security(HttpContext.Current, Security.MUST_BE_ADMIN);
-
+            
             titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "admin";
 

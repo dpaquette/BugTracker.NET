@@ -1,4 +1,5 @@
 <%@ Page language="C#" ValidateRequest="false" CodeBehind="search.aspx.cs" Inherits="btnet.search" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -26,7 +27,8 @@ search_suggest_min_chars = <% Response.Write(Util.get_setting("SearchSuggestMinC
 
 
 // start of mass edit javascript
-<% if (security.user.is_admin || security.user.can_mass_edit_bugs) { %>
+<% if (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanMassEditBugs())
+   { %>
 
 function select_all(sel)
 {
@@ -310,7 +312,7 @@ function on_change()
 		frm.project_custom_dropdown3.options, "bg_project_custom_dropdown_value3");
 
 <%
-	if (security.user.other_orgs_permission_level != 0)
+	if (User.Identity.GetOtherOrgsPermissionLevels() != 0)
 	{
 %>
 		var org_clause = build_clause_from_options (frm.org.options, "bg_org");
@@ -364,7 +366,7 @@ function on_change()
 	if (frm.like2.value != "") {
 		comments_clause = " bg_id in (select bp_bug from bug_posts where bp_type in ('comment','received','sent') and isnull(bp_comment_search,bp_comment) like";
 		comments_clause += " N'%" + like2_string + "%'";
-		<% if (security.user.external_user) { %>
+		<% if (User.Identity.GetIsExternalUser()) { %>
 		comments_clause += " and bp_hidden_from_external_users = 0"
 		<% } %>
 		comments_clause += ")\n";
@@ -400,64 +402,6 @@ function on_change()
 		lu_to_clause = " bg_last_updated_date <= '" + frm.lu_to_date.value + " 23:59:59'\n";
 	}
 
-<%
-	// echo the custom input columns as the user types them
-	int custom_count = 1;
-	foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-	{
-		string column_name = (string) drcc["name"];
-		if (security.user.dict_custom_field_permission_level[column_name] == Security.PERMISSION_NONE)
-		{
-			continue;
-		}			
-
-		string clause = "custom_clause_" + Convert.ToString(custom_count++);
-		string custom_col_id = column_name.Replace(" ","");
-		string datatype = (string) drcc["datatype"];
-
-		Response.Write ("var " + clause + " = \"\";\n");
-		Response.Write ("el = document.getElementById('" +  custom_col_id + "')\n");
-
-		if ((datatype == "varchar" || datatype == "nvarchar" || datatype == "char" || datatype == "nchar")
-		&& (string) drcc["dropdown type"] == "")
-		{
-			// my_text_field like '%val%'
-			Response.Write ("if (el.value != \"\")\n");
-			Response.Write ("{\n\t");
-			Response.Write (clause + " = \" [" + column_name + "] like '%\" + el.value.replace(/'/gi,\"''\") + \"%'\\n\"\n");
-			Response.Write ("\twhere = build_where(where, " + clause + ");\n");
-			Response.Write ("}\n\n");
-		}
-		else if (datatype == "datetime")
-		{
-			Response.Write ("if (el.value != \"\")\n");
-			Response.Write ("{\n\t");
-			Response.Write (clause + " = \" [" + column_name + "] >=  '\" + format_from_date_for_db(el.value) + \"'\\n\"\n");
-			Response.Write ("\twhere = build_where(where, " + clause + ");\n");
-			Response.Write ("}\n\n");
-
-			Response.Write ("el = document.getElementById('to__" +  custom_col_id + "')\n");
-
-
-			Response.Write ("if (el.value != \"\")\n");
-			Response.Write ("{\n\t");
-			Response.Write (clause + " = \" [" + column_name + "] <=  '\" + format_to_date_for_db(el.value) + \"'\\n\"\n");
-			Response.Write ("\twhere = build_where(where, " + clause + ");\n");
-			Response.Write ("}\n\n");
-
-		}
-		else
-		{
-			// my_field in (val1, val2, val3)
-			Response.Write ("vals = in_not_in_vals(el)\n");
-			Response.Write ("if (vals != \"\")\n");
-			Response.Write ("{\n\t");
-			Response.Write (clause + " = \" [" + column_name + "] in \" + vals\n");
-			Response.Write ("\twhere = build_where(where, " + clause + ");\n");
-			Response.Write ("}\n\n");
-		}
-	}
-%>
 
 	where = build_where(where, reported_by_clause);
 	where = build_where(where, assigned_to_clause);
@@ -520,7 +464,7 @@ function on_change()
 		select += ",\nbg_last_updated_date [last updated on]"
 
 <%
-		if (security.user.tags_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetTagsFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(bg_tags,'') [tags]";
@@ -528,35 +472,35 @@ function on_change()
 		}
 
 
-		if (security.user.project_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetProjectFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(pj_name,'') [project]"
 <%
 		}
 
-		if (security.user.org_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetOrgFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(og_name,'') [organization]"
 <%
 		}
 
-		if (security.user.category_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetCategoryFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(ct_name,'') [category]";
 <%
 		}
 
-		if (security.user.priority_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetPriorityFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(pr_name,'') [priority]"
 <%
 		}
 
-		if (security.user.assigned_to_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetAssignedToFieldPermissionLevel() != PermissionLevel.None)
 		{
 			if (use_full_names)
 			{
@@ -572,14 +516,14 @@ function on_change()
 			}
 		}
 
-		if (security.user.status_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetStatusFieldPermissionLevel() != PermissionLevel.None)
 		{
 %>
 			select += ",\nisnull(st_name,'') [status]";
 <%
 		}
 
-		if (security.user.udf_field_permission_level != Security.PERMISSION_NONE)
+		if (User.Identity.GetUdfFieldPermissionLevel() != PermissionLevel.None)
 		{
 			if (show_udf)
 			{
@@ -588,48 +532,7 @@ function on_change()
 			}
 		}
 
-
-		// add the custom fields to the columns
-		int user_dropdown_cnt = 1;
-		foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-		{
-			string column_name = (string) drcc["name"];
-			if (security.user.dict_custom_field_permission_level[column_name] == Security.PERMISSION_NONE)
-			{
-				continue;
-			}
-
-			if (Convert.ToString(drcc["dropdown type"]) == "users")
-			{
-				Response.Write ("\nselect += \", \\nisnull(users"
-				+ Convert.ToString(user_dropdown_cnt)
-				+ ".us_username,'') ["
-				+ column_name
-				+ "]\"");
-				user_dropdown_cnt++;
-			}
-			else
-			{
-				if (Convert.ToString(drcc["datatype"]) == "decimal")
-				{
-					Response.Write ("\nselect += \", \\nisnull(["
-					+ column_name
-					+ "],0) ["
-					+ column_name
-					+ "]\"");
-				}
-				else
-				{
-					Response.Write ("\nselect += \", \\nisnull(["
-					+ column_name
-					+ "],'') ["
-					+ column_name
-					+ "]\"");
-				}
-			}
-		}
-
-		Response.Write ("\nselect += \"" + project_dropdown_select_cols + "\"");
+	
 %>
 
 		select += "\nfrom bugs\n";
@@ -644,29 +547,7 @@ function on_change()
 
 <%
 	// do the joins related to "user" dropdowns
-		user_dropdown_cnt = 1;
-		foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-		{
-			string column_name = (string) drcc["name"];
-			if (security.user.dict_custom_field_permission_level[column_name] == Security.PERMISSION_NONE)
-			{
-				continue;
-			}
-
-			if (Convert.ToString(drcc["dropdown type"]) == "users")
-			{
-				Response.Write ("select += \"left outer join users users");
-				Response.Write (Convert.ToString(user_dropdown_cnt));
-				Response.Write (" on users");
-				Response.Write (Convert.ToString(user_dropdown_cnt));
-				Response.Write (".us_id = bugs.");
-				Response.Write ("[");
-				Response.Write (column_name);
-				Response.Write ("]\\n\"\n");
-				user_dropdown_cnt++;
-			}
-		}
-
+		
 		if (show_udf)
 		{
 %>
@@ -744,13 +625,13 @@ function do_doc_ready()
 
 </head>
 <body onload="on_change()">
-<% security.write_menu(Response, "search"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="search"/>
 
 <div id="suggest_popup" style="position:absolute; display:none; z-index:1000;"></div>
 
 <div class=align>
 
-<% if (!security.user.adds_not_allowed) { %>
+<% if (User.Identity.GetCanAddBugs()) { %>
 <a href=edit_bug.aspx><img src=add.png border=0 align=top>&nbsp;add new <% Response.Write(Util.get_setting("SingularBugLabel","bug")); %></a>
 <% } %>
 
@@ -907,165 +788,6 @@ function do_doc_ready()
 	int minTextAreaSize = int.Parse(Util.get_setting("TextAreaThreshold","100"));
 	int maxTextAreaRows = int.Parse(Util.get_setting("MaxTextAreaRows","5"));
 
-	// Create the custom column INPUT elements
-	foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-	{
-		string column_name = (string) drcc["name"];
-		if (security.user.dict_custom_field_permission_level[column_name] == Security.PERMISSION_NONE)
-		{
-			continue;
-		}
-
-		string field_id = column_name.Replace(" ","");
-		string datatype = drcc["datatype"].ToString();
-		string dropdown_type = Convert.ToString(drcc["dropdown type"]);
-		
-		Response.Write ("<tr>");
-		Response.Write ("<td><span class=lbl id=\"" +  field_id + "_label\">");
-		Response.Write (column_name);
-
-		if ((datatype == "nvarchar" || datatype == "varchar" || datatype == "char" || datatype == "nchar")
-		&& dropdown_type == "")
-		{
-			Response.Write (" contains");
-		}
-
-		Response.Write (":&nbsp;</span>");
-
-		Response.Write ("<td colspan=3>");
-
-		int fieldLength = int.Parse(drcc["length"].ToString());
-
-		string dropdown_options = Convert.ToString(drcc["vals"]);
-
-		if (dropdown_type != "" || dropdown_options != "")
-		{
-			// create dropdown here
-
-			Response.Write ("<select multiple=multiple size=3 onchange='on_change()' ");
-
-			Response.Write (" id=\"" + field_id + "\"");
-			Response.Write (" name=\"" + column_name + "\"");
-			Response.Write (">");
-
-			string selected_vals = Request[column_name];
-			if (selected_vals == null)
-			{
-				selected_vals = "$Q6Q6Q6$"; // the point here is, don't select anything in the dropdowns
-			}
-			string[] selected_vals_array = Util.split_string_using_commas(selected_vals);
-
-			if (dropdown_type != "users")
-			{
-			
-				string[] options = Util.split_dropdown_vals(dropdown_options);
-				for (int j = 0; j < options.Length; j++)
-				{
-					Response.Write ("<option ");
-
-					// reselect vals
-					for (int k = 0; k < selected_vals_array.Length; k++)
-					{
-						if (options[j] == selected_vals_array[k])
-						{
-							Response.Write (" selected ");
-							break;
-						}
-					}
-
-					Response.Write (">");
-					Response.Write (options[j]);
-					Response.Write ("</option>");
-				}
-			}
-			else
-			{
-				DataView dv_users = new DataView(dt_users);
-				foreach (DataRowView drv in dv_users)
-				{
-					string user_id = Convert.ToString(drv[0]);
-					string user_name = Convert.ToString(drv[1]);
-
-					Response.Write ("<option value=");
-					Response.Write (user_id);
-
-					// reselect vals
-					for (int k = 0; k < selected_vals_array.Length; k++)
-					{
-						if (user_id == selected_vals_array[k])
-						{
-							Response.Write (" selected ");
-							break;
-						}
-					}
-
-					Response.Write (">");
-					Response.Write (user_name);
-					Response.Write ("</option>");
-
-				}
-			}
-
-			Response.Write ("</select>");
-
-		}
-		else
-		{
-
-			if (datatype == "datetime")
-			{
-
-				write_custom_date_controls(column_name);
-			}
-			else
-			{
-
-				Response.Write ("<input type=text class=txt");
-				Response.Write ("  onkeyup=\"on_change()\" ");
-
-				// match the size of the text field to the size of the database field
-
-                int size = Convert.ToInt32(drcc["length"]);
-
-				// adjust the size
-				if (size > 60)
-				{
-					size = 60;
-				}
-				else if (datatype == "int" || datatype == "decimal")
-				{
-					size = 30;
-				}
-
-				string size_string = Convert.ToString(size);
-
-				Response.Write (" size=" + size_string);
-				Response.Write (" maxlength=" + size_string);
-
-				Response.Write (" name=\"" + column_name + "\"");
-				Response.Write (" id=\"" + field_id + "\"");
-
-				Response.Write (" value=\"");
-				if (Request[column_name]!="")
-				{
-					Response.Write (HttpUtility.HtmlEncode(Request[column_name]));
-				}
-				Response.Write ("\"");
-				Response.Write (">");
-
-
-				if ((datatype == "nvarchar" || datatype == "varchar" || datatype == "char" || datatype == "nchar")
-				&& dropdown_type == "")
-				{
-					//
-				}
-				else
-				{
-					Response.Write ("&nbsp;&nbsp;<span class=smallnote>Enter multiple values using commas, no spaces: 1,2,3</span>");
-				}
-			}
-		}
-	}
 %>
 
 	<tr>
@@ -1095,7 +817,7 @@ function do_doc_ready()
 				frm2.submit();
 			}
 			</script>
-<% if (security.user.is_guest) /* can't save search */ { %>
+<% if (!User.IsInRole(BtnetRoles.Guest)) /* can't save search */ { %>
             <span style="color:Gray; font-size: 7pt;">Save Search not available to "guest" user</span>
 <% } else { %>
 			<a href="javascript:on_save_query()">Save search criteria as query</a>
@@ -1114,7 +836,7 @@ function do_doc_ready()
 <input type=hidden name="tags" id="tags" value="">
 
 <script>
-    var enable_popups = <% Response.Write(security.user.enable_popups ? "1" : "0"); %>;
+    var enable_popups = <% Response.Write(User.Identity.GetEnablePopups() ? "1" : "0"); %>;
     var asp_form_id = '<% Response.Write(Util.get_form_name()); %>';
 </script>
 
@@ -1142,11 +864,11 @@ else
 
 		if (btnet.Util.get_setting("EnableTags","0") == "1")
 		{
-			btnet.BugList.display_buglist_tags_line(Response, security);
+			btnet.BugList.display_buglist_tags_line(Response, User.Identity);
 		}
 
 
-		if (!security.user.is_guest && (security.user.is_admin || security.user.can_mass_edit_bugs))
+        if (!User.IsInRole(BtnetRoles.Guest) && (User.IsInRole(BtnetRoles.Admin) || User.Identity.GetCanMassEditBugs()))
 		{
 			Response.Write ("<form id=massform onsubmit='return validate_mass()' method=get action=massedit.aspx>");
 			display_bugs(true);

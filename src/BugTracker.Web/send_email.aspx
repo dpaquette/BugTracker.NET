@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="send_email.aspx.cs" Inherits="btnet.send_email" validateRequest="false" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <%@ Import Namespace="System.IO" %>
 <!--
 Copyright 2002-2011 Corey Trager
@@ -10,7 +11,8 @@ Distributed under the terms of the GNU General Public License
 <head>
 <title id="titl" runat="server">btnet send email</title>
 <link rel="StyleSheet" href="btnet.css" type="text/css">
-<%  if (security.user.use_fckeditor) { %>
+<%  if (User.Identity.GetUseFCKEditor())
+    { %>
 <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
 <% } %>
 
@@ -98,7 +100,7 @@ function include_bug_click()
 function my_on_load()
 {
 	<%
-	if (security.user.use_fckeditor)	
+    if (User.Identity.GetUseFCKEditor())	
 	{
 		Response.Write ("CKEDITOR.replace( 'body' )");
 	}
@@ -115,7 +117,7 @@ function my_on_load()
 
 </head>
 <body onload="my_on_load()">
-<% security.write_menu(Response, btnet.Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu"/>
 <div class=align><table border=0><tr><td>
 
 <a id="back_href" runat="server" href="">back to <% Response.Write(btnet.Util.get_setting("SingularBugLabel","bug")); %></a>
@@ -287,7 +289,7 @@ function my_on_load()
 		}
 
 
-		DataTable dt_related_users = btnet.Util.get_related_users(security, true); // force full names
+		DataTable dt_related_users = btnet.Util.get_related_users(User.Identity, true); // force full names
 		// let's sort by email
 		DataView dv_related_users = new DataView(dt_related_users);
 		dv_related_users.Sort = "us_email";

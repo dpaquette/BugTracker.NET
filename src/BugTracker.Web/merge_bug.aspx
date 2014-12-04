@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="merge_bug.aspx.cs" Inherits="btnet.merge_bug" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,7 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
 DataRow dr;
 
 ///////////////////////////////////////////////////////////////////////
@@ -19,11 +20,7 @@ void Page_Load(Object sender, EventArgs e)
 	Util.do_not_cache(Response);
 	
 
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	if (security.user.is_admin || security.user.can_merge_bugs)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanMergeBugs())
 	{
 		//
 	}
@@ -251,7 +248,7 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 
 		sql = sql.AddParameterWithValue("@from",prev_from_bug.Value);
 		sql = sql.AddParameterWithValue("@into",prev_into_bug.Value);
-		sql = sql.AddParameterWithValue("@us",Convert.ToString(security.user.usid));
+		sql = sql.AddParameterWithValue("@us",Convert.ToString(User.Identity.GetUserId()));
 
 		int comment_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -287,7 +284,7 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 			}
 		}
 
-		btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(prev_into_bug.Value), security);
+		btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(prev_into_bug.Value), User.Identity);
 
 		Response.Redirect ("edit_bug.aspx?id=" + prev_into_bug.Value);
 
@@ -319,7 +316,7 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <p>
 <div class=align><table border=0><tr><td>
 

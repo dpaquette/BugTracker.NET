@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="queries.aspx.cs" Inherits="btnet.queries" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,23 +10,19 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
 
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
 
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "queries";
 
 	SQLString sql;
 
-	if (security.user.is_admin || security.user.can_edit_sql)
+	if (User.IsInRole(BtnetRoles.Admin))
 	{
 		// allow admin to edit all queries
 
@@ -72,7 +69,7 @@ void Page_Load(Object sender, EventArgs e)
 			order by qu_desc");
 	}
 
-	sql = sql.AddParameterWithValue("us",Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("us",User.Identity.GetUserId());
 	ds = btnet.DbUtil.get_dataset(sql);
 
 }
@@ -87,11 +84,11 @@ void Page_Load(Object sender, EventArgs e)
 </head>
 
 <body>
-<% security.write_menu(Response, "queries"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="queries"/>
 
 <div class=align>
 
-<% if (security.user.is_admin || security.user.can_edit_sql) { %>
+<% if (User.IsInRole(BtnetRoles.Admin)) { %>
 	<table border=0 width=80%><tr>
 		<td align=left valign=top>
 			<a href=edit_query.aspx>add new query</a>

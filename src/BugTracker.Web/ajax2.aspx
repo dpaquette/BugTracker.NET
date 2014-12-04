@@ -4,17 +4,12 @@
 <script runat="server">
 
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
-
 	// will this be too slow?
 
 	// we could index on bg_short_desc and then do '$str%' rather than '%$str%'
@@ -26,7 +21,7 @@ void Page_Load(Object sender, EventArgs e)
 			order by 1");
 
 		// if you don't use permissions, comment out this line for speed?
-		sql = Util.alter_sql_per_project_permissions(sql, security);
+		sql = Util.alter_sql_per_project_permissions(sql, User.Identity);
 
 		string text = Request["q"];
 		sql = sql.AddParameterWithValue("str","%" + text + "%");
