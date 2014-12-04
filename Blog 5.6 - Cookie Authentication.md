@@ -226,7 +226,7 @@ Another example from Bugs.aspx is `Util.alter_sql_per_project_permissions`. In t
      new Claim(BtnetClaimTypes.CanOnlySeeOwnReportedBugs, Convert.ToString(dr["og_can_only_see_own_reported"])),
      new Claim(BtnetClaimTypes.OtherOrgsPermissionLevel, Convert.ToString(dr["og_other_orgs_permission_level"]))
 
-[View the commit - Row Leel security using Identity](https://github.com/dpaquette/BugTracker.NET/commit/f00ad0c70a73243dbe0e7609adbb8d83443afebd)
+[View the commit - Row Level security using Identity](https://github.com/dpaquette/BugTracker.NET/commit/f00ad0c70a73243dbe0e7609adbb8d83443afebd)
 
 A few more changes to remove any dependencies on btnet.Security:
 
