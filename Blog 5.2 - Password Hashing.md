@@ -15,7 +15,7 @@ How easy is it to break a password hashed with a low grade hashing function? Wel
 <blockquote class="twitter-tweet" data-partner="tweetdeck"><p>I love my new 4 GPU password cracker. Over 60 BILLION NTLM hashes a second. :-)&#10;Unfortunately, Md5crypt is much slower. I need to add cards.</p>&mdash; Kevin Mitnick (@kevinmitnick) <a href="https://twitter.com/kevinmitnick/status/519105934246051840">October 6, 2014</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-A 2005 paper, [Attacks on MD5 Hashed Passwords](http://pamsusc.googlecode.com/svn-history/r38/CSCI555/thesis/papers/RAINBOW_report.pdf_), by Robertiello and Bandla suggested they could brute force an MD5 password in 96 hours using a simple CPU based approach. Modern GPU approaches coupled with cheap hardware and even elastic computing makes cracking MD5 not only possible but easy.
+A 2005 paper, [Attacks on MD5 Hashed Passwords](http://pamsusc.googlecode.com/svn-history/r38/CSCI555/thesis/papers/RAINBOW_report.pdf), by Robertiello and Bandla suggested they could brute force an MD5 password in 96 hours using a simple CPU based approach. Modern GPU approaches coupled with cheap hardware and even elastic computing makes cracking MD5 not only possible but easy.
 
 This is not to say that a bug database would be a high value target but the amount of effort needed to make encryption difficult to break is pretty small.
 
