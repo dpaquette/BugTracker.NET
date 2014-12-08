@@ -6,7 +6,7 @@ Even those developers who should be highly concerned with security are often lac
 
 In BugTracker.NET we have identified a couple of poor practices that may be exploitable. Some of them are easy fixes and others are, well, catastrophically difficult. Let's examine BugTracker.NET's security issues by going through the top 10 security exploits on OWSP's list.  Before we start remember that these aren't the only security exploits in the world.
 
-I once did some work for a large engineering multinational who had a software security group. This group's mandate was to review applications deployed internally and access their security. Unfortunatly the security team had been pulled from the general population of programmers and were not given any additional training. Thus their entire approach to security was predicated on complying with the top 10 list. We mortal developers had to address each point before being permitted to deploy our application. Despite the application I developed having no backing database I still had to come up with an approach for eliminating SQL injection attacks. Much hilarity ensued.
+I once did some work for a large engineering multinational who had a software security group. This group's mandate was to review applications deployed internally and access their security. Unfortunately the security team had been pulled from the general population of programmers and were not given any additional training. Thus their entire approach to security was predicated on complying with the top 10 list. We mortal developers had to address each point before being permitted to deploy our application. Despite the application I developed having no backing database I still had to come up with an approach for eliminating SQL injection attacks. Much hilarity ensued.
 
 We'll just take a cursory look at all the potential issues in this post. Those that require more investigation and correction will be addressed in follow up posts.
 
@@ -34,13 +34,13 @@ However it possible to override this setting on a page by page basis in the unli
 ```
 validateRequest="false"
 ```
-Searching the project for these yeilds [quite a few examples](https://github.com/dpaquette/BugTracker.NET/search?p=2&q=validateRequest%3D%22false%22&type=Code&utf8=%E2%9C%93). The thing is that turning off request validation is not necessarily bad, unless we're printing the content back to the web browser unencoded. This is however difficult to find every case where unescaped values can be written back out to the browser. The difficulty of tracking down possible cross site scripting vulnerabilities when request validation is disabled is half the problem.
+Searching the project for these yields [quite a few examples](https://github.com/dpaquette/BugTracker.NET/search?p=2&q=validateRequest%3D%22false%22&type=Code&utf8=%E2%9C%93). The thing is that turning off request validation is not necessarily bad, unless we're printing the content back to the web browser unencoded. This is however difficult to find every case where unescaped values can be written back out to the browser. The difficulty of tracking down possible cross site scripting vulnerabilities when request validation is disabled is half the problem.
 
 This topic is complicated enough to warrant an entire blog post as we investigate whether proper care has been taken to avoid cross site scripting attacks. We'll introduce some tricks to make it easier for future developers to know that cross site scripting attacks have been mitigated.
 
 ##Insecure Direct Object References
 
-Often there are parts of the system to which a user might have only partial access. In BugTracker.NET a great example woudl be a bug. A user from project A should not have access to a bug from project B. However the same screen is used for accessing each bug with the only difference being the bug ID. Checks have to be made in the code to avoid displaying bugs that users should not be able to see.  This is actually a pretty common exploit.
+Often there are parts of the system to which a user might have only partial access. In BugTracker.NET a great example would be a bug. A user from project A should not have access to a bug from project B. However the same screen is used for accessing each bug with the only difference being the bug ID. Checks have to be made in the code to avoid displaying bugs that users should not be able to see.  This is actually a pretty common exploit.
 
 Fortunately, it looks like there are extensive checks throughout the application for user permissions. The checks look something like
 
@@ -79,7 +79,7 @@ We're going to drop these features. It is possible that we'll lose some customer
 
 ##Missing Function Level Access Control
 
-Ensuring that lower level users cannot visit pages that are restircted to higher level users is important. Attacks on your site may come from users who are valid. It is also possible that an external attacker may have an easier time exploiting user level accounts and then elevating their privileges.
+Ensuring that lower level users cannot visit pages that are restricted to higher level users is important. Attacks on your site may come from users who are valid. It is also possible that an external attacker may have an easier time exploiting user level accounts and then elevating their privileges.
 
 There are extensive checks in place inside BugTracker.NET to prevent these sorts of attacks. The difficulty again is that the checks for this are scattered all over the application. It is hard to know if every possible escalation is protected against. For the moment I'm comfortable leaving this alone. At some later point it may be worthwhile extracting the user level functionality to some common module. This may actually be an ideal place to leverage aspect oriented programming.
 
