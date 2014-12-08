@@ -97,21 +97,9 @@ Is BugTracker.NET helping you or your company?  Please consider <a href=javascri
 <li class=listitem><a href=customfields.aspx>Custom Fields</a>
 &nbsp;&nbsp;<span class=smallnote>(add custom fields to the bug page)</span></li>
 
-<li class=listitem><a target=_blank href=query.aspx>Run Ad-hoc Query</a>
-    &nbsp;&nbsp;
-    <span style="border: solid red 1px; padding: 2px; margin: 3px; color: red; font-size: 9px;">
-    This links to query.aspx.&nbsp;&nbsp;Query.aspx is potentially unsafe.&nbsp;&nbsp;Delete it if you are deploying on a public web server.
-    </span><br></li>
-
 <li class=listitem><a href=notifications.aspx>Queued Email Notifications</a></li>
 
 <li class=listitem><a href=edit_custom_html.aspx>Edit Custom Html</a></li>
-
-<li class=listitem><a href=edit_web_config.aspx>Edit Web.Config</a></li>
-    &nbsp;&nbsp;
-    <span style="border: solid red 1px; padding: 2px; margin: 3px; color: red; font-size: 9px;">
-    Many BugTracker.NET features are configurable by editing Web.config, but please be careful!  Web.config is easy to break!
-    </span><br></li>
 
 <li class=listitem><a href=backup_db.aspx>Backup Database</a></li>
 <li class=listitem><a href=manage_logs.aspx>Manage Logs</a></li>
