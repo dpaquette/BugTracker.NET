@@ -29,15 +29,15 @@ There are some other pages that allow for arbitrary queries to be run. The page 
 
 As it turns out there is a good reason not everybody is a programmer: it is pretty hard to get right.
 
-A> There is a constant struggle to build tools for reporting that are so simple the average user can use them and so powerful that they provide real value. I've seen a lot of these tools come and go over the years. It is an impossible balence to strike. The only tool I've ever seen that even comes close is Microsoft Excel. All my applications just export to Excel to allow users to do whatever crazy things users do.
+A> There is a constant struggle to build tools for reporting that are so simple the average user can use them and so powerful that they provide real value. I've seen a lot of these tools come and go over the years. It is an impossible balance to strike. The only tool I've ever seen that even comes close is Microsoft Excel. All my applications just export to Excel to allow users to do whatever crazy things users do.
 
-Let's take the ability to edit queries but leave intact the actual query functionality. This means that people can still create the queries on the back end should they be needed.
+Let's take away the ability to edit queries but leave intact the actual query functionality. This means that people can still create the queries on the back end should they be needed.
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/0b339846d85e948714e730c12ea16ba14daea8a6)
 
 ##Web Config
 
-The final item of concern is the web.config file. Typically the web config is a well guarded secret. It contains applicaiton setting such as the connection string and encryption keys. There is a tool provided to allow editing of the web config file from within the tool. This is dangerous not only for security reasons but if an incorrect configuration is entered the application may no longer work to allow the change to be reverted.
+The final item of concern is the web.config file. Typically the web config is a well guarded secret. It contains application setting such as the connection string and encryption keys. There is a tool provided to allow editing of the web config file from within the tool. This is dangerous not only for security reasons but if an incorrect configuration is entered the application may no longer work to allow the change to be reverted.
 
 ![Web.confg](Images/webconfig.jpg)
 
