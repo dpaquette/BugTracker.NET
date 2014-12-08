@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_styles.aspx.cs" Inherits="btnet.edit_styles" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <%@ Import Namespace="System.IO" %>
 
 <!--
@@ -12,8 +14,6 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -22,9 +22,6 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
 	ds = btnet.DbUtil.get_dataset(
 		new SQLString(@"select
 			'<a target=_blank href=edit_priority.aspx?id=' + convert(varchar,pr_id) + '>' + pr_name + '</a>' [priority],
@@ -86,7 +83,7 @@ void Page_Load(Object sender, EventArgs e)
 </head>
 
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
 <div class=align>

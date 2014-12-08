@@ -4,6 +4,7 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
+using System.Security.Principal;
 using System.Web;
 using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace btnet
 		static long prev_seconds = 0;
 		public const long ten_million = 10000000; 
 		
-		public static void add_news(int bugid, string desc, string action, Security security)
+		public static void add_news(int bugid, string desc, string action, IIdentity identity)
 		{
 
 			if (btnet.Util.get_setting("EnableWhatsNewPage","0") == "1")
@@ -36,7 +37,7 @@ namespace btnet
 				bn.bugid = Convert.ToString(bugid);
 				bn.desc = desc;
 				bn.action = action;
-				bn.who = security.user.username;
+				bn.who = identity.Name;
 
 				lock(mylock)
 				{

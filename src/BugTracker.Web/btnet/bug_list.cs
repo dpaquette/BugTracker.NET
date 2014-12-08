@@ -4,6 +4,7 @@ Distributed under the terms of the GNU General Public License
 */
 
 using System;
+using System.Security.Principal;
 using System.Web;
 using System.Data;
 //using System.Data.SqlClient;
@@ -11,11 +12,13 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using btnet.Security;
 
 namespace btnet
 {
 
-	public class BugList {
+    public class BugList
+    {
 
         static string get_distinct_vals_from_dataset(DataTable dt, int col)
         {
@@ -64,7 +67,7 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        static string get_buglist_paging_string(DataView dv, Security security, bool IsPostBack, string new_page, ref int this_page)
+        static string get_buglist_paging_string(DataView dv, int bugsPerPage, bool IsPostBack, string new_page, ref int this_page)
         {
 
             // format the text "page N of N:  1 2..."
@@ -83,7 +86,7 @@ namespace btnet
             }
 
             // how many pages to show all the rows?
-            int total_pages = (dv.Count - 1) / security.user.bugs_per_page + 1;
+            int total_pages = (dv.Count - 1) / bugsPerPage + 1;
 
             if (this_page > total_pages - 1)
             {
@@ -281,19 +284,19 @@ namespace btnet
 
         }
 
-		///////////////////////////////////////////////////////////////////////
-		static string maybe_not(string op, string text)
-		{
-			if (op == "<>")
-			{
-				return "NOT " + text;
-			}
-			else
-			{
-				return text;
-			}
-		
-		}
+        ///////////////////////////////////////////////////////////////////////
+        static string maybe_not(string op, string text)
+        {
+            if (op == "<>")
+            {
+                return "NOT " + text;
+            }
+            else
+            {
+                return text;
+            }
+
+        }
 
         ///////////////////////////////////////////////////////////////////////
         static void display_buglist_filter_select(
@@ -425,9 +428,9 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        public static void display_buglist_tags_line(HttpResponse Response, Security security)
+        public static void display_buglist_tags_line(HttpResponse Response, IIdentity identity)
         {
-            if (security.user.tags_field_permission_level == Security.PERMISSION_NONE)
+            if (identity.GetTagsFieldPermissionLevel() == PermissionLevel.None)
             {
                 return;
             }
@@ -482,17 +485,18 @@ namespace btnet
             bool show_checkbox,
             DataView dv,
             HttpResponse Response,
-            Security security,
+            IIdentity identity,
             string new_page_val,
             bool IsPostBack,
-            DataSet ds_custom_cols,
             string filter_val
             )
         {
             int this_page = 0;
+            int bugsPerPage = identity.GetBugsPerPage();
+
             string paging_string = get_buglist_paging_string(
                 dv,
-                security,
+                bugsPerPage,
                 IsPostBack,
                 new_page_val,
                 ref this_page);
@@ -510,7 +514,7 @@ namespace btnet
 
             int db_column_count = 0;
             int description_column = -1;
-            
+
             int search_desc_column = -1;
             int search_source_column = -1;
             int search_text_column = -1;
@@ -594,17 +598,12 @@ namespace btnet
             /// filter row
             ////////////////////////////////////////////////////////////////////
 
-            if (ds_custom_cols == null)
-            {
-                ds_custom_cols = Util.get_custom_columns();
-            }
-
             db_column_count = 0;
             string udf_column_name = Util.get_setting("UserDefinedBugAttributeName", "YOUR ATTRIBUTE");
 
             foreach (DataColumn dc in dv.Table.Columns)
             {
-				string lowercase_column_name = dc.ColumnName.ToLower();
+                string lowercase_column_name = dc.ColumnName.ToLower();
 
                 // skip color
                 if (db_column_count == 0)
@@ -651,35 +650,7 @@ namespace btnet
                     }
                     else
                     {
-                        bool with_filter = false;
-                        foreach (DataRow drcc in ds_custom_cols.Tables[0].Rows)
-                        {
-                            if (dc.ColumnName.ToLower() == Convert.ToString(drcc["name"]).ToLower())
-                            {
-                                if ((string)drcc["dropdown type"] == "normal"
-                                || (string)drcc["dropdown type"] == "users")
-                                {
-                                    with_filter = true;
-
-                                    string string_vals = get_distinct_vals_from_dataset(
-                                        (DataTable)HttpContext.Current.Session["bugs_unfiltered"],
-                                        db_column_count);
-
-                                    display_filter_select(
-                                        Response,
-                                        filter_val,
-                                        "[" + (string)drcc["name"] + "]",
-                                        string_vals);
-                                }
-
-                                break;
-                            }
-                        }
-
-                        if (!with_filter)
-                        {
-                            Response.Write("&nbsp");
-                        }
+                        Response.Write("&nbsp");
                     }
 
                     Response.Write("\n");
@@ -706,7 +677,7 @@ namespace btnet
             {
 
                 // skip over rows prior to this page
-                if (j < security.user.bugs_per_page * this_page)
+                if (j < bugsPerPage * this_page)
                 {
                     j++;
                     continue;
@@ -715,16 +686,15 @@ namespace btnet
 
                 // do not show rows beyond this page
                 rows_this_page++;
-                if (rows_this_page > security.user.bugs_per_page)
+                if (rows_this_page > bugsPerPage)
                 {
                     break;
                 }
 
-
                 DataRow dr = drv.Row;
 
-				string string_bugid = Convert.ToString(dr[1]);
-				
+                string string_bugid = Convert.ToString(dr[1]);
+
                 Response.Write("\n<tr>");
 
                 if (show_checkbox)
@@ -792,49 +762,49 @@ namespace btnet
                                 + string_bugid
                                 + ")'>&nbsp;</span>");
                         }
-						else if (dv.Table.Columns[i].ColumnName == "$VOTE")
+                        else if (dv.Table.Columns[i].ColumnName == "$VOTE")
                         {
-                            
-							// we're going to use a scheme here to represent both the total votes
-							// and this particular user's vote.
-							
-							// We'll assume that there will never be more than 10,000 votes.
-							// So, we'll encode the vote vount as 10,000 * vote count, and
-							// we'll use the 1 column as the yes/no of this user.
-							// So...
-							//  30,001 means 3 votes, 1 from this user.
-							// 120,000 means 12 votes, 0 from this user.
-							// The purpose of this is so that we can sort the column by votes,
-							// but still color it by THIS user's vote.
-							
-							int vote_count = 0;
-							int this_users_vote = 0;
-							int magic_number = 10000;
-							
-							int val = (int) dr[i];
-							this_users_vote = val % magic_number;
-							
-							object obj_vote_count = HttpContext.Current.Application[string_bugid];
-							if (obj_vote_count != null)
-							{
-								vote_count = (int) obj_vote_count;
-							}
-							
-							dr[i] = (vote_count * magic_number) + this_users_vote;
-														
+
+                            // we're going to use a scheme here to represent both the total votes
+                            // and this particular user's vote.
+
+                            // We'll assume that there will never be more than 10,000 votes.
+                            // So, we'll encode the vote vount as 10,000 * vote count, and
+                            // we'll use the 1 column as the yes/no of this user.
+                            // So...
+                            //  30,001 means 3 votes, 1 from this user.
+                            // 120,000 means 12 votes, 0 from this user.
+                            // The purpose of this is so that we can sort the column by votes,
+                            // but still color it by THIS user's vote.
+
+                            int vote_count = 0;
+                            int this_users_vote = 0;
+                            int magic_number = 10000;
+
+                            int val = (int)dr[i];
+                            this_users_vote = val % magic_number;
+
+                            object obj_vote_count = HttpContext.Current.Application[string_bugid];
+                            if (obj_vote_count != null)
+                            {
+                                vote_count = (int)obj_vote_count;
+                            }
+
+                            dr[i] = (vote_count * magic_number) + this_users_vote;
+
                             string cls = "novote";
                             if (this_users_vote == 1)
                             {
                                 cls = "yesvote";
                             }
-						
+
                             Response.Write("<td class=bugd align=right><span title='click to toggle your vote' class="
                                 + cls
                                 + " onclick='vote(this, "
                                 + string_bugid
                                 + ")'>" + Convert.ToString(vote_count) + "</span>");
                         }
-      
+
                         else
                         {
 
@@ -893,20 +863,20 @@ namespace btnet
 
                                             if (parts.Length < 2)
                                             {
-                                            	Response.Write(val);
+                                                Response.Write(val);
                                             }
                                             else
                                             {
-												Response.Write("<a href=edit_bug.aspx?id=");
-												Response.Write(string_bugid); // bg_id
-												Response.Write("#");
-												Response.Write(parts[1]);  // bp_id, the post id
-												Response.Write(">");
-												Response.Write(parts[0]); // sent, received, comment
-												Response.Write(" #");
-												Response.Write(parts[1]);
-												Response.Write("</a>");
-											}
+                                                Response.Write("<a href=edit_bug.aspx?id=");
+                                                Response.Write(string_bugid); // bg_id
+                                                Response.Write("#");
+                                                Response.Write(parts[1]);  // bp_id, the post id
+                                                Response.Write(">");
+                                                Response.Write(parts[0]); // sent, received, comment
+                                                Response.Write(" #");
+                                                Response.Write(parts[1]);
+                                                Response.Write("</a>");
+                                            }
                                         }
                                     }
                                     else if (i == search_text_column)
@@ -936,6 +906,5 @@ namespace btnet
             Response.Write(bug_count_string);
         }
 
-	}
-}	
-	
+    }
+}

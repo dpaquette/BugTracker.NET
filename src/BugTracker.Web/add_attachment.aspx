@@ -1,5 +1,6 @@
 <%@ Page language="C#" CodeBehind="add_attachment.aspx.cs" Inherits="btnet.add_attachment" AutoEventWireup="True" %>
 <%@ Import Namespace="System.IO" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,7 +10,6 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 int bugid;
-Security security;
 
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
@@ -19,8 +19,6 @@ void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "add attachment";
@@ -36,9 +34,9 @@ void Page_Load(Object sender, EventArgs e)
 	else
 	{
 		bugid = Convert.ToInt32(string_id);
-		int permission_level = Bug.get_bug_permission_level(bugid, security);
-		if (permission_level == Security.PERMISSION_NONE
-		|| permission_level == Security.PERMISSION_READONLY)
+        int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
+		if (permission_level ==PermissionLevel.None
+		|| permission_level == PermissionLevel.ReadOnly)
 		{
 			write_msg("You are not allowed to edit this item", false);
 			Response.End();
@@ -47,7 +45,7 @@ void Page_Load(Object sender, EventArgs e)
 	}
 
 
-	if (security.user.external_user || Util.get_setting("EnableInternalOnlyPosts","0") == "0")
+	if (User.Identity.GetIsExternalUser()|| Util.get_setting("EnableInternalOnlyPosts","0") == "0")
 	{
 		internal_only.Visible = false;
 		internal_only_label.Visible = false;
@@ -119,7 +117,7 @@ void on_update()
 	try
 	{
         Bug.insert_post_attachment(
-            security,
+            User.Identity,
 			bugid,
 			attached_file.PostedFile.InputStream,
 			content_length,

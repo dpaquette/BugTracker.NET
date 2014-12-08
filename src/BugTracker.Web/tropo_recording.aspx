@@ -2,6 +2,7 @@
 <!-- #include file = "inc.aspx" -->
 <script language="C#" runat="server">
 
+    private IIdentity _identity; 
 void Page_Load(Object sender, EventArgs e)
 {
 
@@ -11,7 +12,7 @@ void Page_Load(Object sender, EventArgs e)
     {
 
         string username = btnet.Util.get_setting("TropoUsername", "admin");
-        Security security = Mime.get_synthesized_security(null, null, username);
+        _identity = Security.GetIdentity(username);
         
         // new or existing bug?
         string key = Request.QueryString["time"];
@@ -27,7 +28,7 @@ void Page_Load(Object sender, EventArgs e)
         if (bugid == 0)
         {
             // create a new bug from either the recording or transcript, which comes in first
-            bugid = create_new_bug(security);
+            bugid = create_new_bug();
             Application["tropo-" + key] = bugid;            
         }
        
@@ -48,7 +49,7 @@ void Page_Load(Object sender, EventArgs e)
                 attachment_content_type = "audio/mpeg";
 
             Bug.insert_post_attachment(
-                security,
+                _identity,
                 bugid,
                 file.InputStream,
                 file.ContentLength,
@@ -85,7 +86,7 @@ void Page_Load(Object sender, EventArgs e)
                 // Add a comment to existing bug.
                 int postid = btnet.Bug.insert_comment(
                     bugid,
-                    security.user.usid, // (int) dr["us_id"],
+                    _identity.GetUserId(), // (int) dr["us_id"],
                     comment,
                     comment,
                     null, //from_addr,
@@ -106,14 +107,14 @@ void Page_Load(Object sender, EventArgs e)
     }
 }
         
-int create_new_bug(Security security)
+int create_new_bug()
 {
 
     DataRow defaults = Bug.get_bug_defaults();
 
     // If you didn't set these from the query string, we'll give them default values
     int projectid = (int)defaults["pj"];
-    int orgid = security.user.org;
+    int orgid = _identity.GetOrganizationId();
     int categoryid = (int)defaults["ct"];
     int priorityid = (int)defaults["pr"];
     int statusid = (int)defaults["st"];
@@ -125,7 +126,7 @@ int create_new_bug(Security security)
 
     btnet.Bug.NewIds new_ids = btnet.Bug.insert_bug(
         short_desc,
-        security,
+        _identity,
         "", // tags
         projectid,
         orgid,
@@ -146,8 +147,8 @@ int create_new_bug(Security security)
     // your customizations
     Bug.apply_post_insert_rules(new_ids.bugid);
 
-    btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, security);
-    btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", security);        
+    btnet.Bug.send_notifications(btnet.Bug.INSERT, new_ids.bugid, _identity);
+    btnet.WhatsNew.add_news(new_ids.bugid, short_desc, "added", _identity);        
     
     return new_ids.bugid;    
 }

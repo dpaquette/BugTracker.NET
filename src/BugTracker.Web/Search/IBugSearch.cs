@@ -1,4 +1,5 @@
 using System.Data;
+using System.Security.Principal;
 
 namespace btnet.Search
 {
@@ -23,8 +24,8 @@ namespace btnet.Search
         /// Search for bugs based on the specified input text and security settings
         /// </summary>
         /// <param name="searchText">The user entered search text</param>
-        /// <param name="security">The security settings for the current user</param>
+        /// <param name="identity">The current user</param>
         /// <returns>A dataset containing the search results</returns>
-        DataSet Search(string searchText, Security security);
+        DataSet Search(string searchText, IIdentity identity);
     }
 }

@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="add_customfield.aspx.cs" Inherits="btnet.add_customfield" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,19 +10,12 @@ Distributed under the terms of the GNU General Public License
 
 String sql;
 
-
-Security security;
-
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
     Util.do_not_cache(Response);
     
-    security = new Security();
-    security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN);
-
     msg.InnerText = "";
 
     if (!IsPostBack)
@@ -305,7 +299,7 @@ alter table bugs add [$nm] $dt $ln $null $df";
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 
 <div class=align><table border=0><tr><td>

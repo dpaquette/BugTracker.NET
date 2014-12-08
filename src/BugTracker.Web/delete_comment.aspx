@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_comment.aspx.cs" Inherits="btnet.delete_comment" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -10,23 +12,18 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
+    MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	if (security.user.is_admin || security.user.can_edit_and_delete_posts)
-	{
-		//
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditAndDeletePosts())
+    {
+        //
 	}
 	else
 	{
@@ -49,8 +46,8 @@ void Page_Load(Object sender, EventArgs e)
 		string bug_id = Util.sanitize_integer(Request["bug_id"]);
 		redirect_bugid.Value = bug_id;
 
-		int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(bug_id), security);
-		if (permission_level != Security.PERMISSION_ALL)
+		int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(bug_id), User.Identity);
+		if (permission_level != PermissionLevel.All)
 		{
 			Response.Write("You are not allowed to edit this item");
 			Response.End();
@@ -91,7 +88,7 @@ void Page_Load(Object sender, EventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

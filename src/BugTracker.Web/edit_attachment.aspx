@@ -1,4 +1,5 @@
 <%@ Page language="C#" CodeBehind="edit_attachment.aspx.cs" Inherits="btnet.edit_attachment" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -11,9 +12,6 @@ int id;
 int bugid;
 SQLString sql;
 
-
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -21,13 +19,11 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 void Page_Load(Object sender, EventArgs e)
 {
 
+    MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 	Util.do_not_cache(Response);
 	
-	security = new Security();
 
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	if (security.user.is_admin || security.user.can_edit_and_delete_posts)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditAndDeletePosts())
 	{
 		//
 	}
@@ -49,15 +45,15 @@ void Page_Load(Object sender, EventArgs e)
 	var = Request.QueryString["bug_id"];
 	bugid = Convert.ToInt32(var);
 
-	int permission_level = btnet.Bug.get_bug_permission_level(bugid, security);
-	if (permission_level != Security.PERMISSION_ALL)
+	int permission_level = btnet.Bug.get_bug_permission_level(bugid, User.Identity);
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");
 		Response.End();
 	}
 
 
-	if (security.user.external_user || Util.get_setting("EnableInternalOnlyPosts","0") == "0")
+	if (User.Identity.GetIsExternalUser()|| Util.get_setting("EnableInternalOnlyPosts","0") == "0")
 	{
 		internal_only.Visible = false;
 		internal_only_label.Visible = false;
@@ -117,7 +113,7 @@ void on_update()
 
 		if (!internal_only.Checked)
 		{
-			btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security);
+			btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity);
 		}
 
 		Response.Redirect ("edit_bug.aspx?id=" + Convert.ToString(bugid));
@@ -138,7 +134,7 @@ void on_update()
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, Util.get_setting("PluralBugLabel","bugs")); %>
+<uc1:MainMenu runat="server" ID="MainMenu"/>
 
 
 <div class=align><table border=0><tr><td>

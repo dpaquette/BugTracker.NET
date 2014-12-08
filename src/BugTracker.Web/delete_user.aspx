@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_user.aspx.cs" Inherits="btnet.delete_user" AutoEventWireup="True" %>
+
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -10,8 +12,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -20,18 +20,15 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN_OR_PROJECT_ADMIN);
-
 	string id = Util.sanitize_integer(Request["id"]);
 
-	if (!security.user.is_admin)
+    if (!User.IsInRole(BtnetRoles.Admin))
 	{
 		sql = new SQLString(@"select us_created_user, us_admin from users where us_id = @us");
 		sql = sql.AddParameterWithValue("us", id);
 		DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-		if (security.user.usid != (int) dr["us_created_user"])
+		if (User.Identity.GetUserId() != (int) dr["us_created_user"])
 		{
 			Response.Write ("You not allowed to delete this user, because you didn't create it.");
 			Response.End();
@@ -108,7 +105,7 @@ select us_username, @cnt [cnt] from users where us_id = @us");
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

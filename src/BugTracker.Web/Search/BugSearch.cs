@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Principal;
 using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -96,7 +97,7 @@ and sc.length > 30"));
 
         }
 
-        public DataSet Search(string searchText, Security security)
+        public DataSet Search(string searchText, IIdentity identity)
         {
             ISearchResponse<object> response =
                 _client.Search<object>(s => s.Types("bug")
@@ -109,7 +110,7 @@ and sc.length > 30"));
             DataSet results = GetSearchResultDataSet();
             DataTable resultTable = results.Tables[0];
 
-            var filteredHits = GetHitsFilteredBySecurity(response, security);
+            var filteredHits = GetHitsFilteredBySecurity(response, identity);
 
             foreach (var hit in filteredHits)
             {
@@ -140,14 +141,14 @@ and sc.length > 30"));
             return results;
         }
 
-        private IEnumerable<IHit<object>> GetHitsFilteredBySecurity(ISearchResponse<object> response, Security security)
+        private IEnumerable<IHit<object>> GetHitsFilteredBySecurity(ISearchResponse<object> response, IIdentity identity)
         {
             //NOTE: The search response will contain all bugs, but the current user might not have access to some of the bugs in the search response.
             //      This method filters the list of hits based on the list of bugs that the user has access to in the system.
             //      This is not an optimal solution but was considered the best approach given the current security filtering approach in bug tracker
             //TODO: Change this once the security approach has been redesigned.
             var sql = new SQLString(@"SELECT bg_id FROM bugs WHERE $ALTER_HERE");
-            sql = Util.alter_sql_per_project_permissions(sql, security);
+            sql = Util.alter_sql_per_project_permissions(sql, identity);
 
             DataSet ds = DbUtil.get_dataset(sql);
             HashSet<int> visibleBugIds = new HashSet<int>(

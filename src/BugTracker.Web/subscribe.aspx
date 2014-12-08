@@ -9,20 +9,15 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 ///////////////////////////////////////////////////////////////////////
 void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
 	int bugid = Convert.ToInt32(Request["id"]);
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
+	if (permission_level ==PermissionLevel.None)
 	{
 		Response.End();
 	}
@@ -45,7 +40,7 @@ void Page_Load(Object sender, EventArgs e)
 	}
 
 	sql = sql.AddParameterWithValue("bg", Util.sanitize_integer(Request["id"]));
-	sql = sql.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+	sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 	btnet.DbUtil.execute_nonquery(sql);
 
 }

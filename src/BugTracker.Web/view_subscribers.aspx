@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 <script language="C#" runat="server">
 
 
-Security security;
 SQLString sql;
 int bugid;
 DataSet ds;
@@ -17,17 +16,14 @@ void Page_Load(Object sender, EventArgs e)
 {
 
 	Util.do_not_cache(Response);
-	
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK);
 
 	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
 		+ "view subscribers";
 
 	bugid = Convert.ToInt32(Util.sanitize_integer(Request["id"]));
 
-	int permission_level = Bug.get_bug_permission_level(bugid, security);
-	if (permission_level == Security.PERMISSION_NONE)
+    int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
+	if (permission_level ==PermissionLevel.None)
 	{
 		Response.Write("You are not allowed to view this item");
 		Response.End();
@@ -43,7 +39,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	if (action != "")
 	{
-		if (permission_level == Security.PERMISSION_READONLY)
+		if (permission_level == PermissionLevel.ReadOnly)
 		{
 			Response.Write("You are not allowed to edit this item");
 			Response.End();
@@ -59,7 +55,7 @@ void Page_Load(Object sender, EventArgs e)
 			btnet.DbUtil.execute_nonquery(sql);
 
 			// send a notification to this user only
-            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, security, new_subscriber_userid);
+            btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, User.Identity, new_subscriber_userid);
 		}
 	}
 
@@ -70,7 +66,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	// show who is subscribed
 
-	if (security.user.is_admin)
+	if (User.IsInRole(BtnetRoles.Admin))
 	{
 		sql = new SQLString(@"
 select

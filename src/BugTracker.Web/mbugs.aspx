@@ -8,7 +8,6 @@ Distributed under the terms of the GNU General Public License
 
 <script language="C#" runat="server">
 
-    Security security;
     DataSet ds;
 
     ///////////////////////////////////////////////////////////////////////
@@ -17,8 +16,6 @@ Distributed under the terms of the GNU General Public License
 
         Util.do_not_cache(Response);
 
-        security = new Security();
-        security.check_security(HttpContext.Current, Security.ANY_USER_OK);
         if (btnet.Util.get_setting("EnableMobile", "0") == "0")
         {
             Response.Write("BugTracker.NET EnableMobile is not set to 1 in Web.config");
@@ -56,16 +53,16 @@ order by bg_last_updated_date desc";
         {
             bug_sql = bug_sql.Replace("$WHERE$",
                 "where bg_reported_user = "
-                + Convert.ToString(security.user.usid)
+                + Convert.ToString(User.Identity.GetUserId())
                 + " or bg_assigned_to_user = "
-                + Convert.ToString(security.user.usid));
+                + Convert.ToString(User.Identity.GetUserId()));
         }
         else
         {
             bug_sql = bug_sql.Replace("$WHERE$", "");
         }
 
-        var sql = Util.alter_sql_per_project_permissions(new SQLString(bug_sql), security);
+        var sql = Util.alter_sql_per_project_permissions(new SQLString(bug_sql), User.Identity);
 
         ds = btnet.DbUtil.get_dataset(sql);
 

@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="users.aspx.cs" Inherits="btnet.users" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,22 +11,18 @@ Distributed under the terms of the GNU General Public License
 
 DataSet ds;
 
-Security security;
-
 void Page_Load(Object sender, EventArgs e)
 {
 
     Util.do_not_cache(Response);
     
-    security = new Security();
-    security.check_security( HttpContext.Current, Security.MUST_BE_ADMIN_OR_PROJECT_ADMIN);
 
     titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
         + "users";
 
     string sql;
     
-    if (security.user.is_admin)
+    if (User.IsInRole(BtnetRoles.Admin))
     {
         sql = @"
             select distinct pu_user
@@ -146,7 +144,7 @@ void Page_Load(Object sender, EventArgs e)
         sql = sql.Replace("$filter_users", "");
     }
     var filteredSQL = new SQLString(sql);
-    filteredSQL.AddParameterWithValue("us", Convert.ToString(security.user.usid));
+    filteredSQL.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
     ds = btnet.DbUtil.get_dataset(filteredSQL);
 
     // cookies
@@ -202,7 +200,7 @@ function filter_changed()
 </head>
 
 <body onload="filter_changed()">
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 
 <div class=align>
 

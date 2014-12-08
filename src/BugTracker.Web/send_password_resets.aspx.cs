@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Net.Mail;
 using System.Collections.Generic;
+using btnet.Security;
 
 namespace btnet
 {
-    public partial class send_password_resets : System.Web.UI.Page
+    [PageAuthorize(BtnetRoles.Admin)]
+    public partial class send_password_resets : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
-        {
-            new Security().check_security(Context, Security.MUST_BE_ADMIN);
-
+        {          
             var sql = new SQLString("select us_id, us_email, us_username from users");
             using (var reader = DbUtil.execute_reader(sql, System.Data.CommandBehavior.Default))
             {

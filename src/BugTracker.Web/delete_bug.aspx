@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="delete_bug.aspx.cs" Inherits="btnet.delete_bug" AutoEventWireup="True" %>
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 ///////////////////////////////////////////////////////////////////////
@@ -19,11 +19,7 @@ void Page_Load(Object sender, EventArgs e)
 
 	Util.do_not_cache(Response);
 	
-
-	security = new Security();
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	if (security.user.is_admin || security.user.can_delete_bug)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanDeleteBugs())
 	{
 		//
 	}
@@ -35,8 +31,8 @@ void Page_Load(Object sender, EventArgs e)
 
 	string id = Util.sanitize_integer(Request["id"]);
 
-	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(id), security);
-	if (permission_level != Security.PERMISSION_ALL)
+	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(id), User.Identity);
+	if (permission_level != PermissionLevel.All)
 	{
 		Response.Write("You are not allowed to edit this item");
 		Response.End();
@@ -81,7 +77,7 @@ void Page_Load(Object sender, EventArgs e)
 <link rel="StyleSheet" href="btnet.css" type="text/css">
 </head>
 <body>
-<% security.write_menu(Response, "admin"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
 <p>
 <div class=align>
 <p>&nbsp</p>

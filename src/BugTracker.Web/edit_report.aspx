@@ -1,4 +1,6 @@
 <%@ Page language="C#" CodeBehind="edit_report.aspx.cs" Inherits="btnet.edit_report" AutoEventWireup="True" %>
+
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
 <!--
 Copyright 2002-2011 Corey Trager
 Distributed under the terms of the GNU General Public License
@@ -9,8 +11,6 @@ Distributed under the terms of the GNU General Public License
 int id;
 SQLString sql;
 
-Security security;
-
 void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
 
 
@@ -18,11 +18,7 @@ void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionI
 void Page_Load(Object sender, EventArgs e) {
 	Util.do_not_cache(Response);
 	
-	security = new Security();
-
-	security.check_security( HttpContext.Current, Security.ANY_USER_OK_EXCEPT_GUEST);
-
-	if (security.user.is_admin || security.user.can_edit_reports)
+	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditReports())
 	{
 		//
 	}
@@ -197,7 +193,7 @@ void on_update()
 </head>
 
 <body>
-<% security.write_menu(Response, "reports"); %>
+<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
 <div class='align'>
 <a href='reports.aspx'>back to reports</a>
 <br><br>
