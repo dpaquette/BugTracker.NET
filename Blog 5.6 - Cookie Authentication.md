@@ -149,7 +149,7 @@ Signing a user out of the application is a simple process with Owin Authenticati
 
 Now, on the logoff page we can simply call this SignOut method instead of manually deleting cookies.
 
-[View the commit - Sign Out using Owin Cookie Authentication]()
+[View the commit - Sign Out using Owin Cookie Authentication](https://github.com/dpaquette/BugTracker.NET/commit/f3ba11f37e50f75ffc204f713c256297cc80d4f7)
 
 
 ###Access User Claims

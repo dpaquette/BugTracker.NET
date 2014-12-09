@@ -10,7 +10,7 @@ You may have noticed that you can include script tags in the head (as used to be
 
 The problem with this is that it means that if users enter something that looks like JavaScript and the sever returns it then the browser will interpret it as JavaScript and execute it. This sort of behaviour is more common that you would expect. Any time that you show the search criteria that lead to a search results page this is an opportunity for a cross site scripting attack.
 
-Being able to place arbitrary JavaScript on the page opens up all sorts of potential issues. On a login page the JavaScript could capture keystrokes and forward them to an attacker. On other pages actions could be executed. It is even possible that the injected script could perform AJAX actions. That is especiall problematic on a single page application where all actions are executed via AJAX end points. The requests sent from the injected script will carry with them the authentication cookies from the user's session granting it the same permissions as the user.
+Being able to place arbitrary JavaScript on the page opens up all sorts of potential issues. On a login page the JavaScript could capture keystrokes and forward them to an attacker. On other pages actions could be executed. It is even possible that the injected script could perform AJAX actions. That is especially problematic on a single page application where all actions are executed via AJAX end points. The requests sent from the injected script will carry with them the authentication cookies from the user's session granting it the same permissions as the user.
 
 ##Non Persistent XSS
 
