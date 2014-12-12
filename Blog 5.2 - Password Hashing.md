@@ -4,11 +4,11 @@ Storing passwords is always a tricky proposition. For a great number of sites th
 
 Authorization is the act of matching a user with a set of permissions. So I could be authenticated as Simon and authorized to edit bugs.
 
-When storing a password there are a couple of ways to do it - most all of them are wrong. Encryping passwords seems like a good idea at first but if the encrypted passwords are leaked, as seems to happen with alarming regularity, then an attacker could decrypt the passwords. This is a bad situation because many people reuse passwords from site to site. Not only do you put your own site at risk but also other sites. With a password and an e-mail address it is possible the attacker could log into a banking website or some other high impact site. This is the reason that it is recommended that people use distinct passwords for each website.
+When storing a password there are a couple of ways to do it - most all of them are wrong. Encrypting passwords seems like a good idea at first but if the encrypted passwords are leaked, as seems to happen with alarming regularity, then an attacker could decrypt the passwords. This is a bad situation because many people reuse passwords from site to site. Not only do you put your own site at risk but also other sites. With a password and an e-mail address it is possible the attacker could log into a banking website or some other high impact site. This is the reason that it is recommended that people use distinct passwords for each website.
 
-Hashing passwords is a far better idea. A hash is a one-way function that cannot be reversed to reveal the password. When hashing it is important to hash not just the user's password but to combine it with a nonance. A nonance, sometimes erroneously called a salt, is a string of random characters that is appended to the unhashed password before hashing. This random string acts as protection from an attack using rainbow tables. A rainbow table is a large database that maps passwords with the hashes they generate. Many popular hashing algorithms have rainbow tables which permit near instantaneous exploration of a large percentage of the key-space. Nonances invalidate this approach as the key in the rainbow table maps to the password + nonance. Without knowing the nonance an attacker is not able to enter any password that will work. The key in the rainbow table is unlikely to be the actual user password and more likely to be a string that simply hashes to the same value so it will not be obvious what the users's password is.
+Hashing passwords is a far better idea. A hash is a one-way function that cannot be reversed to reveal the password. When hashing it is important to hash not just the user's password but to combine it with a salt. A salt is a string of random characters that is appended to the unhashed password before hashing. This random string acts as protection from an attack using rainbow tables. A rainbow table is a large database that maps passwords with the hashes they generate. Many popular hashing algorithms have rainbow tables which permit near instantaneous exploration of a large percentage of the key-space. Salts invalidate this approach as the key in the rainbow table maps to the password + salt. Without knowing the salt an attacker is not able to enter any password that will work. The key in the rainbow table is unlikely to be the actual user password and more likely to be a string that simply hashes to the same value so it will not be obvious what the user's password is.
 
-Even when hashing passwords we need to remain vigilent about the implementation. Many common hashing functions such as MD5 and SHA are designed to be as fast as possible. Their purpose is to give a checksum of a file so you know if the file is correct. For this application we want hashing large quantities of data to be as simple and fast as possible. The opposite is true of password hashing. We would like to take as substantial amount of time to avoid brute force attacks. A possible algorithm is the bcrypt algorithm. It is interesting as it is a tuneable algorithym that can easily be made to take longer as computer resources get cheaper.
+Even when hashing passwords we need to remain vigilant about the implementation. Many common hashing functions such as MD5 and SHA are designed to be as fast as possible. Their purpose is to give a checksum of a file so you know if the file is correct. For this application we want hashing large quantities of data to be as simple and fast as possible. The opposite is true of password hashing. We would like to take as substantial amount of time to avoid brute force attacks. A possible algorithm is the bcrypt algorithm. It is interesting as it is a tuneable algorithm that can easily be made to take longer as computer resources get cheaper.
 
 How easy is it to break a password hashed with a low grade hashing function? Well famed hacker Kevin Mitnick give a hint:
 
@@ -22,7 +22,7 @@ This is not to say that a bug database would be a high value target but the amou
 There are a couple of options for fixing the password problem in BugTracker.NET. The ideal solution is to rip out all the entire authentication system and replace it with something like [ASP.net Identity](http://www.asp.net/identity). Identity is well designed (at least in this version, don't ask about version 1) and well tested. It also brings in functions to throttle logins, change passwords and all that good stuff. This is, however, a pretty large undertaking.  
 We're in the business of getting the best solution for the least amount of work. We can solve most of the issue here simply by replacing the hashing algorithm.
 
-There is no well checked implementation of bcrypt on the .net platform. There is, however, an alterntative in the PKDBF2 algorithm as defined in RFC 2898 in the base class library. This algorithm is similar to bcrypt in that it has an interations setting that permits making the algorithm take longer thus increasing the cost to the attacker.
+There is no well checked implementation of bcrypt on the .net platform. There is, however, an alternative in the PKDBF2 algorithm as defined in RFC 2898 in the base class library. This algorithm is similar to bcrypt in that it has an iterations setting that permits making the algorithm take longer thus increasing the cost to the attacker.
 
 So now that we know the algorithm we need to decide how we're going to migrate to it. Looking at the source code it seems like, perhaps, this is not the first time that somebody has attempted to improve password security.
 
@@ -67,7 +67,7 @@ A slightly sanitized version of the original code is
         }
 ````
 
-It appears that BugTracker.NET originally accepted plain text passwords then added hashing using MD5 (note that is is incorrectly called encrypted here) and then added MD5 hashing with a salt (really a nonance). If either of the earlier two approaches is used then the system will upgrade the stored password to the newest version.
+It appears that BugTracker.NET originally accepted plain text passwords then added hashing using MD5 (note that is is incorrectly called encrypted here) and then added MD5 hashing with a salt. If either of the earlier two approaches is used then the system will upgrade the stored password to the newest version.
 
 At issue here is that if the password database has already been compromised there is no password change required and the user continues to be compromised. Ideally we would do a mass reset of everybody's password. We have the user's e-mail addresses  so we can send them a message but what to send them?
 
@@ -75,7 +75,7 @@ We don't want to send a new password in plain text. If somebody is reading their
 
 #Adding the New Password Check
 
-The very first step is to rip out the existing MD5 based password algorithm and put in place the PKDBF2 algorithm. In the code it is called RFC2898. At the same time we'll simplyfiy the hashing function to be a bit clearer.
+The very first step is to rip out the existing MD5 based password algorithm and put in place the PKDBF2 algorithm. In the code it is called RFC2898. At the same time we'll simplify the hashing function to be a bit clearer.
 
 The old method looked like
 ```
@@ -114,7 +114,7 @@ public static string HashString(string password, string salt)
 
 You may notice that the function has been renamed to be less specific to the technology used and to reference the fact that we're hashing and not encrypting the text. This is a good time to mention that this work is being done in a branch otherwise we're going to break passwords for everybody.
 
-The next step is to simplify the login process. We no longer want to allow plain text passwords, MD5 hashed passwords or even MD5 hashed passwords with a nonance. The only valid password now is one using the new hash.
+The next step is to simplify the login process. We no longer want to allow plain text passwords, MD5 hashed passwords or even MD5 hashed passwords with a salt. The only valid password now is one using the new hash.
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/3e42d03a344b62c6973921f77b7a75790d100515)
 

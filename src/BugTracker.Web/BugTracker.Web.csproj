@@ -484,7 +484,6 @@
     <Content Include="delete_org.aspx" />
     <Content Include="delete_priority.aspx" />
     <Content Include="delete_project.aspx" />
-    <Content Include="delete_query.aspx" />
     <Content Include="delete_report.aspx" />
     <Content Include="delete_status.aspx" />
     <Content Include="delete_subscriber.aspx" />
@@ -567,7 +566,6 @@
     <Content Include="edit_org.aspx" />
     <Content Include="edit_priority.aspx" />
     <Content Include="edit_project.aspx" />
-    <Content Include="edit_query.aspx" />
     <Content Include="edit_queued_notifications.aspx" />
     <Content Include="edit_report.aspx" />
     <Content Include="edit_self.aspx" />
@@ -577,7 +575,6 @@
     <Content Include="edit_udf.aspx" />
     <Content Include="edit_user.aspx" />
     <Content Include="edit_user_permissions2.aspx" />
-    <Content Include="edit_web_config.aspx" />
     <Content Include="email_edit.png" />
     <Content Include="email_open.png" />
     <Content Include="favicon.ico" />
@@ -627,7 +624,6 @@
     <Content Include="priorities.aspx" />
     <Content Include="projects.aspx" />
     <Content Include="queries.aspx" />
-    <Content Include="query.aspx" />
     <Content Include="register.aspx" />
     <Content Include="relationships.aspx" />
     <Content Include="reports.aspx" />
@@ -835,13 +831,6 @@
     <Compile Include="delete_project.aspx.designer.cs">
       <DependentUpon>delete_project.aspx</DependentUpon>
     </Compile>
-    <Compile Include="delete_query.aspx.cs">
-      <DependentUpon>delete_query.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="delete_query.aspx.designer.cs">
-      <DependentUpon>delete_query.aspx</DependentUpon>
-    </Compile>
     <Compile Include="delete_report.aspx.cs">
       <DependentUpon>delete_report.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -958,13 +947,6 @@
     <Compile Include="edit_project.aspx.designer.cs">
       <DependentUpon>edit_project.aspx</DependentUpon>
     </Compile>
-    <Compile Include="edit_query.aspx.cs">
-      <DependentUpon>edit_query.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="edit_query.aspx.designer.cs">
-      <DependentUpon>edit_query.aspx</DependentUpon>
-    </Compile>
     <Compile Include="edit_queued_notifications.aspx.cs">
       <DependentUpon>edit_queued_notifications.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1027,13 +1009,6 @@
     </Compile>
     <Compile Include="edit_user_permissions2.aspx.designer.cs">
       <DependentUpon>edit_user_permissions2.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="edit_web_config.aspx.cs">
-      <DependentUpon>edit_web_config.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="edit_web_config.aspx.designer.cs">
-      <DependentUpon>edit_web_config.aspx</DependentUpon>
     </Compile>
     <Compile Include="flag.aspx.cs">
       <DependentUpon>flag.aspx</DependentUpon>
@@ -1288,13 +1263,6 @@
     </Compile>
     <Compile Include="queries.aspx.designer.cs">
       <DependentUpon>queries.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="query.aspx.cs">
-      <DependentUpon>query.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="query.aspx.designer.cs">
-      <DependentUpon>query.aspx</DependentUpon>
     </Compile>
     <Compile Include="register.aspx.cs">
       <DependentUpon>register.aspx</DependentUpon>

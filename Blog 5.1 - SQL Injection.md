@@ -1,4 +1,4 @@
-In the previous instalment of this series we took a look at the various security issues present in BugTracker.NET. We identified five vulnerabilities that were worth addressing at once. The most difficult, or at least the most time consuming problem to address is the potential for SQL injection attacks.
+In the previous installment of this series we took a look at the various security issues present in BugTracker.NET. We identified five vulnerabilities that were worth addressing at once. The most difficult, or at least the most time consuming problem to address is the potential for SQL injection attacks.
 
 BugTracker.NET does not make use of any entity relational mapping tool such as Entity Framework or NHibernate. Instead it uses direct access to the database though ADO.net. To ensure that your ADO.net queries are safe the it is considered best practice to use parameterized queries. Parameterizing queries avoid SQL injection attacks by passing the duty of escaping string onto the database itself.  This ensures that there is no risk of anybody sneaking a value in that will break out of the query and allow an attacker the ability to compromise the data.
 
@@ -46,7 +46,7 @@ and (us_id <> $us or isnull(us_send_notifications_to_self,0) = 1)";
 ```
 The construction of this query relies on the various parameters having been escaped prior to being inserted into the string. The final few lines of the above code do the replacement of tokens in the query and then pass the query onto a utility function that fetches a dataset.
 
-Now looking through the application I can't actually find any parameters that aren't properly escaped. I think it is likely that they exist, somewhere, and that the large amount of code is obscuring them. However it does require that every parameter be manually escaped. It is very easy to forget such things andy it only takes one mistake to allow an attacker to delete the entire database. The [general advice](https://www.owasp.org/images/d/d4/OWASP_IL_2007_SQL_Smuggling.pdf) is to avoid blacklisting characters.
+Now looking through the application I can't actually find any parameters that aren't properly escaped. I think it is likely that they exist, somewhere, and that the large amount of code is obscuring them. However it does require that every parameter be manually escaped. It is very easy to forget such things and it only takes one mistake to allow an attacker to delete the entire database. The [general advice](https://www.owasp.org/images/d/d4/OWASP_IL_2007_SQL_Smuggling.pdf) is to avoid blacklisting characters.
 
 We want to make sure that not only is the application itself secure but that future developers are prevented, as best as possible, from shooting themselves in the foot. If every query is parameterized then it should act as something of a hint to future developers that they too should parameterize queries.
 
@@ -133,7 +133,7 @@ Now comes the long and arduous task of going through and replacing all the SQL s
 1. Remove any quoting of the variables in the string
 1. Remove any escaping that has been plugged in to the parameters
 
-An typical example is that we change
+A typical example is that we change
 
 ```
 string sql = @"
@@ -185,7 +185,7 @@ This poses a difficult problem: I'd like to keep the custom column functionality
 
 ![Properties Table](Images/PropertiesTablePattern.png)
 
-When querying for a bug we can look for all the entires in this table to find the properties. It makes some filtering queries a bit harder but we will have a search engine in place for that.
+When querying for a bug we can look for all the entries in this table to find the properties. It makes some filtering queries a bit harder but we will have a search engine in place for that.
 
 I chugged along for some time fixing the various queries in the application. I spent a lot of time without a compiling application, which always makes me nervous. Eventually I got to the point where the application would compile. With baited breath I launched the application to see if it would work.
 
@@ -219,7 +219,7 @@ We use this parameter name as it one that is used by ASP.net MVC projects so it 
 
 [View the Commit](https://github.com/dpaquette/BugTracker.NET/commit/c6201f790a80bcfb678ce2cd54810277e0caaaab)
 
-With this in place I discovered another hundred and fifty places in need of updating. When these were fixed another hundred and fifty errors poped up. It looks like there might be some batching of files sent to the aspx compiler and that if any one batch fails the processing stops before hitting the next batch. In the end there were about 500 places in need of changes. This took, obviously, more than one commit.
+With this in place I discovered another hundred and fifty places in need of updating. When these were fixed another hundred and fifty errors popped up. It looks like there might be some batching of files sent to the aspx compiler and that if any one batch fails the processing stops before hitting the next batch. In the end there were about 500 places in need of changes. This took, obviously, more than one commit.
 
 [View the Commits](https://github.com/dpaquette/BugTracker.NET/commits/SQL_Parameters)
 
