@@ -12,12 +12,12 @@ namespace btnet
         protected bool nag = false;
 
         ///////////////////////////////////////////////////////////////////////
-        void Page_Load(Object sender, EventArgs e)
+        public void Page_Load(Object sender, EventArgs e)
         {
 
             Util.do_not_cache(Response);
             
-            titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
+            Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "admin";
 
             if (false) // change this to if(true) to make the donation nag message go away
