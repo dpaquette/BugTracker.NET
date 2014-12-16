@@ -13,21 +13,15 @@ namespace btnet {
     public partial class categories {
         
         /// <summary>
-        /// titl control.
+        /// Master property.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
+        /// Auto-generated property.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl titl;
-        
-        /// <summary>
-        /// MainMenu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::btnet.Controls.MainMenu MainMenu;
+        public new btnet.LoggedIn Master {
+            get {
+                return ((btnet.LoggedIn)(base.Master));
+            }
+        }
     }
 }
