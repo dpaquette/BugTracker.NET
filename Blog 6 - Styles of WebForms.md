@@ -185,7 +185,7 @@ protected void Page_Load(object sender, EventArgs e)
 </table>
 ```
 
-As you can see this approach is somewhat more verbose than the pure WebForms approach. It also means that you can't take advantage of most the controls you might typically use in a WebFroms application. For an experienced WebForms developer this would almost certainly slow you down. Adding sorting to a GridView is as easy as adding a sortable property to it. For my version you need to build an entire control yourself.
+As you can see this approach is somewhat more verbose than the pure WebForms approach. It also means that you can't take advantage of most the controls you might typically use in a WebFroms application. For an experienced WebForms developer this would almost certainly slow you down. Adding sorting to a GridView is as easy as adding a sortable property to it. For my version you need to build an entire control yourself. There are, however, plenty of client side options that provide functionality similar to what is lost by doing away with WebForms. [Datatables](http://www.datatables.net/) is a jQuery based solution for grids and there are equivalent solutions for all other controls. The controls that are available are frequently lighter weight and more modern than the WebForms version. 
 
 The advantages, I believe, outweigh the drawbacks. First is that this style gets us far closer to using pure HTML. One of my major frustrations with WebForms is that it is a leaky abstraction over top of HTML. This means that many of the things that are easy with regular HTML become very difficult with WebForms. Up until a recent release of WebForms is was non-trivial to predict the client side Ids for elements on a page. This made programming against it using JavaScript tricky. This has since been ameliorated by allowing developers to set the client Id generation strategy. However there are numerous other situations in which WebForms seems to act as a huge barrier to adopting good (or at least modern) HTML practices.
 
@@ -222,4 +222,4 @@ Not only did I change this to MVC I also altered the view engine to Razor. We co
 
 ##Conclusion
 
-Each of the styles has its advantages and disadvantages. Choosing the right solution is a matter of examining the tradeoffs within the context of your application and your team. 
+Each of the styles has its advantages and disadvantages. Choosing the right solution is a matter of examining the tradeoffs within the context of your application and your team.
