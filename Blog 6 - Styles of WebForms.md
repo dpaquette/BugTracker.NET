@@ -35,7 +35,7 @@ Here a number of variables are written out directly to the output stream. In thi
 
 This style can be quite performant as there is very little overhead to writing to the response stream. It is also quite easy for maintenance developers to understand what is going on.
 
-It is, however, difficult to provide any sort of structure to applications written in this style. Should a component in the middle of the page need to change some earlier part of the page then it is almost impossible. You have to write to some buffer and then rewrite the existing content. The code quickly turns into a spagetti mess.  You also end up writing out complex escape sequences just to get the actual markdown you want. For instance in this example code also taken from BugTracker.NET:
+It is, however, difficult to provide any sort of structure to applications written in this style. Should a component in the middle of the page need to change some earlier part of the page then it is almost impossible. You have to write to some buffer and then rewrite the existing content. The code quickly turns into a spaghetti mess.  You also end up writing out complex escape sequences just to get the actual markdown you want. For instance in this example code also taken from BugTracker.NET:
 
 ```
     Response.Write("<table border=0 cellpadding=0 cellspacing=0 width=100%><tr><td align=left valign=top>");
@@ -80,7 +80,7 @@ In the late 90s and early 2000s Microsoft had a problem: their strategy called f
 
 In order to allow developers to use their existing skills Microsoft developed WebForms which brought much of the same programming paradigm to the web. Controls can be paced onto the page and the event handlers execute on the server side. Custom controls can be built to provide reusable functionality beween pages.
 
-The normal method of interacting with a web page were overridden using JavaScript to send post messages back to the server. The code on the server would update the page model and perform a full page refresh, sending the entire page back to the client. A significant amount of binding logic is handled server side as well.
+The normal methods of interacting with a web page were overridden using JavaScript to send post messages back to the server. The code on the server would update the page model and perform a full page refresh, sending the entire page back to the client. A significant amount of binding logic is handled server side as well.
 
 Very little of BugTracker.net is written using this style. One section that uses it is the log management screen, manage_logs.aspx.
 
@@ -189,7 +189,7 @@ As you can see this approach is somewhat more verbose than the pure WebForms app
 
 The advantages, I believe, outweigh the drawbacks. First is that this style gets us far closer to using pure HTML. One of my major frustrations with WebForms is that it is a leaky abstraction over top of HTML. This means that many of the things that are easy with regular HTML become very difficult with WebForms. Up until a recent release of WebForms is was non-trivial to predict the client side Ids for elements on a page. This made programming against it using JavaScript tricky. This has since been ameliorated by allowing developers to set the client Id generation strategy. However there are numerous other situations in which WebForms seems to act as a huge barrier to adopting good (or at least modern) HTML practices.
 
-The second advantage I see is around readability. To me it is much easier to understand what is happing in the layered approach. There is less magic going on in the background much of which is unnecessary magic. Developers coming from other platforms such as PHP or even Rails will have an easy time understanding the code.
+The second advantage I see is around readability. To me it is much easier to understand what is happening in the layered approach. There is less magic going on in the background much of which is unnecessary magic. Developers coming from other platforms such as PHP or even Rails will have an easy time understanding the code.
 
 Finally keeping view logic away from the controller logic makes unit testing far easier. It is, of course, still difficult to test the monolithic HttpRequest and HttpResponse objects. Getting around that requires a much more dramatic change such as adopting OWIN. Because the view logic in the layered approach is split from the back end logic it is actually quite easy to move the code to ASP.net MVC. The example above might be changed by simply doing
 
