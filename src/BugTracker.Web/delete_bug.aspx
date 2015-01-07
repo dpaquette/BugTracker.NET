@@ -1,105 +1,29 @@
-<%@ Page language="C#" CodeBehind="delete_bug.aspx.cs" Inherits="btnet.delete_bug" AutoEventWireup="True" %>
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+<%@ Page Language="C#" CodeBehind="delete_bug.aspx.cs" Inherits="btnet.delete_bug" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
 
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
-<script language="C#" runat="server">
+<asp:Content ContentPlaceHolderID="body" runat="server">
+    <p />
+    <div class="align">
+        <p>&nbsp</p>
+        <a id="back_href" runat="server" href="">back to <% Response.Write(btnet.Util.get_setting("SingularBugLabel", "bug")); %></a>
 
-SQLString sql;
+        <p>or</p>
 
-void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
+        <form runat="server" id="frm">
+            <a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
+            <input type="hidden" id="row_id" runat="server">
+        </form>
+    </div>
 
-///////////////////////////////////////////////////////////////////////
-void Page_Load(Object sender, EventArgs e)
-{
+</asp:Content>
 
-	Util.do_not_cache(Response);
-	
-	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanDeleteBugs())
-	{
-		//
-	}
-	else
-	{
-		Response.Write ("You are not allowed to use this page.");
-		Response.End();
-	}
-
-	string id = Util.sanitize_integer(Request["id"]);
-
-	int permission_level = btnet.Bug.get_bug_permission_level(Convert.ToInt32(id), User.Identity);
-	if (permission_level != PermissionLevel.All)
-	{
-		Response.Write("You are not allowed to edit this item");
-		Response.End();
-	}
-
-	if (IsPostBack)
-	{
-
-		Bug.delete_bug(Convert.ToInt32(row_id.Value));
-		Server.Transfer ("bugs.aspx");
-
-	}
-	else
-	{
-
-		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-			+ "delete " + Util.get_setting("SingularBugLabel","bug");
-
-		back_href.HRef = "edit_bug.aspx?id=" + id;
-
-		sql = new SQLString(@"select bg_short_desc from bugs where bg_id = @bugId");
-		sql = sql.AddParameterWithValue("bugId", id);
-
-		DataRow dr = btnet.DbUtil.get_datarow(sql);
-
-		confirm_href.InnerText = "confirm delete of "
-				+ Util.get_setting("SingularBugLabel","bug")
-				+ ": "
-				+ Convert.ToString(dr["bg_short_desc"]);
-
-		row_id.Value = id;
-	}
-
-}
-
-
-</script>
-
-<html>
-<head>
-<title id="titl" runat="server">btnet delete bug</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
-</head>
-<body>
-<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
-<p>
-<div class=align>
-<p>&nbsp</p>
-<a id="back_href" runat="server" href="">back to <% Response.Write(Util.get_setting("SingularBugLabel","bug")); %></a>
-
-<p>or<p>
-
-<script>
-function submit_form()
-{
-    var frm = document.getElementById("frm");
-    frm.submit();
-    return true;
-}
-
-</script>
-<form runat="server" id="frm">
-<a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
-<input type="hidden" id="row_id" runat="server">
-</form>
-
-
-</div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
+<asp:Content ContentPlaceHolderID="footerScripts" runat="server">
+    <script>
+        function submit_form() {
+            var frm = document.getElementById("frm");
+            frm.submit();
+            return true;
+        }
+    </script>
+</asp:Content>
