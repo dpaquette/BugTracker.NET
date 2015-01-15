@@ -82,15 +82,17 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         void on_update()
         {
+            var file = Request.Files["attached_file"];
+            if(file == null)
+                file = Request.Files[0];
 
-
-            if (attached_file.PostedFile == null)
+            if (file == null)
             {
                 write_msg("Please select file", false);
                 return;
             }
-
-            string filename = System.IO.Path.GetFileName(attached_file.PostedFile.FileName);
+            
+            string filename = System.IO.Path.GetFileName(file.FileName);
             if (string.IsNullOrEmpty(filename))
             {
                 write_msg("Please select file", false);
@@ -98,7 +100,7 @@ namespace btnet
             }
 
             int max_upload_size = Convert.ToInt32(Util.get_setting("MaxUploadSize", "100000"));
-            int content_length = attached_file.PostedFile.ContentLength;
+            int content_length = file.ContentLength;
             if (content_length > max_upload_size)
             {
                 write_msg("File exceeds maximum allowed length of "
@@ -120,11 +122,11 @@ namespace btnet
                 Bug.insert_post_attachment(
                     User.Identity,
                     bugid,
-                    attached_file.PostedFile.InputStream,
+                    file.InputStream,
                     content_length,
                     filename,
                     desc.Value,
-                    attached_file.PostedFile.ContentType,
+                    file.ContentType,
                     -1, // parent
                     internal_only.Checked,
                     true);
@@ -144,7 +146,7 @@ namespace btnet
                 write_msg(
                     filename
                     + " was successfully upload ("
-                    + attached_file.PostedFile.ContentType
+                    + file.ContentType
                     + "), "
                     + Convert.ToString(content_length)
                     + " bytes"

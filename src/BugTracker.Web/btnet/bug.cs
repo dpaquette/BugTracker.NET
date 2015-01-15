@@ -316,27 +316,27 @@ insert into bug_posts
     values ('file', @bg, @fi, @de, @si, @now, @us, @ct, @pa, @internal)
     select scope_identity()");
 
-                sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
-                sql = sql.AddParameterWithValue("fi", effective_file);
-                sql = sql.AddParameterWithValue("de", comment);
-                sql = sql.AddParameterWithValue("si", Convert.ToString(effective_content_length));
-                sql = sql.AddParameterWithValue("us", Convert.ToString(identity.GetUserId()));
+                sql = sql.AddParameterWithValue("@bg", Convert.ToString(bugid));
+                sql = sql.AddParameterWithValue("@fi", effective_file);
+                sql = sql.AddParameterWithValue("@de", comment);
+                sql = sql.AddParameterWithValue("@si", Convert.ToString(effective_content_length));
+                sql = sql.AddParameterWithValue("@us", Convert.ToString(identity.GetUserId()));
 
                 // Sometimes, somehow, content type is null.  Not sure how.
-                sql = sql.AddParameterWithValue("ct",
+                sql = sql.AddParameterWithValue("@ct",
                     effective_content_type != null
                         ? effective_content_type.Replace("'", "''")
                         : string.Empty);
 
                 if (parent == -1)
                 {
-                    sql = sql.AddParameterWithValue("pa", "null");
+                    sql = sql.AddParameterWithValue("@pa", 0);
                 }
                 else
                 {
-                    sql = sql.AddParameterWithValue("pa", Convert.ToString(parent));
+                    sql = sql.AddParameterWithValue("@pa", parent);
                 }
-                sql = sql.AddParameterWithValue("$internal", btnet.Util.bool_to_string(hidden_from_external_users));
+                sql = sql.AddParameterWithValue("@internal", btnet.Util.bool_to_string(hidden_from_external_users));
 
                 int bp_id = Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
@@ -414,6 +414,11 @@ insert into bug_posts
                     btnet.Bug.send_notifications(btnet.Bug.UPDATE, bugid, identity);
                 }
                 return bp_id;
+            }
+            catch (Exception ex)
+            {
+                Util.write_to_log(ex.ToString());
+                throw ex;
             }
             finally
             {
@@ -921,7 +926,7 @@ select scope_identity();");
                 }
                 else
                 {
-                    sql = sql.AddParameterWithValue("@from", "null");
+                    sql = sql.AddParameterWithValue("@from", null);
                     sql = sql.AddParameterWithValue("@type", "comment"); // bug comment
                 }
 

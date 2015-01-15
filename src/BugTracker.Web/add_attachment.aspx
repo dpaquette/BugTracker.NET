@@ -9,13 +9,13 @@
     <script>
 
         function set_msg(s) {
-            document.getElementById("msg").innerHTML = s
+            document.getElementById("<%:msg.ClientID%>").innerHTML = s
             document.getElementById("file_input").innerHTML
                 = '<input type=file class=txt name="attached_file" id="attached_file" maxlength=255 size=60>'
         }
 
         function waiting() {
-            document.getElementById("msg").innerHTML = "Uploading..."
+            document.getElementById("<%:msg.ClientID%>").innerHTML = "Uploading..."
             return true
         }
 
