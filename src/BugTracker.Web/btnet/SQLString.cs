@@ -27,7 +27,7 @@ namespace btnet
             return _value;
         }
 
-        public SQLString AddParameterWithValue(string parameter, string value)
+        public SQLString AddParameterWithValue(string parameter, object value)
         {
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
@@ -38,6 +38,7 @@ namespace btnet
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
         }
+
 
         public SQLString Append(string toAppend)
         {

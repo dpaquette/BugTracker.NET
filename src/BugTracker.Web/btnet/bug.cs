@@ -330,7 +330,7 @@ insert into bug_posts
 
                 if (parent == -1)
                 {
-                    sql = sql.AddParameterWithValue("@pa", 0);
+                    sql = sql.AddParameterWithValue("@pa", DBNull.Value);
                 }
                 else
                 {
