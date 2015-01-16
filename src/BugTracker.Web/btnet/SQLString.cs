@@ -29,6 +29,8 @@ namespace btnet
 
         public SQLString AddParameterWithValue(string parameter, object value)
         {
+            if (value == null)
+                value = DBNull.Value;
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
         }
