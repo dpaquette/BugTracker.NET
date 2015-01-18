@@ -2,8 +2,6 @@
 
 <%@ MasterType TypeName="btnet.LoggedIn" %>
 
-
-
 <asp:Content ContentPlaceHolderID="body" runat="server">
     <div class="align">
         <p>&nbsp</p>

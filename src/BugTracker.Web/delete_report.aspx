@@ -1,95 +1,31 @@
-<%@ Page language="C#" CodeBehind="delete_report.aspx.cs" Inherits="btnet.delete_report" AutoEventWireup="True" %>
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
+<%@ Page Language="C#" CodeBehind="delete_report.aspx.cs" Inherits="btnet.delete_report" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
 
-<script language="C#" runat="server">
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
 
-void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
+<asp:Content ContentPlaceHolderID="body" runat="server">
+    <div class="align">
+        <p>&nbsp</p>
+        <a href="reports.aspx">back to reports</a>
 
-///////////////////////////////////////////////////////////////////////
-void Page_Load(Object sender, EventArgs e)
-{
+        <p>or</p>
 
-	Util.do_not_cache(Response);
-	
-	if (User.IsInRole(BtnetRoles.Admin)|| User.Identity.GetCanEditReports())
-	{
-		//
-	}
-	else
-	{
-		Response.Write ("You are not allowed to use this page.");
-		Response.End();
-	}
-    SQLString sql;
-	if (IsPostBack)
-	{
-		// do delete here
-		sql = new SQLString(@"
-delete reports where rp_id = $1;
-delete dashboard_items where ds_report = @reportId");
-        sql = sql.AddParameterWithValue("reportId", Util.sanitize_integer(row_id.Value));
-		btnet.DbUtil.execute_nonquery(sql);
-		Server.Transfer ("reports.aspx");
-	}
-	else
-	{
-		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-			+ "delete report";
 
-		string id = Util.sanitize_integer(Request["id"] );
+        <form runat="server">
+            <a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
+            <input type="hidden" id="row_id" runat="server">
+        </form>
 
-		sql = new SQLString(@"select rp_desc from reports where rp_id = @id");
-		sql = sql.AddParameterWithValue("id", id);
+    </div>
+</asp:Content>
+<asp:Content ContentPlaceHolderID="headerScripts" runat="server">
+    <script>
+        function submit_form() {
+            var frm = document.getElementById("<%: Form.ClientID %>");
+            frm.submit();
+            return true;
+        }
 
-		DataRow dr = btnet.DbUtil.get_datarow(sql);
-
-		confirm_href.InnerText = "confirm delete of report: "
-				+ Convert.ToString(dr["rp_desc"]);
-
-		row_id.Value = id;
-
-	}
-
-}
-
-</script>
-
-<html>
-<head>
-<title id="titl" runat="server">btnet delete report</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
-</head>
-<body>
-<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="reports"/>
-<p>
-<div class=align>
-<p>&nbsp</p>
-<a href=reports.aspx>back to reports</a>
-
-<p>or<p>
-
-<script>
-function submit_form()
-{
-    var frm = document.getElementById("frm");
-    frm.submit();
-    return true;
-}
-
-</script>
-<form runat="server" id="frm">
-<a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
-<input type="hidden" id="row_id" runat="server">
-</form>
-
-</div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
-
+    </script>
+</asp:Content>
 
