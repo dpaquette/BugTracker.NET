@@ -894,7 +894,7 @@ drop table #temp");
 
 			var sql = new SQLString(@"select isnull(pj_default_user,0)
 					from projects
-					where pj_id = @pj)");
+					where pj_id = @pj");
 
 			sql = sql.AddParameterWithValue("pj", Convert.ToString(projectid));
 			object obj = btnet.DbUtil.execute_scalar(sql);
