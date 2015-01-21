@@ -1,10 +1,13 @@
 using System;
-using System.Web;
-using System.Linq;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using btnet.Security;
 using System.Web.UI.WebControls;
-using System.Collections.Generic;
+using System.Data;
 
 namespace btnet
 {
@@ -12,11 +15,22 @@ namespace btnet
     public partial class edit_project : BasePage
     {
         protected int id;
+
+        protected void Page_Init(object sender, EventArgs e) { ViewStateUserKey = Session.SessionID; }
+
+        ///////////////////////////////////////////////////////////////////////
         protected void Page_Load(Object sender, EventArgs e)
         {
+<<<<<<< HEAD
+
+            Util.do_not_cache(Response);
+
+
+=======
             Util.do_not_cache(Response);
 
             Master.Menu.SelectedItem = "admin";
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "edit project";
 
@@ -36,7 +50,11 @@ namespace btnet
             {
 
                 default_user.DataSource =
+<<<<<<< HEAD
+                    DbUtil.get_dataview(new SQLString("select us_id, us_username from users order by us_username"));
+=======
                     btnet.DbUtil.get_dataview(new SQLString("select us_id, us_username from users order by us_username"));
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
                 default_user.DataTextField = "us_username";
                 default_user.DataValueField = "us_id";
                 default_user.DataBind();
@@ -77,8 +95,13 @@ namespace btnet
 			isnull(pj_custom_dropdown_values3,'') [pj_custom_dropdown_values3]
 			from projects
 			where pj_id = @projectId");
+<<<<<<< HEAD
+                    sql = sql.AddParameterWithValue("projectId", Convert.ToString(id));
+                    DataRow dr = DbUtil.get_datarow(sql);
+=======
                     sql = sql.AddParameterWithValue("projectId", id);
                     DataRow dr = btnet.DbUtil.get_datarow(sql);
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
 
                     // Fill in this form
                     name.Value = (string)dr["pj_name"];
@@ -142,7 +165,11 @@ namespace btnet
 
             string vals_error_string = "";
             bool errors_with_custom_dropdowns = false;
+<<<<<<< HEAD
+            vals_error_string = Util.validate_dropdown_values(custom_dropdown_values1.Value);
+=======
             vals_error_string = btnet.Util.validate_dropdown_values(custom_dropdown_values1.Value);
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
             if (!string.IsNullOrEmpty(vals_error_string))
             {
                 good = false;
@@ -154,7 +181,11 @@ namespace btnet
                 custom_dropdown_values1_err.InnerText = "";
             }
 
+<<<<<<< HEAD
+            vals_error_string = Util.validate_dropdown_values(custom_dropdown_values2.Value);
+=======
             vals_error_string = btnet.Util.validate_dropdown_values(custom_dropdown_values2.Value);
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
             if (!string.IsNullOrEmpty(vals_error_string))
             {
                 good = false;
@@ -166,7 +197,11 @@ namespace btnet
                 custom_dropdown_values2_err.InnerText = "";
             }
 
+<<<<<<< HEAD
+            vals_error_string = Util.validate_dropdown_values(custom_dropdown_values3.Value);
+=======
             vals_error_string = btnet.Util.validate_dropdown_values(custom_dropdown_values3.Value);
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
             if (!string.IsNullOrEmpty(vals_error_string))
             {
                 good = false;
@@ -282,7 +317,11 @@ namespace btnet
                 sql = sql.AddParameterWithValue("cdv2", custom_dropdown_values2.Value);
                 sql = sql.AddParameterWithValue("cdv3", custom_dropdown_values3.Value);
 
+<<<<<<< HEAD
+                DbUtil.execute_nonquery(sql);
+=======
                 btnet.DbUtil.execute_nonquery(sql);
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
                 Server.Transfer("projects.aspx");
 
             }

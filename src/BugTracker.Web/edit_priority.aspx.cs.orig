@@ -5,24 +5,40 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using btnet.Security;
+using System.Data;
 
 namespace btnet
 {
     [PageAuthorize(BtnetRoles.Admin)]
     public partial class edit_priority : BasePage
     {
+<<<<<<< HEAD
+
+        int id;
+        SQLString sql;
+
+
+        protected void Page_Init(object sender, EventArgs e) { ViewStateUserKey = Session.SessionID; }
+
+
+=======
         protected int id;
         SQLString sql;
 
         protected void Page_Init(object sender, EventArgs e) { ViewStateUserKey = Session.SessionID; }
 
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
         ///////////////////////////////////////////////////////////////////////
         protected void Page_Load(Object sender, EventArgs e)
         {
 
             Util.do_not_cache(Response);
 
+<<<<<<< HEAD
+
+=======
             Master.Menu.SelectedItem = "admin";
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "edit priority";
 
@@ -56,7 +72,11 @@ namespace btnet
 				pr_name, pr_sort_seq, pr_background_color, isnull(pr_style,'') [pr_style], pr_default
 				from priorities where pr_id = @id");
 
+<<<<<<< HEAD
+                    sql = sql.AddParameterWithValue("id", Convert.ToString(id));
+=======
                     sql = sql.AddParameterWithValue("id", id);
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
                     DataRow dr = btnet.DbUtil.get_datarow(sql);
 
                     // Fill in this form
@@ -78,7 +98,11 @@ namespace btnet
 
 
         ///////////////////////////////////////////////////////////////////////
+<<<<<<< HEAD
+        protected Boolean validate()
+=======
         Boolean validate()
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
         {
 
             Boolean good = true;
@@ -179,5 +203,9 @@ namespace btnet
 
         }
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 0bf859e7f731e068c762c6839010060396e9a9ae
     }
 }
