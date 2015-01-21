@@ -14,7 +14,7 @@ namespace btnet
         {
 
             Util.do_not_cache(Response);
-
+            Master.Menu.SelectedItem = "queries";
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - queries";
 
             SQLString sql;
