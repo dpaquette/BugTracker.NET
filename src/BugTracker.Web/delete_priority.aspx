@@ -13,7 +13,7 @@
 
         <form runat="server">
             <a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
-            <input type="hidden" id="row_id" runat="server">
+            <input type="hidden" id="row_id" runat="server"/>
         </form>
 
     </div>
