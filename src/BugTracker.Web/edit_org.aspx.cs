@@ -257,7 +257,7 @@ update orgs set
 	og_status_field_permission_level = @flp_status,
 	og_assigned_to_field_permission_level = @flp_assigned_to,
 	og_udf_field_permission_level = @flp_udf
-	where og_id = $og_id");
+	where og_id = @og_id");
 
                     sql = sql.AddParameterWithValue("og_id", Convert.ToString(id));
 
