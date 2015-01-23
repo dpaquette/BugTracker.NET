@@ -16,7 +16,7 @@ namespace btnet
         {
 
             Util.do_not_cache(Response);
-            
+            Master.Menu.SelectedItem = "admin";
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "admin";
 
