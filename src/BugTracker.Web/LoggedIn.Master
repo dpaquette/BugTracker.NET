@@ -9,7 +9,11 @@
     <link rel="shortcut icon" href="favicon.ico">
     <title>btnet bugs</title>
     <link rel="StyleSheet" href="btnet.css" type="text/css">
+    <link rel="StyleSheet" href="Content/style/jquery-ui.min.css" type="text/css">
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="datejs/date.js"></script>
+
     <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
 
 </head>
