@@ -56,6 +56,7 @@ namespace btnet
 
             if (!IsPostBack)
             {
+                Master.Menu.SelectedItem = "admin";
                 Page.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                                     + "edit task";
 

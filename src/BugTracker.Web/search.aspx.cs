@@ -48,6 +48,7 @@ namespace btnet
                 Response.End();
             }
 
+            Master.Menu.SelectedItem = "search";
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "search";
 

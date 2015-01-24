@@ -23,7 +23,7 @@ namespace btnet
                 Response.Write("You are not allowed to use this page.");
                 Response.End();
             }
-
+            Master.Menu.SelectedItem = "reports";
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "reports";
 
