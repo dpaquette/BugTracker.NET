@@ -13,6 +13,7 @@
     <link rel="StyleSheet" href="btnet.css" type="text/css">
     <link rel="StyleSheet" href="Content/style/jquery-ui.min.css" type="text/css">
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/btnet-bootstrap-theme.css" rel="stylesheet" />
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" language="JavaScript" src="datejs/date.js"></script>

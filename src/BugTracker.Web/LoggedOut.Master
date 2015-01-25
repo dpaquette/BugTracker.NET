@@ -10,6 +10,7 @@
     <title>btnet bugs</title>
     <link rel="StyleSheet" href="btnet.css" type="text/css">
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/btnet-bootstrap-theme.css" rel="stylesheet" />
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
 

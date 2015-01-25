@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="btnet_css_for_email.css.renamed" />
+    <Content Include="Content\btnet-bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
