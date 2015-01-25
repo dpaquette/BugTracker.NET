@@ -627,7 +627,6 @@
     <Content Include="mbug.aspx" />
     <Content Include="mbugs.aspx" />
     <Content Include="merge_bug.aspx" />
-    <Content Include="mlogin.aspx" />
     <Content Include="notifications.aspx" />
     <Content Include="orgs.aspx" />
     <Content Include="paste_plain.png" />
@@ -1229,13 +1228,6 @@
     </Compile>
     <Compile Include="merge_bug.aspx.designer.cs">
       <DependentUpon>merge_bug.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="mlogin.aspx.cs">
-      <DependentUpon>mlogin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="mlogin.aspx.designer.cs">
-      <DependentUpon>mlogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="notifications.aspx.cs">
       <DependentUpon>notifications.aspx</DependentUpon>
