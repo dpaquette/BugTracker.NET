@@ -13,33 +13,6 @@ namespace btnet {
     public partial class delete_priority {
         
         /// <summary>
-        /// titl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl titl;
-        
-        /// <summary>
-        /// MainMenu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::btnet.Controls.MainMenu MainMenu;
-        
-        /// <summary>
-        /// frm control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm frm;
-        
-        /// <summary>
         /// confirm_href control.
         /// </summary>
         /// <remarks>
@@ -56,5 +29,17 @@ namespace btnet {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlInputHidden row_id;
+        
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new btnet.LoggedIn Master {
+            get {
+                return ((btnet.LoggedIn)(base.Master));
+            }
+        }
     }
 }

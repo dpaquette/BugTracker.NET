@@ -48,7 +48,8 @@ namespace btnet
                 Response.End();
             }
 
-            titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
+            Master.Menu.SelectedItem = "search";
+            Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "search";
 
             show_udf = (Util.get_setting("ShowUserDefinedBugAttribute", "1") == "1");
@@ -162,17 +163,6 @@ or isnull(pj_enable_custom_dropdown3,0) = 1");
 
             hit_submit_button.Value = "0";
             project_changed.Value = "0";
-
-            if (User.IsInRole(BtnetRoles.Admin))
-            {
-
-            }
-            else
-            {
-                visible_sql_label.Style["display"] = "none";
-                visible_sql_text.Style["display"] = "none";
-            }
-
         }
 
 

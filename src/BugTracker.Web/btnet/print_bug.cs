@@ -1070,7 +1070,7 @@ and a.bp_parent is null");
 			sql.Append( btnet.Util.get_setting("CommentSortOrder","desc"));
 			sql.Append( ", ba.bp_parent, ba.bp_id");
 
-            sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
+            sql = sql.AddParameterWithValue("@id", Convert.ToString(bugid));
             
             return btnet.DbUtil.get_dataset(sql);
 

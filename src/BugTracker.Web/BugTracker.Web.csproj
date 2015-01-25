@@ -424,6 +424,8 @@
     <Content Include="Scripts\ckeditor\composer.json" />
     <Content Include="Scripts\ckeditor\CHANGES.md" />
     <Content Include="Scripts\ckeditor\bower.json" />
+    <Content Include="LoggedIn.Master" />
+    <Content Include="LoggedOut.Master" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -728,6 +730,20 @@
     </Compile>
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoggedIn.Master.cs">
+      <DependentUpon>LoggedIn.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoggedIn.Master.designer.cs">
+      <DependentUpon>LoggedIn.Master</DependentUpon>
+    </Compile>
+    <Compile Include="LoggedOut.Master.cs">
+      <DependentUpon>LoggedOut.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LoggedOut.Master.designer.cs">
+      <DependentUpon>LoggedOut.Master</DependentUpon>
     </Compile>
     <Compile Include="Security\PageAllowAnonymous.cs" />
     <Compile Include="Security\PageAuthorizeAttribute.cs" />

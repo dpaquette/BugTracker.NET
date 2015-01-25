@@ -164,9 +164,8 @@ us_most_recent_login_datetime datetime null
 
 create unique index unique_us_username on users (us_username)
 
-insert into users (
-us_username, us_firstname, us_lastname, us_password, us_admin, us_default_query, us_org)
-values ('admin', 'System', 'Administrator', 'admin', 1, 1, 1)
+--admin/admin is the username/password
+INSERT [dbo].[users] ([us_id], [us_username], [us_salt], [us_password], [password_reset_key], [us_firstname], [us_lastname], [us_email], [us_admin], [us_default_query], [us_enable_notifications], [us_auto_subscribe], [us_auto_subscribe_own_bugs], [us_auto_subscribe_reported_bugs], [us_send_notifications_to_self], [us_active], [us_bugs_per_page], [us_forced_project], [us_reported_notifications], [us_assigned_notifications], [us_subscribed_notifications], [us_signature], [us_use_fckeditor], [us_enable_bug_list_popups], [us_created_user], [us_org], [us_most_recent_login_datetime]) VALUES (1, N'admin', N'PmafvZSWFYML3', N'si�ύ�oJ̚�M����cx����piĦWNls��!�9O��XL]�s��׊6�{�%�$�7������ڨFL�IS�v.����MC��1(K�C�8F[�fW�0����.a���c''iR%�U�hߎ��', NULL, N'System', N'Administrator', NULL, 1, 1, 1, 0, 0, 0, 0, 1, NULL, NULL, 4, 4, 4, NULL, 0, 1, 1, 1, CAST(N'2015-01-13 22:05:16.973' AS DateTime))
 
 insert into users (
 us_username, us_firstname, us_lastname, us_password, us_admin, us_default_query, us_org)

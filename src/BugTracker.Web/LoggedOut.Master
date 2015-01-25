@@ -1,0 +1,27 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="LoggedIn.master.cs" Inherits="btnet.LoggedIn" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>btnet bugs</title>
+    <link rel="StyleSheet" href="btnet.css" type="text/css">
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
+
+</head>
+<body>
+    <%
+
+    Response.Write (Application["custom_logo"]);
+
+%>
+    <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
+
+</body>
+
+<asp:contentplaceholder runat="server" id="footerScripts"></asp:contentplaceholder>
+
+<% Response.Write(Application["custom_footer"]); %>
+</html>

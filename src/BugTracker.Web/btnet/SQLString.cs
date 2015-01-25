@@ -27,17 +27,24 @@ namespace btnet
             return _value;
         }
 
-        public SQLString AddParameterWithValue(string parameter, string value)
+        public SQLString AddParameterWithValue(string parameter, object value)
         {
+            if (value == null)
+                value = DBNull.Value;
+            if (!parameter.StartsWith("@"))
+                parameter = "@" + parameter;
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
         }
 
         public SQLString AddParameterWithValue(string parameter, int value)
         {
+            if (!parameter.StartsWith("@"))
+                parameter = "@" + parameter;
             _parameters.Add(new SqlParameter { ParameterName = parameter, Value = value });
             return this;
         }
+
 
         public SQLString Append(string toAppend)
         {

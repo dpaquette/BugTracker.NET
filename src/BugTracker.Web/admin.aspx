@@ -1,74 +1,63 @@
-<%@ Page language="C#" CodeBehind="admin.aspx.cs" Inherits="btnet.admin" AutoEventWireup="True" %>
+<%@ Page Language="C#" CodeBehind="admin.aspx.cs" Inherits="btnet.admin" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
-
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
-
-<html>
-<head>
-<title id="titl" runat="server">btnet admin</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
+<asp:Content runat="server" contentplaceholderid="headerScripts">
 <script>
 
-var nagspan
-var color
-var hex_chars = "0123456789ABCDEF"
+    var nagspan
+    var color
+    var hex_chars = "0123456789ABCDEF"
 
-function decimal_to_hex(dec)
-{
-	var result = 
-		hex_chars.charAt(Math.floor(dec / 16))
-		+ hex_chars.charAt(dec % 16)
-	return result
-}
+    function decimal_to_hex(dec) {
+        var result =
+            hex_chars.charAt(Math.floor(dec / 16))
+            + hex_chars.charAt(dec % 16)
+        return result
+    }
 
-function RGB2HTML(red, green, blue)
-{
-	var rgb = "#"
-	rgb += String(decimal_to_hex(red));
-	rgb += String(decimal_to_hex(green));
-	rgb += String(decimal_to_hex(blue));
-	return rgb
-}
+    function RGB2HTML(red, green, blue) {
+        var rgb = "#"
+        rgb += String(decimal_to_hex(red));
+        rgb += String(decimal_to_hex(green));
+        rgb += String(decimal_to_hex(blue));
+        return rgb
+    }
 
-function start_animation()
-{
-	nagspan = document.getElementById("nagspan")
-// cc = 204, 66 = 102
-	color = 1
-	timer = setInterval(timer_callback,5)
-}
+    function start_animation() {
+        nagspan = document.getElementById("nagspan")
+        // cc = 204, 66 = 102
+        color = 1
+        timer = setInterval(timer_callback, 5)
+    }
 
-function timer_callback()
-{
-	color += 1
-	
-	new_color = RGB2HTML(255, color * 2, color)
-	
-	nagspan.style.background = new_color
-	
-	if (color == 102) // if the color is now orange
-	{
-		clearInterval(timer)
-	}
-}
+    function timer_callback() {
+        color += 1
 
+        new_color = RGB2HTML(255, color * 2, color)
+
+        nagspan.style.background = new_color
+
+        if (color == 102) // if the color is now orange
+        {
+            clearInterval(timer)
+        }
+    }
+
+    $(function () {
+    <% if (nag) Response.Write("onload='start_animation()'"); %>
+});
 </script>
-</head>
-<body  <% if (nag) Response.Write("onload='start_animation()'"); %>>
-    <uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
+</asp:Content>
 
-<% if (nag) { %>
+
+<asp:Content contentplaceholderid="body" runat="server">
+<% if (nag)
+   { %>
 
 <script>
-function donate()
-{
-	pp.submit()
-}
+    function donate() {
+        pp.submit()
+    }
 </script>
 <form name=pp id=pp action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <span id="nagspan" style='background: #ff0000; border: dotted 1px blue; padding: 5px;'>
@@ -111,19 +100,18 @@ Is BugTracker.NET helping you or your company?  Please consider <a href=javascri
 <p>&nbsp;<p>
 <p>Server Info:
 <%
-Response.Write ("<br>Path=");
-Response.Write (HttpContext.Current.Server.MapPath(null));
-Response.Write ("<br>MachineName=");
-Response.Write (HttpContext.Current.Server.MachineName);
-Response.Write ("<br>ScriptTimeout=");
-Response.Write (HttpContext.Current.Server.ScriptTimeout);
-Response.Write ("<br>.NET Version=");
-Response.Write(Environment.Version.ToString());
-Response.Write ("<br>CurrentCulture=");
-Response.Write(System.Threading.Thread.CurrentThread.CurrentCulture.Name);
+    Response.Write("<br>Path=");
+    Response.Write(HttpContext.Current.Server.MapPath(null));
+    Response.Write("<br>MachineName=");
+    Response.Write(HttpContext.Current.Server.MachineName);
+    Response.Write("<br>ScriptTimeout=");
+    Response.Write(HttpContext.Current.Server.ScriptTimeout);
+    Response.Write("<br>.NET Version=");
+    Response.Write(Environment.Version.ToString());
+    Response.Write("<br>CurrentCulture=");
+    Response.Write(System.Threading.Thread.CurrentThread.CurrentCulture.Name);
 
 %>
 
 </div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
+</asp:Content>

@@ -11,5 +11,17 @@ namespace btnet {
     
     
     public partial class delete_subscriber {
+        
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new btnet.LoggedIn Master {
+            get {
+                return ((btnet.LoggedIn)(base.Master));
+            }
+        }
     }
 }
