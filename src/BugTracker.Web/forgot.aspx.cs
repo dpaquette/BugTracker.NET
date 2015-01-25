@@ -25,7 +25,7 @@ namespace btnet
 
             if (!IsPostBack)
             {
-                titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
+                Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                     + "forgot password";
             }
             else
