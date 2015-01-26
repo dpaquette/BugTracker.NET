@@ -1,4 +1,6 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="LoggedIn.master.cs" Inherits="btnet.LoggedIn" %>
+<%@ Register Src="~/Controls/Footer.ascx" TagPrefix="uc1" TagName="Footer" %>
+
 
 <!DOCTYPE html>
 
@@ -24,25 +26,11 @@
     <div class="container" style="margin-top: 40px">
         <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
     </div>
-    <footer class="page-footer">
-        <div class="container">
-            <ul class="text-muted">
-                <li>BugTracker.NET</li>
-                <li>·</li>
-                <li><a target="_blank" href="http://ifdefined.com/README.html">Help</a></li>
-                <li>·</li>
-                <li><a target="_blank" href="mailto:ctrager@yahoo.com">Feedback</a></li>
-                <li>·</li>
-                <li><a target="_blank" href="about.html">About</a></li>
-                <li>·</li>
-                <li><a target="_blank" href="http://ifdefined.com/README.html">Donate</a></li>
-            </ul>
-        </div>
-    </footer>
+    <uc1:Footer runat="server" id="Footer" />
     <script src="Scripts/bootstrap.min.js"></script>
 </body>
 
 <asp:contentplaceholder runat="server" id="footerScripts"></asp:contentplaceholder>
 
-<% Response.Write(Application["custom_footer"]); %>
+
 </html>

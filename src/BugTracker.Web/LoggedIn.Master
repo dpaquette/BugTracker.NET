@@ -1,6 +1,8 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="LoggedIn.master.cs" Inherits="btnet.LoggedIn" %>
 
 <%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+<%@ Register Src="~/Controls/Footer.ascx" TagPrefix="uc1" TagName="Footer" %>
+
 
 <!DOCTYPE html>
 
@@ -15,8 +17,8 @@
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
     <link href="Content/btnet-bootstrap-theme.css" rel="stylesheet" />
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
-    <script type="text/javascript" language="JavaScript" src="datejs/date.js"></script>
+    <script type="text/javascript" src="scripts/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="datejs/date.js"></script>
 
     <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
 
@@ -24,10 +26,9 @@
 <body>
     <uc1:MainMenu runat="server" ID="MainMenu" />
     <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
+    <uc1:Footer runat="server" ID="Footer" />
     <script src="Scripts/bootstrap.min.js"></script>
 </body>
 
 <asp:contentplaceholder runat="server" id="footerScripts"></asp:contentplaceholder>
-
-<% Response.Write(Application["custom_footer"]); %>
 </html>

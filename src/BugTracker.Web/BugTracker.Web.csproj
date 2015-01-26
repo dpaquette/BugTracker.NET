@@ -150,6 +150,7 @@
     <Content Include="Content\style\jquery.mobile.custom.structure.min.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.min.css" />
+    <Content Include="Controls\Footer.ascx" />
     <Content Include="Controls\MainMenu.ascx" />
     <Content Include="edit_area\edit_area_full.gz" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -743,6 +744,13 @@
     </Compile>
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Footer.ascx.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Footer.ascx.designer.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
     </Compile>
     <Compile Include="LoggedIn.Master.cs">
       <DependentUpon>LoggedIn.Master</DependentUpon>

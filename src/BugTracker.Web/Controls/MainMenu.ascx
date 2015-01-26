@@ -2,13 +2,108 @@
 <%@ Import Namespace="btnet" %>
 <%@ Import Namespace="btnet.Security" %>
 <%= Util.context.Application["custom_header"]%>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/bugs.aspx">
+                <%= Util.context.Application["custom_logo"] %>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="bugs.aspx"><%:btnet.Util.get_setting("PluralBugLabel", "bugs") %></a></li>
+                <% if (Page.User.Identity.GetCanSearch())
+                   { %>
+                <li><a href="search.aspx">search</a> </li>
+                <% } %>
+                <% if (Util.get_setting("EnableWhatsNewPage", "0") == "1")
+                   { %>
+                <li><a href="view_whatsnew.aspx">news</a> </li>
+                <% } %>
 
+                <% if (!Page.User.IsInRole(BtnetRoles.Guest))
+                   { %>
+                <li>
+                    <a href="queries.aspx">queries</a>
+                </li>
+                <% } %>
+
+                <% if (Page.User.IsInRole(BtnetRoles.Admin) || Page.User.Identity.GetCanUseReports() || Page.User.Identity.GetCanEditReports())
+                   { %>
+                <li>
+                    <a href="reports.aspx">reports</a>
+                </li>
+                <% } %>
+
+
+                <% if (Util.get_setting("CustomMenuLinkLabel", "") != "")
+                   { %>
+                <li>
+                    <a href="<%:Util.get_setting("CustomMenuLinkUrl", "") %>"><%:Util.get_setting("CustomMenuLinkLabel", "") %></a>
+                </li>
+                <% } %>
+                <% if (Page.User.IsInRole(BtnetRoles.Admin))
+                   { %>
+                <li>
+                    <a href="admin.aspx">admin</a>
+                </li>
+                <% }
+                   else if (Page.User.IsInRole(BtnetRoles.ProjectAdmin))
+                   {%>
+                <li>
+                    <a href="users.aspx">users</a>
+                </li>
+                <% }    %>
+            </ul>
+            <form class="navbar-form navbar-left" action="edit_bug.aspx" method="get">
+                <div class="form-group">
+                    <input class="form-control" size="4" type="text" name="id" accesskey="g" placeholder="bug id">
+                </div>
+                <button type="submit" class="btn btn-default">go</button>
+            </form>
+
+            <% if (Util.get_setting("EnableSearch", "1") == "1" && Page.User.Identity.GetCanSearch())
+               { %>
+
+            <form class="navbar-form navbar-left" role="search" action="search_text.aspx" method="get" onsubmit='return on_submit_search()'>
+                <div class="form-group">
+                    <input type="text" class="form-control" id='lucene_input' name="query" accesskey="s" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                <a href='lucene_syntax.html' target='_blank'>?</a>
+            </form>
+            <% } %>
+            <ul class="nav navbar-nav navbar-right">
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-user"></span> <%:Page.User.Identity.Name %> <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <% if (!Page.User.IsInRole(BtnetRoles.Guest))
+                           { %>
+                        <li>
+                            <a href="edit_self.aspx">settings</a>
+                        </li>
+                        <% } %>
+                        <li>
+                            <a href="logoff.aspx">logoff</a>
+                        </li>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</nav>
 <span id="debug" style='position: absolute; top: 0; left: 0;'></span>
 <script type='text/javascript' src='scripts/require.js'></script>
 <script>
-    function dbg(s) {
-        document.getElementById('debug').innerHTML += (s + '<br>');
-    }
     function on_submit_search() {
         el = document.getElementById('lucene_input');
         if (el.value == '') {
@@ -22,113 +117,9 @@
     }
 </script>
 <script type='text/javascript'>
-    require.config({
-        baseUrl: 'scripts',
-        paths: {
-            jquery: 'jquery-1.11.1'
-        }
-    });
-    require(['jquery'], function ($) {
-        $(function () {
-            $('a').filter(function () { return this.hostname && this.hostname !== location.hostname; }).addClass('external-link');
+    $(function () {
+        $('a').filter(function () { return this.hostname && this.hostname !== location.hostname; }).addClass('external-link');
 
-            $('td.menu_td span:contains("<%:SelectedItem%>")').addClass("selected_menu_item");
-        });
+        $('li:has(a:contains("<%:SelectedItem%>"))').addClass("active");
     });
 </script>
-<table border="0" width="100%" cellpadding="0" cellspacing="0" class="menubar">
-    <tr>
-
-        <%= Util.context.Application["custom_logo"] %>
-        <td width="20">&nbsp;</td>
-        <td class='menu_td'>
-            <a href="bugs.aspx"><span class='menu_item warn' style='margin-left: 3px;'><%:btnet.Util.get_setting("PluralBugLabel", "bugs") %></span></a>
-        </td>
-
-
-
-        <% if (Page.User.Identity.GetCanSearch())
-           { %>
-        <td class='menu_td'>
-            <a href="search.aspx"><span class='menu_item warn' style='margin-left: 3px;'>search</span></a>
-        </td>
-        <% } %>
-
-
-        <% if (Util.get_setting("EnableWhatsNewPage", "0") == "1")
-           { %>
-        <td class='menu_td'>
-            <a href="view_whatsnew.aspx"><span class='menu_item warn' style='margin-left: 3px;'>news</span></a>
-        </td>
-        <% } %>
-
-        <% if (!Page.User.IsInRole(BtnetRoles.Guest))
-           { %>
-        <td class='menu_td'>
-            <a href="queries.aspx"><span class='menu_item warn' style='margin-left: 3px;'>queries</span></a>
-        </td>
-        <% } %>
-
-        <% if (Page.User.IsInRole(BtnetRoles.Admin) || Page.User.Identity.GetCanUseReports() || Page.User.Identity.GetCanEditReports())
-           { %>
-        <td class='menu_td'>
-            <a href="reports.aspx"><span class='menu_item warn' style='margin-left: 3px;'>reports</span></a>
-        </td>
-        <% } %>
-
-        <% if (Util.get_setting("CustomMenuLinkLabel", "") != "")
-           { %>
-        <td class='menu_td'>
-            <a href="<%:Util.get_setting("CustomMenuLinkUrl", "") %>"><span class='menu_item warn' style='margin-left: 3px;'><%:Util.get_setting("CustomMenuLinkLabel", "") %></span></a>
-        </td>
-        <% } %>
-        <% if (Page.User.IsInRole(BtnetRoles.Admin))
-           { %>
-        <td class='menu_td'>
-            <a href="admin.aspx"><span class='menu_item warn' style='margin-left: 3px;'>admin</span></a>
-        </td>
-        <% }
-           else if (Page.User.IsInRole(BtnetRoles.ProjectAdmin))
-           {%>
-        <td class='menu_td'>
-            <a href="users.aspx"><span class='menu_item warn' style='margin-left: 3px;'>users</span></a>
-        </td>
-        <% }    %>
-
-        <td nowrap valign="middle">
-            <form style='margin: 0px; padding: 0px;' action="edit_bug.aspx" method="get">
-                <input class="menubtn" type="submit" value='go to ID'>
-                <input class="menuinput" size="4" type="text" class="txt" name="id" accesskey="g">
-            </form>
-        </td>
-        <% if (Util.get_setting("EnableSearch", "1") == "1" && Page.User.Identity.GetCanSearch())
-           { %>
-        <td nowrap valign="middle">
-            <form style='margin: 0px; padding: 0px;' action="search_text.aspx" method="get" onsubmit='return on_submit_search()'>
-                <input class='menubtn' type='submit' value='search text'>
-                <input class='menuinput' id='lucene_input' size='24' type='text' class='txt'
-                    value='<%:(string) HttpContext.Current.Session["query"] %>' name="query" accesskey="s">
-                <a href='lucene_syntax.html' target='_blank' style='font-size: 7pt;'>advanced</a>
-            </form>
-        </td>
-        <% }%>
-        <td nowrap valign="middle">
-            <span class="smallnote">logged in as <%:Page.User.Identity.Name %><br>
-            </span></td>
-        <td class='menu_td'>
-            <a href="logoff.aspx"><span class='menu_item warn' style='margin-left: 3px;'>logoff</span></a>
-        </td>
-
-        <% if (!Page.User.IsInRole(BtnetRoles.Guest))
-           { %>
-        <td class='menu_td'>
-            <a href="edit_self.aspx"><span class='menu_item warn' style='margin-left: 3px;'>settings</span></a>
-        </td>
-        <% } %>
-        <td>
-            <a target='_blank' href='about.html'><span class='menu_item' style='margin-left: 3px;'>about</span></a></td>
-        <td>
-            <a target="_blank" href="http://ifdefined.com/README.html"><span class='menu_item' style='margin-left: 3px;'>help</span></a></td>
-    </tr>
-</table>
-<br>
