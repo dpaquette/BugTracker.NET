@@ -127,6 +127,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\btnet.png" />
     <Content Include="Content\images\ExternalLink.png" />
     <Content Include="Content\images\ExternalLink.svg" />
     <Content Include="Content\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
