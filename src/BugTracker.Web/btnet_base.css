@@ -1,22 +1,3 @@
-body {
-	font-family: verdana, arial; 
-	font-size: 10pt; 
-	background: #ffffff;
-}
-
-td {
-	font-size: 8pt;
-}
-
-p {
-	font-size: 10pt;
-}
-
-a         {color:#0000ff; font-size: 10pt; text-decoration: none; }
-a:visited {color:#0000ff; font-size: 10pt; text-decoration: none; }
-a:hover   {color:#ff6633; font-size: 10pt; text-decoration: none; }
-
-
 a.external-link {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJTUUH2wEbDi8zqQfLEwAAAOhJREFUKJGlkD1LQmEYhq9XT4giFC6tboE69hviRHuDoCDiyVWkf9AcVFDQ0CF0zNnBQZw0sE0HB6O/EPRBBN4Oh6S310W6t+fjerjvBzaUcTp1ZVnQB7LO7Na4+9TUL93JEYEEEHOAOJXWiPfDS3j7cu95AARjrTqLKcbscZDzSCciKJ34iwVjSdLoWdptSvfDyMZ5T/IvbEveD/P6CUdXcF2E431oP0Lz4Rtp66MckgJeLGA7Ce0q3Ayi+rQD0gxihXxrSEicimNJkroTKdOI7FnZrNC/5OdhfgY7KfdDFmBOntZv/FdLo+R3CdfXTq4AAAAASUVORK5CYII=') /*Content/images/ExternalLink.png*/;
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgo8c3ZnCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgdmVyc2lvbj0iMS4wIgogICB3aWR0aD0iMTIiCiAgIGhlaWdodD0iMTIiCiAgIGlkPSJzdmcyIj4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCIgLz4KICA8cmVjdAogICAgIHdpZHRoPSI1Ljk5OTk5OTUiCiAgICAgaGVpZ2h0PSI2IgogICAgIHg9IjEuNSIKICAgICB5PSI0LjUiCiAgICAgaWQ9InJlY3QzMTcwIgogICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOm5vbnplcm87c3Ryb2tlOiMwMDY2Y2M7c3Ryb2tlLXdpZHRoOjAuOTk5OTk5OTQ7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLWRhc2hvZmZzZXQ6MDtzdHJva2Utb3BhY2l0eToxIiAvPgogIDxwYXRoCiAgICAgZD0iTSA0LDIuNSBMIDUsMy41IEwgNS4yNSw0LjI1IEwgMi43NSw2LjUgTCA1LjUsOS4yNSBMIDcuNzUsNi43NSBMIDguNSw3IEwgOS41LDggTCAxMSw2LjUgTCAxMSwxIEwgNS41LDEgTCA0LDIuNSB6IgogICAgIGlkPSJwYXRoMjM5NSIKICAgICBzdHlsZT0iZmlsbDojMDA2NmZmO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTpub25lO3N0cm9rZS13aWR0aDoxcHg7c3Ryb2tlLWxpbmVjYXA6YnV0dDtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICA8cGF0aAogICAgIGQ9Ik0gNiwyIEwgMTAsMiBMIDEwLDYgTCA5LjUsNi43NSBMIDguMjUsNC43NSBMIDUuMjUsOCBMIDQsNi43NSBMIDcuMjUsMy43NSBMIDUuMjUsMi41IEwgNiwyIHoiCiAgICAgaWQ9InBhdGgyMzk4IgogICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmU7c3Ryb2tlLXdpZHRoOjFweDtzdHJva2UtbGluZWNhcDpidXR0O3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utb3BhY2l0eToxIiAvPgo8L3N2Zz4K') /*Content/images/ExternalLink.svg*/, none;
@@ -29,11 +10,7 @@ a.external-link {
 /* bug tables */
 
 .bugt {
-	border-collapse: collapse;
-	border-width: 1px;
-	border-style: solid;
-	border-color: #aaaaaa;
-	padding: 3px;
+    width: 100%;
 }
 
 /* bug table headers */
@@ -105,12 +82,6 @@ a.external-link {
 	font-size: 10pt;
 	font-weight: bold;
 }
-
-.btn {
-	background: #ffeeaa;
-	color: #0000ff;
-}
-
 
 .cmt {
 	background:white;
@@ -256,16 +227,6 @@ a.external-link {
 	color:red; 
 	font-weight: bold; 
 	letter-spacing: 3px;
-}
-
-
-select {
-	font-size: 8pt;
-	border: 1px solid #cccccc;
-}
-
-option {
-	font-size: 8pt;
 }
 
 .edit_bug_option {
