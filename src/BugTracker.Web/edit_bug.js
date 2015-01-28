@@ -90,16 +90,15 @@ function handle_get_bug_date(data, status)
 	el.value = data
 }
 
-function rewrite_posts(bugid)
-{
-	var images_inline = get_cookie("images_inline")
-	var history_inline = get_cookie("history_inline")
+function rewrite_posts(bugid) {
+    var images_inline = get_cookie("images_inline");
+    var history_inline = get_cookie("history_inline");
 
-	var url = "write_posts.aspx?images_inline=" + images_inline
-		+ "&history_inline=" + history_inline
-		+ "&id=" + bugid
-	
-	$.get(url, "", handle_rewrite_posts)
+    var url = "write_posts.aspx?images_inline=" + images_inline
+        + "&history_inline=" + history_inline
+        + "&id=" + bugid;
+
+    $.get(url, "", handle_rewrite_posts);
 }
 
 function toggle_notifications(bugid)
@@ -410,25 +409,14 @@ function change_dropdown_style()
 	sels = document.getElementsByTagName("select");
 
 	// change the select styles depending on whether something has been selected or not
-	for (i = 0; i < sels.length; i++)
-	{
-		if (sels[i].id != "project")
-		{
-			sels[i].onchange = change_dropdown_style
-		}
-		si = sels[i].options.selectedIndex;
-		if (sels[i].options[si].text.substr(0,3) == "[no")
-		{
-			sels[i].setAttribute(cls,'edit_bug_option_none')
-		}
-		else
-		{
-			sels[i].setAttribute(cls,'edit_bug_option')
-		}
+	for (i = 0; i < sels.length; i++) {
+	    if (sels[i].id != "project");
+	    {
+	        sels[i].onchange = change_dropdown_style;
+	    }
 	}
 
-	mark_dirty()
-
+    mark_dirty();
 }
 
 var ren = new RegExp( "\\n", "g" )

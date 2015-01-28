@@ -48,8 +48,7 @@ namespace btnet
             {
                 // New
                 id = 0;
-                bugid_label.InnerHtml = "Description:&nbsp;";
-
+              
             }
             else
             {
@@ -64,9 +63,7 @@ namespace btnet
                     id = Convert.ToInt32(string_bugid);
                 }
 
-                bugid_label.Visible = true;
-                bugid_label.InnerHtml = Util.capitalize_first_letter(Util.get_setting("SingularBugLabel", "bug")) + " ID:&nbsp;";
-
+          
             }
 
             if (!IsPostBack)

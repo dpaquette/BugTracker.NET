@@ -148,6 +148,15 @@ namespace btnet {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl custom;
         
         /// <summary>
+        /// bugid control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl bugid;
+        
+        /// <summary>
         /// custom_field_msg2 control.
         /// </summary>
         /// <remarks>
@@ -173,24 +182,6 @@ namespace btnet {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlInputSubmit submit_button2;
-        
-        /// <summary>
-        /// bugid_label control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl bugid_label;
-        
-        /// <summary>
-        /// bugid control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl bugid;
         
         /// <summary>
         /// static_short_desc control.

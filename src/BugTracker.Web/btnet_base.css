@@ -121,17 +121,6 @@ a.external-link {
 	font-size: 8pt;
 }
 
-
-.frm {
-	padding-top: 6px;
-	padding-left: 6px;
-	border-left: 1px solid silver;
-	border-top: 1px solid silver;
-	border-right: 2px solid black;
-	border-bottom: 3px solid black;
-	background: #f3f3f3;
-}
-
 .align {
 	text-align: left;
 }
@@ -229,17 +218,6 @@ a.external-link {
 	letter-spacing: 3px;
 }
 
-.edit_bug_option {
-	font-size: 8pt;
-	font-weight: bold;
-}
-
-/* for "[no category]", etc, for dropdowns */
-.edit_bug_option_none {
-	font-size: 8pt;
-	color: #666666;
-	background: #f3f3f3;
-}
 
 
 .stat {
@@ -265,13 +243,6 @@ a.external-link {
 	font-weight: bold;
 }
 
-.short_desc_input {
-	font-size: 9pt;
-	width: 650px;
-	border: 1px solid #cccccc;
-}
-
-
 .edit_bug_static {
 	font-size: 8pt;
 	font-weight: bold;
@@ -283,31 +254,10 @@ a.external-link {
 	color: #666666;
 }
 
-input  {
-	font-size: 8pt;
-}
-
 .txt  {
 	font-size: 8pt;
 	border: 1px solid #cccccc;
 }
-
-
-textarea {
-	font-family: Courier New; font-size: 10pt;
-	border: 1px solid #cccccc;
-}
-
-textarea:focus {
-	border: 1px solid #6666ff;
-}
-input:focus {
-	border: 1px solid #6666ff;
-}
-select:focus {
-	border: 1px solid #6666ff;
-}
-
 
 .disabled_link
 {
