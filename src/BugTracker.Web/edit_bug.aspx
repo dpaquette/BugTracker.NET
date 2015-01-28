@@ -4,45 +4,40 @@
 <%@ Import Namespace="btnet.Security" %>
 
 <asp:Content ContentPlaceHolderID="headerScripts" runat="server">
-    <script type="text/javascript" language="JavaScript" src="edit_bug.js"></script>
+    <script type="text/javascript" src="edit_bug.js"></script>
     <%  if (User.Identity.GetUseFCKEditor())
         { %>
     <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
     <% } %>
     <script>
-        var this_bugid = <% Response.Write(Convert.ToString(id)); %>
+        var this_bugid = <%=Convert.ToString(id)%>
 
         $(document).ready(do_doc_ready);
 
         function do_doc_ready() {
-            date_format = '<% Response.Write(btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")); %>'
-            $(".date").datepicker({ dateFormat: date_format, duration: 'fast' })
-            $(".date").change(mark_dirty)
-            $(".warn").click(warn_if_dirty)
+            date_format = '<%=btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")%>';
+            $(".date").datepicker({ dateFormat: date_format, duration: 'fast' });
+            $(".date").change(mark_dirty);
+            $(".warn").click(warn_if_dirty);
             $("textarea").resizable();
-
-    <% 
-    
-        if (User.Identity.GetUseFCKEditor())
-        {
-            Response.Write("CKEDITOR.replace( 'comment' )");
-        }
-        else
-        {
-            Response.Write("$('textarea').resizable();");
-        }	
-    
-    %>
-        }
-        $(function () {
+            <% if (User.Identity.GetUseFCKEditor())
+                {
+                    Response.Write("CKEDITOR.replace( 'comment' )");
+                }
+                else
+                {
+                    Response.Write("$('textarea').resizable();");
+                }	    
+            %>
             on_body_load();
-            $.on("unload", "body", function () { on_body_unload(); });
-        });
+            $(document).on("unload", "body", function () { on_body_unload(); });
+
+        }        
     </script>
     <link rel="StyleSheet" href="custom/btnet_edit_bug.css" type="text/css">
 </asp:Content>
 
-<asp:Content ContentPlaceHolderID="body" runat="server">
+<asp:Content ContentPlaceHolderID="body" runat="server" ClientIDMode="Static">
 
 
 
@@ -52,7 +47,7 @@
         <%  if (User.Identity.GetCanAddBugs() && id > 0)
             { %>
         <a class="warn" href="edit_bug.aspx?id=0">
-            <img src="add.png" border="0" align="top">&nbsp;add new <% Response.Write(btnet.Util.get_setting("SingularBugLabel", "bug")); %></a>
+            <img src="add.png" border="0" align="top">&nbsp;add new <%=btnet.Util.get_setting("SingularBugLabel", "bug")%></a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <% } %>
 
@@ -104,7 +99,7 @@
                                         type="submit"
                                         id="submit_button2"
                                         onclick="on_user_hit_submit()"
-                                        value="Update">
+                                        value="Update"/>
                                 </div>
                                 <% } %>
 
@@ -122,8 +117,8 @@
                                             <span class="short_desc_static" id="static_short_desc" runat="server" style='width: 500px; display: none;'></span>
 
 
-                                            <input title="" runat="server" type="text" class="short_desc_input" id="short_desc" maxlength="200"
-                                                onkeydown="count_chars('short_desc',200)" onkeyup="count_chars('short_desc',200)">
+                                    <input title="" runat="server" type="text" class="short_desc_input" id="short_desc" maxlength="200"
+                                           onkeydown="count_chars('short_desc',200)" onkeyup="count_chars('short_desc',200)"/>
                                             &nbsp;&nbsp;&nbsp;
                
                                             <span runat="server" class="err" id="short_desc_err"></span>
@@ -157,7 +152,7 @@
 
                                         <td nowrap>
                                             <span class="stat" id="static_tags" runat="server"></span>
-                                            <input runat="server" type="text" class="txt" id="tags" size="70" maxlength="80" onkeydown="mark_dirty()" onkeyup="mark_dirty()">
+                                    <input runat="server" type="text" class="txt" id="tags" size="70" maxlength="80" onkeydown="mark_dirty()" onkeyup="mark_dirty()"/>
                                             <span id="tags_link" runat="server">&nbsp;&nbsp;<a href='javascript:show_tags()'>tags</a></span>
                                         <tr id="row1">
                                             <td nowrap>
@@ -208,7 +203,7 @@
                                                                     <tr id="row7">
                                                                         <td nowrap>
                                                                             <span class="lbl" id="udf_label" runat="server">
-                                                                                <% Response.Write(btnet.Util.get_setting("UserDefinedBugAttributeName", "YOUR ATTRIBUTE")); %>:&nbsp;</span>
+                                                                                <%=btnet.Util.get_setting("UserDefinedBugAttributeName", "YOUR ATTRIBUTE")%>:&nbsp;</span>
                                                                         <td nowrap>
                                                                             <span class="stat" id="static_udf" runat="server"></span>
                                                                             <asp:DropDownList ID="udf" runat="server">
@@ -231,9 +226,8 @@
 
                                             <span class="smallnote" style="margin-left: 170px">
                                                 <% 
-                                                    if (permission_level != btnet.Security.PermissionLevel.ReadOnly)
+                                                    if (permission_level != PermissionLevel.ReadOnly)
                                                     {
-
                                                         Response.Write("Entering \""
                                                             + btnet.Util.get_setting("BugLinkMarker", "bugid#")
                                                             + "999\" in comment creates link to id 999");
@@ -253,33 +247,33 @@
                                                     <span runat="server" class="err" id="msg">&nbsp;</span>
                                                 <tr>
                                                     <td nowrap align="center">
-                                                        <input
-                                                            runat="server"
-                                                            class="btn"
-                                                            type="submit"
-                                                            id="submit_button"
-                                                            onclick="on_user_hit_submit()"
-                                                            value="Update">
+                                    <input
+                                        runat="server"
+                                        class="btn"
+                                        type="submit"
+                                        id="submit_button"
+                                        onclick="on_user_hit_submit()"
+                                        value="Update"/>
                                 </table>
 
-                                <input type="hidden" id="new_id" runat="server" value="0">
-                                <input type="hidden" id="prev_short_desc" runat="server">
-                                <input type="hidden" id="prev_tags" runat="server">
-                                <input type="hidden" id="prev_project" runat="server">
-                                <input type="hidden" id="prev_project_name" runat="server">
-                                <input type="hidden" id="prev_org" runat="server">
-                                <input type="hidden" id="prev_org_name" runat="server">
-                                <input type="hidden" id="prev_category" runat="server">
-                                <input type="hidden" id="prev_priority" runat="server">
-                                <input type="hidden" id="prev_assigned_to" runat="server">
-                                <input type="hidden" id="prev_assigned_to_username" runat="server">
-                                <input type="hidden" id="prev_status" runat="server">
-                                <input type="hidden" id="prev_udf" runat="server">
-                                <input type="hidden" id="prev_pcd1" runat="server">
-                                <input type="hidden" id="prev_pcd2" runat="server">
-                                <input type="hidden" id="prev_pcd3" runat="server">
-                                <input type="hidden" id="snapshot_timestamp" runat="server">
-                                <input type="hidden" id="clone_ignore_bugid" runat="server" value="0">
+                                <input type="hidden" id="new_id" runat="server" value="0"/>
+                                <input type="hidden" id="prev_short_desc" runat="server"/>
+                                <input type="hidden" id="prev_tags" runat="server"/>
+                                <input type="hidden" id="prev_project" runat="server"/>
+                                <input type="hidden" id="prev_project_name" runat="server"/>
+                                <input type="hidden" id="prev_org" runat="server"/>
+                                <input type="hidden" id="prev_org_name" runat="server"/>
+                                <input type="hidden" id="prev_category" runat="server"/>
+                                <input type="hidden" id="prev_priority" runat="server"/>
+                                <input type="hidden" id="prev_assigned_to" runat="server"/>
+                                <input type="hidden" id="prev_assigned_to_username" runat="server"/>
+                                <input type="hidden" id="prev_status" runat="server"/>
+                                <input type="hidden" id="prev_udf" runat="server"/>
+                                <input type="hidden" id="prev_pcd1" runat="server"/>
+                                <input type="hidden" id="prev_pcd2" runat="server"/>
+                                <input type="hidden" id="prev_pcd3" runat="server"/>
+                                <input type="hidden" id="snapshot_timestamp" runat="server"/>
+                                <input type="hidden" id="clone_ignore_bugid" runat="server" value="0"/>
                                 <input type="hidden" id="user_hit_submit" name="user_hit_submit" value="0" />
 
                                 <%  
