@@ -25,9 +25,7 @@
 </head>
 <body>
     <uc1:MainMenu runat="server" ID="MainMenu" />
-    <div class="container-fluid">
-        <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
-    </div>
+    <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
     <uc1:Footer runat="server" ID="Footer" />
     <script src="Scripts/bootstrap.min.js"></script>
 </body>
