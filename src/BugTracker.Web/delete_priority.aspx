@@ -1,103 +1,31 @@
-<%@ Page language="C#" CodeBehind="delete_priority.aspx.cs" Inherits="btnet.delete_priority" AutoEventWireup="True" %>
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
+<%@ Page Language="C#" CodeBehind="delete_priority.aspx.cs" Inherits="btnet.delete_priority" MasterPageFile="~/LoggedIn.Master" %>
 
-<script language="C#" runat="server">
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
-SQLString sql;
+<asp:Content ContentPlaceHolderID="body" runat="server">
+    <div class="align">
+        <p>&nbsp</p>
+        <a href="priorities.aspx">back to priorities</a>
 
-
-void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
-
-///////////////////////////////////////////////////////////////////////
-void Page_Load(Object sender, EventArgs e)
-{
-
-	Util.do_not_cache(Response);
-	
-
-	if (IsPostBack)
-	{
-		// do delete here
-		sql = new SQLString(@"delete priorities where pr_id = @prid");
-        sql = sql.AddParameterWithValue("prid", Util.sanitize_integer(row_id.Value));
-		btnet.DbUtil.execute_nonquery(sql);
-		Server.Transfer ("priorities.aspx");
-	}
-	else
-	{
-
-		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-			+ "delete priority";
-
-		string id = Util.sanitize_integer(Request["id"]);
+        <p>
+            or<p />
 
 
-		sql = new SQLString(@"declare @cnt int
-			select @cnt = count(1) from bugs where bg_priority = @id
-			select pr_name, @cnt [cnt] from priorities where pr_id = @id");
-		sql = sql.AddParameterWithValue("id", id);
+        <form runat="server">
+            <a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
+            <input type="hidden" id="row_id" runat="server"/>
+        </form>
 
-		DataRow dr = btnet.DbUtil.get_datarow(sql);
+    </div>
+</asp:Content>
 
-		if ((int) dr["cnt"] > 0)
-		{
-			Response.Write ("You can't delete priority \""
-				+ Convert.ToString(dr["pr_name"])
-				+ "\" because some bugs still reference it.");
-			Response.End();
-		}
-		else
-		{
+<asp:Content ContentPlaceHolderID="headerScripts" runat="server">
+    <script>
+        function submit_form() {
+            var frm = document.getElementById("<%:Form.ClientID%>");
+            frm.submit();
+            return true;
+        }
 
-			confirm_href.InnerText = "confirm delete of \""
-				+ Convert.ToString(dr["pr_name"])
-				+ "\"";
-
-			row_id.Value = id;
-
-		}
-
-	}
-
-}
-
-</script>
-
-<html>
-<head>
-<title id="titl" runat="server">btnet delete priority</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
-</head>
-<body>
-<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
-<p>
-<div class=align>
-<p>&nbsp</p>
-<a href=priorities.aspx>back to priorities</a>
-
-<p>or<p>
-
-<script>
-function submit_form()
-{
-    var frm = document.getElementById("frm");
-    frm.submit();
-    return true;
-}
-
-</script>
-<form runat="server" id="frm">
-<a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
-<input type="hidden" id="row_id" runat="server">
-</form>
-
-</div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
-
-
+    </script>
+</asp:Content>

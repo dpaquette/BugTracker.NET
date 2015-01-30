@@ -1,0 +1,29 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="LoggedIn.master.cs" Inherits="btnet.LoggedIn" %>
+
+<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <link rel="shortcut icon" href="favicon.ico">
+    <title>btnet bugs</title>
+    <link rel="StyleSheet" href="btnet.css" type="text/css">
+    <link rel="StyleSheet" href="Content/style/jquery-ui.min.css" type="text/css">
+    <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="scripts/jquery-ui.min.js"></script>
+    <script type="text/javascript" language="JavaScript" src="datejs/date.js"></script>
+
+    <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
+
+</head>
+<body>
+    <uc1:MainMenu runat="server" ID="MainMenu" />
+    <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
+
+</body>
+
+<asp:contentplaceholder runat="server" id="footerScripts"></asp:contentplaceholder>
+
+<% Response.Write(Application["custom_footer"]); %>
+</html>

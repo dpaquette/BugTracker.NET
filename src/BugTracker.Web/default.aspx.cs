@@ -21,7 +21,7 @@ namespace btnet
 
             Util.do_not_cache(Response);
 
-            titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
+            Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "logon";
 
             msg.InnerText = "";

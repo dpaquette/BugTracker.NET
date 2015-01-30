@@ -1,52 +1,15 @@
-<%@ Page language="C#" CodeBehind="udfs.aspx.cs" Inherits="btnet.udfs" AutoEventWireup="True" %>
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+<%@ Page language="C#" CodeBehind="udfs.aspx.cs" Inherits="btnet.udfs" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
+<%@ Import Namespace="btnet" %>
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
+<asp:Content runat="server" ContentPlaceHolderID="headerScripts">
+    <script type="text/javascript" src="sortable.js"></script>
+</asp:Content>
 
-<script language="C#" runat="server">
-
-
-DataSet ds;
-
-void Page_Load(Object sender, EventArgs e)
-{
-
-	Util.do_not_cache(Response);
-	
-	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-		+ "user defined attribute values";
-
-	ds = btnet.DbUtil.get_dataset(new SQLString(
-		@"select udf_id [id],
-		udf_name [user defined attribute value],
-		udf_sort_seq [sort seq],
-		case when udf_default = 1 then 'Y' else 'N' end [default],
-		udf_id [hidden]
-		from user_defined_attribute order by udf_name"));
-
-}
-
-
-</script>
-
-<html>
-<head>
-<title id="titl" runat="server">btnet user defined attributes</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
-<script type="text/javascript" language="JavaScript" src="sortable.js"></script>
-</head>
-
-<body>
-<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
-
-
-<div class=align>
+<asp:Content runat="server" ContentPlaceHolderID="body">
+    <div class=align>
 <a href=edit_udf.aspx>add new user defined attribute value</a>
-</p>
+</div>
 <%
 
 
@@ -61,6 +24,5 @@ else
 	Response.Write ("No user defined attributes in the database.");
 }
 %>
-</div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
+</asp:Content>
+

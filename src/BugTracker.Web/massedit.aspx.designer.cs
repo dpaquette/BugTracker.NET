@@ -13,24 +13,6 @@ namespace btnet {
     public partial class massedit {
         
         /// <summary>
-        /// titl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl titl;
-        
-        /// <summary>
-        /// MainMenu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::btnet.Controls.MainMenu MainMenu;
-        
-        /// <summary>
         /// msg control.
         /// </summary>
         /// <remarks>
@@ -83,5 +65,17 @@ namespace btnet {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl sql_text;
+        
+        /// <summary>
+        /// Master property.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated property.
+        /// </remarks>
+        public new btnet.LoggedIn Master {
+            get {
+                return ((btnet.LoggedIn)(base.Master));
+            }
+        }
     }
 }

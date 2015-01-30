@@ -13,22 +13,13 @@ namespace btnet {
     public partial class search {
         
         /// <summary>
-        /// titl control.
+        /// searchForm control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl titl;
-        
-        /// <summary>
-        /// MainMenu control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::btnet.Controls.MainMenu MainMenu;
+        protected global::System.Web.UI.HtmlControls.HtmlForm searchForm;
         
         /// <summary>
         /// reported_by control.
@@ -391,21 +382,15 @@ namespace btnet {
         protected global::System.Web.UI.HtmlControls.HtmlInputHidden query;
         
         /// <summary>
-        /// visible_sql_label control.
+        /// Master property.
         /// </summary>
         /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
+        /// Auto-generated property.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl visible_sql_label;
-        
-        /// <summary>
-        /// visible_sql_text control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl visible_sql_text;
+        public new btnet.LoggedIn Master {
+            get {
+                return ((btnet.LoggedIn)(base.Master));
+            }
+        }
     }
 }

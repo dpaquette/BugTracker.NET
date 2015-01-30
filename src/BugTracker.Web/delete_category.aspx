@@ -1,98 +1,34 @@
-<%@ Page language="C#" CodeBehind="delete_category.aspx.cs" Inherits="btnet.delete_category" AutoEventWireup="True" %>
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
+<%@ Page Language="C#" CodeBehind="delete_category.aspx.cs" Inherits="btnet.delete_category" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
 
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
-
-<script language="C#" runat="server">
-
-SQLString sql;
-
-void Page_Init (object sender, EventArgs e) {ViewStateUserKey = Session.SessionID;}
-
-///////////////////////////////////////////////////////////////////////
-void Page_Load(Object sender, EventArgs e)
-{
-
-	Util.do_not_cache(Response);
-	
-
-	if (IsPostBack)
-	{
-		sql = new SQLString(@"delete categories where ct_id = @catid");
-        sql = sql.AddParameterWithValue("catid", Util.sanitize_integer(row_id.Value));
-		btnet.DbUtil.execute_nonquery(sql);
-		Server.Transfer ("categories.aspx");
-	}
-	else
-	{
-		titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-			+ "delete category";
-
-		string id = Util.sanitize_integer(Request["id"]);
-
-		sql = new SQLString(@"declare @cnt int
-			select @cnt = count(1) from bugs where bg_category = @ctid
-			select ct_name, @cnt [cnt] from categories where ct_id = @ctid");
-		sql = sql.AddParameterWithValue("ctid", id);
-
-		DataRow dr = btnet.DbUtil.get_datarow(sql);
-
-		if ((int) dr["cnt"] > 0)
-		{
-			Response.Write ("You can't delete category \""
-				+ Convert.ToString(dr["ct_name"])
-				+ "\" because some bugs still reference it.");
-			Response.End();
-		}
-		else
-		{
-			confirm_href.InnerText = "confirm delete of \""
-				+ Convert.ToString(dr["ct_name"])
-				+ "\"";
-
-			row_id.Value = id;
-		}
-	}
-
-}
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
 
-</script>
 
-<html>
-<head>
-<title id="titl" runat="server">btnet delete category</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
-</head>
-<body>
-<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="admin"/>
-<p>
-<div class=align>
-<p>&nbsp</p>
-<a href=categories.aspx>back to categories</a>
+<asp:Content ContentPlaceHolderID="body" runat="server">
+    <p />
+    <div class="align">
+        <p>&nbsp</p>
+        <a href="categories.aspx">back to categories</a>
 
-<p>or<p>
+        <p>
+            or<p />
+        <form runat="server">
+            <a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
+            <input type="hidden" id="row_id" runat="server">
+        </form>
+    </div>
+</asp:Content>
 
-<script>
-function submit_form()
-{
-    var frm = document.getElementById("frm");
-    frm.submit();
-    return true;
-}
+<asp:Content ContentPlaceHolderID="footerScripts" runat="server">
+    <script>
+        function submit_form() {
+            var frm = document.getElementById("<%:Form.ClientID%>");
+            frm.submit();
+            return true;
+        }
 
-</script>
-<form runat="server" id="frm">
-<a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
-<input type="hidden" id="row_id" runat="server">
-</form>
+    </script>
 
-</div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
+</asp:Content>
 
 

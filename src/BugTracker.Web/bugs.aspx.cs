@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Claims;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using btnet.Security;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
 
 namespace btnet
 {
@@ -15,8 +12,8 @@ namespace btnet
     {
 
         protected SQLString sql;
-        protected System.Data.DataView dv;
-        protected System.Data.DataSet ds_custom_cols = null;
+        protected DataView dv;
+        protected DataSet ds_custom_cols = null;
 
         ///////////////////////////////////////////////////////////////////////
         protected void display_bugs(bool show_checkboxes)
@@ -59,10 +56,10 @@ namespace btnet
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
         {
-            MainMenu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
+            Master.Menu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
             Util.do_not_cache(Response);
 
-            titl.InnerText = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
+            Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + Util.get_setting("PluralBugLabel", "bugs");
 
 

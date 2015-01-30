@@ -1,102 +1,27 @@
-<%@ Page language="C#" CodeBehind="queries.aspx.cs" Inherits="btnet.queries" AutoEventWireup="True" %>
-<%@ Register Src="~/Controls/MainMenu.ascx" TagPrefix="uc1" TagName="MainMenu" %>
-<!--
-Copyright 2002-2011 Corey Trager
-Distributed under the terms of the GNU General Public License
--->
-<!-- #include file = "inc.aspx" -->
+<%@ Page Language="C#" CodeBehind="queries.aspx.cs" Inherits="btnet.queries" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
+<%@ Import Namespace="btnet" %>
+<%@ MasterType TypeName="btnet.LoggedIn" %>
 
-<script language="C#" runat="server">
+<asp:Content runat="server" ContentPlaceHolderID="headerScripts">
+    <script type="text/javascript" src="sortable.js"></script>
+</asp:Content>
 
-DataSet ds;
+<asp:Content runat="server" ContentPlaceHolderID="body">
+    <div class="align">
+        <%
 
+            if (ds.Tables[0].Rows.Count > 0)
+            {
+                SortableHtmlTable.create_from_dataset(
+                    Response, ds, "", "", false);
+            }
+            else
+            {
+                Response.Write("No queries in the database.");
+            }
 
-void Page_Load(Object sender, EventArgs e)
-{
+        %>
+    </div>
 
-	Util.do_not_cache(Response);
-	
+</asp:Content>
 
-	titl.InnerText = Util.get_setting("AppTitle","BugTracker.NET") + " - "
-		+ "queries";
-
-	SQLString sql;
-
-	if (User.IsInRole(BtnetRoles.Admin))
-	{
-		// allow admin to view all queries
-
-		sql =  new SQLString(@"select
-			qu_desc [query],
-			case
-				when isnull(qu_user,0) = 0 and isnull(qu_org,0) is null then 'everybody'
-				when isnull(qu_user,0) <> 0 then 'user:' + us_username
-				when isnull(qu_org,0) <> 0 then 'org:' + og_name
-				else ' '
-				end [visibility],
-			'<a href=bugs.aspx?qu_id=' + convert(varchar,qu_id) + '>view list</a>' [view list],
-			'<a target=_blank href=print_bugs.aspx?qu_id=' + convert(varchar,qu_id) + '>print list</a>' [print list],
-			'<a target=_blank href=print_bugs.aspx?format=excel&qu_id=' + convert(varchar,qu_id) + '>export as excel</a>' [export as excel],
-			'<a target=_blank href=print_bugs2.aspx?qu_id=' + convert(varchar,qu_id) + '>print detail</a>' [print list<br>with detail]
-			from queries
-			left outer join users on qu_user = us_id
-			left outer join orgs on qu_org = og_id
-			or isnull(qu_user,0) = @us
-			or isnull(qu_user,0) = 0
-			order by qu_desc");
-
-	}
-	else
-	{
-		// allow editing for users' own queries
-
-		sql =  new SQLString(@"select
-			qu_desc [query],
-			'<a href=bugs.aspx?qu_id=' + convert(varchar,qu_id) + '>view list</a>' [view list],
-			'<a target=_blank href=print_bugs.aspx?qu_id=' + convert(varchar,qu_id) + '>print list</a>' [print list],
-			'<a target=_blank href=print_bugs.aspx?format=excel&qu_id=' + convert(varchar,qu_id) + '>export as excel</a>' [export as excel],
-			'<a target=_blank href=print_bugs2.aspx?qu_id=' + convert(varchar,qu_id) + '>print detail</a>' [print list<br>with detail],
-			'<a href=edit_query.aspx?id=' + convert(varchar,qu_id) + '>rename</a>' [rename],
-			'<a href=delete_query.aspx?id=' + convert(varchar,qu_id) + '>delete</a>' [delete]
-			from queries
-			inner join users on qu_user = us_id
-			where isnull(qu_user,0) = @us
-			order by qu_desc");
-	}
-
-	sql = sql.AddParameterWithValue("us",User.Identity.GetUserId());
-	ds = btnet.DbUtil.get_dataset(sql);
-
-}
-
-</script>
-
-<html>
-<head>
-<title id="titl" runat="server">btnet queries</title>
-<link rel="StyleSheet" href="btnet.css" type="text/css">
-<script type="text/javascript" language="JavaScript" src="sortable.js"></script>
-</head>
-
-<body>
-<uc1:MainMenu runat="server" ID="MainMenu" SelectedItem="queries"/>
-
-<div class=align>
-
-
-<%
-
-if (ds.Tables[0].Rows.Count > 0)
-{
-	SortableHtmlTable.create_from_dataset(
-		Response, ds, "", "", false);
-}
-else
-{
-	Response.Write ("No queries in the database.");
-}
-
-%>
-</div>
-<% Response.Write(Application["custom_footer"]); %></body>
-</html>
