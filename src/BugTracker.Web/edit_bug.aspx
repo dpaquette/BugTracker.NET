@@ -38,9 +38,12 @@
 
         <div class="row">
 
-            
-            <div id="edit_bug_menu" class="<%=id > 0 ? "col-md-3" : "" %>">
-                <ul>
+
+            <div id="edit_bug_menu" class="custom-collapse <%=id > 0 ? "col-sm-12 col-md-3 col-lg-2" : "" %>">
+                <div class="btn btn-default text-left visible-xs-block visible-sm-block"  style="text-align: left; width: 175px" data-toggle="collapse" data-target="#side_menu_collapse">
+                    <i class="glyphicon glyphicon-tasks"></i><span> Bug Tools </span> <i class="glyphicon glyphicon-chevron-down pull-right"></i>
+                </div>
+                <ul id="side_menu_collapse" class="collapse">
                     <%  if (User.Identity.GetCanAddBugs() && id > 0)
                         { %>
                     <li>
@@ -48,24 +51,24 @@
                     </li>
                     <% } %>
 
-                    <li id="clone" runat="server" />
-                    <li id="print" runat="server" />
-                    <li id="merge_bug" runat="server" />
-                    <li id="delete_bug" runat="server" />
-                    <li id="svn_revisions" runat="server" />
-                    <li id="git_commits" runat="server" />
-                    <li id="hg_revisions" runat="server" />
-                    <li id="subscribers" runat="server" />
-                    <li id="subscriptions" runat="server" />
-                    <li id="relationships" runat="server" />
-                    <li id="tasks" runat="server" />
-                    <li id="send_email" runat="server" />
-                    <li id="attachment" runat="server" />
-                    <li id="custom" runat="server" />
+                    <li class="dropdown-toggle" id="clone" runat="server" />
+                    <li class="dropdown-toggle" id="print" runat="server" />
+                    <li class="dropdown-toggle" id="merge_bug" runat="server" />
+                    <li class="dropdown-toggle" id="delete_bug" runat="server" />
+                    <li class="dropdown-toggle" id="svn_revisions" runat="server" />
+                    <li class="dropdown-toggle" id="git_commits" runat="server" />
+                    <li class="dropdown-toggle" id="hg_revisions" runat="server" />
+                    <li class="dropdown-toggle" id="subscribers" runat="server" />
+                    <li class="dropdown-toggle" id="subscriptions" runat="server" />
+                    <li class="dropdown-toggle" id="relationships" runat="server" />
+                    <li class="dropdown-toggle" id="tasks" runat="server" />
+                    <li class="dropdown-toggle" id="send_email" runat="server" />
+                    <li class="dropdown-toggle" id="attachment" runat="server" />
+                    <li class="dropdown-toggle" id="custom" runat="server" />
                 </ul>
             </div>
 
-            <div id="bugform_div" class="col-md-9">
+            <div id="bugform_div" class="col-sm-12 col-md-9 col-lg-10">
 
 
                 <form runat="server" class="form-horizontal">
@@ -79,7 +82,7 @@
                         <% if (id == 0 || permission_level == btnet.Security.PermissionLevel.All)
                            { %>
 
-                        
+
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
                                 Presets <a title="Use previously saved settings for project, category, priority, etc..."

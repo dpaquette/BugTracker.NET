@@ -283,6 +283,22 @@ a.external-link {
     max-width: 175px;
 }
 
+
+@media only screen and (min-width: 992px) {
+    .custom-collapse .collapse {
+        display: block;
+        visibility: visible;
+    }
+
+}
+
+@media only screen and (max-width: 992px) {
+     .custom-collapse  .collapse{
+        display: none;
+        visibility: hidden;
+     }
+}
+
 /* for flags */
 .wht {margin: auto; display: block; width:40%; height:80%; border: 1px solid #cccccc;}
 .red {margin: auto; display: block; width:40%; height:80%; background: red; border: 1px solid red;}
