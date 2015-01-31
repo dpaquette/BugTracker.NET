@@ -122,6 +122,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="btnet_css_for_email.css.renamed" />
+    <Content Include="Content\btnet-bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\btnet.png" />
     <Content Include="Content\images\ExternalLink.png" />
     <Content Include="Content\images\ExternalLink.svg" />
     <Content Include="Content\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
@@ -145,9 +151,13 @@
     <Content Include="Content\style\jquery.mobile.custom.structure.min.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.min.css" />
+    <Content Include="Controls\Footer.ascx" />
     <Content Include="Controls\MainMenu.ascx" />
     <Content Include="edit_area\edit_area_full.gz" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="packages.config" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\ckeditor\adapters\jquery.js" />
     <Content Include="Scripts\ckeditor\build-config.js" />
     <Content Include="Scripts\ckeditor\ckeditor.js" />
@@ -426,6 +436,11 @@
     <Content Include="Scripts\ckeditor\bower.json" />
     <Content Include="LoggedIn.Master" />
     <Content Include="LoggedOut.Master" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -615,7 +630,6 @@
     <Content Include="mbug.aspx" />
     <Content Include="mbugs.aspx" />
     <Content Include="merge_bug.aspx" />
-    <Content Include="mlogin.aspx" />
     <Content Include="notifications.aspx" />
     <Content Include="orgs.aspx" />
     <Content Include="paste_plain.png" />
@@ -633,6 +647,7 @@
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.mobile-1.4.4.min.js" />
+    <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="search.aspx" />
@@ -730,6 +745,13 @@
     </Compile>
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Footer.ascx.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Footer.ascx.designer.cs">
+      <DependentUpon>Footer.ascx</DependentUpon>
     </Compile>
     <Compile Include="LoggedIn.Master.cs">
       <DependentUpon>LoggedIn.Master</DependentUpon>
@@ -1216,13 +1238,6 @@
     </Compile>
     <Compile Include="merge_bug.aspx.designer.cs">
       <DependentUpon>merge_bug.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="mlogin.aspx.cs">
-      <DependentUpon>mlogin.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="mlogin.aspx.designer.cs">
-      <DependentUpon>mlogin.aspx</DependentUpon>
     </Compile>
     <Compile Include="notifications.aspx.cs">
       <DependentUpon>notifications.aspx</DependentUpon>
