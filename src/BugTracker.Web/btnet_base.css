@@ -277,6 +277,12 @@ a.external-link {
 	margin-bottom: 10px;
 }
 
+#edit_bug_menu ul li a.btn {
+    width: 100%;
+    text-align: left;
+    max-width: 175px;
+}
+
 /* for flags */
 .wht {margin: auto; display: block; width:40%; height:80%; border: 1px solid #cccccc;}
 .red {margin: auto; display: block; width:40%; height:80%; background: red; border: 1px solid red;}
