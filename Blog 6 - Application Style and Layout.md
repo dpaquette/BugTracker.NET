@@ -249,3 +249,5 @@ We could continue to make changes to more pages, but this is probably a good tim
 
 ##Conclusion
 With very little effort, we were able to make some high impact improvemnts to the design of a web application that is over a decade old. By using a popular CSS framework, we were able to leverage design expertise from the community without requiring extensive design experience ourselves. As an added bonus, we are  also able to provide a much more pleasant experience for those accessing BugTracker on a mobile devices.
+
+If you want to learn more about Bootstrap, we highly recommend [Bootstrapping MVC](https://leanpub.com/bootstrappingmvc) by James Chambers.
