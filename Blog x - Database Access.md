@@ -109,10 +109,209 @@ Running the tool on our web project will install the Entity Framework package fr
 
 [View the commit](https://github.com/dpaquette/BugTracker.NET/commit/ddd3dfec3e049a1a387878905b1aacfea2d02158)
 
-With these in place we're now able to make use of EF to access the database. However the classes that are generated are named as they are in the database which is not ideal for use in code. For instance the ```bug_tasks``` table has been mapped to a class called ```bug_tasks```. This is not, typically, how we would name classes in C#. Instead we would call this class ```BugTasks```.
+With these in place we're now able to make use of EF to access the database. However the classes that are generated are named as they are in the database which is not ideal for use in code. For instance the ```bug_tasks``` table has been mapped to a class called ```bug_tasks```. This is not, typically, how we would name classes in C#. Instead we would call this class ```BugTasks```. There are numerous places in BugTracker.net where the names don't look like C# names but, perhaps, more like PHP names. Updating all of these would be a monumental task so we'll take the approach of just fixing them when we happen to be in that section of code. For new code, however, we want to make sure it looks as clean as possible.
 
-We're going to have to get into some code clean up to rename all of these something sensible. 
+We're going to have to get into some code clean up to rename all of these something sensible.
 
 ##Cleaning up EF Classes
+
+Let's start with the first model class that was generated: ```bug.cs```.
+
+```
+using System;
+using System.Collections.Generic;
+
+namespace btnet.Models
+{
+  public partial class bug
+  {
+    public int bg_id { get; set; }
+    public string bg_short_desc { get; set; }
+    public int bg_reported_user { get; set; }
+    public System.DateTime bg_reported_date { get; set; }
+    public int bg_status { get; set; }
+    public int bg_priority { get; set; }
+    public int bg_org { get; set; }
+    public int bg_category { get; set; }
+    public int bg_project { get; set; }
+    public Nullable<int> bg_assigned_to_user { get; set; }
+    public Nullable<int> bg_last_updated_user { get; set; }
+    public Nullable<System.DateTime> bg_last_updated_date { get; set; }
+    public Nullable<int> bg_user_defined_attribute { get; set; }
+    public string bg_project_custom_dropdown_value1 { get; set; }
+    public string bg_project_custom_dropdown_value2 { get; set; }
+    public string bg_project_custom_dropdown_value3 { get; set; }
+    public string bg_tags { get; set; }
+  }
+}
+```
+Immediately we can see a number of things that could be cleaned up. The ```System``` prefix on bg_reported_date is not necessary as we're importing the ```System``` namespace. The fields are also prefixed with ```bg_```. We don't need to prefix our variables in this fashion. The prefix doesn't provide any value, unlike those that one might see in C/C++ code for [Hungarian Notation](https://en.wikipedia.org/wiki/Hungarian_notation).
+
+In EF Code First the names of the fields in the model objects must match the column names in the database unless explicitly overridden. The overriding can be done using an annotation on a filed like so
+
+```
+[ColumnName("bug_id")]
+public int Id { get; set; }
+```
+
+Alternatively a mapping class can be provided that maps the model names to database names. This is one of the three objects that is provided by the reverse engineering tool. For ```bug.cs``` the mapping looks like
+
+```
+public class bugMap : EntityTypeConfiguration<bug>
+{
+  public bugMap()
+  {
+    // Primary Key
+    this.HasKey(t => t.bg_id);
+
+    // Properties
+    this.Property(t => t.bg_short_desc)
+    .IsRequired()
+    .HasMaxLength(200);
+
+    this.Property(t => t.bg_project_custom_dropdown_value1)
+    .HasMaxLength(120);
+
+    this.Property(t => t.bg_project_custom_dropdown_value2)
+    .HasMaxLength(120);
+
+    this.Property(t => t.bg_project_custom_dropdown_value3)
+    .HasMaxLength(120);
+
+    this.Property(t => t.bg_tags)
+    .HasMaxLength(200);
+
+    // Table & Column Mappings
+    this.ToTable("bugs");
+    this.Property(t => t.bg_id).HasColumnName("bg_id");
+    this.Property(t => t.bg_short_desc).HasColumnName("bg_short_desc");
+    this.Property(t => t.bg_reported_user).HasColumnName("bg_reported_user");
+    this.Property(t => t.bg_reported_date).HasColumnName("bg_reported_date");
+    this.Property(t => t.bg_status).HasColumnName("bg_status");
+    this.Property(t => t.bg_priority).HasColumnName("bg_priority");
+    this.Property(t => t.bg_org).HasColumnName("bg_org");
+    this.Property(t => t.bg_category).HasColumnName("bg_category");
+    this.Property(t => t.bg_project).HasColumnName("bg_project");
+    this.Property(t => t.bg_assigned_to_user).HasColumnName("bg_assigned_to_user");
+    this.Property(t => t.bg_last_updated_user).HasColumnName("bg_last_updated_user");
+    this.Property(t => t.bg_last_updated_date).HasColumnName("bg_last_updated_date");
+    this.Property(t => t.bg_user_defined_attribute).HasColumnName("bg_user_defined_attribute");
+    this.Property(t => t.bg_project_custom_dropdown_value1).HasColumnName("bg_project_custom_dropdown_value1");
+    this.Property(t => t.bg_project_custom_dropdown_value2).HasColumnName("bg_project_custom_dropdown_value2");
+    this.Property(t => t.bg_project_custom_dropdown_value3).HasColumnName("bg_project_custom_dropdown_value3");
+    this.Property(t => t.bg_tags).HasColumnName("bg_tags");
+  }
+}
+```
+
+Using a refactoring tool should allow us to change bug.cs and have the change reflected in the equivalent map file. This is a huge time saver so let's push on.
+
+Some of the field names in ```bug.cs``` can simply have the ```bg_``` dropped and their underscore notation replace with Pascal Case, the standard for C#. However many columns could benifit from a bit more information being added. For instance ```bg_reported_user``` is not actually a user object so much as it is the Id of a user object. To make that clear we'll add the Id postfix to it.
+
+After applying all our fixes the class looks like
+
+```
+public partial class bug
+{
+  public int Id { get; set; }
+  public string ShortDescription { get; set; }
+  public int ReportedUserId { get; set; }
+  public DateTime ReportedDate { get; set; }
+  public int StatusId { get; set; }
+  public int PriorityId { get; set; }
+  public int OrganizationId { get; set; }
+  public int CategoryId { get; set; }
+  public int ProjectId { get; set; }
+  public Nullable<int> AssignedToUserId { get; set; }
+  public Nullable<int> LastUpdatedUserId { get; set; }
+  public Nullable<DateTime> LastUpdatedDate { get; set; }
+  public Nullable<int> UserDefinedAttributeId { get; set; }
+  public string CustomDropDownValue1 { get; set; }
+  public string CustomDropDownValue2 { get; set; }
+  public string CustomDropDownValue3 { get; set; }
+  public string Tags { get; set; }
+}
+```
+
+This is looking really good! The one final fix is to rename the class as a whole to ```Bug.cs```. For good measure we'll also rename the mapping file to ```BugMap.cs```.
+
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/0a35f7a54be6d6e569c5482abd95dbc42e01b9b1)
+
+Now we just need to work our way through the remaining classes and apply the same fixes.
+
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/038bfd5b7d2c85f785973343eae336559babc587)
+
+With the model and mapping classes taken care of we can now turn our attention to the final class that was added: the context. This is the class that holds all of the other added classes together. Our refactoring has already updated it significantly but the names of the collections should be updated to be well named.
+
+```
+public partial class Context : DbContext
+{
+  static Context()
+  {
+    Database.SetInitializer<Context>(null);
+  }
+
+  public Context()
+  : base("Name=bugtrackerContext")
+  {
+  }
+
+  public DbSet<BugPostAttachment> BugPostAttachments { get; set; }
+  public DbSet<BugPost> BugPosts { get; set; }
+  public DbSet<BugRelationShip> BugRelationShip { get; set; }
+  public DbSet<BugSubscription> BugSubscription { get; set; }
+  public DbSet<BugTask> BugTasks { get; set; }
+  public DbSet<BugUser> BugUsers { get; set; }
+  public DbSet<Bug> Bugs { get; set; }
+  public DbSet<Category> Categories { get; set; }
+  public DbSet<CustomColumnsMetaData> CustomColumnsMetaDatas { get; set; }
+  public DbSet<DashboardItems> DashboardItems { get; set; }
+  public DbSet<EmailedLink> EmailedLinks { get; set; }
+  public DbSet<Organization> Organizations { get; set; }
+  public DbSet<Priority> Priorities { get; set; }
+  public DbSet<ProjectUser> ProjectUsers { get; set; }
+  public DbSet<Project> Projects { get; set; }
+  public DbSet<query> Queries { get; set; }
+  public DbSet<QueuedNotification> QueuedNotification { get; set; }
+  public DbSet<Report> Reports { get; set; }
+  public DbSet<session> Sessions { get; set; }
+  public DbSet<Status> Statuses { get; set; }
+  public DbSet<UserDefinedAttribute> UserDefinedAttributes { get; set; }
+  public DbSet<User> Users { get; set; }
+  public DbSet<Votes> Votes { get; set; }
+
+  protected override void OnModelCreating(DbModelBuilder modelBuilder)
+  {
+    modelBuilder.Configurations.Add(new BugPostAttachmentMap());
+    modelBuilder.Configurations.Add(new BugPostMap());
+    modelBuilder.Configurations.Add(new BugRelationShipMap());
+    modelBuilder.Configurations.Add(new BugSubscriptionMap());
+    modelBuilder.Configurations.Add(new BugTaskMap());
+    modelBuilder.Configurations.Add(new BugUserMap());
+    modelBuilder.Configurations.Add(new BugMap());
+    modelBuilder.Configurations.Add(new CategoryMap());
+    modelBuilder.Configurations.Add(new CustomColumnsMetaDataMap());
+    modelBuilder.Configurations.Add(new DashboardItemsMap());
+    modelBuilder.Configurations.Add(new EmailedLinkMap());
+    modelBuilder.Configurations.Add(new OrganizationMap());
+    modelBuilder.Configurations.Add(new PriorityMap());
+    modelBuilder.Configurations.Add(new ProjectUserMap());
+    modelBuilder.Configurations.Add(new ProjectMap());
+    modelBuilder.Configurations.Add(new queryMap());
+    modelBuilder.Configurations.Add(new QueuedNotificationMap());
+    modelBuilder.Configurations.Add(new ReportMap());
+    modelBuilder.Configurations.Add(new sessionMap());
+    modelBuilder.Configurations.Add(new StatusMap());
+    modelBuilder.Configurations.Add(new UserDefinedAttributeMap());
+    modelBuilder.Configurations.Add(new UserMap());
+    modelBuilder.Configurations.Add(new VotesMap());
+  }
+}
+
+```
+
+I also renamed the class to Context from bugtrackerContext, it seemed reduandant to name the context after the project we're in. 
+
+##Adding Migration Properties
 
 ##Migrating to EF
