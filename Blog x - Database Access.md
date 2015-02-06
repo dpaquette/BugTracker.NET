@@ -20,7 +20,7 @@ A> Many programmers are moving away from using object relational mappers(ORMs). 
 
 A> For instance the n+1 problem is not one that occurs outside of an object relational mapper. In order to address the shortcomings with object relational mappers some suggest completely abandoning them as being more trouble that they are worth. I think that ORMs are a great 80% solution. You cannot do everything with an ORM but the vast majority of tasks more easily and more reliably. For the places where some specialized functionality is needed (bulk operations, high performance,...) then you can drop to using lower level tools or tools that are specifically built for that scenario.
 
-A> A very fair, if dated, treatment of the whole Object/Relationship mismatch is available on Ted Neward's blog entitled [The Vietname of Computer Science]( http://blogs.tedneward.com/2006/06/26/The+Vietnam+Of+Computer+Science.aspx).
+A> A very fair, if dated, treatment of the whole Object/Relationship mismatch is available on Ted Neward's blog entitled [The Vietnam of Computer Science]( http://blogs.tedneward.com/2006/06/26/The+Vietnam+Of+Computer+Science.aspx).
 
 For future development on BugTracker.NET we would like to find an ORM based solution for accessing the database in net new code. Before we get to that point, however, we would like to address one of the pain points for BugTracker.NET: when we make changes to the database.
 
@@ -32,7 +32,7 @@ alter table users alter column us_salt nvarchar(200);
 alter table users alter column us_password nvarchar(200);
 ```
 
-Manually updating the database structure like this is error prone and, as you can tell from the length of the file, time consuming. If you don't know the current version of your database then you don't know which part of the file to start at to bring your database up to date. It would be nice to have some tooling take care of this for us.
+We also updated the creation script to have these same changes. Manually updating the database structure like this is error prone and, as you can tell from the length of the file, time consuming. Because there is both an update.sql file and a full creation script the changes need to be made in two places, introducing another vector for errors. If you don't know the current version of your database then you don't know which part of the file to start at to bring your database up to date. It would be nice to have some tooling take care of this for us.
 
 There are two very good options for versioning database structure:
 
@@ -43,10 +43,46 @@ SQL Server Projects are special Visual Studio projects that break the current da
 
 I'm a fan of SQL projects as they provide the ability to generate custom upgrade scripts while maintaining full control over the database. If developers are used to working with SQL this is a fantastic path to upgrade the way in which database updates are deployed. There is no need to abandon existing knowledge and move to another method of update databases.
 
-However SQL projects require that all your developers use Visual Studio; a scenario that is becoming less common. 
+However SQL projects require that all your developers use Visual Studio; a scenario that is becoming less common.
 
 There are quite a few options available at the moment in the .net space for ORMs. With the release of newer versions of Microsoft's Entity Framework has really picked up its game to the point where it is as good as or better than any other ORM.
 
 One of the features of EF is migrations. When building a model in EF migrations between one model state and another can be written in pure C#. These migrations are very useful when using a code first approach to Entity Framework. The next release of Entity Framework drops support for model and db first and only supports code first. So it is likely that migrations will become more common.
 
-Each of these approaches has its advantages and disadvantages.
+Each of these approaches has its advantages and disadvantages. For existing projects that may have made use of stored procedures or other artifacts of SQL Server an SQL Project is the better option.
+
+This gives us our strategy for update the data access for the application: first we will extract an SQL project from an existing database instance built from the creation script. Second we'll generate a series of model classes and a datacontext allowing our database to be used from Entity Framework. Finally we'll pick a page in the application to update to use Entity Framework just as a demonstration.
+
+##Generating an SQL Project
+
+SQL projects are a fantastic tool for cleaning up existing databases as well as working with new databases. They are an evolution of the older database projects that were all the rage some years ago. We'll start by adding a new SQL project to the solution.
+
+![New project](Images/new_project.jpg)
+
+Here we've called the project BugTracker.Database.  Once we have the database right clicking on it we are presented with the option to import an existing database.
+
+![Import database](Images/import_database.jpg)
+
+Within that we can select our existing database that was built from the original SQL script. In my case this is the bugtracker database on localhost\sql2012.
+
+![Select database](Images/import_select.jpg)
+
+With that familiar dialog behind us we can alter some setting on the import database window. It is likely that you'll want to disable the import of referenced logins as they will be different from test to production.
+
+![Import source](Images/import_source.jpg)
+
+The tool will run for a while and generate a bunch of new files.
+
+![Import running](Images/import_running.jpg)
+
+The result is a couple of directories containing a file for each database object: table, stored proc, view, etc.
+
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/b9088e46cd9e7951f80198e75454bb98df00b9db)
+
+The SQL project brings with it the ability to deploy directly and to generate .dacpac files as part of a build. These .dacpac files are basically portable versions of the schema which can be compared with existing databases to generate diffs. This eliminates the need to know what version an existing database is to upgrade it.
+
+##Generating EF Classes
+
+##Cleaning up EF Classes
+
+##Migrating to EF
