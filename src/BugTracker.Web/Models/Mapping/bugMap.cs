@@ -3,49 +3,49 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace btnet.Models.Mapping
 {
-    public class bugMap : EntityTypeConfiguration<bug>
+    public class BugMap : EntityTypeConfiguration<Bug>
     {
-        public bugMap()
+        public BugMap()
         {
             // Primary Key
-            this.HasKey(t => t.bg_id);
+            HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.bg_short_desc)
+            Property(t => t.ShortDescription)
                 .IsRequired()
                 .HasMaxLength(200);
 
-            this.Property(t => t.bg_project_custom_dropdown_value1)
+            Property(t => t.CustomDropDownValue1)
                 .HasMaxLength(120);
 
-            this.Property(t => t.bg_project_custom_dropdown_value2)
+            Property(t => t.CustomDropDownValue2)
                 .HasMaxLength(120);
 
-            this.Property(t => t.bg_project_custom_dropdown_value3)
+            Property(t => t.CustomDropDownValue3)
                 .HasMaxLength(120);
 
-            this.Property(t => t.bg_tags)
+            Property(t => t.Tags)
                 .HasMaxLength(200);
 
             // Table & Column Mappings
-            this.ToTable("bugs");
-            this.Property(t => t.bg_id).HasColumnName("bg_id");
-            this.Property(t => t.bg_short_desc).HasColumnName("bg_short_desc");
-            this.Property(t => t.bg_reported_user).HasColumnName("bg_reported_user");
-            this.Property(t => t.bg_reported_date).HasColumnName("bg_reported_date");
-            this.Property(t => t.bg_status).HasColumnName("bg_status");
-            this.Property(t => t.bg_priority).HasColumnName("bg_priority");
-            this.Property(t => t.bg_org).HasColumnName("bg_org");
-            this.Property(t => t.bg_category).HasColumnName("bg_category");
-            this.Property(t => t.bg_project).HasColumnName("bg_project");
-            this.Property(t => t.bg_assigned_to_user).HasColumnName("bg_assigned_to_user");
-            this.Property(t => t.bg_last_updated_user).HasColumnName("bg_last_updated_user");
-            this.Property(t => t.bg_last_updated_date).HasColumnName("bg_last_updated_date");
-            this.Property(t => t.bg_user_defined_attribute).HasColumnName("bg_user_defined_attribute");
-            this.Property(t => t.bg_project_custom_dropdown_value1).HasColumnName("bg_project_custom_dropdown_value1");
-            this.Property(t => t.bg_project_custom_dropdown_value2).HasColumnName("bg_project_custom_dropdown_value2");
-            this.Property(t => t.bg_project_custom_dropdown_value3).HasColumnName("bg_project_custom_dropdown_value3");
-            this.Property(t => t.bg_tags).HasColumnName("bg_tags");
+            ToTable("bugs");
+            Property(t => t.Id).HasColumnName("bg_id");
+            Property(t => t.ShortDescription).HasColumnName("bg_short_desc");
+            Property(t => t.ReportedUserId).HasColumnName("bg_reported_user");
+            Property(t => t.ReportedDate).HasColumnName("bg_reported_date");
+            Property(t => t.StatusId).HasColumnName("bg_status");
+            Property(t => t.PriorityId).HasColumnName("bg_priority");
+            Property(t => t.OrganizationId).HasColumnName("bg_org");
+            Property(t => t.CategoryId).HasColumnName("bg_category");
+            Property(t => t.ProjectId).HasColumnName("bg_project");
+            Property(t => t.AssignedToUserId).HasColumnName("bg_assigned_to_user");
+            Property(t => t.LastUpdatedUserId).HasColumnName("bg_last_updated_user");
+            Property(t => t.LastUpdatedDate).HasColumnName("bg_last_updated_date");
+            Property(t => t.UserDefinedAttributeId).HasColumnName("bg_user_defined_attribute");
+            Property(t => t.CustomDropDownValue1).HasColumnName("bg_project_custom_dropdown_value1");
+            Property(t => t.CustomDropDownValue2).HasColumnName("bg_project_custom_dropdown_value2");
+            Property(t => t.CustomDropDownValue3).HasColumnName("bg_project_custom_dropdown_value3");
+            Property(t => t.Tags).HasColumnName("bg_tags");
         }
     }
 }

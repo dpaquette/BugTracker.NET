@@ -22,7 +22,7 @@ namespace btnet.Models
         public DbSet<bug_subscriptions> bug_subscriptions { get; set; }
         public DbSet<bug_tasks> bug_tasks { get; set; }
         public DbSet<bug_user> bug_user { get; set; }
-        public DbSet<bug> bugs { get; set; }
+        public DbSet<Bug> bugs { get; set; }
         public DbSet<category> categories { get; set; }
         public DbSet<custom_col_metadata> custom_col_metadata { get; set; }
         public DbSet<dashboard_items> dashboard_items { get; set; }
@@ -54,7 +54,7 @@ namespace btnet.Models
             modelBuilder.Configurations.Add(new bug_subscriptionsMap());
             modelBuilder.Configurations.Add(new bug_tasksMap());
             modelBuilder.Configurations.Add(new bug_userMap());
-            modelBuilder.Configurations.Add(new bugMap());
+            modelBuilder.Configurations.Add(new BugMap());
             modelBuilder.Configurations.Add(new categoryMap());
             modelBuilder.Configurations.Add(new custom_col_metadataMap());
             modelBuilder.Configurations.Add(new dashboard_itemsMap());
