@@ -3,34 +3,34 @@ using System.Collections.Generic;
 
 namespace btnet.Models
 {
-    public partial class user
+    public partial class User
     {
-        public int us_id { get; set; }
-        public string us_username { get; set; }
-        public string us_salt { get; set; }
-        public string us_password { get; set; }
-        public string us_firstname { get; set; }
-        public string us_lastname { get; set; }
-        public string us_email { get; set; }
-        public int us_admin { get; set; }
-        public int us_default_query { get; set; }
-        public int us_enable_notifications { get; set; }
-        public int us_auto_subscribe { get; set; }
-        public Nullable<int> us_auto_subscribe_own_bugs { get; set; }
-        public Nullable<int> us_auto_subscribe_reported_bugs { get; set; }
-        public Nullable<int> us_send_notifications_to_self { get; set; }
-        public int us_active { get; set; }
-        public Nullable<int> us_bugs_per_page { get; set; }
-        public Nullable<int> us_forced_project { get; set; }
-        public int us_reported_notifications { get; set; }
-        public int us_assigned_notifications { get; set; }
-        public int us_subscribed_notifications { get; set; }
-        public string us_signature { get; set; }
-        public int us_use_fckeditor { get; set; }
-        public int us_enable_bug_list_popups { get; set; }
-        public int us_created_user { get; set; }
-        public int us_org { get; set; }
-        public Nullable<System.DateTime> us_most_recent_login_datetime { get; set; }
-        public string password_reset_key { get; set; }
+        public int Id { get; set; }
+        public string UserName { get; set; }
+        public string Salt { get; set; }
+        public string Password { get; set; }
+        public string FristName { get; set; }
+        public string LastName { get; set; }
+        public string EMail { get; set; }
+        public int AdminId { get; set; }
+        public int DefaltQueryID { get; set; }
+        public int EnableNotifications { get; set; }
+        public int AutoSubscribe { get; set; }
+        public Nullable<int> AutoSubscribeOwnBugs { get; set; }
+        public Nullable<int> AutoSubscribeReportedBugs { get; set; }
+        public Nullable<int> SendNotificationsToSelf { get; set; }
+        public int Active { get; set; }
+        public Nullable<int> BugsPerPage { get; set; }
+        public Nullable<int> ForcedProject { get; set; }
+        public int ReportedNotifications { get; set; }
+        public int AssignedNotifications { get; set; }
+        public int SubscribedNotifications { get; set; }
+        public string Signature { get; set; }
+        public int UseEditor { get; set; }
+        public int EnableBugListPopUps { get; set; }
+        public int CreatedUser { get; set; }
+        public int OrganizationId { get; set; }
+        public Nullable<DateTime> LastLoginDate { get; set; }
+        public string PasswordResetKey { get; set; }
     }
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace btnet.Models
 {
-    public partial class report
+    public partial class Report
     {
-        public int rp_id { get; set; }
-        public string rp_desc { get; set; }
-        public string rp_sql { get; set; }
-        public string rp_chart_type { get; set; }
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public string SQL { get; set; }
+        public string ChartType { get; set; }
     }
 }

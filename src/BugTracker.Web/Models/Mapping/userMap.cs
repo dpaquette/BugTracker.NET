@@ -3,68 +3,68 @@ using System.Data.Entity.ModelConfiguration;
 
 namespace btnet.Models.Mapping
 {
-    public class userMap : EntityTypeConfiguration<user>
+    public class UserMap : EntityTypeConfiguration<User>
     {
-        public userMap()
+        public UserMap()
         {
             // Primary Key
-            this.HasKey(t => t.us_id);
+            this.HasKey(t => t.Id);
 
             // Properties
-            this.Property(t => t.us_username)
+            this.Property(t => t.UserName)
                 .IsRequired()
                 .HasMaxLength(40);
 
-            this.Property(t => t.us_salt)
+            this.Property(t => t.Salt)
                 .HasMaxLength(200);
 
-            this.Property(t => t.us_password)
+            this.Property(t => t.Password)
                 .HasMaxLength(200);
 
-            this.Property(t => t.us_firstname)
+            this.Property(t => t.FristName)
                 .HasMaxLength(60);
 
-            this.Property(t => t.us_lastname)
+            this.Property(t => t.LastName)
                 .HasMaxLength(60);
 
-            this.Property(t => t.us_email)
+            this.Property(t => t.EMail)
                 .HasMaxLength(120);
 
-            this.Property(t => t.us_signature)
+            this.Property(t => t.Signature)
                 .HasMaxLength(1000);
 
-            this.Property(t => t.password_reset_key)
+            this.Property(t => t.PasswordResetKey)
                 .HasMaxLength(200);
 
             // Table & Column Mappings
             this.ToTable("users");
-            this.Property(t => t.us_id).HasColumnName("us_id");
-            this.Property(t => t.us_username).HasColumnName("us_username");
-            this.Property(t => t.us_salt).HasColumnName("us_salt");
-            this.Property(t => t.us_password).HasColumnName("us_password");
-            this.Property(t => t.us_firstname).HasColumnName("us_firstname");
-            this.Property(t => t.us_lastname).HasColumnName("us_lastname");
-            this.Property(t => t.us_email).HasColumnName("us_email");
-            this.Property(t => t.us_admin).HasColumnName("us_admin");
-            this.Property(t => t.us_default_query).HasColumnName("us_default_query");
-            this.Property(t => t.us_enable_notifications).HasColumnName("us_enable_notifications");
-            this.Property(t => t.us_auto_subscribe).HasColumnName("us_auto_subscribe");
-            this.Property(t => t.us_auto_subscribe_own_bugs).HasColumnName("us_auto_subscribe_own_bugs");
-            this.Property(t => t.us_auto_subscribe_reported_bugs).HasColumnName("us_auto_subscribe_reported_bugs");
-            this.Property(t => t.us_send_notifications_to_self).HasColumnName("us_send_notifications_to_self");
-            this.Property(t => t.us_active).HasColumnName("us_active");
-            this.Property(t => t.us_bugs_per_page).HasColumnName("us_bugs_per_page");
-            this.Property(t => t.us_forced_project).HasColumnName("us_forced_project");
-            this.Property(t => t.us_reported_notifications).HasColumnName("us_reported_notifications");
-            this.Property(t => t.us_assigned_notifications).HasColumnName("us_assigned_notifications");
-            this.Property(t => t.us_subscribed_notifications).HasColumnName("us_subscribed_notifications");
-            this.Property(t => t.us_signature).HasColumnName("us_signature");
-            this.Property(t => t.us_use_fckeditor).HasColumnName("us_use_fckeditor");
-            this.Property(t => t.us_enable_bug_list_popups).HasColumnName("us_enable_bug_list_popups");
-            this.Property(t => t.us_created_user).HasColumnName("us_created_user");
-            this.Property(t => t.us_org).HasColumnName("us_org");
-            this.Property(t => t.us_most_recent_login_datetime).HasColumnName("us_most_recent_login_datetime");
-            this.Property(t => t.password_reset_key).HasColumnName("password_reset_key");
+            this.Property(t => t.Id).HasColumnName("us_id");
+            this.Property(t => t.UserName).HasColumnName("us_username");
+            this.Property(t => t.Salt).HasColumnName("us_salt");
+            this.Property(t => t.Password).HasColumnName("us_password");
+            this.Property(t => t.FristName).HasColumnName("us_firstname");
+            this.Property(t => t.LastName).HasColumnName("us_lastname");
+            this.Property(t => t.EMail).HasColumnName("us_email");
+            this.Property(t => t.AdminId).HasColumnName("us_admin");
+            this.Property(t => t.DefaltQueryID).HasColumnName("us_default_query");
+            this.Property(t => t.EnableNotifications).HasColumnName("us_enable_notifications");
+            this.Property(t => t.AutoSubscribe).HasColumnName("us_auto_subscribe");
+            this.Property(t => t.AutoSubscribeOwnBugs).HasColumnName("us_auto_subscribe_own_bugs");
+            this.Property(t => t.AutoSubscribeReportedBugs).HasColumnName("us_auto_subscribe_reported_bugs");
+            this.Property(t => t.SendNotificationsToSelf).HasColumnName("us_send_notifications_to_self");
+            this.Property(t => t.Active).HasColumnName("us_active");
+            this.Property(t => t.BugsPerPage).HasColumnName("us_bugs_per_page");
+            this.Property(t => t.ForcedProject).HasColumnName("us_forced_project");
+            this.Property(t => t.ReportedNotifications).HasColumnName("us_reported_notifications");
+            this.Property(t => t.AssignedNotifications).HasColumnName("us_assigned_notifications");
+            this.Property(t => t.SubscribedNotifications).HasColumnName("us_subscribed_notifications");
+            this.Property(t => t.Signature).HasColumnName("us_signature");
+            this.Property(t => t.UseEditor).HasColumnName("us_use_fckeditor");
+            this.Property(t => t.EnableBugListPopUps).HasColumnName("us_enable_bug_list_popups");
+            this.Property(t => t.CreatedUser).HasColumnName("us_created_user");
+            this.Property(t => t.OrganizationId).HasColumnName("us_org");
+            this.Property(t => t.LastLoginDate).HasColumnName("us_most_recent_login_datetime");
+            this.Property(t => t.PasswordResetKey).HasColumnName("password_reset_key");
         }
     }
 }

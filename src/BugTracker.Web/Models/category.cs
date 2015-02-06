@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace btnet.Models
 {
-    public partial class category
+    public partial class Category
     {
-        public int ct_id { get; set; }
-        public string ct_name { get; set; }
-        public int ct_sort_seq { get; set; }
-        public int ct_default { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int SortOrder { get; set; }
+        public int Default { get; set; }
     }
 }
