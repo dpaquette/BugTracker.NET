@@ -79,9 +79,39 @@ The result is a couple of directories containing a file for each database object
 
 [View the commit](https://github.com/dpaquette/BugTracker.NET/commit/b9088e46cd9e7951f80198e75454bb98df00b9db)
 
-The SQL project brings with it the ability to deploy directly and to generate .dacpac files as part of a build. These .dacpac files are basically portable versions of the schema which can be compared with existing databases to generate diffs. This eliminates the need to know what version an existing database is to upgrade it.
+The SQL project brings with it the ability to deploy directly and to generate .dacpac files as part of a build. These .dacpac files are basically portable versions of the schema which can be compared with existing databases to generate diffs. It can even generate a full database if targeted at a blank database. This eliminates the need to know what version an existing database is to upgrade it.
 
 ##Generating EF Classes
+
+Now that we have a reliable way to manage database scripts and to upgrade databases we can turn our attention to accessing the database.
+
+There are a bunch of ways to use Entity Framework
+
+- Model first
+- Database first
+- Code first
+
+The model and database first approaches are being deprecated in future versions so let's take the code first approach. In the past I've built model classes by hand. This process is a bit slow and somewhat error prone, especially around the precision of decimals. David suggested that I try using the model generator tool to build models by looking at the database.
+
+In Visual Studio install the Entity Framework Power Tools.
+
+![Extensions](Images/extensions.jpg)
+
+This brings us a new menu option: to reverse engineer a data model. Unfortunatly this sounds far cooler than it is and, unlike the movie Paycheck, Aaron Eckhart is unlikley to try to kill you for doing it.
+
+![Reverse engineer code first](Images/reverse_engineer.jpg)
+
+Running the tool on our web project will install the Entity Framework package from nuget and then build three different object types:
+
+- A data context
+- Model classes for each table
+- Mapping companion classes for each model class
+
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/ddd3dfec3e049a1a387878905b1aacfea2d02158)
+
+With these in place we're now able to make use of EF to access the database. However the classes that are generated are named as they are in the database which is not ideal for use in code. For instance the ```bug_tasks``` table has been mapped to a class called ```bug_tasks```. This is not, typically, how we would name classes in C#. Instead we would call this class ```BugTasks```.
+
+We're going to have to get into some code clean up to rename all of these something sensible. 
 
 ##Cleaning up EF Classes
 
