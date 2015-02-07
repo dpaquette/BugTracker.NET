@@ -40,6 +40,15 @@ namespace btnet {
         protected global::System.Web.UI.WebControls.ContentPlaceHolder body;
         
         /// <summary>
+        /// Footer control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::btnet.Controls.Footer Footer;
+        
+        /// <summary>
         /// footerScripts control.
         /// </summary>
         /// <remarks>

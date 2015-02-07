@@ -503,10 +503,9 @@ namespace btnet
 
             string bug_count_string = get_buglist_bug_count_string(dv);
 
-            Response.Write("<table border=0 cellpadding=0 cellspacing=0 width=100%><tr><td align=left valign=top>");
+            
             Response.Write(paging_string);
-            Response.Write("<td align=right valign=top><span class=smallnote>clicking while holding Ctrl key toggles \"NOT\" in a filter: \"NOT project 1\"</span></table>");
-            Response.Write("\n<table class=bugt border=1 ><tr>\n");
+            Response.Write("\n<table class=\"bugt\" ><tr>\n");
 
             ///////////////////////////////////////////////////////////////////
             // headings

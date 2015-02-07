@@ -1,0 +1,41 @@
+.btn-primary {
+    background-image: -webkit-linear-gradient(top, #00cc00 0%, #009900 100%);
+    background-image: -o-linear-gradient(top, #00cc00 0%, #009900 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#00cc00), to(#009900));
+    background-image: linear-gradient(to bottom, #00cc00 0%, #009900 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff00cc00', endColorstr='#ff009900', GradientType=0);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+    background-repeat: repeat-x;
+    border-color: #009900;
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: #009900;
+        background-position: 0 -15px;
+    }
+
+    .btn-primary:active,
+    .btn-primary.active {
+        background-color: #009900;
+        border-color: #009900;
+    }
+
+    .btn-primary:disabled,
+    .btn-primary[disabled] {
+        background-color: #009900;
+        background-image: none;
+    }
+
+.navbar-default {
+    background-color: #f0fff0;
+}
+    .navbar-default .navbar-nav > .open > a,
+    .navbar-default .navbar-nav > .active > a,
+    .navbar-default .navbar-nav > .active > a:hover {
+        background-color: #bcffbc;
+    }
+
+.navbar-brand {
+    padding-top: 10px;
+}

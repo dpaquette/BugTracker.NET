@@ -1,12 +1,18 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="LoggedIn.master.cs" Inherits="btnet.LoggedIn" %>
+<%@ Register Src="~/Controls/Footer.ascx" TagPrefix="uc1" TagName="Footer" %>
+
 
 <!DOCTYPE html>
 
 <html>
 <head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="favicon.ico">
     <title>btnet bugs</title>
     <link rel="StyleSheet" href="btnet.css" type="text/css">
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="Content/btnet-bootstrap-theme.css" rel="stylesheet" />
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
 
@@ -14,14 +20,17 @@
 <body>
     <%
 
-    Response.Write (Application["custom_logo"]);
+        Response.Write(Application["custom_logo"]);
 
 %>
-    <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
-
+    <div class="container" style="margin-top: 40px">
+        <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
+    </div>
+    <uc1:Footer runat="server" id="Footer" />
+    <script src="Scripts/bootstrap.min.js"></script>
 </body>
 
 <asp:contentplaceholder runat="server" id="footerScripts"></asp:contentplaceholder>
 
-<% Response.Write(Application["custom_footer"]); %>
+
 </html>

@@ -31,47 +31,41 @@ function set_task_cnt(bugid, cnt)
 }
 
 
-var popup_window = null
-function open_popup_window(url, title, bugid, width, height)
-{
-	var url_and_vars = url + '?id=' + bugid
-	
-	popup_window = window.open(
-		url_and_vars,
-		'bug',
-		"menubar=0,scrollbars=1,toolbar=0,resizable=1,width=" + width + ",height=" + height)
-		
-	popup_window.focus()
+var popup_window = null;
+function open_popup_window(url, title, bugid, width, height) {
+    var url_and_vars = url + '?id=' + bugid;
+
+    popup_window = window.open(
+        url_and_vars,
+        'bug',
+        "menubar=0,scrollbars=1,toolbar=0,resizable=1,width=" + width + ",height=" + height);
+
+    popup_window.focus();
 }
 
 var dirty = false;
-function mark_dirty()
-{
-	dirty = true
+function mark_dirty() {
+    dirty = true;
 }
 
-function my_confirm()
-{
-	return confirm('You have unsaved changes.  Do you want to leave this page and lose your changes?.')
+function my_confirm() {
+    return confirm('You have unsaved changes.  Do you want to leave this page and lose your changes?.');
 }
 
 function warn_if_dirty(event)
 {
-	if (dirty)
-	{
-		result = my_confirm()
-		if (!result)
-		{
-			event.preventDefault()
+	if (dirty) {
+	    result = my_confirm();
+		if (!result) {
+		    event.preventDefault();
 		}
 	}
 }
 
 function send_email(id)
 {
-	if (dirty)
-	{
-		var result = my_confirm()
+	if (dirty) {
+	    var result = my_confirm();
 		if (result)
 		{
 			window.document.location = "send_email.aspx?bg_id=" + id;
@@ -83,12 +77,11 @@ function send_email(id)
 	}
 }
 
-function handle_rewrite_posts(data, status)
-{
-	$("#posts").html(data)
-	$(".warn").click(warn_if_dirty)
-	$.get("get_db_datetime.aspx","",handle_get_bug_date)
-	start_animation()
+function handle_rewrite_posts(data, status) {
+    $("#posts").html(data);
+    $(".warn").click(warn_if_dirty);
+    $.get("get_db_datetime.aspx", "", handle_get_bug_date);
+    start_animation();
 }
 
 function handle_get_bug_date(data, status)
@@ -97,16 +90,15 @@ function handle_get_bug_date(data, status)
 	el.value = data
 }
 
-function rewrite_posts(bugid)
-{
-	var images_inline = get_cookie("images_inline")
-	var history_inline = get_cookie("history_inline")
+function rewrite_posts(bugid) {
+    var images_inline = get_cookie("images_inline");
+    var history_inline = get_cookie("history_inline");
 
-	var url = "write_posts.aspx?images_inline=" + images_inline
-		+ "&history_inline=" + history_inline
-		+ "&id=" + bugid
-	
-	$.get(url, "", handle_rewrite_posts)
+    var url = "write_posts.aspx?images_inline=" + images_inline
+        + "&history_inline=" + history_inline
+        + "&id=" + bugid;
+
+    $.get(url, "", handle_rewrite_posts);
 }
 
 function toggle_notifications(bugid)
@@ -417,25 +409,14 @@ function change_dropdown_style()
 	sels = document.getElementsByTagName("select");
 
 	// change the select styles depending on whether something has been selected or not
-	for (i = 0; i < sels.length; i++)
-	{
-		if (sels[i].id != "project")
-		{
-			sels[i].onchange = change_dropdown_style
-		}
-		si = sels[i].options.selectedIndex;
-		if (sels[i].options[si].text.substr(0,3) == "[no")
-		{
-			sels[i].setAttribute(cls,'edit_bug_option_none')
-		}
-		else
-		{
-			sels[i].setAttribute(cls,'edit_bug_option')
-		}
+	for (i = 0; i < sels.length; i++) {
+	    if (sels[i].id != "project");
+	    {
+	        sels[i].onchange = change_dropdown_style;
+	    }
 	}
 
-	mark_dirty()
-
+    mark_dirty();
 }
 
 var ren = new RegExp( "\\n", "g" )

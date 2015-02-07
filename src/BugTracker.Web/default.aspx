@@ -1,91 +1,79 @@
 <%@ Page Language="C#" ValidateRequest="false" CodeBehind="default.aspx.cs" Inherits="btnet.default" AutoEventWireup="True" MasterPageFile="LoggedOut.Master" %>
+
 <%@ Import Namespace="btnet" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="body">
-    <div style="float: right;">
-        <span>
-            <a target="_blank" style="font-size: 7pt; font-family: arial; letter-spacing: 1px;" href="http://ifdefined.com/bugtrackernet.html">BugTracker.NET</a>
-            <br>
-            <a target="_blank" style="font-size: 7pt; font-family: arial; letter-spacing: 1px;" href="http://ifdefined.com/README.html">Help</a>
-            <br>
-            <a target="_blank" style="font-size: 7pt; font-family: arial; letter-spacing: 1px;" href="mailto:ctrager@yahoo.com">Feedback</a>
-            <br>
-            <a target="_blank" style="font-size: 7pt; font-family: arial; letter-spacing: 1px;" href="about.html">About</a>
-            <br>
-            <a target="_blank" style="font-size: 7pt; font-family: arial; letter-spacing: 1px;" href="http://ifdefined.com/README.html">Donate</a>
-        </span>
-    </div>
 
-    <div align="center">
-        <table border="0">
-            <tr>
-                <td>
-                    <form class="frm" runat="server">
-                        <table border="0">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+            <div class="panel panel-default">
 
-                            <% if (Util.get_setting("WindowsAuthentication", "0") != "0")
-                               { %>
-                            <tr>
-                                <td colspan="2" class="smallnote">To login using your Windows ID, leave User blank</td>
-                            </tr>
-                            <% } %>
-                            <tr>
-                                <td class="lbl">User:</td>
-                                <td>
-                                    <input runat="server" type="text" class="txt" id="user"/></td>
-                            </tr>
+                <div class="panel-body">
+                    <form role="form" method="POST" runat="server">
+                        <fieldset>
+                            <div class="row">
+                                <div class="center-block">
+                                    <div class="profile-img">
+                                        <i class="glyphicon glyphicon-user"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 col-md-10  col-md-offset-1 ">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="glyphicon glyphicon-user"></i>
+                                            </span>
+                                            <input runat="server" type="text" class="form-control" placeholder="Username" id="user" autofocus />
 
-                            <tr>
-                                <td class="lbl">Password:</td>
-                                <td>
-                                    <input runat="server" type="password" class="txt" id="pw"/></td>
-                            </tr>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="glyphicon glyphicon-lock"></i>
+                                            </span>
+                                            <input runat="server" type="password" class="form-control" placeholder="Password" id="pw" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" class="btn btn-lg btn-primary btn-block" value="Sign in">
+                                        <span runat="server" class="err" id="msg">&nbsp;</span>
 
-                            <tr>
-                                <td colspan="2" align="left">
-                                    <span runat="server" class="err" id="msg">&nbsp;</span>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td colspan="2" align="center">
-                                    <input class="btn" type="submit" value="Logon" runat="server"/>
-                                </td>
-                            </tr>
-
-                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
                     </form>
+                </div>
+                <div class="panel-footer text-muted">
+                    <% if (Util.get_setting("AllowGuestWithoutLogin", "0") == "1")
+                       { %>
+                    <div>Continue as <a href="bugs.aspx">guest</a></div>
 
-                    <span>
+                    <% } %>
 
-                        <% if (Util.get_setting("AllowGuestWithoutLogin", "0") == "1")
-                           { %>
-                        <p>
-                            <a style="font-size: 8pt;" href="bugs.aspx">Continue as "guest" without logging in</a>
-                        <p>
-                            <% } %>
+                    <% if (Util.get_setting("AllowSelfRegistration", "0") == "1")
+                       { %>
+                    <div>Don't have an account? <a href="register.aspx">Register Here</a></div>
 
-                            <% if (Util.get_setting("AllowSelfRegistration", "0") == "1")
-                               { %>
-                        <p>
-                            <a style="font-size: 8pt;" href="register.aspx">Register</a>
-                        <p>
-                            <% } %>
+                    <% } %>
 
-                            <% if (Util.get_setting("ShowForgotPasswordLink", "1") == "1")
-                               { %>
-                        <p>
-                            <a style="font-size: 8pt;" href="forgot.aspx">Forgot your username or password?</a>
-                        <p>
-                            <% } %>
-                    </span>
-
-                </td>
-            </tr>
-        </table>
-
-        <% Response.Write(Application["custom_welcome"]); %>
+                    <% if (Util.get_setting("ShowForgotPasswordLink", "1") == "1")
+                       { %>
+                    <div><a href="forgot.aspx">Forgot password?</a></div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-md-4 col-md-offset-4">
+                <% Response.Write(Application["custom_welcome"]); %>
+            </div>
+        </div>
     </div>
+
 </asp:Content>
 <asp:Content runat="server" ContentPlaceHolderID="footerScripts">
     <script>
