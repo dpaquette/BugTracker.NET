@@ -8,7 +8,7 @@ namespace btnet.Models.Mapping
         public BugUserMap()
         {
             // Primary Key
-            this.HasKey(t => new { bu_bug = t.BugId, bu_user = t.UserId, bu_flag = t.Flag, bu_seen = t.Seen, bu_vote = t.Vote });
+            this.HasKey(t => t.Id);
 
             // Properties
             this.Property(t => t.BugId)

@@ -8,7 +8,7 @@ namespace btnet.Models.Mapping
         public BugSubscriptionMap()
         {
             // Primary Key
-            this.HasKey(t => new { bs_bug = t.BugId, bs_user = t.UserId });
+            HasKey(t => t.Id);
 
             // Properties
             this.Property(t => t.BugId)

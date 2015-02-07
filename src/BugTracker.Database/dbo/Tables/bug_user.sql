@@ -1,4 +1,5 @@
 ﻿CREATE TABLE [dbo].[bug_user] (
+	id				int not null identity(1,1) primary key,
     [bu_bug]           INT      NOT NULL,
     [bu_user]          INT      NOT NULL,
     [bu_flag]          INT      NOT NULL,
@@ -11,6 +12,6 @@
 
 
 GO
-CREATE UNIQUE CLUSTERED INDEX [bu_index_1]
+CREATE UNIQUE nonCLUSTERED INDEX [bu_index_1]
     ON [dbo].[bug_user]([bu_bug] ASC, [bu_user] ASC);
 

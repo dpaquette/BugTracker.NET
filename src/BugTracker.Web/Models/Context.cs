@@ -4,41 +4,41 @@ using btnet.Models.Mapping;
 
 namespace btnet.Models
 {
-    public partial class bugtrackerContext : DbContext
+    public partial class Context : DbContext
     {
-        static bugtrackerContext()
+        static Context()
         {
-            Database.SetInitializer<bugtrackerContext>(null);
+            Database.SetInitializer<Context>(null);
         }
 
-        public bugtrackerContext()
+        public Context()
             : base("Name=bugtrackerContext")
         {
         }
 
-        public DbSet<BugPostAttachment> bug_post_attachments { get; set; }
-        public DbSet<BugPost> bug_posts { get; set; }
-        public DbSet<BugRelationShip> bug_relationships { get; set; }
-        public DbSet<BugSubscription> bug_subscriptions { get; set; }
-        public DbSet<BugTask> bug_tasks { get; set; }
-        public DbSet<BugUser> bug_user { get; set; }
-        public DbSet<Bug> bugs { get; set; }
-        public DbSet<Category> categories { get; set; }
-        public DbSet<CustomColumnsMetaData> custom_col_metadata { get; set; }
-        public DbSet<DashboardItems> dashboard_items { get; set; }
-        public DbSet<EmailedLink> emailed_links { get; set; }
-        public DbSet<Organization> orgs { get; set; }
-        public DbSet<Priority> priorities { get; set; }
-        public DbSet<ProjectUser> project_user_xref { get; set; }
-        public DbSet<Project> projects { get; set; }
-        public DbSet<query> queries { get; set; }
-        public DbSet<QueuedNotification> queued_notifications { get; set; }
-        public DbSet<Report> reports { get; set; }
-        public DbSet<session> sessions { get; set; }
-        public DbSet<Status> statuses { get; set; }
-        public DbSet<UserDefinedAttribute> user_defined_attribute { get; set; }
-        public DbSet<User> users { get; set; }
-        public DbSet<Votes> votes_view { get; set; }
+        public DbSet<BugPostAttachment> BugPostAttachments { get; set; }
+        public DbSet<BugPost> BugPosts { get; set; }
+        public DbSet<BugRelationShip> BugRelationShip { get; set; }
+        public DbSet<BugSubscription> BugSubscription { get; set; }
+        public DbSet<BugTask> BugTasks { get; set; }
+        public DbSet<BugUser> BugUsers { get; set; }
+        public DbSet<Bug> Bugs { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<CustomColumnsMetaData> CustomColumnsMetaDatas { get; set; }
+        public DbSet<DashboardItems> DashboardItems { get; set; }
+        public DbSet<EmailedLink> EmailedLinks { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Priority> Priorities { get; set; }
+        public DbSet<ProjectUser> ProjectUsers { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<query> Queries { get; set; }
+        public DbSet<QueuedNotification> QueuedNotification { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<session> Sessions { get; set; }
+        public DbSet<Status> Statuses { get; set; }
+        public DbSet<UserDefinedAttribute> UserDefinedAttributes { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Votes> Votes { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -9,12 +9,32 @@
         </p>
         <%
 
-            if (ds.Tables[0].Rows.Count > 0)
-            {
-                btnet.SortableHtmlTable.create_from_dataset(
-                    Response, ds, "edit_category.aspx?id=", "delete_category.aspx?id=");
-
-            }
+            if (_categories.Any())
+            {%>
+                
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>
+                        Name
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <%foreach(var category in _categories){ %>
+                <tr>
+                    <td>
+                        <a href="edit_category.aspx?id=<%:category.Id %>">Edit</a>
+                    </td>
+                    <td>
+                        <%: category.Name %>
+                    </td>
+                </tr>
+                <%} %>
+            </tbody>
+        </table>
+            <%}
             else
             {
                 Response.Write("No categories in the database.");
