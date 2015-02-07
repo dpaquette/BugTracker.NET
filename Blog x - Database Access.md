@@ -464,4 +464,6 @@ else
 ```
 This is somewhat longer than what was there before where we were using a helper method to render the table. We'll look at adding some better client side sorting to the table in an upcoming post.
 
+[View the commit](https://github.com/dpaquette/BugTracker.NET/commit/fcdbeb8ef35550b83c7a6e69d78a6bbe859f4e3f)
+
 The code has been simplified and we no longer have raw SQL in the application. If we rename a column the error will be much more apparent than with SQL strings and, in fact, EF will warn us on startup if its schema doesn't match the database. For new pages we'll make use of EF and, should the opportunity arise, we'll update old pages as we encounter them.
