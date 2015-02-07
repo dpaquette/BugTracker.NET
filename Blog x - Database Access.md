@@ -310,8 +310,93 @@ public partial class Context : DbContext
 
 ```
 
-I also renamed the class to Context from bugtrackerContext, it seemed reduandant to name the context after the project we're in. 
+I also renamed the class to Context from bugtrackerContext, it seemed redundant to name the context after the project we're in.
 
-##Adding Migration Properties
+##Adding Navigation Properties
+
+One of the features that makes EF useful for generating queries is the use of navigation properties. In the database we know that a bug is related to a user through a foreign key. However if we look at the classes we've generated there is no such concept. Fortunatly when we were correcting names in the model objects we added the Id prefix to any property that was a foreign key. We can now loop back through the objects again and add a property for navigation.
+
+This is the class as it stands
+```
+public partial class Bug
+{
+  public int Id { get; set; }
+  public string ShortDescription { get; set; }
+  public int ReportedUserId { get; set; }
+  public DateTime ReportedDate { get; set; }
+  public int StatusId { get; set; }
+  public int PriorityId { get; set; }
+  public int OrganizationId { get; set; }
+  public int CategoryId { get; set; }
+  public int ProjectId { get; set; }
+  public Nullable<int> AssignedToUserId { get; set; }
+  public Nullable<int> LastUpdatedUserId { get; set; }
+  public Nullable<DateTime> LastUpdatedDate { get; set; }
+  public Nullable<int> UserDefinedAttributeId { get; set; }
+  public string CustomDropDownValue1 { get; set; }
+  public string CustomDropDownValue2 { get; set; }
+  public string CustomDropDownValue3 { get; set; }
+  public string Tags { get; set; }
+}
+```
+
+with navigation properties added the class looks like
+
+```
+public partial class Bug
+{
+  public int Id { get; set; }
+  public string ShortDescription { get; set; }
+
+  public int ReportedUserId { get; set; }
+  public virtual User ReportedUser { get; set; }
+
+  public DateTime ReportedDate { get; set; }
+
+  public int StatusId { get; set; }
+  public virtual Status Status { get; set; }
+
+  public int PriorityId { get; set; }
+  public virtual Priority Priority { get; set; }
+
+  public int OrganizationId { get; set; }
+  public virtual Organization Organization { get; set; }
+
+  public int CategoryId { get; set; }
+  public virtual Category Category { get; set; }
+
+  public int ProjectId { get; set; }
+  public virtual Project Project { get; set; }
+
+  public Nullable<int> AssignedToUserId { get; set; }
+  public virtual User AssignedToUser { get; set; }
+
+  public Nullable<int> LastUpdatedUserId { get; set; }
+  public virtual User LastUpdatedUser { get; set; }
+
+  public Nullable<DateTime> LastUpdatedDate { get; set; }
+  public Nullable<int> UserDefinedAttributeId { get; set; }
+  public string CustomDropDownValue1 { get; set; }
+  public string CustomDropDownValue2 { get; set; }
+  public string CustomDropDownValue3 { get; set; }
+  public string Tags { get; set; }
+}
+```
+
+Note that we've made each of the navigation properties virtual; this allows EF to override them when generating a proxy class.  With these in place we can now run queries against the foreign key tables like so:
+
+```
+context.Users.Wherer(x => x.Category.Contains("Developers"));
+```
+
+This query will find any users that are in a category containing the word Developers. We can also add collections to the navigation properties for relationships with a cardinality greater than 1 to 1.  For example a bug can have many tasks so we can add a collection to the Bug object
+
+```
+public virtual IList<BugTask> Tasks { get; set; }
+```
+
+Now we can project the tasks related to a bug simply by dotting into the Tasks property.
+
+The navigation properties add an easy way to create queries and get strongly typed entities out of the database.  We should be in a good position now to actually use EF in the project.  
 
 ##Migrating to EF
