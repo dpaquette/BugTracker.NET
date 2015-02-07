@@ -1,6 +1,6 @@
 Database access is one of those things that is continually changing in the .net world. When I started doing .net development datatables and ADO.net were all the rage. Typically these were accessed over web services just to throw some unnecessary network latency into the mix. It was not at all uncommon to see a web application that called a web service, often on the same machine, that would access a database, extract a datatable and then serialize that and send it back over the network. In hindsight it was a terrible architecture but we didn't think that at the time. In a few years everything we believe is best practice now will also be considered wrong.
 
-A> In the world of accounting the normal way to maintain a list of debits and credits is through a system known as "double entry bookkeeping". This system was developed in Italy some time [before the year 1400](https://en.wikipedia.org/wiki/Double-entry_bookkeeping_system#History). It remains more or less unchanged to this day. Whenever you're upset at the pace that things change in computer technology imagine how boring it must be to work in a field where all the major chalenges were solved 600 years ago.
+A> In the world of accounting the normal way to maintain a list of debits and credits is through a system known as "double entry bookkeeping". This system was developed in Italy some time [before the year 1400](https://en.wikipedia.org/wiki/Double-entry_bookkeeping_system#History). It remains more or less unchanged to this day. Whenever you're upset at the pace that things change in computer technology imagine how boring it must be to work in a field where all the major chalenges were solved some 600 years ago.
 
 I've used numerous other data access tools over the years
 
@@ -400,3 +400,68 @@ Now we can project the tasks related to a bug simply by dotting into the Tasks p
 The navigation properties add an easy way to create queries and get strongly typed entities out of the database.  We should be in a good position now to actually use EF in the project.  
 
 ##Migrating to EF
+
+Let's pick a simple page on the site to demonstrate how to use EF. ```categories.aspx``` is a good candidate. It simply lists all the categories and provides links to the edit pages for them.
+
+At the moment the query looks like:
+
+```
+ds = btnet.DbUtil.get_dataset(new SQLString(
+  @"select
+  ct_id [id],
+  ct_name [category],
+  ct_sort_seq [sort seq],
+  case when ct_default = 1 then 'Y' else 'N' end [default],
+  ct_id [hidden]
+  from categories order by ct_name"));
+```
+
+The dataset that is returned is not strongly typed so we'll replace it with an IEnumerable of categories.
+
+```
+using (var context = new Context())
+{
+  _categories = context.Categories.OrderBy(x => x.Name).ToList();
+}
+```
+
+One the .aspx side we can render the contents of the collection by looping over the collection
+
+```
+<%
+
+if (_categories.Any())
+{%>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+    <%foreach (var category in _categories)
+    { %>
+      <tr>
+        <td>
+          <a href="edit_category.aspx?id=<%:category.Id %>">Edit</a>
+        </td>
+        <td>
+          <%: category.Name %>
+        </td>
+      </tr>
+    <%} %>
+    </tbody>
+  </table>
+<%}
+else
+{
+  Response.Write("No categories in the database.");
+}
+
+%>
+```
+This is somewhat longer than what was there before where we were using a helper method to render the table. We'll look at adding some better client side sorting to the table in an upcoming post.
+
+The code has been simplified and we no longer have raw SQL in the application. If we rename a column the error will be much more apparent than with SQL strings and, in fact, EF will warn us on startup if its schema doesn't match the database. For new pages we'll make use of EF and, should the opportunity arise, we'll update old pages as we encounter them.
