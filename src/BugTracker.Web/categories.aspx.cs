@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
+using btnet.Models;
 using btnet.Security;
-using System.Data;
+using System.Collections.Generic;
 
 namespace btnet
 {
@@ -12,7 +10,7 @@ namespace btnet
     public partial class categories : BasePage
     {
 
-        protected DataSet ds;
+        protected IEnumerable<Category> _categories;
 
         protected void Page_Load(Object sender, EventArgs e)
         {
@@ -22,14 +20,10 @@ namespace btnet
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "categories";
 
-            ds = btnet.DbUtil.get_dataset(new SQLString(
-                @"select
-		ct_id [id],
-		ct_name [category],
-		ct_sort_seq [sort seq],
-		case when ct_default = 1 then 'Y' else 'N' end [default],
-		ct_id [hidden]
-		from categories order by ct_name"));
+            using (var context = new Context())
+            {
+                _categories = context.Categories.OrderBy(x => x.Name).ToList();
+            }
 
         }
 

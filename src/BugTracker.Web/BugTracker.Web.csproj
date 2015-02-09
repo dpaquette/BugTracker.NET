@@ -44,6 +44,12 @@
     <Reference Include="Elasticsearch.Net">
       <HintPath>..\packages\Elasticsearch.Net.1.0.2\lib\Elasticsearch.Net.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Owin">
       <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -767,6 +773,53 @@
     <Compile Include="LoggedOut.Master.designer.cs">
       <DependentUpon>LoggedOut.Master</DependentUpon>
     </Compile>
+    <Compile Include="Models\Bug.cs" />
+    <Compile Include="Models\Context.cs" />
+    <Compile Include="Models\BugPost.cs" />
+    <Compile Include="Models\BugPostAttachment.cs" />
+    <Compile Include="Models\BugRelationShip.cs" />
+    <Compile Include="Models\BugSubscription.cs" />
+    <Compile Include="Models\BugTask.cs" />
+    <Compile Include="Models\BugUser.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\CustomColumnsMetaData.cs" />
+    <Compile Include="Models\DashboardItems.cs" />
+    <Compile Include="Models\EmailedLink.cs" />
+    <Compile Include="Models\Mapping\BugMap.cs" />
+    <Compile Include="Models\Mapping\BugPostMap.cs" />
+    <Compile Include="Models\Mapping\BugPostAttachmentMap.cs" />
+    <Compile Include="Models\Mapping\BugRelationShipMap.cs" />
+    <Compile Include="Models\Mapping\BugSubscriptionMap.cs" />
+    <Compile Include="Models\Mapping\BugTaskMap.cs" />
+    <Compile Include="Models\Mapping\BugUserMap.cs" />
+    <Compile Include="Models\Mapping\CategoryMap.cs" />
+    <Compile Include="Models\Mapping\CustomColumnsMetaDataMap.cs" />
+    <Compile Include="Models\Mapping\DashboardItemsMap.cs" />
+    <Compile Include="Models\Mapping\EmailedLinkMap.cs" />
+    <Compile Include="Models\Mapping\OrganizationMap.cs" />
+    <Compile Include="Models\Mapping\PriorityMap.cs" />
+    <Compile Include="Models\Mapping\ProjectMap.cs" />
+    <Compile Include="Models\Mapping\ProjectUserMap.cs" />
+    <Compile Include="Models\Mapping\queryMap.cs" />
+    <Compile Include="Models\Mapping\QueuedNotificationMap.cs" />
+    <Compile Include="Models\Mapping\ReportMap.cs" />
+    <Compile Include="Models\Mapping\sessionMap.cs" />
+    <Compile Include="Models\Mapping\StatusMap.cs" />
+    <Compile Include="Models\Mapping\UserMap.cs" />
+    <Compile Include="Models\Mapping\UserDefinedAttributeMap.cs" />
+    <Compile Include="Models\Mapping\VotesMap.cs" />
+    <Compile Include="Models\Organization.cs" />
+    <Compile Include="Models\Priority.cs" />
+    <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\ProjectUser.cs" />
+    <Compile Include="Models\query.cs" />
+    <Compile Include="Models\QueuedNotification.cs" />
+    <Compile Include="Models\Report.cs" />
+    <Compile Include="Models\session.cs" />
+    <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserDefinedAttribute.cs" />
+    <Compile Include="Models\Votes.cs" />
     <Compile Include="Security\PageAllowAnonymous.cs" />
     <Compile Include="Security\PageAuthorizeAttribute.cs" />
     <Compile Include="Security\BtnetRoles.cs" />
