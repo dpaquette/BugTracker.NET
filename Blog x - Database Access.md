@@ -1,6 +1,6 @@
 Database access is one of those things that is continually changing in the .net world. When I started doing .net development datatables and ADO.net were all the rage. Typically these were accessed over web services just to throw some unnecessary network latency into the mix. It was not at all uncommon to see a web application that called a web service, often on the same machine, that would access a database, extract a datatable and then serialize that and send it back over the network. In hindsight it was a terrible architecture but we didn't think that at the time. In a few years everything we believe is best practice now will also be considered wrong.
 
-A> In the world of accounting the normal way to maintain a list of debits and credits is through a system known as "double entry bookkeeping". This system was developed in Italy some time [before the year 1400](https://en.wikipedia.org/wiki/Double-entry_bookkeeping_system#History). It remains more or less unchanged to this day. Whenever you're upset at the pace that things change in computer technology imagine how boring it must be to work in a field where all the major chalenges were solved some 600 years ago.
+A> In the world of accounting the normal way to maintain a list of debits and credits is through a system known as "double entry bookkeeping". This system was developed in Italy some time [before the year 1400](https://en.wikipedia.org/wiki/Double-entry_bookkeeping_system#History). It remains more or less unchanged to this day. Whenever you're upset at the pace that things change in computer technology imagine how boring it must be to work in a field where all the major challenges were solved some 600 years ago.
 
 I've used numerous other data access tools over the years
 
@@ -12,7 +12,7 @@ I've used numerous other data access tools over the years
 
 to name just those I remember off the top of my head. All of these tools attempt to bridge the gap between the relational world of SQL databases and the object world in which we program.
 
-If we take a look at BugTracker.net we can see that it predates any of these nifty object relational mapping technologies. It is still heavily dependant on using loosely typed collections such as DataSet to hold information from the database. There is a lot of overhead to these collections and we lose out on all the advantage of using a strongly typed language. Type conversion errors are not caught until run time.
+If we take a look at BugTracker.net we can see that it predates any of these nifty object relational mapping technologies. It is still heavily dependent on using loosely typed collections such as DataSet to hold information from the database. There is a lot of overhead to these collections and we lose out on all the advantage of using a strongly typed language. Type conversion errors are not caught until run time.
 
 Dynamic typing is fine if you have a good collection of unit tests to cover the implicit tests that the compiler performs. Unfortunatly BugTracker.NET is devoid of tests. This is a deficiency we're going to address at some point but first things first we should look at leveraging an object relational mapper to help out.
 
@@ -147,7 +147,7 @@ namespace btnet.Models
 ```
 Immediately we can see a number of things that could be cleaned up. The ```System``` prefix on bg_reported_date is not necessary as we're importing the ```System``` namespace. The fields are also prefixed with ```bg_```. We don't need to prefix our variables in this fashion. The prefix doesn't provide any value, unlike those that one might see in C/C++ code for [Hungarian Notation](https://en.wikipedia.org/wiki/Hungarian_notation).
 
-In EF Code First the names of the fields in the model objects must match the column names in the database unless explicitly overridden. The overriding can be done using an annotation on a filed like so
+In EF Code First the names of the fields in the model objects must match the column names in the database unless explicitly overridden. The overriding can be done using an annotation on a field like so
 
 ```
 [ColumnName("bug_id")]
@@ -206,7 +206,7 @@ public class bugMap : EntityTypeConfiguration<bug>
 
 Using a refactoring tool should allow us to change bug.cs and have the change reflected in the equivalent map file. This is a huge time saver so let's push on.
 
-Some of the field names in ```bug.cs``` can simply have the ```bg_``` dropped and their underscore notation replace with Pascal Case, the standard for C#. However many columns could benifit from a bit more information being added. For instance ```bg_reported_user``` is not actually a user object so much as it is the Id of a user object. To make that clear we'll add the Id postfix to it.
+Some of the field names in ```bug.cs``` can simply have the ```bg_``` dropped and their underscore notation replace with Pascal Case, the standard for C#. However many columns could benefit from a bit more information being added. For instance ```bg_reported_user``` is not actually a user object so much as it is the Id of a user object. To make that clear we'll add the Id postfix to it.
 
 After applying all our fixes the class looks like
 
@@ -314,7 +314,7 @@ I also renamed the class to Context from bugtrackerContext, it seemed redundant 
 
 ##Adding Navigation Properties
 
-One of the features that makes EF useful for generating queries is the use of navigation properties. In the database we know that a bug is related to a user through a foreign key. However if we look at the classes we've generated there is no such concept. Fortunatly when we were correcting names in the model objects we added the Id prefix to any property that was a foreign key. We can now loop back through the objects again and add a property for navigation.
+One of the features that makes EF useful for generating queries is the use of navigation properties. In the database we know that a bug is related to a user through a foreign key. However if we look at the classes we've generated there is no such concept. Fortunately when we were correcting names in the model objects we added the Id prefix to any property that was a foreign key. We can now loop back through the objects again and add a property for navigation.
 
 This is the class as it stands
 ```
@@ -386,7 +386,7 @@ public partial class Bug
 Note that we've made each of the navigation properties virtual; this allows EF to override them when generating a proxy class.  With these in place we can now run queries against the foreign key tables like so:
 
 ```
-context.Users.Wherer(x => x.Category.Contains("Developers"));
+context.Users.Where(x => x.Category.Contains("Developers"));
 ```
 
 This query will find any users that are in a category containing the word Developers. We can also add collections to the navigation properties for relationships with a cardinality greater than 1 to 1.  For example a bug can have many tasks so we can add a collection to the Bug object
@@ -425,7 +425,7 @@ using (var context = new Context())
 }
 ```
 
-One the .aspx side we can render the contents of the collection by looping over the collection
+On the .aspx side we can render the contents of the collection by looping over the collection
 
 ```
 <%
