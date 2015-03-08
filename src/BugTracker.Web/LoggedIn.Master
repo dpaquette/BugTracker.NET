@@ -16,10 +16,11 @@
     <link rel="StyleSheet" href="Content/style/jquery-ui.min.css" type="text/css">
     <link href="Content/bootstrap.min.css" rel="stylesheet" />
     <link href="Content/btnet-bootstrap-theme.css" rel="stylesheet" />
+    <link href="Content/DataTables-1.10.5/media/css/jquery.dataTables.min.css" rel="stylesheet" />
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="scripts/jquery-ui.min.js"></script>
     <script type="text/javascript" src="datejs/date.js"></script>
-
+    <script src="Scripts/DataTables-1.10.5/media/js/jquery.dataTables.min.js"></script>
     <asp:ContentPlaceHolder runat="server" ID="headerScripts"></asp:ContentPlaceHolder>
 
 </head>
