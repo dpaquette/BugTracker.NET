@@ -136,6 +136,7 @@
     <Content Include="Content\DataTables-1.10.5\extensions\AutoFill\css\dataTables.autoFill.css" />
     <Content Include="Content\DataTables-1.10.5\extensions\AutoFill\css\dataTables.autoFill.min.css" />
     <Content Include="Content\DataTables-1.10.5\extensions\AutoFill\images\filler.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Bootstrap\dataTables.bootstrap.css" />
     <Content Include="Content\DataTables-1.10.5\extensions\ColReorder\css\dataTables.colReorder.css" />
     <Content Include="Content\DataTables-1.10.5\extensions\ColReorder\css\dataTables.colReorder.min.css" />
     <Content Include="Content\DataTables-1.10.5\extensions\ColReorder\images\insert.png" />
@@ -479,6 +480,7 @@
     <Content Include="Scripts\DataTables-1.10.5\extensions\AutoFill\js\dataTables.autoFill.js" />
     <Content Include="Scripts\DataTables-1.10.5\extensions\AutoFill\js\dataTables.autoFill.min.js" />
     <Content Include="Scripts\DataTables-1.10.5\extensions\AutoFill\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Bootstrap\dataTables.bootstrap.js" />
     <Content Include="Scripts\DataTables-1.10.5\extensions\ColReorder\js\dataTables.colReorder.js" />
     <Content Include="Scripts\DataTables-1.10.5\extensions\ColReorder\js\dataTables.colReorder.min.js" />
     <Content Include="Scripts\DataTables-1.10.5\extensions\ColReorder\Readme.txt" />
