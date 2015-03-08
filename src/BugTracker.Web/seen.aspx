@@ -11,50 +11,44 @@ Distributed under the terms of the GNU General Public License
 void Page_Load(Object sender, EventArgs e)
 {
 	Util.do_not_cache(Response);
-	
-	if (!User.IsInRole(BtnetRoles.Guest))
-	{
-		if (Request.QueryString["ses"] != (string) Session["session_cookie"])
-		{
-			Response.Write ("session in URL doesn't match session cookie");
-			Response.End();
-		}
-	}
 
-	DataView dv = (DataView) Session["bugs"];
-	if (dv == null)
-	{
-		Response.End();
-	}
+    if (!User.IsInRole(BtnetRoles.Guest))
+    {
+        DataView dv = (DataView) Session["bugs"];
+        if (dv == null)
+        {
+            Response.End();
+        }
 
-	int bugid = Convert.ToInt32(Util.sanitize_integer(Request["bugid"]));
+        int bugid = Convert.ToInt32(Util.sanitize_integer(Request["bugid"]));
 
-	int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
-	if (permission_level ==PermissionLevel.None)
-	{
-		Response.End();
-	}
+        int permission_level = Bug.get_bug_permission_level(bugid, User.Identity);
+        if (permission_level == PermissionLevel.None)
+        {
+            Response.End();
+        }
 
-	for (int i = 0; i < dv.Count; i++)
-	{
-		if ((int)dv[i][1] == bugid)
-		{
-			int seen = Convert.ToInt32(Util.sanitize_integer(Request["seen"]));
-			dv[i]["$SEEN"] = seen;
-			var sql = new SQLString(@"
+        for (int i = 0; i < dv.Count; i++)
+        {
+            if ((int) dv[i][1] == bugid)
+            {
+                int seen = Convert.ToInt32(Util.sanitize_integer(Request["seen"]));
+                dv[i]["$SEEN"] = seen;
+                var sql = new SQLString(@"
 if not exists (select bu_bug from bug_user where bu_bug = @bg and bu_user = @us)
 	insert into bug_user (bu_bug, bu_user, bu_flag, bu_seen, bu_vote) values(@bg, @us, 0, 1, 0) 
 update bug_user set bu_seen = @seen, bu_seen_datetime = getdate() where bu_bug = @bg and bu_user = @us and bu_seen <> @seen");
 
-			sql = sql.AddParameterWithValue("seen", Convert.ToString(seen));
-			sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
-			sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
+                sql = sql.AddParameterWithValue("seen", Convert.ToString(seen));
+                sql = sql.AddParameterWithValue("bg", Convert.ToString(bugid));
+                sql = sql.AddParameterWithValue("us", Convert.ToString(User.Identity.GetUserId()));
 
-			btnet.DbUtil.execute_nonquery(sql);
+                btnet.DbUtil.execute_nonquery(sql);
 
-			break;
-		}
-	}
+                break;
+            }
+        }
+    }
 
 }
 
