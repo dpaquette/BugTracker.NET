@@ -1,7 +1,6 @@
 <%@ Page Language="C#" CodeBehind="projects.aspx.cs" Inherits="btnet.projects" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
 
-<%@ Import Namespace="System.Data" %>
-<%@ Import Namespace="btnet" %>
+<%@ Import Namespace="btnet.Models" %>
 <%@ MasterType TypeName="btnet.LoggedIn" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="body">
@@ -36,25 +35,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% foreach (DataRow dataRow in ds.Tables[0].Rows)
+                        <% foreach (Project project in Projects)
                            {
-                               string projectId = Convert.ToString(dataRow["id"]);
                         %>
                         <tr>
-                            <td><%=projectId %></td>
-                            <td><%=dataRow["project"] %></td>
-                            <td><%=dataRow["active"] %></td>
-                            <td><%=dataRow["default user"] %></td>
-                            <td><%=dataRow["auto assign default user"] %></td>
-                            <td><%=dataRow["auto subscribe default user"] %></td>
-                            <td><%=dataRow["receive items via pop3"] %></td>
-                            <td><%=dataRow["pop3 username"] %></td>
-                            <td><%=dataRow["from email address"] %></td>
-                            <td><%=dataRow["default"] %></td>
+                            <td><%=project.Id %></td>
+                            <td><%=project.Name%></td>
+                            <td><%=project.Active == 1 ? "Y" : "N" %></td>
+                            <td><%=project.DefaultUser == 1 ? "Y" : "N" %></td>
+                            <td><%=project.AutoAssignToDefaultUser == 1 ? "Y" : "N" %></td>
+                            <td><%=project.AutoSubscribeDefaultUser == 1 ? "Y" : "N" %></td>
+                            <td><%=project.EnablePOP3 == 1 ? "Y" : "N" %></td>
+                            <td><%=project.POP3UserName %></td>
+                            <td><%=project.POP3SourceEMail %></td>
+                            <td><%=project.Default == 1 ? "Y" : "N" %></td>
                             <td>
-                                <a href="edit_project.aspx?id=<%=projectId %>"><i class="glyphicon glyphicon-edit text-primary" title="Edit Project"></i></a>
-                                <a href="edit_user_permissions2.aspx?projects=y&id=<%=projectId %>"><i class="glyphicon glyphicon-user text-primary" title="Edit User Permissions"></i></a>
-                                <a href="delete_project.aspx?id=<%=projectId %>"><i class="glyphicon glyphicon-trash text-primary" title="Delete Project"></i></a>
+                                <a href="edit_project.aspx?id=<%=project.Id %>"><i class="glyphicon glyphicon-edit text-primary" title="Edit Project"></i></a>
+                                <a href="edit_user_permissions2.aspx?projects=y&id=<%=project.Id %>"><i class="glyphicon glyphicon-user text-primary" title="Edit User Permissions"></i></a>
+                                <a href="delete_project.aspx?id=<%=project.Id %>"><i class="glyphicon glyphicon-trash text-primary" title="Delete Project"></i></a>
                             </td>
 
                         </tr>
