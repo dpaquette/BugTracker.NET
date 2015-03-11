@@ -14,7 +14,8 @@
         <br />
         <div class="row">
             <div class="col-md-9 col-sm-12">
-                <table id="projects-table" class="table table-striped table-bordered">
+                <div id="table-loading-indicator">Loading...</div>
+                <table id="projects-table" class="table table-striped table-bordered" style="display: none">
                     <thead>
                         <tr>
                             <th>id</th>
@@ -54,7 +55,6 @@
                                 <a href="edit_user_permissions2.aspx?projects=y&id=<%=project.Id %>"><i class="glyphicon glyphicon-user text-primary" title="Edit User Permissions"></i></a>
                                 <a href="delete_project.aspx?id=<%=project.Id %>"><i class="glyphicon glyphicon-trash text-primary" title="Delete Project"></i></a>
                             </td>
-
                         </tr>
                         <%} %>
                     </tbody>
@@ -67,6 +67,8 @@
     <script type="text/javascript">
         $(function () {
             $("#projects-table").dataTable();
+            $("#projects-table").show();
+            $("#table-loading-indicator").hide();
         });
     </script>
 </asp:Content>
