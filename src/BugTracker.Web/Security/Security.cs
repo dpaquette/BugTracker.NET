@@ -36,7 +36,7 @@ where us_username = @us and u.us_active = 1");
             sql = sql.AddParameterWithValue("us", username);
             DataRow dr = btnet.DbUtil.get_datarow(sql);
 
-            var bugsPerPage = string.IsNullOrEmpty(dr["us_bugs_per_page"] as string) ? 10 : (int)dr["us_bugs_per_page"];
+            var bugsPerPage = dr["us_bugs_per_page"] == DBNull.Value ? 10 : (int)dr["us_bugs_per_page"];
 
             var claims = new List<Claim>
             {
