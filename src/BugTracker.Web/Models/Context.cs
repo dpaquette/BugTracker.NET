@@ -1,6 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Security.Principal;
 using btnet.Models.Mapping;
+using btnet.Security;
 
 namespace btnet.Models
 {
@@ -31,7 +36,19 @@ namespace btnet.Models
         public DbSet<Priority> Priorities { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<query> Queries { get; set; }
+        
+        public DbSet<Query> Queries { get; set; }
+
+        public IList<Query> GetQueriesForUser(IIdentity identity)
+        {
+            var userId = identity.GetUserId();
+            var orgId = identity.GetOrganizationId();
+            return Queries.Where(q =>
+                    (q.User == null || q.User == userId) &&
+                    (q.Org == null || q.Org == orgId)
+                    ).OrderBy(q => q.Description).ToList(); 
+        }
+
         public DbSet<QueuedNotification> QueuedNotification { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<session> Sessions { get; set; }
@@ -57,7 +74,7 @@ namespace btnet.Models
             modelBuilder.Configurations.Add(new PriorityMap());
             modelBuilder.Configurations.Add(new ProjectUserMap());
             modelBuilder.Configurations.Add(new ProjectMap());
-            modelBuilder.Configurations.Add(new queryMap());
+            modelBuilder.Configurations.Add(new QueryMap());
             modelBuilder.Configurations.Add(new QueuedNotificationMap());
             modelBuilder.Configurations.Add(new ReportMap());
             modelBuilder.Configurations.Add(new sessionMap());

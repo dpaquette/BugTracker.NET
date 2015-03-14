@@ -5,6 +5,7 @@
     [qu_default] INT            NULL,
     [qu_user]    INT            NULL,
     [qu_org]     INT            NULL,
+	[qu_columns] NTEXT          NOT NULL DEFAULT 'ColumnsNeeded'
     CONSTRAINT [pk_queries] PRIMARY KEY CLUSTERED ([qu_id] ASC)
 );
 

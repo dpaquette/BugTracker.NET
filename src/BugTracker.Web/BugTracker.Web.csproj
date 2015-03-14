@@ -841,6 +841,7 @@
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="btnet\BugQueryExecutor.cs" />
     <Compile Include="Controls\BugList.ascx.cs">
       <DependentUpon>BugList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -896,7 +897,7 @@
     <Compile Include="Models\Mapping\PriorityMap.cs" />
     <Compile Include="Models\Mapping\ProjectMap.cs" />
     <Compile Include="Models\Mapping\ProjectUserMap.cs" />
-    <Compile Include="Models\Mapping\queryMap.cs" />
+    <Compile Include="Models\Mapping\QueryMap.cs" />
     <Compile Include="Models\Mapping\QueuedNotificationMap.cs" />
     <Compile Include="Models\Mapping\ReportMap.cs" />
     <Compile Include="Models\Mapping\sessionMap.cs" />
