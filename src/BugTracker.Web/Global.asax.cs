@@ -2,6 +2,7 @@
 using System.IO;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Http;
 using btnet.App_Start;
 using NLog;
 
@@ -23,6 +24,7 @@ namespace btnet
 
         public void Application_OnStart(Object sender, EventArgs e)
         {
+            GlobalConfiguration.Configure(WebApiConfig.Register);
             LoggingConfig.Configure();
             HttpRuntime.Cache.Add("Application", Application, null, Cache.NoAbsoluteExpiration,
                 Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, null);
