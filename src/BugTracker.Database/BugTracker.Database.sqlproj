@@ -94,4 +94,7 @@
     <Build Include="dbo\Tables\dashboard_items.sql" />
     <Build Include="dbo\Views\votes_view.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
 </Project>
