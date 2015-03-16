@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
 using btnet.Models;
 using btnet.Security;
+using System.IO;
 
 namespace btnet
 {
@@ -18,47 +20,52 @@ namespace btnet
         public BugQueryExecutor(Query query)
         {
             _query = query;
-            _columnNames = query.ColumnNames;
-            if (query.Columns == "ColumnsNeeded")
-            {
-                var initialSql = string.Format("SELECT TOP 1 t.* FROM ({0}) t", GetInnerSql());
-                SQLString sqlString = new SQLString(initialSql);
-                sqlString.AddParameterWithValue("@ME", -1);
-                var dataSet = DbUtil.get_dataset(sqlString);
-                var columns = new List<string>();
-                foreach (DataColumn column in dataSet.Tables[0].Columns)
-                {
-                 columns.Add(column.ColumnName);
-                }
-                _columnNames = columns.ToArray();
-            }
+            _columnNames = query.ColumnNames;           
         }
 
-        public DataTable ExecuteQuery(IIdentity identity, int pageNumber, string orderBy, string sortDirection)
+        public BugQueryResult ExecuteQuery(IIdentity identity, int start, int length, string orderBy, string sortDirection, BugQueryFilter[] filters = null)
         {
             if (!string.IsNullOrEmpty(orderBy) && !_columnNames.Contains(orderBy))
             {
                 throw new ArgumentException("Invalid order by column specified: {0}", orderBy);
             }
-
-            int pageSize = identity.GetBugsPerPage();
-
-            //TODO: Add Util.alter_sql_per_project_permissions(bug_sql, User.Identity);
-            var initialSql = string.Format("SELECT t.* FROM ({0}) t", GetInnerSql());
+           
+            var initialSql = string.Format("SELECT t.* FROM ({0}) t", GetInnerSql(identity));
             SQLString sqlString = new SQLString(initialSql);
-            sqlString.AddParameterWithValue("@ME", identity.GetUserId());
+            var initialCountSql = string.Format("SELECT COUNT(*) FROM ({0}) t", GetInnerSql(identity));
+            SQLString countSqlString = new SQLString(initialCountSql);
+            SQLString countUnfilteredSqlString = new SQLString(initialCountSql);
+            int userId = identity.GetUserId();
+            sqlString.AddParameterWithValue("@ME", userId);
+            countSqlString.AddParameterWithValue("@ME", userId);
+            countUnfilteredSqlString.AddParameterWithValue("@ME", userId);
 
+            
+            if (filters != null && filters.Any())
+            {
+                ApplyWhereClause(sqlString, filters);
+                ApplyWhereClause(countSqlString, filters);
+            }
+           
             sqlString.Append(" ORDER BY ");
 
             sqlString.Append(BuildDynamicOrderByClause());
 
             sqlString.AddParameterWithValue("ORDER_BY", orderBy ?? _columnNames.First());
             sqlString.AddParameterWithValue("SORT_DIRECTION", sortDirection);
-            sqlString.Append(" OFFSET @offset ROWS FETCH NEXT @page_size ROWS ONLY");
-            sqlString.AddParameterWithValue("page_size", pageSize);
-            sqlString.AddParameterWithValue("offset", pageSize*pageNumber);
 
-            return btnet.DbUtil.get_dataset(sqlString).Tables[0];
+         
+            sqlString.Append(" OFFSET @offset ROWS FETCH NEXT @page_size ROWS ONLY");
+            sqlString.AddParameterWithValue("page_size", length);
+            sqlString.AddParameterWithValue("offset", start);
+
+
+            return new BugQueryResult
+            {
+                CountUnfiltered = Convert.ToInt32(DbUtil.execute_scalar(countUnfilteredSqlString)),
+                CountFiltered = Convert.ToInt32(DbUtil.execute_scalar(countSqlString)),
+                Data = DbUtil.get_dataset(sqlString).Tables[0]
+            };
 
         }
 
@@ -66,21 +73,41 @@ namespace btnet
         {
             return string.Join(", ",
                 _columnNames.Select(column => string.Format(
-                    @"CASE WHEN @ORDER_BY = '{0}' AND @SORT_DIRECTION = 'DESC' THEN [{0}] END DESC, 
-  CASE WHEN @ORDER_BY = '{0}' AND @SORT_DIRECTION = 'ASC' THEN [{0}] END ASC
-                            ", column)).ToArray());
+                    @" CASE WHEN @ORDER_BY = '{0}' AND @SORT_DIRECTION = 'DESC' THEN [{0}] END DESC, 
+  CASE WHEN @ORDER_BY = '{0}' AND @SORT_DIRECTION = 'ASC' THEN [{0}] END ASC", column)).ToArray());
         }
 
-        private string GetInnerSql()
+        private void ApplyWhereClause(SQLString sqlString, BugQueryFilter[] filters)
         {
-            var innerSql = _query.SQL;
-            var indexOfOrderBy = innerSql.IndexOf("order by", StringComparison.InvariantCultureIgnoreCase);
-            if (indexOfOrderBy > 0)
+            sqlString.Append(" WHERE ");
+            List<string> conditions = new List<string>();
+            foreach (var filter in filters)
             {
-                innerSql = innerSql.Substring(0, indexOfOrderBy);
+                if (!_columnNames.Contains(filter.Column))
+                {
+                    throw new ArgumentException("Invalid filter column: {0}", filter.Column);
+                }
+                string parameterName = GetCleanParameterName(filter.Column);
+                conditions.Add(string.Format("[{0}] = @{1}", filter.Column, parameterName));
+                sqlString.AddParameterWithValue(parameterName, filter.Value);
             }
-            return innerSql.Replace("isnull(pr_background_color,'#ffffff')", "isnull(pr_background_color,'#ffffff') [$COLOR]");
-
+            sqlString.Append(string.Join(" AND ", conditions));
         }
+
+        private string GetInnerSql(IIdentity identity)
+        {
+            SQLString innerSql = new SQLString(_query.SQL);
+            return Util.alter_sql_per_project_permissions(innerSql, identity).ToString();
+        }
+
+        private string GetCleanParameterName(string columnName)
+        {
+            var parameterName = columnName;
+            //TODO: Add other invalid special characters
+            parameterName = parameterName.Replace(" ", "_");            
+            return parameterName;
+        }
+
+
     }
 }

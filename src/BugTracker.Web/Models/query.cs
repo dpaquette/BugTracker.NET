@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace btnet.Models
 {
@@ -17,7 +18,10 @@ namespace btnet.Models
         {
             get { return Columns.Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries); }
         }
-
+        public string[] VisibleColumnNames
+        {
+            get { return ColumnNames.Except(new[] { "$COLOR", "$SCORE" }).ToArray(); }
+        }
 
     }
 }

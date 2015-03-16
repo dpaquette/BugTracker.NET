@@ -21,6 +21,7 @@
     <link href="Content/btnet-bootstrap-theme.css" rel="stylesheet" />
 
     <script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script>
+    <script src="Scripts/moment.min.js"></script>
     <script type="text/javascript" src="scripts/jquery-ui.min.js"></script>
     <script src="Scripts/DataTables-1.10.5/media/js/jquery.dataTables.min.js"></script>
     <script src="Scripts/DataTables-1.10.5/extensions/Bootstrap/dataTables.bootstrap.js"></script>

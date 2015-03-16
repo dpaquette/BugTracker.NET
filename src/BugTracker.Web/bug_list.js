@@ -1,16 +1,14 @@
-function on_page(page)
-{
-	add_tags_to_form_var()
+function on_page(page) {
+    add_tags_to_form_var();
 	
 	var frm =  document.getElementById(asp_form_id);
 	frm.actn.value = "page";
-	frm.new_page.value = page
+    frm.new_page.value = page;
 	frm.submit();
 }
 
-function on_sort(col)
-{
-	add_tags_to_form_var()
+function on_sort(col) {
+    add_tags_to_form_var();
 	
 	var frm = document.getElementById(asp_form_id);
 	frm.actn.value = "sort";
@@ -119,9 +117,8 @@ function on_filter()
 var current_element
 var current_bug
 
-function get_bug_comment(bugid)
-{
-	var url = "ajax.aspx?bugid=" + bugid
+function get_bug_comment(bugid) {
+    var url = "ajax.aspx?bugid=" + bugid;
 	$.get(url, "", handle_popup)
 }
 
@@ -185,9 +182,9 @@ function maybe_get_bug_comment(bug)
 {
 	// if they have already moved to another bug,
 	// ignore where they HAD been hovering
-	if (bug == current_bug)
-	{
-		get_bug_comment(current_bug)
+    if (bug == current_bug) {
+        console.log("Match!");
+	    get_bug_comment(current_bug);
 	}
 }
 
@@ -196,11 +193,12 @@ function on_mouse_over(el)
 	if (enable_popups)
 	{
 		current_element = el;
-		pos = el.href.indexOf("=")
+	    pos = el.href.indexOf("=");
 		pos++ // start with char after the =
-		current_bug = el.href.substr(pos)
+		current_bug = el.href.substr(pos);
+	    console.log(current_bug);
 		// get comment if the user keeps hovering over this
-		setTimeout('maybe_get_bug_comment(' + current_bug + ')', 250)
+	    setTimeout('maybe_get_bug_comment(' + current_bug + ')', 250);
 	}
 }
 
@@ -224,9 +222,8 @@ function get_cookie(name) {
 
 
 var cls = (navigator.userAgent.indexOf("MSIE") > 0) ? "className" : "class";
-function flag(el, bugid)
-{
-	var which = el.getAttribute(cls)
+function flag(el, bugid) {
+    var which = el.getAttribute(cls);
 	var which_int = 0;
 
 	if (which == 'wht') 
@@ -245,10 +242,10 @@ function flag(el, bugid)
 		which_int = 0;
 	}
 
-	el.setAttribute(cls,which)
-	
-	var url = "flag.aspx?ses=" + get_cookie("se_id") +  "&bugid=" + bugid + "&flag=" + which_int
-	$.get(url)
+    el.setAttribute(cls, which);
+
+    var url = "flag.aspx?bugid=" + bugid + "&flag=" + which_int;
+    $.get(url);
 }
 
 function seen(el, bugid)
@@ -269,7 +266,7 @@ function seen(el, bugid)
 
 	el.setAttribute(cls,which)
 	
-	var url = "seen.aspx?ses=" + get_cookie("se_id") +  "&bugid=" + bugid + "&seen=" + which_int
+	var url = "seen.aspx?bugid=" + bugid + "&seen=" + which_int
 	$.get(url)
 }
 
@@ -296,7 +293,7 @@ function vote(el, bugid)
 	$(el).text(vote_count)
 	
 	// update the server side cache and the db
-	var url = "vote.aspx?ses=" + get_cookie("se_id") +  "&bugid=" + bugid + "&vote=" + yes_or_no
+	var url = "vote.aspx?bugid=" + bugid + "&vote=" + yes_or_no
 	$.get(url)
 }
 
