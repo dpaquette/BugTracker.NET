@@ -11,16 +11,8 @@
                 <a href="search.aspx">back to search</a>
 
             or<p>
-                <script>
-                    function submit_form() {
-                        var frm = document.getElementById("<%=frm.ClientID%>");
-                        frm.submit();
-                        return true;
-                    }
-
-                </script>
                 <form runat="server" id="frm">
-                    <a style="border: 1px red solid; padding: 3px;" id="confirm_href" runat="server" href="javascript: submit_form()"></a>
+                    <a style="border: 1px red solid; padding: 3px;" id="confirm_href" runat="server" data-action="submit"></a>
                     <input type="hidden" id="bug_list" runat="server" />
                     <input type="hidden" id="update_or_delete" runat="server" />
                 </form>
