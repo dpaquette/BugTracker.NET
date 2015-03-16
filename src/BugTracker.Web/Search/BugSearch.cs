@@ -54,6 +54,7 @@ namespace btnet.Search
             ISearchResponse<object> response =
                 _client.Search<object>(s => s.Types("bug")
                   .Query(q => q.QueryString(d => d.Query(searchText)))
+                  .Take(500) //Maximum of 500 results just to avoid major performance problems
                   .Highlight(h => h.PreTags("<span class='highlighted'>")
                                    .PostTags("</span>")
                                    .OnFields(f => f.OnField("*"))));
