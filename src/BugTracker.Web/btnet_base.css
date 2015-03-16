@@ -9,6 +9,19 @@ a.external-link {
 
 /* bug tables */
 
+#bug-table thead tr:first-child th {
+    border-bottom: none;   
+}
+
+#bug-table thead tr.filter-row {
+    
+}
+
+#bug-table thead tr.filter-row th {
+    font-weight: normal;
+}
+
+
 table.table th {
     background: none !important;
     vertical-align: text-top !important;
