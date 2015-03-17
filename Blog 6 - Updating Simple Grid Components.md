@@ -1,5 +1,8 @@
 #Updating Grid Components
 
+Most line of business ASP.NET applications rely heavily on some for of Data Table / Data Grid component. These components take either lists of strongly typed objects or an instance of a DataTable and display the contents in a tabular format. The grid components provide common functionality such as sorting, filtering and paging. While the components have are intended to help the developer by encapsulating this common logic, they also tend to be a major road-block to updating the application. This is often because the implementation of the grid component requires us to strongly couple our application code to it. The way we access the data in our application is often dictated to us by the grid component.
+
+In the case of BugTracker, we are lucky in a way because it does not use a third party grid library. Unfortunately though, the implementation of grids is less than ideal and not very easy to change.
 
 ##The Current Approach
 Let's start with a simple example from the Admin section. The Admin -> Projects page displays all of the projects defined in BugTracker in a simple, sortable grid.
@@ -256,7 +259,7 @@ On the aspx page, we can now loop over the strongly typed array of Projects whic
 [View the commit - Using Entity Framework in Projects page]()
 
 #Performance
-You might be wondering about the performance of this approach and how well it will scale when dealing with large amounts of data. These are valid concerns as this approach as the potential to be very inefficient if we are trying to display a large number of rows.
+You might be wondering about the performance of this approach and how well it will scale when dealing with large amounts of data. These are valid concerns as this approach has the potential to be very inefficient if we are trying to display a large number of rows.
 
 For the example above, performance should not be a problem. I can't imagine a situation where we would have more than a handful or projects in the system and I know that this approach will scale well to at least 100 rows. Just to test out the theory, let's test a scenario where we have 1000 projects.
 
@@ -284,60 +287,6 @@ This small change will ensure a good user experience for a fairly large number o
 
 [View the commit - Improved initialization of Projects grid](https://github.com/dpaquette/BugTracker.NET/commit/9d6287fe16fd73a32aff7a5abb96c2f3196c476c)
 
-According to guidance provided on the [DataTables.net FAQ](http://datatables.net/faqs/index), the DOM sourced data approach should scale to ~5,000 rows. That seems a little high to me but again gives me confidence that we will be okay for the admin grid. We will get back to the remaining admin grids later. For now, let's turn our attention to the Bugs grid.
+According to guidance provided on the [DataTables.net FAQ](http://datatables.net/faqs/index), the DOM sourced data approach should scale to ~5,000 rows. That seems a little high to me but again gives me confidence that we will be okay for the admin grid.
 
-#Updating the Bugs Grid
-With the bugs grid, we need to be a little more careful because we could conceivably have 10s of thousands of bugs stored in the system. In this case, we will probably want to use AJAX sourced data instead of DOM sourced. If I was building this system from scratch, I would have a Web API end-point that served JSON data. The client would make HTTP requests to the server, passing search, sorting and paging parameters. The server would use pass those parameters to the SQL server and all the filtering, sorting and paging would be done in SQL. This is hands down the most efficient way to do this. It minimizes the amount of data passed between the SQL server, the Web Server and the client. Requests and responses would be small, which would help ensure optimal throughput.
-
-But, we are not building BugTracker.NET from scratch. We have an existing system that we are trying to improve.
-
-First, let's review how the bugs.aspx page works today. Here is a screenshot of the current grid:
-
-![The original Bugs grid](Images/BugsGridOriginal.png)
-
-Users can interact with this grid in a number of ways. They can select different queries from the Query dropdown. Selecting a difference query executes a completely different SQL query and renders a completely different grid with different columns. Clicking on the column header will sort the result set by that column. Some of the columns have dropdowns that allow for filtering. Selecting a value from one of these dropdows will filter the grid to only rows that match the selected value for that column.
-
-Behind the scenes, this page works with by submitting a form back to the bugs.aspx page whenever the user completes one of these actions. The form contains hidden fields to indicate which query to execute, which column to sort by and the selected filters.
-
-```
-<input type="hidden" name="new_page" id="new_page" runat="server" value="0" />
-<input type="hidden" name="actn" id="actn" runat="server" value="" />
-<input type="hidden" name="filter" id="filter" runat="server" value="" />
-<input type="hidden" name="sort" id="sort" runat="server" value="-1" />
-<input type="hidden" name="prev_sort" id="prev_sort" runat="server" value="-1" />
-<input type="hidden" name="prev_dir" id="prev_dir" runat="server" value="ASC" />
-<input type="hidden" name="tags" id="tags" value="" />
-```
-All the filtering, sorting and paging is done on the Web server, not the database server. This is probably acceptable in for many scenarios but it is far from ideal. For example, imagine the grid displays bugs in pages of 25 at a time. What would happen if we had 100,000 bugs in BugTracker and we are trying to display the last 25 bugs in the list of 100,000.
-
-First, the Web server would send a query to the database and load all 100,000 rows in a DataSet in .NET. Right off the bat, this is consuming a lot of unnecessary bandwidth between the database and the web server. It will also cause a big spike in memory usage by the web server. Next, the server will create a DataView from the DataSet and apply sorting and filtering. This much less efficient than asking the database to perform these operations. Databases are VERY good at sorting and filtering. DataViews can do an okay job, but they just aren't optimized to the same extend as a database server is. Finally, let's look at the C# code that handles paging.
-
-```
-int rows_this_page = 0;
-int j = 0;
-
-foreach (DataRowView drv in dv)
-{
-    // skip over rows prior to this page
-    if (j < bugsPerPage * this_page)
-    {
-        j++;
-        continue;
-    }
-    // do not show rows beyond this page
-    rows_this_page++;
-    if (rows_this_page > bugsPerPage)
-    {
-        break;
-    }
-    //Render the table row
-}
-```
-
-As you can see, rendering the last page in the table involves iterating through every single row in the table. This is not a responsible use of the web server's CPU.
-
-The approach used to render this grid might result in acceptable performance for a small number of total bugs and a small number of users, it just won't handle load well. Unlike the admin pages, the bugs page needs to be as efficient as possible. It is the main page of the appliction and we should expect that every single user of BugTracker might be using it at the same time.
-
-Let's see what we can do it improve this page.
-
-One of the biggest challenges here is the fact that this page can execute  arbitrary queries that return any number of columns. This seems to be an important extensibility point in BugTracker so I would like to keep this feature.
+In the next post, we will turn our attention to the far more complex Bugs grid.
