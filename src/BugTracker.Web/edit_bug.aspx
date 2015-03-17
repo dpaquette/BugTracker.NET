@@ -10,20 +10,18 @@
     <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
     <% } %>
     <script>
-        var this_bugid = <%=Convert.ToString(id)%>;
+        var this_bugid = parseInt($("[data-bug-id]").attr("data-bug-id"));
 
         $(document).ready(do_doc_ready);
 
         function do_doc_ready() {
-            date_format = '<%=btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")%>';
+            date_format = $("[data-date-format]").attr("data-date-format");
             $(".date").datepicker({ dateFormat: date_format, duration: 'fast' });
             $(".date").change(mark_dirty);
             $(".warn").click(warn_if_dirty);
-            <% if (User.Identity.GetUseFCKEditor())
-               {
-                   Response.Write("CKEDITOR.replace( 'comment' )");
-               }	    
-            %>
+            if ($("[data-use-fck-editor]").length > 0) {
+                CKEDITOR.replace('comment');
+            }
             on_body_load();
             $(document).on("unload", "body", function () { on_body_unload(); });
 
@@ -34,14 +32,17 @@
 
 <asp:Content ContentPlaceHolderID="body" runat="server" ClientIDMode="Static">
 
-    <div class="container">
+    <div class="container" 
+         data-bug-id="<%: Convert.ToString(id)%>" 
+         data-date-format="<%: btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")%>" 
+        <%: User.Identity.GetUseFCKEditor() ? "data-use-fck-editor=''" : "" %> >
 
         <div class="row">
 
 
             <div id="edit_bug_menu" class="custom-collapse <%=id > 0 ? "col-sm-12 col-md-3 col-lg-2" : "" %>">
-                <div class="btn btn-default text-left visible-xs-block visible-sm-block"  style="text-align: left; width: 175px" data-toggle="collapse" data-target="#side_menu_collapse">
-                    <i class="glyphicon glyphicon-tasks"></i><span> Bug Tools </span> <i class="glyphicon glyphicon-chevron-down pull-right"></i>
+                <div class="btn btn-default text-left visible-xs-block visible-sm-block" style="text-align: left; width: 175px" data-toggle="collapse" data-target="#side_menu_collapse">
+                    <i class="glyphicon glyphicon-tasks"></i><span>Bug Tools </span><i class="glyphicon glyphicon-chevron-down pull-right"></i>
                 </div>
                 <ul id="side_menu_collapse" class="collapse">
                     <%  if (User.Identity.GetCanAddBugs() && id > 0)
