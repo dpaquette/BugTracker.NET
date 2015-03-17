@@ -566,3 +566,19 @@ function show_calendar(el)
 	$("#" + el).datepicker("show")
 }
 
+var this_bugid = parseInt($("[data-bug-id]").attr("data-bug-id"));
+
+$(document).ready(do_doc_ready);
+
+function do_doc_ready() {
+    var date_format = $("[data-date-format]").attr("data-date-format");
+    $(".date").datepicker({ dateFormat: date_format, duration: 'fast' });
+    $(".date").change(mark_dirty);
+    $(".warn").click(warn_if_dirty);
+    if ($("[data-use-fck-editor]").length > 0) {
+        CKEDITOR.replace('comment');
+    }
+    on_body_load();
+    $(document).on("unload", "body", function () { on_body_unload(); });
+
+}
