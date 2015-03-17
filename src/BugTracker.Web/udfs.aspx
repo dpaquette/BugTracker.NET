@@ -4,9 +4,6 @@
 <%@ Import Namespace="btnet.Models" %>
 <%@ MasterType TypeName="btnet.LoggedIn" %>
 
-<asp:Content runat="server" ContentPlaceHolderID="headerScripts">
-    <script type="text/javascript" src="sortable.js"></script>
-</asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="body">
         <div class="container-fluid">
