@@ -1,5 +1,9 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using btnet.Models;
 using btnet.Security;
 
 namespace btnet
@@ -9,16 +13,20 @@ namespace btnet
     {
 
         protected DataSet ds;
+        protected IEnumerable<Priority> Priorities;
 
         protected void Page_Load(Object sender, EventArgs e)
         {
 
             Util.do_not_cache(Response);
             Master.Menu.SelectedItem = "admin";
-
+            
             Page.Header.Title = Util.get_setting("AppTitle", "BugTracker.NET") + " - "
                 + "priorities";
-
+            using (Context context = new Context())
+            {
+                Priorities = context.Priorities.OrderBy(p => p.Name).ToArray();
+            }      
             ds = btnet.DbUtil.get_dataset(new SQLString(
                 @"select pr_id [id],
 		pr_name [description],
