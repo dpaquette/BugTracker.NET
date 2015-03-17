@@ -584,7 +584,6 @@
     <Content Include="comment.png" />
     <Content Include="complete_registration.aspx" />
     <Content Include="COPYING.TXT" />
-    <Content Include="customfields.aspx" />
     <Content Include="custom\btnet_custom.css" />
     <Content Include="custom\btnet_edit_bug.css" />
     <Content Include="custom\btnet_search.css" />
@@ -605,7 +604,6 @@
     <Content Include="delete_bug.aspx" />
     <Content Include="delete_category.aspx" />
     <Content Include="delete_comment.aspx" />
-    <Content Include="delete_customfield.aspx" />
     <Content Include="delete_org.aspx" />
     <Content Include="delete_priority.aspx" />
     <Content Include="delete_project.aspx" />
@@ -685,7 +683,6 @@
     <Content Include="edit_bug.js" />
     <Content Include="edit_category.aspx" />
     <Content Include="edit_comment.aspx" />
-    <Content Include="edit_customfield.aspx" />
     <Content Include="edit_custom_html.aspx" />
     <Content Include="edit_dashboard.aspx" />
     <Content Include="edit_org.aspx" />
@@ -973,13 +970,6 @@
     <Compile Include="Controls\MainMenu.ascx.designer.cs">
       <DependentUpon>MainMenu.ascx</DependentUpon>
     </Compile>
-    <Compile Include="customfields.aspx.cs">
-      <DependentUpon>customfields.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="customfields.aspx.designer.cs">
-      <DependentUpon>customfields.aspx</DependentUpon>
-    </Compile>
     <Compile Include="dashboard.aspx.cs">
       <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1011,13 +1001,6 @@
     </Compile>
     <Compile Include="delete_comment.aspx.designer.cs">
       <DependentUpon>delete_comment.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="delete_customfield.aspx.cs">
-      <DependentUpon>delete_customfield.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="delete_customfield.aspx.designer.cs">
-      <DependentUpon>delete_customfield.aspx</DependentUpon>
     </Compile>
     <Compile Include="delete_org.aspx.cs">
       <DependentUpon>delete_org.aspx</DependentUpon>
@@ -1116,13 +1099,6 @@
     </Compile>
     <Compile Include="edit_comment.aspx.designer.cs">
       <DependentUpon>edit_comment.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="edit_customfield.aspx.cs">
-      <DependentUpon>edit_customfield.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="edit_customfield.aspx.designer.cs">
-      <DependentUpon>edit_customfield.aspx</DependentUpon>
     </Compile>
     <Compile Include="edit_custom_html.aspx.cs">
       <DependentUpon>edit_custom_html.aspx</DependentUpon>
