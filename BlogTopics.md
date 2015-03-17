@@ -49,3 +49,4 @@
  - Packaging
  - Deploying to azure
  - Building a Web Platform Install package(http://www.microsoft.com/web/gallery/)
+ - Deploy to azure button http://www.bradygaster.com/post/the-deploy-to-azure-button
