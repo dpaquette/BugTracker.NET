@@ -36,7 +36,7 @@ At the end of the body, we add a reference to the Bootstrap JS file:
 
 [View the commit - Added Bootstrap](https://github.com/dpaquette/BugTracker.NET/commit/9dc3c6f5cb598d40aeea30bd0938b65c7f3180db)
 
-Now that we have Bootstrap available, we need to decide where to start. In a typical production web application, we could easily identify the most visited pages by checking the web server log files. The most visted pages are a good place to start as they would have the highest potential positive impact. In the case of BugTracker, we don't have access to web server logs. Luckily, it is pretty easy to make an educated guess at the which are the most visited pages:
+Now that we have Bootstrap available, we need to decide where to start. In a typical production web application, we could easily identify the most visited pages by checking the web server log files. The most visited pages are a good place to start as they would have the highest potential positive impact. In the case of BugTracker, we don't have access to web server logs. Luckily, it is pretty easy to make an educated guess at the which are the most visited pages:
 - Login
 - Bugs List
 - View/Edit Bug
@@ -175,7 +175,7 @@ As I start to introduce these changes, I notice that some more css from btnet-ba
 }
 ````
 
-Likewise, the styling of body, p, td and a several other tags is all causing some inconsistent styling. It is best to keep our custom CSS to a minimum. In the case of BugTracker, we can safefly remove most CSS rules that are setting font sizes or font family.
+Likewise, the styling of body, p, td and a several other tags is all causing some inconsistent styling. It is best to keep our custom CSS to a minimum. In the case of BugTracker, we can safely remove most CSS rules that are setting font sizes or font family.
 
 With the new toolbar, I split out the query dropdown from the other grid bug related actions.
 
@@ -248,6 +248,6 @@ By applying the same approach as we did to the main menu, we are able to collaps
 We could continue to make changes to more pages, but this is probably a good time to publish the update to the application. The changes we made cover the most commonly used pages. Now is a good time to get some feedback from users before applying the styling changes to the remaining application pages.
 
 ##Conclusion
-With very little effort, we were able to make some high impact improvemnts to the design of a web application that is over a decade old. By using a popular CSS framework, we were able to leverage design expertise from the community without requiring extensive design experience ourselves. As an added bonus, we are  also able to provide a much more pleasant experience for those accessing BugTracker on a mobile devices.
+With very little effort, we were able to make some high impact improvements to the design of a web application that is over a decade old. By using a popular CSS framework, we were able to leverage design expertise from the community without requiring extensive design experience ourselves. As an added bonus, we are  also able to provide a much more pleasant experience for those accessing BugTracker on a mobile devices.
 
 If you want to learn more about Bootstrap, we highly recommend [Bootstrapping MVC](https://leanpub.com/bootstrappingmvc) by James Chambers.
