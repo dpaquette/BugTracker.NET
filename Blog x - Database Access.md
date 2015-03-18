@@ -14,7 +14,7 @@ to name just those I remember off the top of my head. All of these tools attempt
 
 If we take a look at BugTracker.net we can see that it predates any of these nifty object relational mapping technologies. It is still heavily dependent on using loosely typed collections such as DataSet to hold information from the database. There is a lot of overhead to these collections and we lose out on all the advantage of using a strongly typed language. Type conversion errors are not caught until run time.
 
-Dynamic typing is fine if you have a good collection of unit tests to cover the implicit tests that the compiler performs. Unfortunatly BugTracker.NET is devoid of tests. This is a deficiency we're going to address at some point but first things first we should look at leveraging an object relational mapper to help out.
+Dynamic typing is fine if you have a good collection of unit tests to cover the implicit tests that the compiler performs. Unfortunately BugTracker.NET is devoid of tests. This is a deficiency we're going to address at some point but first things first we should look at leveraging an object relational mapper to help out.
 
 A> Many programmers are moving away from using object relational mappers(ORMs). The reasoning is that there is a discord between objects and relationships. This is, in effect, the law of leaky abstractions: as you add layers to cover complex actions with simple ones there are some nuances about the lower layers that are lost.
 
@@ -97,7 +97,7 @@ In Visual Studio install the Entity Framework Power Tools.
 
 ![Extensions](Images/extensions.jpg)
 
-This brings us a new menu option: to reverse engineer a data model. Unfortunatly this sounds far cooler than it is and, unlike the movie Paycheck, Aaron Eckhart is unlikley to try to kill you for doing it.
+This brings us a new menu option: to reverse engineer a data model. Unfortunately this sounds far cooler than it is and, unlike the movie Paycheck, Aaron Eckhart is unlikely to try to kill you for doing it.
 
 ![Reverse engineer code first](Images/reverse_engineer.jpg)
 
