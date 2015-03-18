@@ -257,7 +257,7 @@ On the aspx page, we can now loop over the strongly typed array of `Project` obj
   <% } %>
 ```
 
-[View the commit - Using Entity Framework in Projects page]()
+[View the commit - Using Entity Framework in Projects page](https://github.com/dpaquette/BugTracker.NET/commit/11ffd198b329f10cb07f2eced5509a2121d24455)
 
 #Performance
 You might be wondering about the performance of this approach and how well it will scale when dealing with large amounts of data. These are valid concerns as this approach has the potential to be very inefficient if we are trying to display a large number of rows.
