@@ -1158,62 +1158,7 @@ order by sc.id, isnull(ccm_sort_seq,sc.colorder)"));
 			DbUtil.execute_nonquery(sql);
 		}
 
-        /////////////////////////////////////////////////////////////////////////
-        //public static void print_as_excel(HttpResponse Response, DataView dv)
-        //{ 
-        //    Response.AddHeader("content-disposition", "attachment;filename=bugs.xls");
-        //    Response.Write("<html><head><meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/></head><body>");
-        //    Response.Write("<table border=1>");
-        //    int startCol = 0;
-        //    int col;
-            
-        //    // column names first_column = true;
-        //    for (col = startCol; col < dv.Table.Columns.Count;col++)
-        //    { 
-        //        if (dv.Table.Columns[col].ColumnName == "$FLAG")
-        //            continue;
-        //        if (dv.Table.Columns[col].ColumnName == "$SEEN")
-        //            continue;
-        //        Response.Write("<td>");
-        //        Response.Write(dv.Table.Columns[col].ColumnName.Replace("<br>"," "));
-        //        Response.Write("</td>");
-
-        //    } // bug rows 
-
-        //    foreach (DataRowView drv in dv)
-        //    {
-        //        Response.Write("<tr>");
-
-
-        //        for (col = startCol; col < dv.Table.Columns.Count; col++)
-        //        {
-        //            if (dv.Table.Columns[col].ColumnName == "$FLAG")
-        //                continue;
-        //            if (dv.Table.Columns[col].ColumnName == "$SEEN")
-        //                continue;
-
-        //            Response.Write("<td>");
-
-        //            if (drv[col].ToString().IndexOf("\r\n") >= 0)
-        //            {
-        //                Response.Write("\"" + drv[col].ToString().Replace("\"", "\"\"").Replace("\r\n", "\n") + "\"");
-        //            }
-        //            else
-        //            {
-        //                Response.Write(drv[col].ToString().Replace("\n", ""));
-        //            }
-
-        //            Response.Write("</td>");
-        //        }
-        //        Response.Write("</tr>");
-
-        //    } 
-
-        //    Response.Write("</table>");
- 
-        //} 
-
-
+  
         ///////////////////////////////////////////////////////////////////////
 		public static void print_as_excel(HttpResponse Response, DataView dv)
 		{
