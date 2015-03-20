@@ -21,15 +21,6 @@ function set_relationship_cnt(bugid, cnt)
 	}
 }
 
-function set_task_cnt(bugid, cnt)
-{
-	if (bugid == this_bugid) 
-	{
-		el = get_el("task_cnt");
-		set_text(el,cnt)
-	}
-}
-
 
 var popup_window = null;
 function open_popup_window(url, title, bugid, width, height) {
