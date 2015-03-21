@@ -269,23 +269,6 @@ update git_commits   set gitcom_bug = @into where gitcom_bug = @from
                 int from_bugid = Convert.ToInt32(prev_from_bug.Value);
                 Bug.delete_bug(from_bugid);
 
-                // delete the from bug from the list, if there is a list
-                DataView dv_bugs = (DataView)Session["bugs"];
-                if (dv_bugs != null)
-                {
-                    // read through the list of bugs looking for the one that matches the from
-                    int index = 0;
-                    foreach (DataRowView drv in dv_bugs)
-                    {
-                        if (from_bugid == (int)drv[1])
-                        {
-                            dv_bugs.Delete(index);
-                            break;
-                        }
-                        index++;
-                    }
-                }
-
                 btnet.Bug.send_notifications(btnet.Bug.UPDATE, Convert.ToInt32(prev_into_bug.Value), User.Identity);
 
                 Response.Redirect("edit_bug.aspx?id=" + prev_into_bug.Value);
