@@ -25,7 +25,7 @@ namespace btnet
 
                 if (Session["just_did_text_search"] == null)
                 {
-                    
+
                 }
                 else
                 {
@@ -51,7 +51,7 @@ namespace btnet
         }
 
         ///////////////////////////////////////////////////////////////////////
-        void LoadQueryDropdown()
+        private void LoadQueryDropdown()
         {
             IList<Query> queries;
             using (Context context = new Context())
@@ -64,7 +64,15 @@ namespace btnet
 
             query.DataTextField = "Description";
             query.DataValueField = "Id";
-            query.SelectedValue = defaultQuery != null ? defaultQuery.Id.ToString() : string.Empty;
+            string requestQueryId = Request["queryId"];
+            if (!string.IsNullOrEmpty(requestQueryId))
+            {
+                query.SelectedValue = requestQueryId;
+            }
+            else
+            {
+                query.SelectedValue = defaultQuery != null ? defaultQuery.Id.ToString() : string.Empty;
+            }
             query.DataBind();
         }
     }

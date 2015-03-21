@@ -29,7 +29,7 @@
                         <tr>
                             <td><%=queryRow["query"]%></td>
                             <td><%=queryRow["visibility"]%></td>
-                            <td><a href='bugs.aspx?qu_id=<%=queryRow["id"]%>'>view</a></td>
+                            <td><a href='bugs.aspx?queryId=<%=queryRow["id"]%>'>view</a></td>
                         </tr>
                         <%} %>
                     </tbody>
