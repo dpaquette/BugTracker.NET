@@ -39,11 +39,11 @@
 
 
                         <ul class="dropdown-menu" role="menu">
-                            <li><a target="_blank" href="print_bugs.aspx">List</a></li>
+                            <li><a target="_blank" id="printbuglist" href="#">List</a></li>
                             <li><a target="_blank" href="print_bugs2.aspx">Details</a></li>
                         </ul>
                     </div>
-                    <a target="_blank" class="btn btn-default" href="print_bugs.aspx?format=excel"><span class="glyphicon glyphicon-download"></span>&nbsp;Export to Excel</a>
+                    <a target="_blank" class="btn btn-default" id="exportbuglist" href="#"><span class="glyphicon glyphicon-download"></span>&nbsp;Export to Excel</a>
                     <a target="_blank" class="btn btn-default pull-right" href="btnet_screen_capture.exe" title="Download Screen Capture Utility">
                         <span class="glyphicon glyphicon-camera"></span>&nbsp;Screen Capture Tool</a>
                 </div>
@@ -65,6 +65,26 @@
     <script>
         var enable_popups = <% Response.Write(User.Identity.GetEnablePopups() ? "1" : "0"); %>;
         var asp_form_id = '<%=frm.ClientID %>';
- 
+        $(function() {
+
+            var printBugs  = function(baseUrl) {
+                var queryParams = BugList.getQueryParams();
+                if (queryParams != null && queryParams.queryId) {
+                    queryParams.start = 0;
+                    queryParams.length = -1;
+                    window.open(baseUrl + $.param(queryParams), "_blank");
+                }
+            }
+            $("#printbuglist").click(function() {
+                printBugs("print_bugs.aspx?");
+                return false;
+            });
+
+            $("#exportbuglist").click(function() {
+                printBugs("print_bugs.aspx?format=excel&");
+                return false;
+            });
+
+        });
     </script>
 </asp:Content>

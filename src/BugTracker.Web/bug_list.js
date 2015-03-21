@@ -1,3 +1,18 @@
+var BugList = (function() {
+    var setQueryParams = function(queryParams) {
+        localStorage.setItem("BugQuery", JSON.stringify(queryParams));
+    };
+     
+    var getQueryParams = function() {
+        return JSON.parse(localStorage.getItem("BugQuery"));
+    };
+
+    return {
+        setQueryParams: setQueryParams,
+        getQueryParams: getQueryParams
+    }
+}());
+
 function on_page(page) {
     add_tags_to_form_var();
 	

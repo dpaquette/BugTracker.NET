@@ -30,6 +30,7 @@
     </thead>
 </table>
 <script type="text/javascript">
+    
     $(function() {
         var getFlagColorClass = function(flagId) {
             var color = "wht";
@@ -101,24 +102,24 @@
             //Some columns are rendered in a special way...
             var result = null;
             switch (columnName) {
-                case "id":
-                    result = renderId;
-                    break;
-                case "desc":
-                    result = renderDescription;
-                    break;
-                case "$FLAG":
-                    result = renderFlag;
-                    break;
-                case "$SEEN":
-                    result = renderSeen;
-                    break;
-                case "$VOTE":
-                    result = renderVote;
-                default:
-                    if (columnName.toLowerCase().match(" on$") == " on") {
-                        result = renderDate;
-                    }
+            case "id":
+                result = renderId;
+                break;
+            case "desc":
+                result = renderDescription;
+                break;
+            case "$FLAG":
+                result = renderFlag;
+                break;
+            case "$SEEN":
+                result = renderSeen;
+                break;
+            case "$VOTE":
+                result = renderVote;
+            default:
+                if (columnName.toLowerCase().match(" on$") == " on") {
+                    result = renderDate;
+                }
             }
             return result;
         }
@@ -166,7 +167,8 @@
                     start: data.start,
                     length: data.length,
                     filters: getCurrentFilters()
-                }                
+                }
+                BugList.setQueryParams(urlParameters);
                 var queryUrl = "api/BugQuery?" + $.param(urlParameters);
                 
                 $.get(queryUrl).done(function(d) {

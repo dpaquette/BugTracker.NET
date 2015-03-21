@@ -16,6 +16,7 @@ namespace btnet
     {
         private readonly Query _query;
         private readonly string[] _columnNames;
+        private const int MaxLength = 5000;
 
         public BugQueryExecutor(Query query)
         {
@@ -56,7 +57,7 @@ namespace btnet
 
          
             sqlString.Append(" OFFSET @offset ROWS FETCH NEXT @page_size ROWS ONLY");
-            sqlString.AddParameterWithValue("page_size", length);
+            sqlString.AddParameterWithValue("page_size", length > 0 ? length : MaxLength);
             sqlString.AddParameterWithValue("offset", start);
 
 
