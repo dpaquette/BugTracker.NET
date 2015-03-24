@@ -17,6 +17,7 @@
     <div class="container" 
          data-bug-id="<%: Convert.ToString(id)%>" 
          data-date-format="<%: btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")%>" 
+         data-is-subscribed="<%: isSubscribed %>"
         <%: User.Identity.GetUseFCKEditor() ? "data-use-fck-editor=''" : "" %> >
 
         <div class="row">
@@ -34,19 +35,38 @@
                     </li>
                     <% } %>
 
-                    <li class="dropdown-toggle" id="clone" runat="server" />
+                    <li class="dropdown-toggle" id="clone" runat="server" data-action="clone">
+                        <a class='warn btn btn-default' title='Create a copy of this item'>
+                            <img src='paste_plain.png' border=0 />&nbsp;Create Copy</a>
+                        </li>
                     <li class="dropdown-toggle" id="print" runat="server" />
                     <li class="dropdown-toggle" id="merge_bug" runat="server" />
                     <li class="dropdown-toggle" id="delete_bug" runat="server" />
                     <li class="dropdown-toggle" id="svn_revisions" runat="server" />
                     <li class="dropdown-toggle" id="git_commits" runat="server" />
                     <li class="dropdown-toggle" id="hg_revisions" runat="server" />
-                    <li class="dropdown-toggle" id="subscribers" runat="server" />
-                    <li class="dropdown-toggle" id="subscriptions" runat="server" />
+                    <li class="dropdown-toggle" id="subscribers" runat="server">
+                        <a class='btn btn-default' target=_blank href='view_subscribers.aspx?id=<%:id %>' title='View users who have subscribed to email notifications for this item'>
+                            <img src='telephone_edit.png' border=0>&nbsp;Subscribers
+                        </a>
+                    </li>
+
+                    <li class="dropdown-toggle" id="notifications" runat="server" data-action="notifications">
+                        <a class='btn btn-default' title='Get or stop getting email notifications about changes to this item.'>
+                            <img src=telephone.png border=0 />&nbsp;<span data-id="notifications-label">Notifications</span></a>
+                    </li>
                     <li class="dropdown-toggle" id="relationships" runat="server" />
                     <li class="dropdown-toggle" id="tasks" runat="server" />
-                    <li class="dropdown-toggle" id="send_email" runat="server" />
-                    <li class="dropdown-toggle" id="attachment" runat="server" />
+                    <li class="dropdown-toggle" id="send_email" runat="server" data-action="send_email">
+                        <a class='btn btn-default' title='Send an email about this item'>
+                            <i class='glyphicon glyphicon-envelope'></i>&nbsp;Send Email
+                        </a>
+                     </li>
+                    <li class="dropdown-toggle" id="attachment" runat="server" data-action="add_attachment">
+                        <a class='btn btn-default' title='Attach an image, document, or other file to this item'>
+                            <i class='glyphicon glyphicon-paperclip'></i> Add Attachment
+                        </a>
+                    </li>
                     <li class="dropdown-toggle" id="custom" runat="server" />
                 </ul>
             </div>

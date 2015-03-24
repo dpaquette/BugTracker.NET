@@ -2,6 +2,7 @@ var BugTracker;
 (function (BugTracker) {
     var EditBug = (function () {
         function EditBug() {
+            var _this = this;
             this.popup_window = null;
             this.dirty = false;
             this.cls = null;
@@ -13,7 +14,24 @@ var BugTracker;
             this.new_posts = null;
             this.hex_chars = "0123456789ABCDEF";
             this.bugId = parseInt($("[data-bug-id]").attr("data-bug-id"));
+            this.isSubscribed = $("[data-is-subscribed]").attr("data-is_subscribed") === "True";
+            $("[data-action=send_email] a").on("click", function () {
+                return _this.send_email(_this.bugId);
+            });
+            $("[data-action=send_email] a").on("click", function () {
+                return _this.clone();
+            });
+            $("[data-action=add_attachment] a").on("click", function () {
+                return _this.add_attachment();
+            });
+            $("[data-action=notifications] a").on("click", function () {
+                return _this.toggle_notifications(_this.bugId);
+            });
         }
+        EditBug.prototype.add_attachment = function () {
+            this.open_popup_window('add_attachment.aspx', 'add attachment ', this.bugId, 600, 300);
+        };
+
         EditBug.prototype.on_body_unload = function () {
             // don't leave stray child windows
             if (this.popup_window != null) {
@@ -54,13 +72,14 @@ var BugTracker;
         };
 
         EditBug.prototype.send_email = function (id) {
+            console.log("sending email");
             if (this.dirty) {
                 var result = this.my_confirm();
                 if (result) {
-                    window.document.location.pathname = "send_email.aspx?bg_id=" + id;
+                    window.document.location.href = window.document.location.protocol + window.document.location.host + "/send_email.aspx?bg_id=" + id;
                 }
             } else {
-                window.document.location.pathname = "send_email.aspx?bg_id=" + id;
+                window.document.location.href = window.document.location.protocol + window.document.location.host + "/send_email.aspx?bg_id=" + id;
             }
         };
 
@@ -86,23 +105,25 @@ var BugTracker;
         };
 
         EditBug.prototype.toggle_notifications = function (bugid) {
-            var el = this.get_el("get_stop_notifications");
-            var text = this.get_text(el);
-
             var url = "subscribe.aspx?ses=" + this.get_cookie("se_id") + "&id=" + bugid + "&actn=";
 
-            if (text == "get notifications")
-                url += "1";
-            else
+            if (this.isSubscribed)
                 url += "0";
+            else
+                url += "1";
 
             $.get(url);
+            this.set_notification_label();
 
             // modify text in web page
-            if (text == "get notifications") {
-                this.set_text(el, "stop notifications");
+            this.isSubscribed = !this.isSubscribed;
+        };
+
+        EditBug.prototype.set_notification_label = function () {
+            if (this.isSubscribed) {
+                $("[data-id=notifications-label").text("Stop notifications");
             } else {
-                this.set_text(el, "get notifications");
+                $("[data-id=notifications-label").text("Get notifications");
             }
         };
 
@@ -223,7 +244,7 @@ var BugTracker;
             this.get_preset("assigned_to");
 
             //	get_preset("pcd1")
-            this.on_body_load();
+            this.on_body_load(); // to change the select styles
         };
 
         EditBug.prototype.set_presets = function () {
@@ -316,6 +337,7 @@ var BugTracker;
                 short_desc.title = short_desc.value;
 
             this.start_animation();
+            this.set_notification_label();
         };
 
         EditBug.prototype.change_dropdown_style = function () {
@@ -406,7 +428,7 @@ var BugTracker;
             this.color = 100;
 
             if (navigator.userAgent.indexOf("MSIE") > 0)
-                this.new_posts = this.getElementsByName_for_ie6_and_ie7("td", "new_post");
+                this.new_posts = document.querySelector('td[name=new_post]');
             else
                 this.new_posts = document.getElementsByName("new_post");
 
@@ -427,19 +449,6 @@ var BugTracker;
             if (this.color == 255) {
                 clearInterval(this.timer);
             }
-        };
-
-        EditBug.prototype.getElementsByName_for_ie6_and_ie7 = function (tag, name) {
-            var elem = document.getElementsByTagName(tag);
-            var arr = new Array();
-            for (var i = 0, iarr = 0; i < elem.length; i++) {
-                var att = elem[i].getAttribute("name");
-                if (att == name) {
-                    arr[iarr] = elem[i];
-                    iarr++;
-                }
-            }
-            return arr;
         };
 
         EditBug.prototype.show_calendar = function (el) {
