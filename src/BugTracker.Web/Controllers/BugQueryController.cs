@@ -6,7 +6,7 @@ namespace btnet.Controllers
     [Authorize]
     public class BugQueryController : ApiController
     {
-        public IHttpActionResult Get(int queryId, string sortBy, string sortOrder, int start, int length, [FromUri] BugQueryFilter[] filters)
+        public IHttpActionResult Get(int queryId, string sortBy, string sortOrder, int start, int length, bool idOnly, [FromUri] BugQueryFilter[] filters)
         {
             Query query;
             using (Context context = new Context())
@@ -16,7 +16,7 @@ namespace btnet.Controllers
             if (query != null)
             {
                 BugQueryExecutor queryExecutor = new BugQueryExecutor(query);
-                var result = queryExecutor.ExecuteQuery(User.Identity, start, length, sortBy, sortOrder, filters);
+                var result = queryExecutor.ExecuteQuery(User.Identity, start, length, sortBy, sortOrder, idOnly, filters);
                 return Ok(new
                     {
                         recordsTotal = result.CountUnfiltered,

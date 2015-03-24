@@ -296,8 +296,6 @@ namespace btnet
 
             prepare_a_bunch_of_links_for_update();
 
-            format_prev_next_bug();
-
             // save for next bug
             if (project.SelectedItem != null)
             {
@@ -1639,88 +1637,6 @@ order by us_username; ");
             }
 
         }
-
-
-
-        ///////////////////////////////////////////////////////////////////////
-        void format_prev_next_bug()
-        {
-            // for next/prev bug links
-            DataView dv_bugs = (DataView)Session["bugs"];
-
-            if (dv_bugs != null)
-            {
-                int prev_bug = 0;
-                int next_bug = 0;
-                bool this_bug_found = false;
-
-                // read through the list of bugs looking for the one that matches this one
-                int position_in_list = 0;
-                int save_position_in_list = 0;
-                foreach (DataRowView drv in dv_bugs)
-                {
-                    position_in_list++;
-                    if (this_bug_found)
-                    {
-                        // step 3 - get the next bug - we're done
-                        next_bug = (int)drv[1];
-                        break;
-                    }
-                    else if (id == (int)drv[1])
-                    {
-                        // step 2 - we found this - set switch
-                        save_position_in_list = position_in_list;
-                        this_bug_found = true;
-                    }
-                    else
-                    {
-                        // step 1 - save the previous just in case the next one IS this bug
-                        prev_bug = (int)drv[1];
-                    }
-                }
-
-                if (this_bug_found)
-                {
-                    string prev_next_link = "<ul class='pagination' style='margin: 0 5px'>";
-                    if (prev_bug != 0)
-                    {
-                        prev_next_link +=
-                            "<li><a href='edit_bug.aspx?id="
-                            + Convert.ToString(prev_bug)
-                            + "' class='warn'>&laquo; Prev</a></li>";
-                    }
-                    else
-                    {
-                        prev_next_link +=
-                            "<li class='disabled'><a href='#'>&laquo; Prev</a></li>";
-                    }
-
-                    if (next_bug != 0)
-                    {
-                        prev_next_link +=
-                            "<li><a href='edit_bug.aspx?id="
-                            + Convert.ToString(next_bug)
-                            + "' class='warn'>Next &raquo;</a></li>";
-                    }
-                    else
-                    {
-                        prev_next_link +=
-                            "<li class='disabled'><a href='#'>Next &raquo;</a></li>";
-                    }
-
-                    prev_next_link += "</ul><span class='help-block text-center' style='margin: 0'>"
-                        + Convert.ToString(save_position_in_list)
-                        + " of "
-                        + Convert.ToString(dv_bugs.Count)
-                        + "</span>";
-
-                    prev_next.InnerHtml = prev_next_link;
-                }
-
-            }
-
-        }
-
 
         ///////////////////////////////////////////////////////////////////////
         void load_dropdowns()

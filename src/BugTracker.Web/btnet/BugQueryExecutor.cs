@@ -24,14 +24,20 @@ namespace btnet
             _columnNames = query.ColumnNames;           
         }
 
-        public BugQueryResult ExecuteQuery(IIdentity identity, int start, int length, string orderBy, string sortDirection, BugQueryFilter[] filters = null)
+        public BugQueryResult ExecuteQuery(IIdentity identity, int start, int length, string orderBy,
+            string sortDirection, BugQueryFilter[] filters = null)
+        {
+            return ExecuteQuery(identity, start, length, orderBy, sortDirection, false, filters);
+        }
+
+        public BugQueryResult ExecuteQuery(IIdentity identity, int start, int length, string orderBy, string sortDirection, bool idOnly, BugQueryFilter[] filters = null)
         {
             if (!string.IsNullOrEmpty(orderBy) && !_columnNames.Contains(orderBy))
             {
                 throw new ArgumentException("Invalid order by column specified: {0}", orderBy);
             }
-           
-            var initialSql = string.Format("SELECT t.* FROM ({0}) t", GetInnerSql(identity));
+            string columnsToSelect = idOnly ? "id" : "*";
+            var initialSql = string.Format("SELECT t.{0} FROM ({1}) t",columnsToSelect, GetInnerSql(identity));
             SQLString sqlString = new SQLString(initialSql);
             var initialCountSql = string.Format("SELECT COUNT(*) FROM ({0}) t", GetInnerSql(identity));
             SQLString countSqlString = new SQLString(initialCountSql);

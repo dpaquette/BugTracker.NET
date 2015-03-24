@@ -166,16 +166,17 @@
                     sortOrder : data.order[0].dir,
                     start: data.start,
                     length: data.length,
+                    idOnly: false,
                     filters: getCurrentFilters()
                 }
                 BugList.setQueryParams(urlParameters);
                 var queryUrl = "api/BugQuery?" + $.param(urlParameters);
                 
-                $.get(queryUrl).done(function(d) {
+                $.get(queryUrl).done(function(d) {                    
                     callback(d);
+                    BugList.saveCurrentBugList(d);
                 }).fail(function() {
                     callback();
-
                 });
             }
         }).api();
