@@ -56,7 +56,7 @@ namespace btnet
 
         }
 
-        private BugQueryFilter[] BuildFilter(NameValueCollection queryParams)
+        internal static BugQueryFilter[] BuildFilter(NameValueCollection queryParams)
         {
             List<BugQueryFilter> filters = new List<BugQueryFilter>();
             int arrayIndex = 0;

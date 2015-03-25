@@ -40,7 +40,7 @@
 
                         <ul class="dropdown-menu" role="menu">
                             <li><a target="_blank" id="printbuglist" href="#">List</a></li>
-                            <li><a target="_blank" href="print_bugs2.aspx">Details</a></li>
+                            <li><a target="_blank" id="printbugdetails" href="#">Details</a></li>
                         </ul>
                     </div>
                     <a target="_blank" class="btn btn-default" id="exportbuglist" href="#"><span class="glyphicon glyphicon-download"></span>&nbsp;Export to Excel</a>
@@ -77,6 +77,11 @@
             }
             $("#printbuglist").click(function() {
                 printBugs("print_bugs.aspx?");
+                return false;
+            });
+
+            $("#printbugdetails").click(function() {
+                printBugs("print_bugs2.aspx?");
                 return false;
             });
 
