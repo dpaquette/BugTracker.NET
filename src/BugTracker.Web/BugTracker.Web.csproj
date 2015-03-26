@@ -85,6 +85,11 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.2\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -97,6 +102,14 @@
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.2\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.2\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.2\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -133,6 +146,56 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\AutoFill\css\dataTables.autoFill.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\AutoFill\css\dataTables.autoFill.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\AutoFill\images\filler.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Bootstrap\dataTables.bootstrap.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\ColReorder\css\dataTables.colReorder.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\ColReorder\css\dataTables.colReorder.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\ColReorder\images\insert.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\ColVis\css\dataTables.colVis.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\ColVis\css\dataTables.colvis.jqueryui.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\ColVis\css\dataTables.colVis.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\FixedColumns\css\dataTables.fixedColumns.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\FixedColumns\css\dataTables.fixedColumns.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\FixedHeader\css\dataTables.fixedHeader.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\FixedHeader\css\dataTables.fixedHeader.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\KeyTable\css\dataTables.keyTable.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\KeyTable\css\dataTables.keyTable.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Responsive\css\dataTables.responsive.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Scroller\css\dataTables.scroller.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Scroller\css\dataTables.scroller.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Scroller\images\loading-background.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\css\dataTables.tableTools.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\css\dataTables.tableTools.min.css" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\background.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\collection.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\collection_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\copy.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\copy_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\csv.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\csv_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\pdf.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\pdf_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\print.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\print_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\xls.png" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\xls_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\media\css\jquery.dataTables.css" />
+    <Content Include="Content\DataTables-1.10.5\media\css\jquery.dataTables.min.css" />
+    <Content Include="Content\DataTables-1.10.5\media\css\jquery.dataTables_themeroller.css" />
+    <Content Include="Content\DataTables-1.10.5\media\images\back_disabled.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\back_enabled.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\back_enabled_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\favicon.ico" />
+    <Content Include="Content\DataTables-1.10.5\media\images\forward_disabled.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\forward_enabled.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\forward_enabled_hover.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\sort_asc.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\sort_asc_disabled.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\sort_both.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\sort_desc.png" />
+    <Content Include="Content\DataTables-1.10.5\media\images\sort_desc_disabled.png" />
     <Content Include="Content\images\btnet.png" />
     <Content Include="Content\images\ExternalLink.png" />
     <Content Include="Content\images\ExternalLink.svg" />
@@ -157,6 +220,7 @@
     <Content Include="Content\style\jquery.mobile.custom.structure.min.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.css" />
     <Content Include="Content\style\jquery.mobile.custom.theme.min.css" />
+    <Content Include="Controls\BugList.ascx" />
     <Content Include="Controls\Footer.ascx" />
     <Content Include="Controls\MainMenu.ascx" />
     <Content Include="edit_area\edit_area_full.gz" />
@@ -426,6 +490,37 @@
     <Content Include="Scripts\ckeditor\skins\moono\images\lock.png" />
     <Content Include="Scripts\ckeditor\skins\moono\images\refresh.png" />
     <Content Include="Scripts\ckeditor\styles.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\AutoFill\js\dataTables.autoFill.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\AutoFill\js\dataTables.autoFill.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\AutoFill\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Bootstrap\dataTables.bootstrap.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\ColReorder\js\dataTables.colReorder.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\ColReorder\js\dataTables.colReorder.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\ColReorder\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\ColVis\js\dataTables.colVis.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\ColVis\js\dataTables.colVis.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\ColVis\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\FixedColumns\js\dataTables.fixedColumns.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\FixedColumns\js\dataTables.fixedColumns.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\FixedHeader\js\dataTables.fixedHeader.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\FixedHeader\js\dataTables.fixedHeader.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\FixedHeader\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\KeyTable\js\dataTables.keyTable.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\KeyTable\js\dataTables.keyTable.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\KeyTable\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Responsive\js\dataTables.responsive.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Responsive\js\dataTables.responsive.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Scroller\js\dataTables.scroller.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Scroller\js\dataTables.scroller.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Scroller\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\TableTools\js\dataTables.tableTools.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\TableTools\js\dataTables.tableTools.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\TableTools\Readme.txt" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\TableTools\swf\copy_csv_xls.swf" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\TableTools\swf\copy_csv_xls_pdf.swf" />
+    <Content Include="Scripts\DataTables-1.10.5\media\js\jquery.dataTables.js" />
+    <Content Include="Scripts\DataTables-1.10.5\media\js\jquery.dataTables.min.js" />
+    <Content Include="Scripts\DataTables-1.10.5\media\js\jquery.js" />
     <Content Include="Scripts\jquery-1.11.1.js" />
     <Content Include="Scripts\jquery-1.11.1.min.js" />
     <Content Include="Scripts\jquery-1.11.1.min.map" />
@@ -447,6 +542,13 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Scripts\DataTables-1.10.5\extensions\Responsive\Readme.md" />
+    <Content Include="Content\DataTables-1.10.5\media\images\Sorting icons.psd" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\psd\printer.psd" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\psd\file_types.psd" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\psd\copy document.psd" />
+    <Content Include="Content\DataTables-1.10.5\extensions\TableTools\images\psd\collection.psd" />
+    <Content Include="Content\DataTables-1.10.5\extensions\Responsive\css\dataTables.responsive.scss" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -482,7 +584,6 @@
     <Content Include="comment.png" />
     <Content Include="complete_registration.aspx" />
     <Content Include="COPYING.TXT" />
-    <Content Include="customfields.aspx" />
     <Content Include="custom\btnet_custom.css" />
     <Content Include="custom\btnet_edit_bug.css" />
     <Content Include="custom\btnet_search.css" />
@@ -503,7 +604,6 @@
     <Content Include="delete_bug.aspx" />
     <Content Include="delete_category.aspx" />
     <Content Include="delete_comment.aspx" />
-    <Content Include="delete_customfield.aspx" />
     <Content Include="delete_org.aspx" />
     <Content Include="delete_priority.aspx" />
     <Content Include="delete_project.aspx" />
@@ -583,7 +683,6 @@
     <Content Include="edit_bug.js" />
     <Content Include="edit_category.aspx" />
     <Content Include="edit_comment.aspx" />
-    <Content Include="edit_customfield.aspx" />
     <Content Include="edit_custom_html.aspx" />
     <Content Include="edit_dashboard.aspx" />
     <Content Include="edit_org.aspx" />
@@ -653,6 +752,10 @@
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.mobile-1.4.4.min.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
+    <Content Include="Scripts\moment-with-locales.min.js" />
+    <Content Include="Scripts\moment.js" />
+    <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
@@ -742,6 +845,7 @@
     </Compile>
     <Compile Include="App_Start\LoggingConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="backup_db.aspx.cs">
       <DependentUpon>backup_db.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -751,6 +855,17 @@
     </Compile>
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="btnet\BugQueryExecutor.cs" />
+    <Compile Include="btnet\BugQueryFilter.cs" />
+    <Compile Include="btnet\BugQueryResult.cs" />
+    <Compile Include="Controllers\BugQueryController.cs" />
+    <Compile Include="Controls\BugList.ascx.cs">
+      <DependentUpon>BugList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\BugList.ascx.designer.cs">
+      <DependentUpon>BugList.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\Footer.ascx.cs">
       <DependentUpon>Footer.ascx</DependentUpon>
@@ -800,7 +915,7 @@
     <Compile Include="Models\Mapping\PriorityMap.cs" />
     <Compile Include="Models\Mapping\ProjectMap.cs" />
     <Compile Include="Models\Mapping\ProjectUserMap.cs" />
-    <Compile Include="Models\Mapping\queryMap.cs" />
+    <Compile Include="Models\Mapping\QueryMap.cs" />
     <Compile Include="Models\Mapping\QueuedNotificationMap.cs" />
     <Compile Include="Models\Mapping\ReportMap.cs" />
     <Compile Include="Models\Mapping\sessionMap.cs" />
@@ -855,13 +970,6 @@
     <Compile Include="Controls\MainMenu.ascx.designer.cs">
       <DependentUpon>MainMenu.ascx</DependentUpon>
     </Compile>
-    <Compile Include="customfields.aspx.cs">
-      <DependentUpon>customfields.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="customfields.aspx.designer.cs">
-      <DependentUpon>customfields.aspx</DependentUpon>
-    </Compile>
     <Compile Include="dashboard.aspx.cs">
       <DependentUpon>dashboard.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -893,13 +1001,6 @@
     </Compile>
     <Compile Include="delete_comment.aspx.designer.cs">
       <DependentUpon>delete_comment.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="delete_customfield.aspx.cs">
-      <DependentUpon>delete_customfield.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="delete_customfield.aspx.designer.cs">
-      <DependentUpon>delete_customfield.aspx</DependentUpon>
     </Compile>
     <Compile Include="delete_org.aspx.cs">
       <DependentUpon>delete_org.aspx</DependentUpon>
@@ -998,13 +1099,6 @@
     </Compile>
     <Compile Include="edit_comment.aspx.designer.cs">
       <DependentUpon>edit_comment.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="edit_customfield.aspx.cs">
-      <DependentUpon>edit_customfield.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="edit_customfield.aspx.designer.cs">
-      <DependentUpon>edit_customfield.aspx</DependentUpon>
     </Compile>
     <Compile Include="edit_custom_html.aspx.cs">
       <DependentUpon>edit_custom_html.aspx</DependentUpon>
@@ -1644,6 +1738,9 @@
     <Compile Include="write_posts.aspx.designer.cs">
       <DependentUpon>write_posts.aspx</DependentUpon>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

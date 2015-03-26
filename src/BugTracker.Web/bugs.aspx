@@ -1,34 +1,14 @@
 <%@ Page Language="C#" CodeBehind="bugs.aspx.cs" Inherits="btnet.bugs" AutoEventWireup="True" MasterPageFile="~/LoggedIn.Master" %>
-
 <%@ MasterType TypeName="btnet.LoggedIn" %>
 
 <%@ Import Namespace="btnet" %>
 <%@ Import Namespace="btnet.Security" %>
-
+<%@ Register Src="~/Controls/BugList.ascx" TagPrefix="uc1" TagName="BugList" %>
 
 <asp:Content ContentPlaceHolderID="headerScripts" runat="server">
-
     <script type="text/javascript" src="bug_list.js"></script>
-
-    <script>
-
-        $(document).ready(function() {
-            $('.filter').click(on_invert_filter);
-            $('.filter_selected').click(on_invert_filter);
-        });
-
-
-        function on_query_changed()
-        {
-            var action = document.getElementById("<%=actn.ClientID%>");
-            $(action).val("query");
-            var frm = document.getElementById("<%=frm.ClientID%>");
-            frm.submit();
-        }
-
-</script>
 </asp:Content>
-<asp:Content ContentPlaceHolderID="body" runat="server">
+<asp:Content ContentPlaceHolderID="body" runat="server" ClientIDMode="Static">
     <div class="container-fluid">
 
         <form method="POST" runat="server" id="frm">
@@ -39,7 +19,7 @@
             </div>
             <div class="row">
                 <div class="col-md-4 col-sm-6 col-xs-12">
-                    <asp:DropDownList ID="query" runat="server" class="form-control" onchange="on_query_changed()">
+                    <asp:DropDownList ID="query" runat="server" class="form-control" AutoPostBack="true">
                     </asp:DropDownList>
                 </div>
 
@@ -59,63 +39,57 @@
 
 
                         <ul class="dropdown-menu" role="menu">
-                            <li><a target="_blank" href="print_bugs.aspx">List</a></li>
-                            <li><a target="_blank" href="print_bugs2.aspx">Details</a></li>
+                            <li><a target="_blank" id="printbuglist" href="#">List</a></li>
+                            <li><a target="_blank" id="printbugdetails" href="#">Details</a></li>
                         </ul>
                     </div>
-                    <a target="_blank" class="btn btn-default" href="print_bugs.aspx?format=excel"><span class="glyphicon glyphicon-download"></span>&nbsp;Export to Excel</a>
+                    <a target="_blank" class="btn btn-default" id="exportbuglist" href="#"><span class="glyphicon glyphicon-download"></span>&nbsp;Export to Excel</a>
                     <a target="_blank" class="btn btn-default pull-right" href="btnet_screen_capture.exe" title="Download Screen Capture Utility">
                         <span class="glyphicon glyphicon-camera"></span>&nbsp;Screen Capture Tool</a>
                 </div>
             </div>
             <br />
 
-
-
             <div class="row">
                 <div class="col-md-12">
-
-                    <%
-                        if (dv != null)
-                        {
-                            if (dv.Table.Rows.Count > 0)
-                            {
-                                if (btnet.Util.get_setting("EnableTags", "0") == "1")
-                                {
-                                    btnet.BugList.display_buglist_tags_line(Response, User.Identity);
-                                }
-                                display_bugs(false);
-                            }
-                            else
-                            {
-                                Response.Write("<p>No ");
-                                Response.Write(Util.get_setting("PluralBugLabel", "bugs"));
-                                Response.Write(" yet.<p>");
-                            }
-                        }
-                        else
-                        {
-                            Response.Write("<div class=err>Error in query SQL: " + sql_error + "</div>");
-                        }%>
+                    <uc1:BugList runat="server" ID="BugList" ShowCheckbox="False" />
                 </div>
             </div>
-            <input type="hidden" name="new_page" id="new_page" runat="server" value="0" />
-            <input type="hidden" name="actn" id="actn" runat="server" value="" />
-            <input type="hidden" name="filter" id="filter" runat="server" value="" />
-            <input type="hidden" name="sort" id="sort" runat="server" value="-1" />
-            <input type="hidden" name="prev_sort" id="prev_sort" runat="server" value="-1" />
-            <input type="hidden" name="prev_dir" id="prev_dir" runat="server" value="ASC" />
-            <input type="hidden" name="tags" id="tags" value="" />
-
-
-            <div id="popup" class="buglist_popup"></div>
         </form>
     </div>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="footerScripts" runat="server">
+
+
     <script>
         var enable_popups = <% Response.Write(User.Identity.GetEnablePopups() ? "1" : "0"); %>;
-        var asp_form_id = '<% Response.Write(Util.get_form_name()); %>';
-</script>
+        var asp_form_id = '<%=frm.ClientID %>';
+        $(function() {
+
+            var printBugs  = function(baseUrl) {
+                var queryParams = BugList.getQueryParams();
+                if (queryParams != null && queryParams.queryId) {
+                    queryParams.start = 0;
+                    queryParams.length = -1;
+                    window.open(baseUrl + $.param(queryParams), "_blank");
+                }
+            }
+            $("#printbuglist").click(function() {
+                printBugs("print_bugs.aspx?");
+                return false;
+            });
+
+            $("#printbugdetails").click(function() {
+                printBugs("print_bugs2.aspx?");
+                return false;
+            });
+
+            $("#exportbuglist").click(function() {
+                printBugs("print_bugs.aspx?format=excel&");
+                return false;
+            });
+
+        });
+    </script>
 </asp:Content>

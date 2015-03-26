@@ -22,54 +22,6 @@ namespace btnet.Search
             _client = client;
         }
 
-        ///////////////////////////////////////////////////////////////////////
-        private static DataSet get_text_custom_cols()
-        {
-            DataSet ds_custom_fields = DbUtil.get_dataset(new SQLString(@"
-/* get searchable cols */					
-select sc.name
-from syscolumns sc
-inner join systypes st on st.xusertype = sc.xusertype
-inner join sysobjects so on sc.id = so.id
-where so.name = 'bugs'
-and st.[name] <> 'sysname'
-and sc.name not in ('rowguid',
-'bg_id',
-'bg_short_desc',
-'bg_reported_user',
-'bg_reported_date',
-'bg_project',
-'bg_org',
-'bg_category',
-'bg_priority',
-'bg_status',
-'bg_assigned_to_user',
-'bg_last_updated_user',
-'bg_last_updated_date',
-'bg_user_defined_attribute',
-'bg_project_custom_dropdown_value1',
-'bg_project_custom_dropdown_value2',
-'bg_project_custom_dropdown_value3',
-'bg_tags')
-and st.[name] in ('nvarchar','varchar')
-and sc.length > 30"));
-
-            return ds_custom_fields;
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-        private string get_text_custom_cols_names(DataSet ds_custom_fields)
-        {
-
-            string custom_cols = "";
-            foreach (DataRow dr in ds_custom_fields.Tables[0].Rows)
-            {
-                custom_cols += "[" + (string)dr["name"] + "],";
-            }
-            return custom_cols;
-
-        }
-
         /// <summary>
         /// Re-index all bugs. 
         /// Warning: This is a CPU, Database and network intensive operation
@@ -102,6 +54,7 @@ and sc.length > 30"));
             ISearchResponse<object> response =
                 _client.Search<object>(s => s.Types("bug")
                   .Query(q => q.QueryString(d => d.Query(searchText)))
+                  .Take(500) //Maximum of 500 results just to avoid major performance problems
                   .Highlight(h => h.PreTags("<span class='highlighted'>")
                                    .PostTags("</span>")
                                    .OnFields(f => f.OnField("*"))));
@@ -170,8 +123,7 @@ and sc.length > 30"));
                 Util.write_to_log("started updating search index");
 
                 var sql = new SQLString(@"
-select bg_id, 
-$custom_cols
+select bg_id,
 isnull(bg_tags,'') tags,
 bg_reported_date,
 isnull(st_name,'') status,
@@ -181,10 +133,6 @@ left outer join statuses on st_id = bg_status
 where bg_id = @bugid");
 
                 sql = sql.AddParameterWithValue("bugid", Convert.ToString(bugId));
-
-                DataSet ds_text_custom_cols = get_text_custom_cols();
-
-                sql = sql.AddParameterWithValue("$custom_cols", get_text_custom_cols_names(ds_text_custom_cols));
                 
                 DataRow bugRow = DbUtil.get_datarow(sql);
                
@@ -260,7 +208,7 @@ where bg_id = @bugid");
 
         private static class ResultColumns
         {
-            public const string Color = "Column1";
+            public const string Color = "Color";
             public const string Id = "id";
             public const string Description = "desc";
             public const string Source = "search_source";

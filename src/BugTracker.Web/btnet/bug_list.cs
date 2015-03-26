@@ -7,10 +7,6 @@ using System;
 using System.Security.Principal;
 using System.Web;
 using System.Data;
-//using System.Data.SqlClient;
-using System.Collections.Specialized;
-using System.IO;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using btnet.Security;
 
@@ -442,30 +438,6 @@ namespace btnet
             Response.Write("<a href='javascript:show_tags()'>&nbsp;&nbsp;select tags</a>");
             Response.Write("<br><br>\n");
         }
-        ///////////////////////////////////////////////////////////////////////
-        static void display_filter_select(HttpResponse Response, string filter_val, string which, System.Data.DataTable table)
-        {
-            display_buglist_filter_select(
-            Response,
-            filter_val,
-            which,
-            table,
-            null,
-            0);
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-        static void display_filter_select(HttpResponse Response, string filter_val, string which, System.Data.DataTable table, int col)
-        {
-            display_buglist_filter_select(
-            Response,
-            filter_val,
-            which,
-            table,
-            null,
-            col);
-        }
-
 
         ///////////////////////////////////////////////////////////////////////
         static void display_filter_select(HttpResponse Response, string filter_val, string which, string dropdown_vals)
