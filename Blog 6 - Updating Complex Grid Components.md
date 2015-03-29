@@ -1,7 +1,7 @@
 #Updating the Bugs Grid
 In the last section, we showed how easy it is to update some of the simpler grids. In this section, we will take a look at a more complicated example.
 
-With the bugs grid, we need to be a little more careful because we could conceivably have 10s of thousands of bugs stored in the system. In this case, we will probably want to use AJAX sourced data instead of DOM sourced. If I was building this system from scratch, I would create a Web API end-point that served JSON data. The client would make HTTP requests to the server, passing search, sorting and paging parameters. The server would use pass those parameters to the SQL server and all the filtering, sorting and paging would be done in SQL. This is hands down the most efficient way to do this. It minimizes the amount of data passed between the SQL server, the web server and the client. Requests and responses would be small, which would help ensure better throughput for the web server.
+With the bugs grid, we need to be a little more careful because we could conceivably have 10s of thousands of bugs stored in the system. In this case, we will probably want to use AJAX sourced data instead of DOM sourced. If I were to build this system from scratch, I would create a Web API end-point that served JSON data. The client would make HTTP requests to the server, passing search, sorting and paging parameters. The server would use pass those parameters to the SQL server and all the filtering, sorting and paging would be done in SQL. This is hands down the most efficient way to do this. It minimizes the amount of data passed between the SQL server, the web server and the client. Requests and responses would be small, which would help ensure better throughput for the web server.
 
 But, we are not building BugTracker.NET from scratch. We have an existing system that we are trying to improve.
 
@@ -355,22 +355,172 @@ $(function() {
 ```
 By specifying an `ajax` function for the dataTable configuration, we are able to tell the application exactly how to call our new Web API method. There is also some custom column rendering logic that was migrated over from the old static utility methods. These are not shown above for brevity. While some of this JavaScript might look a little daunting, it did allow us to delete a lot of complex code from the bugs.aspx page. It will also eventually allow us to delete a lot of very hard to understand code from bug_list.js and bug_list.cs.
 
-![New Bugs Grid](images/BugsGridNew.png)
+![New Bugs Grid](Images/BugsGridNew.png)
 
 The columns are a little narrow to fit them all on the page, but the overall look and feel is improved. The biggest improvement for the user is that any sort, filter or paging action no longer triggers a full page refresh. The page generally *feels* snappier.
 
 [View the commit - Updated Bugs page to use jQuery DataTables](https://github.com/dpaquette/BugTracker.NET/commit/c026cb54f69e00ec1860574f20270e3e4a85d7d8)
 
 ##Grid Related Functionality
-If that was all we needed to do, this change would have been fairly straight forward. Unfortunately, there was are a handful of features that relied on the old data grid implementation and are now broken with the new approach.
+At this point, I thought I was done. Unfortunately, there was are a handful of features that relied on the old data grid implementation and are now broken with the new approach.
 
-Talk about how all these features relied on session state
+Specifically, a few features were relying on the following code from bugs.aspx:
 
-###Printing
-People still print things?
+```
+Session["bugs"] = dv;
+Session["SelectedBugQuery"] = qu_id_string;
 
-###Export to Excel
-Always....there always has to be an export to excel...
+if (ds != null)
+{
+    Session["bugs_unfiltered"] = ds.Tables[0];
+}
+else
+{
+    Session["bugs_unfiltered"] = null;
+}
+```
+
+After executing a query, both the filtered and unfiltered results were stored in session state. This was used by the print list, print details and export to Excel features to get the list of bugs without re-querying the database. It was also used by the edit bug page to display links to the previous and next bugs in the query results.
+
+While this may be convenient for the developer, it will be hard on the web server's memory. Let's start by fixing these features so they work with the new implementation, then we can compare memory and CPU usage for before and after.
+
+###Printing & Exporting to Excel
+When the user selects the print option from the bugs page, they are taken to a simple page that lists all the bugs from the current query in a grid that is formatted for printing. This page does not have the BugTracker header or footer. Previously, this page would get the list of bugs from session state:
+
+```
+dv = (DataView)Session["bugs"];
+```
+
+The markup for the print page simply iterates over all the bugs in this DataView and output them to an HTML table. This DataView that was stored in session state contained all the bugs, not only the bugs for the current page of bugs.
+
+In the new version, the server does not keep track of the query results in session state. Even the client does not have a list of all the bugs. The client has a reference to the bugs for the current page. The only way for us to get a list of all the bugs is to have the client pass all the current bug query parameters (queryId, sort column/direction and selected filters) to the print page. The print page can then use the BugQueryExecutor to get a list of all the bugs. Once we have the result ss from the BugQueryExecutor, the markup for the print page can remain unchanged.
+
+First, let's have the client keep track of the currently selected query parameters by storing it in sessions state:
+
+```
+var BugList = (function() {
+    var setQueryParams = function(queryParams) {
+       sessionStorage.setItem("BugQuery", JSON.stringify(queryParams));
+    };
+    var getQueryParams = function() {
+         return JSON.parse(sessionStorage.getItem("BugQuery"));
+    };
+
+  return {
+    setQueryParams: setQueryParams,
+    getQueryParams: getQueryParams
+   }
+ }());
+
+```
+
+In the BugsList.ascx control, keep set the query parameters whenever the data grid is refreshed:
+
+```
+ajax: function(data, callback) {
+                var sortColumnName = data.columns[data.order[0].column].data;
+                var urlParameters = {
+                    queryId : queryId,
+                    sortBy : sortColumnName,
+                    sortOrder : data.order[0].dir,
+                    start: data.start,
+                    length: data.length,
+                    filters: getCurrentFilters()
+                }
+                BugList.setQueryParams(urlParameters);
+                var queryUrl = "api/BugQuery?" + $.param(urlParameters);
+
+                $.get(queryUrl).done(function(d) {
+                    callback(d);
+                    BugList.saveCurrentBugList(d);
+                }).fail(function() {
+                    callback();
+                });
+            }
+```
+
+When the user clicks the Print button, we can get the current query parameters and pass those as parameters to the print_bugs.aspx page.
+
+```
+$(function() {
+    var printBugs  = function(baseUrl) {
+        var queryParams = BugList.getQueryParams();
+        if (queryParams != null && queryParams.queryId) {
+            queryParams.start = 0;
+            queryParams.length = -1; //Get all the bugs instead of just 1 page
+            window.open(baseUrl + $.param(queryParams), "_blank");
+        }
+    }
+
+    $("#printbuglist").click(function() {
+        printBugs("print_bugs.aspx?");
+        return false;
+    });
+});
+```
+
+In the code behind for print_bugs.aspx, we use the parameters to execute a query and get the list of bugs to print.
+
+```
+int queryId = Convert.ToInt32(Request["queryId"]);
+int start = Convert.ToInt32(Request["start"]);
+int length = Convert.ToInt32(Request["length"]);
+string sortBy = Request["sortBy"];
+string sortOrder = Request["sortOrder"];
+BugQueryFilter[] filters = BuildFilter(Request.Params);
+Query query;
+using (Context context = new Context())
+{
+    query = context.Queries.Find(queryId);
+}
+
+BugQueryExecutor executor = new BugQueryExecutor(query);
+
+BugQueryResult result = executor.ExecuteQuery(User.Identity, start, length, sortBy, sortOrder, filters);
+
+dv = new DataView(result.Data);
+```
+
+The design was exactly the same for the Export to Excel and Print Details features. Repeating the same fix solved those problems:
+
+[View the commit - Print and Export to Excel without session state](https://github.com/dpaquette/BugTracker.NET/commit/aa379c222f91c2bf9cd1d1f59c7ade0d954b090f)
 
 ###Navigating through individual results
-This is actually a useful feature. Too bad it's so hard to implement
+Clicking a bug in the bug table takes you to the Edit Bug page. This page shows the details for the selected bug and also shows links to the previous and next bugs in the query the user was viewing on the bugs page.
+
+![Navigating through individual bugs](Images/PrevNextBug.png)
+
+This provides a very convenient way for the user to navigate through the list of bugs they were viewing on the main page. Unfortunately this is now broken because the implementation relied on the bugs being stored in session state.
+
+We can move some this logic over to the client side by storing a list of the bug ids from the current query in session storage, similar to the way we stored the current query parameters:
+
+```
+var saveCurrentBugList = function (queryResults) {
+    var currentBugList = {
+        recordsFiltered: queryResults.recordsFiltered,
+        bugIds: []
+    };
+
+    if (queryResults.data) {
+        var bugList = queryResults.data;
+        for (var i = 0; i < bugList.length; i++) {
+            currentBugList.bugIds.push(bugList[i].id);
+        }
+    }
+
+    sessionStorage.setItem("BugList", JSON.stringify(currentBugList));
+}
+
+var getCurrentBugList = function () {
+    return JSON.parse(sessionStorage.getItem("BugList"));
+}
+```
+
+On the bugs page, we can look for the current bug in the list of bugs. If the bug is found in the list, then we can display the Previous / Next bug links in the same was as before. All we did was move that logic from the server to the client. There is some additional complexity around getting the next or previous list of bug ids when there is more than one page of bugs. This can be handled in JavaScript by calling the Web API endpoint when necessary.
+
+[View the commit - Prev/Next bug links without session state](https://github.com/dpaquette/BugTracker.NET/commit/1249de58648261d5627fe797ad8d3b2eedda4336)
+
+##Comparing Performance
+Compare memory and cpu with 10/100/500/1000/2000/5000/10000 bugs
+
+##Conclusion
