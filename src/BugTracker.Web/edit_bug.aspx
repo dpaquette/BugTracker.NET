@@ -109,7 +109,7 @@
                                 class="btn"
                                 type="submit"
                                 id="submit_button2"
-                                onclick="on_user_hit_submit()"
+                                name="submit"
                                 value="Update" />
                         </div>
                         <% } %>
@@ -119,8 +119,7 @@
                             <div class="col-sm-10">
 
                                 <span class="short_desc_static" id="static_short_desc" runat="server" style='display: none;'></span>
-                                <input runat="server" type="text" class="form-control" id="short_desc" maxlength="200"
-                                    onkeydown="count_chars('short_desc',200)" onkeyup="count_chars('short_desc',200)" />
+                                <input runat="server" type="text" class="form-control" id="short_desc" maxlength="200" />
 
                                 <span runat="server" class="err" id="short_desc_err"></span>
 
@@ -133,7 +132,7 @@
                             <label runat="server" id="tags_label" class="col-sm-2 control-label" for="tags">Tags</label>
                             <div class="col-sm-10">
                                 <span class="stat" id="static_tags" runat="server"></span>
-                                <input runat="server" type="text" class="form-control" id="tags" size="70" maxlength="80" onkeydown="mark_dirty()" onkeyup="mark_dirty()" />
+                                <input runat="server" type="text" class="form-control" id="tags" size="70" maxlength="80"  />
                                 <span id="tags_link" runat="server">&nbsp;&nbsp;<a href='javascript:show_tags()'>tags</a></span>
                             </div>
                         </div>
@@ -205,7 +204,7 @@
                         <div class="form-group">
                             <label for="comment" class="control-label col-sm-2" id="comment_label" runat="server">Comment</label>
                             <div class="col-sm-10">
-                                <textarea id="comment" rows="10" cols="100" runat="server" class="form-control" onkeydown="mark_dirty()" onkeyup="mark_dirty()"></textarea>
+                                <textarea id="comment" rows="10" cols="100" runat="server" class="form-control"></textarea>
                                 <p class="help-block">
                                     <% 
                                         if (permission_level != PermissionLevel.ReadOnly)
@@ -236,8 +235,7 @@
                                 <div runat="server" class="err" id="custom_validation_err_msg"></div>
                                 <div runat="server" class="err" id="msg"></div>
 
-                                <input runat="server" class="btn btn-primary" type="submit" id="submit_button"
-                                    onclick="on_user_hit_submit()"
+                                <input runat="server" class="btn btn-primary" type="submit" name="submit" id="submit_button"
                                     value="Update" />
 
                             </div>
@@ -269,7 +267,6 @@
                         <input type="hidden" id="prev_pcd3" runat="server" />
                         <input type="hidden" id="snapshot_timestamp" runat="server" />
                         <input type="hidden" id="clone_ignore_bugid" runat="server" value="0" />
-                        <input type="hidden" id="user_hit_submit" name="user_hit_submit" value="0" />
 
                         <%  
                             if (id != 0)

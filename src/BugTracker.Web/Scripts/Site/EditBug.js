@@ -4,7 +4,6 @@ var BugTracker;
         function EditBug() {
             var _this = this;
             this.popup_window = null;
-            this.dirty = false;
             this.cls = null;
             this.ie = null;
             this.ren = new RegExp("\\n", "g");
@@ -26,6 +25,19 @@ var BugTracker;
             });
             $("[data-action=notifications] a").on("click", function () {
                 return _this.toggle_notifications(_this.bugId);
+            });
+            $("#short_desc").on("keyup", function () {
+                return _this.count_chars("short_desc", 200);
+            });
+
+            this.dirtyFlag = new BugTracker.Controls.DirtyFlag($("form[name=aspnetForm]"));
+            $(".warn").click(function (event) {
+                return _this.warnIfDirty(event);
+            });
+
+            new BugTracker.Controls.ClickOnceButton("input[type=submit]");
+            $("input[type=submit]").on("click", function () {
+                return $("form[name=aspnetForm]").submit();
             });
         }
         EditBug.prototype.add_attachment = function () {
@@ -54,17 +66,13 @@ var BugTracker;
             this.popup_window.focus();
         };
 
-        EditBug.prototype.mark_dirty = function () {
-            this.dirty = true;
-        };
-
-        EditBug.prototype.my_confirm = function () {
+        EditBug.prototype.confirmPageLeave = function () {
             return confirm('You have unsaved changes.  Do you want to leave this page and lose your changes?.');
         };
 
-        EditBug.prototype.warn_if_dirty = function (event) {
-            if (this.dirty) {
-                var result = this.my_confirm();
+        EditBug.prototype.warnIfDirty = function (event) {
+            if (this.dirtyFlag.isDirty) {
+                var result = this.confirmPageLeave();
                 if (!result) {
                     event.preventDefault();
                 }
@@ -73,8 +81,8 @@ var BugTracker;
 
         EditBug.prototype.send_email = function (id) {
             console.log("sending email");
-            if (this.dirty) {
-                var result = this.my_confirm();
+            if (this.dirtyFlag.isDirty) {
+                var result = this.confirmPageLeave();
                 if (result) {
                     window.document.location.href = window.document.location.protocol + window.document.location.host + "/send_email.aspx?bg_id=" + id;
                 }
@@ -85,7 +93,7 @@ var BugTracker;
 
         EditBug.prototype.handle_rewrite_posts = function (data, status) {
             $("#posts").html(data);
-            $(".warn").click(this.warn_if_dirty);
+
             $.get("get_db_datetime.aspx", "", this.handle_get_bug_date);
             this.start_animation();
         };
@@ -182,12 +190,6 @@ var BugTracker;
         // prevent user from hitting "Submit" twice
         EditBug.prototype.on_user_hit_submit = function () {
             $("#user_hit_submit").val("1");
-            $("#submit_button").attr('disabled', 'disabled');
-            $("#submit_button2").attr('disabled', 'disabled');
-            $("#submit_button").val("Please wait...");
-            $("#submit_button2").val("Please wait...");
-            var btn = document.getElementById("submit_button");
-            btn.form.submit();
         };
         EditBug.prototype.set_cookie = function (name, value) {
             var date = new Date();
@@ -331,8 +333,6 @@ var BugTracker;
 
             var short_desc = document.getElementById("short_desc");
 
-            this.dirty = false;
-
             if (short_desc != null)
                 short_desc.title = short_desc.value;
 
@@ -353,19 +353,15 @@ var BugTracker;
                     };
                 }
             }
-
-            this.mark_dirty();
         };
 
         EditBug.prototype.count_chars = function (textarea_id, max) {
-            this.mark_dirty();
-
             var textarea = this.get_el(textarea_id);
             var count_span = this.get_el(textarea_id + "_cnt");
 
             // \n counts as two chars by the time we insert,
             // so double them here for the purpose of counting
-            var s = textarea.value.replace(ren, "\n\n");
+            var s = textarea.value.replace(this.ren, "\n\n");
             var len = s.length;
 
             if (s.length > max) {
@@ -373,7 +369,7 @@ var BugTracker;
                 var s = s.substr(0, max);
 
                 // convert the \n\n back to \n
-                textarea.value = s.replace(ren2, "\n");
+                textarea.value = s.replace(this.ren2, "\n");
 
                 this.set_text(count_span, "0 more characters allowed");
             } else {
