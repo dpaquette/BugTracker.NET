@@ -104,8 +104,8 @@ var BugTracker;
         };
 
         EditBug.prototype.rewrite_posts = function (bugid) {
-            var images_inline = this.get_cookie("images_inline");
-            var history_inline = this.get_cookie("history_inline");
+            var images_inline = BugTracker.Util.Cookie.Get("images_inline");
+            var history_inline = BugTracker.Util.Cookie.Get("history_inline");
 
             var url = "write_posts.aspx?images_inline=" + images_inline + "&history_inline=" + history_inline + "&id=" + bugid;
 
@@ -113,7 +113,7 @@ var BugTracker;
         };
 
         EditBug.prototype.toggle_notifications = function (bugid) {
-            var url = "subscribe.aspx?ses=" + this.get_cookie("se_id") + "&id=" + bugid + "&actn=";
+            var url = "subscribe.aspx?ses=" + BugTracker.Util.Cookie.Get("se_id") + "&id=" + bugid + "&actn=";
 
             if (this.isSubscribed)
                 url += "0";
@@ -136,7 +136,7 @@ var BugTracker;
         };
 
         EditBug.prototype.toggle_images2 = function (bugid) {
-            var images_inline = this.get_cookie("images_inline");
+            var images_inline = BugTracker.Util.Cookie.Get("images_inline");
             if (images_inline == "1") {
                 images_inline = "0";
                 this.set_text(this.get_el("hideshow_images"), "show inline images");
@@ -145,13 +145,13 @@ var BugTracker;
                 this.set_text(this.get_el("hideshow_images"), "hide inline images");
             }
 
-            this.set_cookie("images_inline", images_inline);
+            BugTracker.Util.Cookie.Set("images_inline", images_inline);
 
             this.rewrite_posts(bugid);
         };
 
         EditBug.prototype.toggle_history2 = function (bugid) {
-            var history_inline = this.get_cookie("history_inline");
+            var history_inline = BugTracker.Util.Cookie.Get("history_inline");
             if (history_inline == "1") {
                 history_inline = "0";
                 this.set_text(this.get_el("hideshow_history"), "show change history");
@@ -160,7 +160,7 @@ var BugTracker;
                 this.set_text(this.get_el("hideshow_history"), "hide change history");
             }
 
-            this.set_cookie("history_inline", history_inline);
+            BugTracker.Util.Cookie.Set("history_inline", history_inline);
 
             this.rewrite_posts(bugid);
         };
@@ -191,41 +191,19 @@ var BugTracker;
         EditBug.prototype.on_user_hit_submit = function () {
             $("#user_hit_submit").val("1");
         };
-        EditBug.prototype.set_cookie = function (name, value) {
-            var date = new Date();
-
-            // expire in 10 years
-            date.setTime(date.getTime() + (3650 * 24 * 60 * 60 * 1000));
-
-            document.cookie = name + "=" + value + ";expires=" + date.toGMTString();
-            +";path=/";
-        };
-
-        EditBug.prototype.get_cookie = function (name) {
-            var nameEQ = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ')
-                    c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0)
-                    return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        };
 
         EditBug.prototype.save_var = function (name) {
             var el = this.get_el(name);
             if (el != null) {
                 var val = el.options[el.selectedIndex].text;
-                this.set_cookie(name, val);
+                BugTracker.Util.Cookie.Set(name, val);
             }
         };
 
         EditBug.prototype.get_preset = function (name) {
             var el = this.get_el(name);
             if (el != null) {
-                var val = this.get_cookie(name);
+                var val = BugTracker.Util.Cookie.Get(name);
 
                 if (val != null) {
                     for (var i = 0; i < el.options.length; i++) {
