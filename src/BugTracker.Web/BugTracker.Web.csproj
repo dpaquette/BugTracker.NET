@@ -667,6 +667,11 @@
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
+    <Content Include="Scripts\Site\Controls\ClickOnceButton.js" />
+    <Content Include="Scripts\Site\Controls\DirtyFlag.js" />
+    <Content Include="Scripts\Site\Controls\LengthLimitedTextArea.js" />
+    <Content Include="Scripts\Site\EditBug.js" />
+    <Content Include="Scripts\Site\Util\Cookie.js" />
     <Content Include="search.aspx" />
     <Content Include="search_text.aspx" />
     <Content Include="seen.aspx" />
@@ -1659,14 +1664,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\Site\Controls\DirtyFlag.ts" />
-    <TypeScriptCompile Include="Scripts\Site\Controls\ClickOnceButton.ts" />
-    <TypeScriptCompile Include="Scripts\Site\Controls\LengthLimitedTextArea.ts" />
-    <TypeScriptCompile Include="Scripts\Site\EditBug.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
     <TypeScriptCompile Include="Scripts\Site\Page.ts" />
-    <TypeScriptCompile Include="Scripts\Site\Util\Cookie.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

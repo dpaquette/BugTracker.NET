@@ -10,7 +10,7 @@ namespace btnet.App_Start
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/all.min.js").IncludeDirectory("~/Scripts/Site", "*.js", true));
+            bundles.Add(new ScriptBundle("~/bundles/all").IncludeDirectory("~/Scripts/Site", "*.js", true));
         }
     }
 }

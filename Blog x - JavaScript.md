@@ -518,7 +518,7 @@ public class BundleConfig
 {
     public static void RegisterBundles(BundleCollection bundles)
     {
-        bundles.Add(new ScriptBundle("~/bundles/all.min.js")
+        bundles.Add(new ScriptBundle("~/bundles/all")
         				 .IncludeDirectory("~/Scripts/Site", "*.js", true));
     }
 }
@@ -546,7 +546,7 @@ private static void RegisterBundles()
 We can test this bundle by putting a file in the Scripts directory and trying to load the scripts. We can include the scripts in the master page by simply referencing the bundle like so 
 
 ```
-<%: System.Web.Optimization.Scripts.Render("~/bundles/all.min.js") %>
+<%: System.Web.Optimization.Scripts.Render("~/bundles/all") %>
 ```
 
 Now when we got to a page we can see that the scripts are indeed all loaded
