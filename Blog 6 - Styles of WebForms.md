@@ -73,13 +73,13 @@ In the case of the above code we could quite easily replace it with inline code:
 
 While writing this version of the code I came across a number of bugs and fixed them. Most of the issues were related to incorrect tag termination. The domain specific language that is a mixture of C# and HTML makes issues far more apparent and the code easier to read.
 
-Code of this sort will probably date to the early days of ASP.net. Developers coming over from CGI approaches to web programming or even those comign from structured languages such as C are most likely to use this style.
+Code of this sort will probably date to the early days of ASP.net. Developers coming over from CGI approaches to web programming or even those coming from structured languages such as C are most likely to use this style.
 
 ##WebForms
 
 In the late 90s and early 2000s Microsoft had a problem: their strategy called for moving to web development but very few of their existing developers had any experience doing web development. Most of their developers had experience with Visual Basic 6 which provided a drag and drop method of building applications out of a series of controls. These controls had event listeners attached to them that were where the majority of the programming occurred.
 
-In order to allow developers to use their existing skills Microsoft developed WebForms which brought much of the same programming paradigm to the web. Controls can be paced onto the page and the event handlers execute on the server side. Custom controls can be built to provide reusable functionality beween pages.
+In order to allow developers to use their existing skills Microsoft developed WebForms which brought much of the same programming paradigm to the web. Controls can be paced onto the page and the event handlers execute on the server side. Custom controls can be built to provide reusable functionality between pages.
 
 The normal methods of interacting with a web page were overridden using JavaScript to send post messages back to the server. The code on the server would update the page model and perform a full page refresh, sending the entire page back to the client. A significant amount of binding logic is handled server side as well.
 

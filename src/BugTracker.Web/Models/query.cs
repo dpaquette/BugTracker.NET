@@ -1,15 +1,27 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace btnet.Models
 {
-    public partial class query
+    public partial class Query
     {
-        public int qu_id { get; set; }
-        public string qu_desc { get; set; }
-        public string qu_sql { get; set; }
-        public Nullable<int> qu_default { get; set; }
-        public Nullable<int> qu_user { get; set; }
-        public Nullable<int> qu_org { get; set; }
+        public int Id { get; set; }
+        public string Description { get; set; }
+        public string SQL { get; set; }
+        public Nullable<int> Default { get; set; }
+        public Nullable<int> User { get; set; }
+        public Nullable<int> Org { get; set; }
+
+        public string Columns { get; set; }
+
+        public string[] ColumnNames
+        {
+            get { return Columns.Split(new [] {','}, StringSplitOptions.RemoveEmptyEntries); }
+        }
+        public string[] VisibleColumnNames
+        {
+            get { return ColumnNames.Except(new[] { "$COLOR", "$SCORE" }).ToArray(); }
+        }
+
     }
 }

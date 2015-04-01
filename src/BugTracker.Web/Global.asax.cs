@@ -2,6 +2,7 @@
 using System.IO;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Http;
 using btnet.App_Start;
 using NLog;
 using System.Web.Optimization;
@@ -24,17 +25,22 @@ namespace btnet
 
         public void Application_OnStart(Object sender, EventArgs e)
         {
+ GlobalConfiguration.Configure(WebApiConfig.Register);           
+ LoggingConfig.Configure();
+            HttpRuntime.Cache.Add("Application", Application, null, Cache.NoAbsoluteExpiration,
+                Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, null);
             ConfigureLogging();
             ConfigureCache();
             CreateRequiredDirectories();
             LoadConfiguration();
             RegisterBundles();
         }
-        private static void RegisterBundles()
+  
+
+      private static void RegisterBundles()
         {
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
-
         private void LoadConfiguration()
         {
             Util.set_context(HttpContext.Current); // required for map path calls to work in util.cs

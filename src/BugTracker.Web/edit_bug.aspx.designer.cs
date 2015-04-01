@@ -148,15 +148,6 @@ namespace btnet {
         protected global::System.Web.UI.HtmlControls.HtmlGenericControl bugid;
         
         /// <summary>
-        /// prev_next control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlGenericControl prev_next;
-        
-        /// <summary>
         /// custom_field_msg2 control.
         /// </summary>
         /// <remarks>

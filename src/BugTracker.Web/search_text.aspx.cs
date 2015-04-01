@@ -1,23 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Security.Permissions;
-using System.Text;
-using System.Web;
 using btnet.Search;
-using Nest;
 
 namespace btnet
 {
     public partial class search_text : BasePage
     {
-
+        protected DataTable _searchResults;
 #pragma warning disable 618
 
         ///////////////////////////////////////////////////////////////////////
         void Page_Load(Object sender, EventArgs e)
         {
-
+            Master.Menu.SelectedItem = Util.get_setting("PluralBugLabel", "bugs");
 
             try
             {
@@ -32,14 +27,9 @@ namespace btnet
             }
 
             var search = BugSearchFactory.CreateBugSearch();
-            var results = search.Search(Request["Query"], User.Identity);
+            _searchResults = search.Search(Request["Query"], User.Identity).Tables[0];
 
-            Session["bugs_unfiltered"] = results.Tables[0];
-            Session["bugs"] = new DataView(results.Tables[0]);
-
-            Session["just_did_text_search"] = "yes"; // switch for bugs.aspx
-            Session["query"] = Request["query"]; // for util.cs, to persist the text in the search <input>
-            Response.Redirect("bugs.aspx");
+            Session["query"] = Request["query"];
         }
 
         void display_exception(Exception e)

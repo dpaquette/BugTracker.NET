@@ -36,6 +36,9 @@
         background-color: #bcffbc;
     }
 
+.text-primary {
+    color: #009900;
+}
 .navbar-brand {
     padding-top: 10px;
 }

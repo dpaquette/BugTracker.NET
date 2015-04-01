@@ -4,6 +4,7 @@
 <%@ Import Namespace="btnet.Security" %>
 
 <asp:Content ContentPlaceHolderID="headerScripts" runat="server">
+    <script type="text/javascript" src="bug_list.js"></script>
     <script type="text/javascript" src="edit_bug.js"></script>
     <%  if (User.Identity.GetUseFCKEditor())
         { %>
@@ -79,7 +80,7 @@
 
                         <!-- Form Name -->
                         <legend><%=btnet.Util.get_setting("SingularBugLabel", "bug")%>  <span runat="server" class="bugid" id="bugid"></span>
-                            <div class="pull-right" id="prev_next" runat="server" style="font-size: 12px; display: inline-block">
+                            <div class="pull-right" id="prev_next" style="font-size: 12px; display: inline-block">
                             </div>
                         </legend>
                         <% if (id == 0 || permission_level == btnet.Security.PermissionLevel.All)
@@ -308,4 +309,49 @@
         </div>
         <!-- posts -->
     </div>
+</asp:Content>
+<asp:Content runat="server" ContentPlaceHolderID="footerScripts">
+    <script type="text/javascript">
+        $(function() {
+            //Get the current bug lists
+            BugList.getBugDetails(<%=id%>).then(function(bugDetails) {
+                if (bugDetails && bugDetails.bugIndex > 0) {
+                    var bugNavHtml = "<ul class='pagination' style='margin: 0 5px'>";
+                    if (bugDetails.previousBugId)
+                    {
+                        bugNavHtml +=
+                            "<li><a href='edit_bug.aspx?id="
+                            + bugDetails.previousBugId
+                            + "' class='warn'>&laquo; Prev</a></li>";
+                    }
+                    else
+                    {
+                        bugNavHtml +=
+                            "<li class='disabled'><a href='#'>&laquo; Prev</a></li>";
+                    }
+
+                    if (bugDetails.nextBugId)
+                    {
+                        bugNavHtml +=
+                            "<li><a href='edit_bug.aspx?id="
+                            + bugDetails.nextBugId
+                            + "' class='warn'>Next &raquo;</a></li>";
+                    }
+                    else
+                    {
+                        bugNavHtml +=
+                            "<li class='disabled'><a href='#'>Next &raquo;</a></li>";
+                    }
+
+                    bugNavHtml += "</ul>";
+                    bugNavHtml += "<span class='help-block text-center' style='margin: 0'>"
+                            + bugDetails.bugIndex
+                            + " of "
+                            + bugDetails.count
+                            + "</span>";
+                    $("#prev_next").html(bugNavHtml);
+                }       
+            });
+        });
+    </script>
 </asp:Content>
