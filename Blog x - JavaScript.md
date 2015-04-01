@@ -543,7 +543,19 @@ private static void RegisterBundles()
 }
 ```
 
-We can test this bundle by putting a file in the Scripts directory and tryign to load the bundles/all.min.js file. 
+We can test this bundle by putting a file in the Scripts directory and trying to load the scripts. We can include the scripts in the master page by simply referencing the bundle like so 
+
+```
+<%: System.Web.Optimization.Scripts.Render("~/bundles/all.min.js") %>
+```
+
+Now when we got to a page we can see that the scripts are indeed all loaded
+
+![Individual scripts](Images/javascript in debug.jpg)
+
+In development all the scripts are included individually to aide in debugging. In production, which is achieved by toggling the flag in the web.config, the scripts are bundled
+
+![Bundled scripts](Images/javascript in release.jpg)
 
 
 [^http2]: The method of communicating between client and sever is currently undergoing its first ever major revision. HTTP 2.0 will be a binary protocol and will allow for multiple requests to be made over a single connection. This should speed up the loading of pages over HTTP2 and will invalidate the need to combine your JavaScript files into a single file. Life should be much better in 5 to 10 years when this HTTP2 is available everywhere. 
