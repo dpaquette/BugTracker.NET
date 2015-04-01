@@ -12,3 +12,4 @@ var BugTracker;
 })(BugTracker || (BugTracker = {}));
 
 var page = new BugTracker.Page();
+//# sourceMappingURL=Page.js.map

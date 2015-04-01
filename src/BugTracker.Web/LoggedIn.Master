@@ -28,6 +28,8 @@
     <asp:ContentPlaceHolder runat="server" ID="body"></asp:ContentPlaceHolder>
     <uc1:Footer runat="server" ID="Footer" />
     <script src="Scripts/bootstrap.min.js"></script>
+    <%: System.Web.Optimization.Scripts.Render("~/bundles/all.min.js") %>
+
 </body>
 
 <asp:contentplaceholder runat="server" id="footerScripts"></asp:contentplaceholder>
