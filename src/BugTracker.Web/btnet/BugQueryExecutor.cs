@@ -36,69 +36,90 @@ namespace btnet
             {
                 throw new ArgumentException("Invalid order by column specified: {0}", orderBy);
             }
-            string columnsToSelect = idOnly ? "id" : "*";
-            var initialSql = string.Format("SELECT t.{0} FROM ({1}) t",columnsToSelect, GetInnerSql(identity));
-            SQLString sqlString = new SQLString(initialSql);
-            var initialCountSql = string.Format("SELECT COUNT(*) FROM ({0}) t", GetInnerSql(identity));
-            SQLString countSqlString = new SQLString(initialCountSql);
-            SQLString countUnfilteredSqlString = new SQLString(initialCountSql);
-            int userId = identity.GetUserId();
-            sqlString.AddParameterWithValue("@ME", userId);
-            countSqlString.AddParameterWithValue("@ME", userId);
-            countUnfilteredSqlString.AddParameterWithValue("@ME", userId);
 
-            
-            if (filters != null && filters.Any())
+            bool hasFilters = filters != null && filters.Any();
+            string columnsToSelect = idOnly ? "id" : "*";
+            var innerSql = GetInnerSql(identity);
+            var countSql = string.Format("SELECT COUNT(1) FROM ({0}) t", GetInnerSql(identity));
+
+            SQLString sqlString = new SQLString(countSql);
+
+            sqlString.Append(";");
+            if (hasFilters)
             {
+                sqlString.Append(countSql);
                 ApplyWhereClause(sqlString, filters);
-                ApplyWhereClause(countSqlString, filters);
+                sqlString.Append(";");
+            }
+
+            var bugsSql = string.Format("SELECT t.{0} FROM ({1}) t",columnsToSelect, innerSql);
+            sqlString.Append(bugsSql);
+            
+
+            sqlString.Append(" WHERE id IN (");
+            var innerBugsSql = string.Format("SELECT t.id FROM ({0}) t", innerSql);
+            sqlString.Append(innerBugsSql);
+
+            ApplyWhereClause(sqlString, filters);
+            
+            
+            if (hasFilters)
+            {
+                foreach (var filter in filters)
+	            {
+                    sqlString.AddParameterWithValue(GetCleanParameterName(filter.Column), filter.Value);
+	            }
+    
             }
            
             sqlString.Append(" ORDER BY ");
 
-            sqlString.Append(BuildDynamicOrderByClause());
+            sqlString.Append(BuildDynamicOrderByClause(orderBy, sortDirection));
 
-            sqlString.AddParameterWithValue("ORDER_BY", orderBy ?? _columnNames.First());
-            sqlString.AddParameterWithValue("SORT_DIRECTION", sortDirection);
-
-         
-            sqlString.Append(" OFFSET @offset ROWS FETCH NEXT @page_size ROWS ONLY");
+            sqlString.Append(" OFFSET @offset ROWS FETCH NEXT @page_size ROWS ONLY)");
+            
+            
+            int userId = identity.GetUserId();
+            sqlString.AddParameterWithValue("@ME", userId);
             sqlString.AddParameterWithValue("page_size", length > 0 ? length : MaxLength);
             sqlString.AddParameterWithValue("offset", start);
+            DataSet dataSet = DbUtil.get_dataset(sqlString);
 
-
+            var countUnfiltered = Convert.ToInt32(dataSet.Tables[0].Rows[0][0]);
+            var countFiltered = hasFilters ? Convert.ToInt32(dataSet.Tables[1].Rows[0][0]) : countUnfiltered;
+            var bugDataTableIndex = hasFilters ? 2 : 1;
+            
             return new BugQueryResult
             {
-                CountUnfiltered = Convert.ToInt32(DbUtil.execute_scalar(countUnfilteredSqlString)),
-                CountFiltered = Convert.ToInt32(DbUtil.execute_scalar(countSqlString)),
-                Data = DbUtil.get_dataset(sqlString).Tables[0]
+                CountUnfiltered = countUnfiltered,
+                CountFiltered = countFiltered,
+                Data = dataSet.Tables[bugDataTableIndex]
             };
 
         }
 
-        private string BuildDynamicOrderByClause()
-        {
-            return string.Join(", ",
-                _columnNames.Select(column => string.Format(
-                    @" CASE WHEN @ORDER_BY = '{0}' AND @SORT_DIRECTION = 'DESC' THEN [{0}] END DESC, 
-  CASE WHEN @ORDER_BY = '{0}' AND @SORT_DIRECTION = 'ASC' THEN [{0}] END ASC", column)).ToArray());
+        private string BuildDynamicOrderByClause(string orderBy, string sortDirection)
+        {            
+            return string.Format("[{0}] {1}", orderBy, sortDirection == "ASC" ? "ASC" : "DESC");            
         }
 
         private void ApplyWhereClause(SQLString sqlString, BugQueryFilter[] filters)
         {
-            sqlString.Append(" WHERE ");
-            List<string> conditions = new List<string>();
-            foreach (var filter in filters)
+            if (filters != null && filters.Any())
             {
-                if (!_columnNames.Contains(filter.Column))
+                sqlString.Append(" WHERE ");
+                List<string> conditions = new List<string>();
+                foreach (var filter in filters)
                 {
-                    throw new ArgumentException("Invalid filter column: {0}", filter.Column);
+                    if (!_columnNames.Contains(filter.Column))
+                    {
+                        throw new ArgumentException("Invalid filter column: {0}", filter.Column);
+                    }
+                    string parameterName = GetCleanParameterName(filter.Column);
+                    conditions.Add(string.Format("[{0}] = @{1}", filter.Column, parameterName));
                 }
-                string parameterName = GetCleanParameterName(filter.Column);
-                conditions.Add(string.Format("[{0}] = @{1}", filter.Column, parameterName));
-                sqlString.AddParameterWithValue(parameterName, filter.Value);
+                sqlString.Append(string.Join(" AND ", conditions));
             }
-            sqlString.Append(string.Join(" AND ", conditions));
         }
 
         private string GetInnerSql(IIdentity identity)
