@@ -100,7 +100,7 @@ namespace btnet
 
         private string BuildDynamicOrderByClause(string orderBy, string sortDirection)
         {            
-            return string.Format("[{0}] {1}", orderBy, sortDirection == "ASC" ? "ASC" : "DESC");            
+            return string.Format("[{0}] {1}", orderBy, sortDirection.ToUpper() == "ASC" ? "ASC" : "DESC");            
         }
 
         private void ApplyWhereClause(SQLString sqlString, BugQueryFilter[] filters)
