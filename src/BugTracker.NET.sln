@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugTracker.Web", "BugTracker.Web\BugTracker.Web.csproj", "{61728368-C276-48D8-9C57-B11A34D1B1B4}"
 EndProject
@@ -17,6 +17,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F5D0B6
 	EndProjectSection
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "BugTracker.Database", "BugTracker.Database\BugTracker.Database.sqlproj", "{490E43F2-EB25-4102-9E5F-768C941987C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugTracker.LoadTest", "BugTracker.LoadTest\BugTracker.LoadTest.csproj", "{EF664ED1-2330-4B15-93D3-70128A4093B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6CBD2D84-C0B3-470D-8193-FEA9AF32CC13}"
+	ProjectSection(SolutionItems) = preProject
+		Local.testsettings = Local.testsettings
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,9 +49,16 @@ Global
 		{490E43F2-EB25-4102-9E5F-768C941987C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{490E43F2-EB25-4102-9E5F-768C941987C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{490E43F2-EB25-4102-9E5F-768C941987C0}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{EF664ED1-2330-4B15-93D3-70128A4093B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF664ED1-2330-4B15-93D3-70128A4093B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF664ED1-2330-4B15-93D3-70128A4093B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF664ED1-2330-4B15-93D3-70128A4093B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(CodealikeProperties) = postSolution
 		SolutionGuid = 57f235d3-6433-446a-8ea7-430401538afd
