@@ -295,7 +295,7 @@ which makes use of the selector API. jQuery will defer to this behavior if it is
 
 ###Breaking up JavaScript
 
-EditBug.js is over 400 lines long. While I don't have a particular limit in mind before a class becomes unmaintainable the nature of the code in this file gives me pause. The function are small but they are also largely unrelated. The past majority of the functions don't call into other function which makes me think that the internal coupling in the class is low and so the class is not cohesive. Cohesion is important as it makes replacing the functionality in the future much easier. We can be confident that changes to a class that does nothing but handle e-mail address verification is not likely to change how web URLs are routed. 
+EditBug.js is over 400 lines long. While I don't have a particular limit in mind before a class becomes unmaintainable the nature of the code in this file gives me pause. The function are small but they are also largely unrelated. The vast majority of the functions don't call into other function which makes me think that the internal coupling in the class is low and so the class is not cohesive. Cohesion is important as it makes replacing the functionality in the future much easier. We can be confident that changes to a class that does nothing but handle e-mail address verification is not likely to change how web URLs are routed. 
 
 Digging into the class we find that there are a few different responsibilities in the class
 
@@ -385,7 +385,7 @@ $(".warn").click(function (event) {
 Much of the logic related to dirty flags has now be moved out of the EditBug.js file and into a control that can be reused whenever we wish.
 
 
-[View the commit - Adding dirty flag](https://github.com/dpaquette/BugTracker.NET/commit/931220e3fab3c45430e987ea6ee8f066b3edd2f8)
+[View the commit - Adding dirty flag](https://github.com/dpaquette/BugTracker.NET/commit/b875ab9392f22ebd5405b82009d78085ec504844)
 
 Getting and setting cookies is a very common function in a web application. It makes very little sense to me that the functions to to this should exist in the page level JavaScript. This sort of functionality can be moved to a common location. A lot of people dislike having a Util or Utility namespace. It does tend to become a bit of a dumping ground for random scripts that have no other home. As long as you're cognizant of this and are vigilant in preventing Util from becoming too crowded I have no issue with it.
 
