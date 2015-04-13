@@ -10,39 +10,23 @@
         { %>
     <script type="text/javascript" src="scripts/ckeditor/ckeditor.js"></script>
     <% } %>
-    <script>
-        var this_bugid = <%=Convert.ToString(id)%>;
-
-        $(document).ready(do_doc_ready);
-
-        function do_doc_ready() {
-            date_format = '<%=btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")%>';
-            $(".date").datepicker({ dateFormat: date_format, duration: 'fast' });
-            $(".date").change(mark_dirty);
-            $(".warn").click(warn_if_dirty);
-            <% if (User.Identity.GetUseFCKEditor())
-               {
-                   Response.Write("CKEDITOR.replace( 'comment' )");
-               }	    
-            %>
-            on_body_load();
-            $(document).on("unload", "body", function () { on_body_unload(); });
-
-        }
-    </script>
     <link rel="StyleSheet" href="custom/btnet_edit_bug.css" type="text/css">
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="body" runat="server" ClientIDMode="Static">
 
-    <div class="container">
+    <div class="container" 
+         data-bug-id="<%: Convert.ToString(id)%>" 
+         data-date-format="<%: btnet.Util.get_setting("DatepickerDateFormat", "yy-mm-dd")%>" 
+         data-is-subscribed="<%: isSubscribed %>"
+        <%: User.Identity.GetUseFCKEditor() ? "data-use-fck-editor=''" : "" %> >
 
         <div class="row">
 
 
             <div id="edit_bug_menu" class="custom-collapse <%=id > 0 ? "col-sm-12 col-md-3 col-lg-2" : "" %>">
-                <div class="btn btn-default text-left visible-xs-block visible-sm-block"  style="text-align: left; width: 175px" data-toggle="collapse" data-target="#side_menu_collapse">
-                    <i class="glyphicon glyphicon-tasks"></i><span> Bug Tools </span> <i class="glyphicon glyphicon-chevron-down pull-right"></i>
+                <div class="btn btn-default text-left visible-xs-block visible-sm-block" style="text-align: left; width: 175px" data-toggle="collapse" data-target="#side_menu_collapse">
+                    <i class="glyphicon glyphicon-tasks"></i><span>Bug Tools </span><i class="glyphicon glyphicon-chevron-down pull-right"></i>
                 </div>
                 <ul id="side_menu_collapse" class="collapse">
                     <%  if (User.Identity.GetCanAddBugs() && id > 0)
@@ -52,19 +36,38 @@
                     </li>
                     <% } %>
 
-                    <li class="dropdown-toggle" id="clone" runat="server" />
+                    <li class="dropdown-toggle" id="clone" runat="server" data-action="clone">
+                        <a class='warn btn btn-default' title='Create a copy of this item'>
+                            <img src='paste_plain.png' border=0 />&nbsp;Create Copy</a>
+                        </li>
                     <li class="dropdown-toggle" id="print" runat="server" />
                     <li class="dropdown-toggle" id="merge_bug" runat="server" />
                     <li class="dropdown-toggle" id="delete_bug" runat="server" />
                     <li class="dropdown-toggle" id="svn_revisions" runat="server" />
                     <li class="dropdown-toggle" id="git_commits" runat="server" />
                     <li class="dropdown-toggle" id="hg_revisions" runat="server" />
-                    <li class="dropdown-toggle" id="subscribers" runat="server" />
-                    <li class="dropdown-toggle" id="subscriptions" runat="server" />
+                    <li class="dropdown-toggle" id="subscribers" runat="server">
+                        <a class='btn btn-default' target=_blank href='view_subscribers.aspx?id=<%:id %>' title='View users who have subscribed to email notifications for this item'>
+                            <img src='telephone_edit.png' border=0>&nbsp;Subscribers
+                        </a>
+                    </li>
+
+                    <li class="dropdown-toggle" id="notifications" runat="server" data-action="notifications">
+                        <a class='btn btn-default' title='Get or stop getting email notifications about changes to this item.'>
+                            <img src=telephone.png border=0 />&nbsp;<span data-id="notifications-label">Notifications</span></a>
+                    </li>
                     <li class="dropdown-toggle" id="relationships" runat="server" />
                     <li class="dropdown-toggle" id="tasks" runat="server" />
-                    <li class="dropdown-toggle" id="send_email" runat="server" />
-                    <li class="dropdown-toggle" id="attachment" runat="server" />
+                    <li class="dropdown-toggle" id="send_email" runat="server" data-action="send_email">
+                        <a class='btn btn-default' title='Send an email about this item'>
+                            <i class='glyphicon glyphicon-envelope'></i>&nbsp;Send Email
+                        </a>
+                     </li>
+                    <li class="dropdown-toggle" id="attachment" runat="server" data-action="add_attachment">
+                        <a class='btn btn-default' title='Attach an image, document, or other file to this item'>
+                            <i class='glyphicon glyphicon-paperclip'></i> Add Attachment
+                        </a>
+                    </li>
                     <li class="dropdown-toggle" id="custom" runat="server" />
                 </ul>
             </div>
@@ -107,7 +110,7 @@
                                 class="btn"
                                 type="submit"
                                 id="submit_button2"
-                                onclick="on_user_hit_submit()"
+                                name="submit"
                                 value="Update" />
                         </div>
                         <% } %>
@@ -117,8 +120,7 @@
                             <div class="col-sm-10">
 
                                 <span class="short_desc_static" id="static_short_desc" runat="server" style='display: none;'></span>
-                                <input runat="server" type="text" class="form-control" id="short_desc" maxlength="200"
-                                    onkeydown="count_chars('short_desc',200)" onkeyup="count_chars('short_desc',200)" />
+                                <input runat="server" type="text" class="form-control" id="short_desc" maxlength="200" />
 
                                 <span runat="server" class="err" id="short_desc_err"></span>
 
@@ -131,7 +133,7 @@
                             <label runat="server" id="tags_label" class="col-sm-2 control-label" for="tags">Tags</label>
                             <div class="col-sm-10">
                                 <span class="stat" id="static_tags" runat="server"></span>
-                                <input runat="server" type="text" class="form-control" id="tags" size="70" maxlength="80" onkeydown="mark_dirty()" onkeyup="mark_dirty()" />
+                                <input runat="server" type="text" class="form-control" id="tags" size="70" maxlength="80"  />
                                 <span id="tags_link" runat="server">&nbsp;&nbsp;<a href='javascript:show_tags()'>tags</a></span>
                             </div>
                         </div>
@@ -203,7 +205,7 @@
                         <div class="form-group">
                             <label for="comment" class="control-label col-sm-2" id="comment_label" runat="server">Comment</label>
                             <div class="col-sm-10">
-                                <textarea id="comment" rows="10" cols="100" runat="server" class="form-control" onkeydown="mark_dirty()" onkeyup="mark_dirty()"></textarea>
+                                <textarea id="comment" rows="10" cols="100" runat="server" class="form-control"></textarea>
                                 <p class="help-block">
                                     <% 
                                         if (permission_level != PermissionLevel.ReadOnly)
@@ -234,8 +236,7 @@
                                 <div runat="server" class="err" id="custom_validation_err_msg"></div>
                                 <div runat="server" class="err" id="msg"></div>
 
-                                <input runat="server" class="btn btn-primary" type="submit" id="submit_button"
-                                    onclick="on_user_hit_submit()"
+                                <input runat="server" class="btn btn-primary" type="submit" name="submit" id="submit_button"
                                     value="Update" />
 
                             </div>
@@ -267,7 +268,6 @@
                         <input type="hidden" id="prev_pcd3" runat="server" />
                         <input type="hidden" id="snapshot_timestamp" runat="server" />
                         <input type="hidden" id="clone_ignore_bugid" runat="server" value="0" />
-                        <input type="hidden" id="user_hit_submit" name="user_hit_submit" value="0" />
 
                         <%  
                             if (id != 0)

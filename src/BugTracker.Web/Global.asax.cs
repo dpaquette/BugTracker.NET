@@ -5,6 +5,7 @@ using System.Web.Caching;
 using System.Web.Http;
 using btnet.App_Start;
 using NLog;
+using System.Web.Optimization;
 
 namespace btnet
 {
@@ -24,29 +25,24 @@ namespace btnet
 
         public void Application_OnStart(Object sender, EventArgs e)
         {
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            LoggingConfig.Configure();
+ GlobalConfiguration.Configure(WebApiConfig.Register);           
+ LoggingConfig.Configure();
             HttpRuntime.Cache.Add("Application", Application, null, Cache.NoAbsoluteExpiration,
                 Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, null);
+            ConfigureLogging();
+            ConfigureCache();
+            CreateRequiredDirectories();
+            LoadConfiguration();
+            RegisterBundles();
+        }
+  
 
-            string dir = Util.GetAbsolutePath("App_Data");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            dir = Util.GetAbsolutePath("App_Data\\logs");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            dir = Util.GetAbsolutePath("App_Data\\uploads");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
+      private static void RegisterBundles()
+        {
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+        private void LoadConfiguration()
+        {
             Util.set_context(HttpContext.Current); // required for map path calls to work in util.cs
 
             StreamReader sr = File.OpenText(Util.GetAbsolutePath("custom\\custom_header.html"));
@@ -75,6 +71,34 @@ namespace btnet
                 Tags.build_tag_index(Application);
             }
         }
+        private static void CreateRequiredDirectories()
+        {
+            string dir = Util.GetAbsolutePath("App_Data");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
 
+            dir = Util.GetAbsolutePath("App_Data\\logs");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            dir = Util.GetAbsolutePath("App_Data\\uploads");
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+        }
+        private void ConfigureCache()
+        {
+            HttpRuntime.Cache.Add("Application", Application, null, Cache.NoAbsoluteExpiration,
+                            Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable, null);
+        }
+        private static void ConfigureLogging()
+        {
+            LoggingConfig.Configure();
+        }
     }
 }

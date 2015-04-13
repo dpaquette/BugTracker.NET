@@ -9,19 +9,8 @@
 
         <p>or</p>
         <form runat="server" id="frm">
-            <a id="confirm_href" runat="server" href="javascript: submit_form()"></a>
+            <a id="confirm_href" runat="server" data-action="submit"></a>
             <input type="hidden" id="row_id" runat="server">
         </form>
     </div>
-</asp:Content>
-
-<asp:Content ContentPlaceHolderID="headerScripts" runat="server">
-    <script>
-        function submit_form() {
-            var frm = document.getElementById("<%: Form.ClientID %>");
-            frm.submit();
-            return true;
-        }
-
-    </script>
 </asp:Content>

@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Web;
 using System.Data;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
 using btnet.Security;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace btnet
@@ -25,6 +24,7 @@ namespace btnet
 
         protected bool images_inline = true;
         protected bool history_inline = false;
+        protected bool isSubscribed = false;
 
         bool status_changed = false;
         bool assigned_to_changed = false;
@@ -48,7 +48,7 @@ namespace btnet
             {
                 // New
                 id = 0;
-              
+
             }
             else
             {
@@ -63,7 +63,7 @@ namespace btnet
                     id = Convert.ToInt32(string_bugid);
                 }
 
-          
+
             }
 
             if (!IsPostBack)
@@ -324,55 +324,21 @@ namespace btnet
                 + "</span></a>";
             toggle_history.InnerHtml = toggle_history_link;
 
-            if (permission_level == PermissionLevel.All)
-            {
-                string clone_link = "<a class='warn btn btn-default' href='javascript:clone()' "
-                    + " title='Create a copy of this item'><img src='paste_plain.png' border=0 />&nbsp;Create Copy</a>";
-                clone.InnerHtml = clone_link;
-            }
 
-
-            if (permission_level != PermissionLevel.ReadOnly)
-            {
-                string attachment_link = "<a class='btn btn-default' href=\"javascript:open_popup_window('add_attachment.aspx','add attachment ',"
-                    + Convert.ToString(id)
-                    + ",600,300)\" title='Attach an image, document, or other file to this item'><i class='glyphicon glyphicon-paperclip'></i> Add Attachment</a>";
-                attachment.InnerHtml = attachment_link;
-            }
-            else
+            if (permission_level == PermissionLevel.ReadOnly)
             {
                 attachment.Visible = false;
             }
 
 
-            if (!User.IsInRole(BtnetRoles.Guest))
-            {
-                if (permission_level != PermissionLevel.ReadOnly)
-                {
-                    string send_email_link = "<a class='btn btn-default' href='javascript:send_email("
-                        + Convert.ToString(id)
-                        + ")' title='Send an email about this item'><i class='glyphicon glyphicon-envelope'></i>&nbsp;Send Email</a>";
-                    send_email.InnerHtml = send_email_link;
-                }
-                else
-                {
-                    send_email.Visible = false;
-                }
-
-            }
-            else
+            if (User.IsInRole(BtnetRoles.Guest) || permission_level == PermissionLevel.ReadOnly)
             {
                 send_email.Visible = false;
             }
 
-            if (permission_level != PermissionLevel.ReadOnly)
-            {
-                string subscribers_link = "<a class='btn btn-default' target=_blank href='view_subscribers.aspx?id="
-                    + Convert.ToString(id)
-                    + "' title='View users who have subscribed to email notifications for this item'><img src='telephone_edit.png' border=0>&nbsp;Subscribers</a>";
-                subscribers.InnerHtml = subscribers_link;
-            }
-            else
+
+
+            if (permission_level == PermissionLevel.ReadOnly)
             {
                 subscribers.Visible = false;
             }
@@ -1313,29 +1279,11 @@ order by us_username; ");
                     subscribed = (int)DbUtil.execute_scalar(sql);
                 }
 
-                if (User.IsInRole(BtnetRoles.Guest)) // wouldn't make sense to share an email address
+                if (!User.IsInRole(BtnetRoles.Guest)) // wouldn't make sense to share an email address
                 {
-                    subscriptions.InnerHtml = "";
+                    isSubscribed = subscribed > 0;
                 }
-                else
-                {
-
-                    string subscription_link = "<a class='btn btn-default'  id='notifications' title='Get or stop getting email notifications about changes to this item.'"
-                        + " href='javascript:toggle_notifications("
-                        + Convert.ToString(id)
-                        + ")'><img src=telephone.png border=0 />&nbsp;<span id='get_stop_notifications'>";
-
-                    if (subscribed > 0)
-                    {
-                        subscription_link += "Stop Notifications</span></a>";
-                    }
-                    else
-                    {
-                        subscription_link += "Get Notifications</span></a>";
-                    }
-
-                    subscriptions.InnerHtml = subscription_link;
-                }
+                    
             }
 
         }
