@@ -876,6 +876,7 @@
     <Compile Include="btnet\BugQueryExecutor.cs" />
     <Compile Include="btnet\BugQueryFilter.cs" />
     <Compile Include="btnet\BugQueryResult.cs" />
+    <Compile Include="Controllers\BugController.cs" />
     <Compile Include="Controllers\BugQueryController.cs" />
     <Compile Include="Controls\BugList.ascx.cs">
       <DependentUpon>BugList.ascx</DependentUpon>
@@ -1756,13 +1757,13 @@
       <DependentUpon>write_posts.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\Site\Page.ts" />
-  </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Scripts\Site\Page.ts" />
+  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
