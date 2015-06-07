@@ -233,7 +233,7 @@ if (User.IsInRole(BtnetRoles.Guest) || permission_level == PermissionLevel.ReadO
 }
 ```
 
-Which imediatly looks much cleaner. The .aspx file now contains
+Which immediately looks much cleaner. The .aspx file now contains
 
 ```
 <li class="dropdown-toggle" id="send_email" data-action="send-email" runat="server">
@@ -243,7 +243,7 @@ Which imediatly looks much cleaner. The .aspx file now contains
  </li>
 ```
 
-You may notice that we've ripped out the call to send_email. This is because we'd like to keep our relationship between the elements on the page and the JavaScript actions in the JavaScript file. Instead we've put in a data-action attribute as we introduced earlier. In the constructor of EditBug we can tie the send_email funciton to this element.
+You may notice that we've ripped out the call to send_email. This is because we'd like to keep our relationship between the elements on the page and the JavaScript actions in the JavaScript file. Instead we've put in a data-action attribute as we introduced earlier. In the constructor of EditBug we can tie the send_email function to this element.
 
 ```
  $("[data-action=send-email]").on("click", function () {
@@ -362,7 +362,7 @@ which becomes
 <textarea id="comment" rows="10" cols="100" runat="server" class="form-control"></textarea>
 ```
 
-Next we can alter the warn_if_drity function to observe the new isDirty property in the DirtyFlag control. 
+Next we can alter the warn_if_dirty function to observe the new isDirty property in the DirtyFlag control. 
 
 ```
 warn_if_dirty(event) {
@@ -559,7 +559,7 @@ In development all the scripts are included individually to aide in debugging. I
 
 ##Conclusion
 
-With all this JavaScript work done we can move forward in a world that uses far more JavaScript than previously. BugTracker uses no real JavaScript frameworks such as knockout, Angular or ReactJS. If we wish to introduce these in future then we would be introducing them into an ecosystem that is already friendly to modern JavaScript. Already our JavaScript is much more testable and modular than ever before. While we didn't completly refactor EditBug.js we did improve it greatly. As we perform more work on the system I'm confident the opportunity to complete its refactoring will present itself. 
+With all this JavaScript work done we can move forward in a world that uses far more JavaScript than previously. BugTracker uses no real JavaScript frameworks such as knockout, Angular or ReactJS. If we wish to introduce these in future then we would be introducing them into an ecosystem that is already friendly to modern JavaScript. Already our JavaScript is much more testable and modular than ever before. While we didn't completely refactor EditBug.js we did improve it greatly. As we perform more work on the system I'm confident the opportunity to complete its refactoring will present itself. 
 
 
 [^http2]: The method of communicating between client and server is currently undergoing its first ever major revision. HTTP 2.0 will be a binary protocol and will allow for multiple requests to be made over a single connection. This should speed up the loading of pages over HTTP2 and will invalidate the need to combine your JavaScript files into a single file. Life should be much better in 5 to 10 years when this HTTP2 is available everywhere. 
