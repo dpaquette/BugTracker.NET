@@ -14,7 +14,7 @@ There is a pattern that can be found in a few places in BugTracker.NET. I'm not 
         }
    }
 ```
-A great example of this in is the code-behind for the insert_bug.aspx page which I have abbreviated here. You can see the full version [here](https://github.com/dpaquette/BugTracker.NET/blob/fef3db538ed359fd60e1d6ce18976a5f75f61c16/src/BugTracker.Web/insert_bug.aspx.cs).
+A great example of this in is the code-behind for the insert_bug.aspx page which I have abbreviated below. You can see the full version [here](https://github.com/dpaquette/BugTracker.NET/blob/fef3db538ed359fd60e1d6ce18976a5f75f61c16/src/BugTracker.Web/insert_bug.aspx.cs).
 ```
     public partial class insert_bug : BasePage
     {
@@ -64,14 +64,14 @@ request_stream.Close();
 res = (HttpWebResponse)req.GetResponse();
 //...Check the response for OK vs ERROR message
 ``` 
-The logic around this is more complex than it needs to be. With Web API, we have a much easier approach to creating an HTTP api that will feel much more standard than the attempt to create an API using the mega-postback pattern.
+The logic around this is more complex than it needs to be. With Web API, we have a much easier approach to creating an HTTP api that will feel much more standard than the attempt to create an API using this mega-postback pattern.
 ##Adding a Web API controller
 Luckily, we added Web API back when we updated the grid components so adding a new controller is easy. Right click the Controllers folder and select Add-> Controller. Select the Web Api Controller - Empty template and name the controller BugController.
-We will add the `Authorize` attribute to the BugController to ensure that only aunthenticated users can acess the endpoints exposed by this controller. Adding this simple attribute will replace a good 30-40 lines of code from the insert_bug.aspx code. The authentication step will be handled separately by the caller as we will see later.
-Next, we will add a placeholder for the Post method. This method will be accessed by the API client by sending a POST request to api/Bug.
+We will add the `Authorize` attribute to the BugController to ensure that only aunthenticated users can acess the endpoints exposed by this controller. Adding this simple attribute will eliminate 30-40 lines of code from insert_bug.aspx. The authentication step will be handled separately by the caller as we will see later.
+Next, we will add a placeholder for the Post method. This method will be accessed by the API client by sending a POST request to `api/BugFromEmail`.
 ```
 [Authorize]
-public class BugController : ApiController
+public class BugFromEmailController : ApiController
 {
     [HttpPost]
     public IHttpActionResult Post()
@@ -145,7 +145,7 @@ public class BugFromEmailController : ApiController
 }
 ```
 ##Adding the logic
-As a first pass, we can move the code from insert_bug.aspx to the Post method. Simply by moving to Web API, we can make eliminate some code that is handled for us by Web API. One example is thhe following code for logging in is no longer necessary.
+As a first pass, we can move the code from insert_bug.aspx to the Post method. Simply by moving to Web API, we can make eliminate some code that is handled for us by Web API. One example is the following code for logging in is no longer necessary.
 
 ```
 if (username == null
@@ -177,12 +177,12 @@ if (!authenticated)
 IIdentity identity = Security.Security.GetIdentity(username);
 ```
 
-The Authorize attribute already ensure that only authenticated clients will be able to call this method. If the client are not authenticated, Web API will return an appropriate response code. Since the client is authenticed, we can get the IIdentity instance the same way we do every where else in the application:
+The Authorize attribute already ensure that only authenticated clients will be able to call this method. If the client is not authenticated, Web API will return an appropriate response code. Since the client is authenticed, we can get the IIdentity instance the same way we do every where else in the application:
 
 ```
 IIdentity = User.Identity;
 ``` 
-Likewise, code for parsing request parameteres is no longer needed since this is handled automatically by the Web API model binder:
+Likewise, the following code for parsing request parameteres is no longer needed since this is handled automatically by the Web API model binder:
 ```
 string projectid_string = Request["projectid"];
 int projectid = 0;
@@ -191,7 +191,7 @@ if (Util.is_int(projectid_string))
     projectid = Convert.ToInt32(projectid_string);
 }
 ```
-Finally, the responses are also simplified since we no longer need mannualy write the response text:
+Finally, the responses are also simplified since we no longer need manualy write the response text:
 ```
 Response.AddHeader("BTNET", "OK:" + Convert.ToString(new_ids.bugid));
 Response.Write("OK:" + Convert.ToString(new_ids.bugid));
@@ -201,12 +201,12 @@ Instead, we can use a standard 200 OK response in Web API:
 ```
 return Ok(newIds.bugid);
 ```
-The code for this web api method is still a more complex than I would like it to be, but it is a big improvement from what we started with. We were able to eliminate ~90 lines from a 340 line method. Since the new code is a little easier to understand, we are also in a much better position to refactor it going forward.
+The code for this web api method is still more complex than I would like it to be, but it is a big improvement from what we started with. We were able to eliminate ~90 lines from a 340 line method. Since the new code is a little easier to understand, we are also in a much better position to refactor it going forward.
 
 [View the Commit - Simple move of Insert_bug.aspx to Web API](https://github.com/dpaquette/BugTracker.NET/commit/abf82b5edb46dc51be5278419a882e33569ec6fe)
 
 ##Supporting Client Login
-We could attempt to post to the existing login page to login as a client but that would make for some confusing code. Instead, I extracted the login code to a class that can be used by the login page and by a new login Web API controller.
+We could attempt to post to the existing login page to login as a client but that would make for some confusing code. Instead, I extracted the login code to a class that can be used by the existing login page and by a new login Web API controller.
 
 The controller itself is very simple:
 
@@ -237,15 +237,14 @@ public class LoginModel
 }
 ``` 
 
-Testing this endpoint in Fidler shows the 200 OK result on successful login as well as the Set-Cookie header for the authentication cookie. It will be the client's responsibility to include this header in subsequent requests.
+Testing this endpoint in Fidler shows the 200 OK result on successful login as well as the Set-Cookie header for the authentication cookie. It will be the client's responsibility to include this cookie in subsequent requests.
 
 ![Testing Web API Login](Images/TestingWebAPILogin.png)
-
 
 [View the commit - Refactored Login logic to support web api login]()
 
 ##Updating the Client
-Now, the client will need to change a little. We changed the URL for posting bug from email and we also changed the way we authenticate. Instead of passing the username/password with the request, we will need to login as a separate request.
+Next, the client will need to change a little. We changed the URL for posting bug from email and we also changed the way we authenticate. Instead of passing the username/password with the request, we will need to login as a separate request.
 
 While we are making changes to the client here, we should also upgrade to a more modern library for making HTTP Requests. The current recommended library for making HTTP requests is Http Client.
 
@@ -253,7 +252,7 @@ While we are making changes to the client here, we should also upgrade to a more
 Install-Package Microsoft.Net.Http
 ```
 
-We can simplify the error logic a lot by using the EnsureSuccessStatusCode() method on the response object. This will through an exception if the status code is anything other than a 200 OK.
+We can simplify the error logic a lot by using the EnsureSuccessStatusCode() method on the response object. This will throw an exception if the status code is anything other than a 200 OK.
 
 ```
 using (var httpClient = new HttpClient(handler))
