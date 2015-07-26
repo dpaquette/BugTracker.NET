@@ -1,19 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Net;
-using System.IO;
-using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Xml;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Timers;
-using System.Web;
+using System.Xml;
 using OpenPop.Mime;
 using OpenPop.Pop3;
-
+using Timer = System.Timers.Timer;
 
 public class POP3Main
 {
@@ -31,7 +34,7 @@ public class POP3Main
 
     protected Timer timer;
     protected int FetchIntervalInMinutes = 15;
-    protected System.Collections.ArrayList websites;
+    protected ArrayList websites;
     protected string MessageInputFile;
     protected string MessageOutputFile;
     protected string ConnectionString;
@@ -49,6 +52,7 @@ public class POP3Main
 
     protected string DeleteMessagesOnServer;
     protected string InsertBugUrl;
+    protected string LoginUrl;
     protected string ServiceUsername;
     protected string ServicePassword;
     protected string TrackingIdString;
@@ -60,16 +64,16 @@ public class POP3Main
 
     static Regex rePipes = new Regex("\\|");
 
-    System.Threading.Thread fetching_thread;
-    System.Threading.Thread watchdog_thread;
+    Thread fetching_thread;
+    Thread watchdog_thread;
 
     public static DateTime heartbeat_datetime = DateTime.Now;
 
     ///////////////////////////////////////////////////////////////////
     public POP3Main(string config_file, bool verbose)
     {
-        string this_exe = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-        LogFileFolder = System.IO.Path.GetDirectoryName(this_exe);
+        string this_exe = Process.GetCurrentProcess().MainModule.FileName;
+        LogFileFolder = Path.GetDirectoryName(this_exe);
 
         this.config_file = config_file;
         POP3Main.verbose = verbose;
@@ -79,12 +83,12 @@ public class POP3Main
         get_settings();
         write_line("creating");
 
-        fetching_thread = new System.Threading.Thread(new System.Threading.ThreadStart(fetching_thread_proc));
+        fetching_thread = new Thread(new ThreadStart(fetching_thread_proc));
         fetching_thread.Start();
 
         if (EnableWatchdogThread == 1)
         {
-            watchdog_thread = new System.Threading.Thread(new System.Threading.ThreadStart(watchdog_thread_proc));
+            watchdog_thread = new Thread(new ThreadStart(watchdog_thread_proc));
             watchdog_thread.Start();
         }
 
@@ -146,7 +150,7 @@ public class POP3Main
 
         lock (dummy)
         {
-            System.IO.StreamWriter w = System.IO.File.AppendText(path);
+            StreamWriter w = File.AppendText(path);
 
             w.WriteLine(DateTime.Now.ToLongTimeString()
                 + " "
@@ -181,7 +185,7 @@ public class POP3Main
 
         while (true)
         {
-            System.Threading.Thread.Sleep(2000);
+            Thread.Sleep(2000);
             if (state == service_state.STOPPED)
             {
                 timer.Enabled = false;
@@ -197,11 +201,11 @@ public class POP3Main
     ///////////////////////////////////////////////////////////////////
     public void watchdog_thread_proc()
     {
-        POP3Main.write_line("entering watchdog thread");
+        write_line("entering watchdog thread");
 
         while (true)
         {
-            System.Threading.Thread.Sleep(2000);
+            Thread.Sleep(2000);
 
             if (state == service_state.STOPPED)
             {
@@ -214,16 +218,16 @@ public class POP3Main
 
                 if (timespan.TotalSeconds > RespawnFetchingThreadAfterNSecondsOfInactivity)
                 {
-                    POP3Main.write_line("WARNING - watchdog thread is killing fetching thread");
+                    write_line("WARNING - watchdog thread is killing fetching thread");
                     fetching_thread.Abort();
-                    fetching_thread = new System.Threading.Thread(new System.Threading.ThreadStart(fetching_thread_proc));
-                    POP3Main.write_line("WARNING - watchdog thread is starting new fetching thread");
+                    fetching_thread = new Thread(new ThreadStart(fetching_thread_proc));
+                    write_line("WARNING - watchdog thread is starting new fetching thread");
                     fetching_thread.Start();
                 }
             }
         }
 
-        POP3Main.write_line("exiting watchdog thread");
+        write_line("exiting watchdog thread");
 
     }
 
@@ -271,6 +275,7 @@ public class POP3Main
                 FromCannotContainStrings = rePipes.Split(FromCannotContain);
 
                 DeleteMessagesOnServer = settings["DeleteMessagesOnServer"];
+                LoginUrl = settings["LoginUrl"];
                 InsertBugUrl = settings["InsertBugUrl"];
                 ServiceUsername = settings["ServiceUsername"];
                 ServicePassword = settings["ServicePassword"];
@@ -298,7 +303,7 @@ public class POP3Main
             timer.Dispose();
         }
 
-        timer = new System.Timers.Timer();
+        timer = new Timer();
         timer.AutoReset = false;
         timer.Elapsed += new ElapsedEventHandler(do_work);
 
@@ -397,7 +402,7 @@ public class POP3Main
                     // create a new dictionary of settings each time we encounter a new Website section
                     if (tr.Name.ToLower() == "website" && tr.NodeType == XmlNodeType.Element)
                     {
-                        settings = new System.Collections.Specialized.StringDictionary();
+                        settings = new StringDictionary();
                         settings["MessageInputFile"] = "";
                         settings["MessageOutputFile"] = "";
                         settings["ConnectionString"] = "";
@@ -503,7 +508,7 @@ public class POP3Main
     }
 
     ///////////////////////////////////////////////////////////////////////
-    protected void fetch_messages(string user, string password, int projectid)
+    protected async void fetch_messages(string user, string password, int projectid)
     {
 
         List<string> messages = null;
@@ -567,11 +572,11 @@ public class POP3Main
                 }
                 catch (Exception exception)
                 {
-                    write_to_log("Error getting message" );
+                    write_to_log("Error getting message");
                     write_to_log(exception.ToString());
                     continue;
                 }
-                    
+
 
                 // for diagnosing problems
                 if (MessageOutputFile != "")
@@ -641,7 +646,8 @@ public class POP3Main
                 }
 
                 write_line("calling insert_bug.aspx");
-                string Url = InsertBugUrl;
+
+                bool useBugId = false;
 
                 // Try to parse out the bugid from the subject line
                 string bugidString = TrackingIdString;
@@ -666,7 +672,7 @@ public class POP3Main
                         try
                         {
                             int bugid = Int32.Parse(bugid_string);
-                            Url += "?bugid=" + Convert.ToString(bugid);
+                            useBugId = true;
                             write_line("updating existing bug " + Convert.ToString(bugid));
                         }
                         catch (Exception e)
@@ -676,84 +682,62 @@ public class POP3Main
                     }
                 }
 
-                string rawMessage = Encoding.Default.GetString(mimeMessage.RawMessage);
-                string post_data = "username=" + HttpUtility.UrlEncode(ServiceUsername)
-                                   + "&password=" + HttpUtility.UrlEncode(ServicePassword)
-                                   + "&projectid=" + Convert.ToString(projectid)
-                                   + "&from=" + HttpUtility.UrlEncode(from)
-                                   + "&short_desc=" + HttpUtility.UrlEncode(subject)
-                                   + "&message=" + HttpUtility.UrlEncode(rawMessage);
-
-                byte[] bytes = Encoding.UTF8.GetBytes(post_data);
-
-
+                
                 // send request to web server
-                HttpWebResponse res = null;
                 try
                 {
-                    HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
+                    HttpClientHandler handler = new HttpClientHandler
+                    {
+                        AllowAutoRedirect = true,
+                        UseCookies = true,
+                        CookieContainer = new CookieContainer()
+                    };
+                    using (var httpClient = new HttpClient(handler))
+                    {
+                        var loginParameters = new Dictionary<string, string>
+                        {
+                           { "user", ServiceUsername },
+                           { "password", ServicePassword }
+                        };
 
+                        HttpContent loginContent = new FormUrlEncodedContent(loginParameters);
+                        var loginResponse = await httpClient.PostAsync(LoginUrl, loginContent);
+                        loginResponse.EnsureSuccessStatusCode();
 
-                    req.Credentials = CredentialCache.DefaultCredentials;
-                    req.PreAuthenticate = true;
+                        string rawMessage = Encoding.Default.GetString(mimeMessage.RawMessage);
+                        var postBugParameters = new Dictionary<string, string>
+                        {
+                           { "projectId", Convert.ToString(projectid) },
+                           { "fromAddress", from },
+                           { "shortDescription", subject},
+                           { "message", rawMessage}
+                           //Any other paramters go here
+                        };
+                        if (useBugId)
+                        {
+                            postBugParameters.Add("bugId", bugidString);
+                        }
 
-                    //req.Timeout = 200; // maybe?
-                    //req.KeepAlive = false; // maybe?
+                        HttpContent bugContent = new FormUrlEncodedContent(postBugParameters);
+                        var postBugResponse = await httpClient.PostAsync(InsertBugUrl, bugContent);
 
-                    req.Method = "POST";
-                    req.ContentType = "application/x-www-form-urlencoded";
-                    req.ContentLength = bytes.Length;
-                    Stream request_stream = req.GetRequestStream();
-                    request_stream.Write(bytes, 0, bytes.Length);
-                    request_stream.Close();
-                    res = (HttpWebResponse)req.GetResponse();
+                        postBugResponse.EnsureSuccessStatusCode();
+                    }
+                    if (MessageInputFile == "" && DeleteMessagesOnServer == "1")
+                    {
+                        write_line("sending POP3 command DELE");
+                        client.DeleteMessage(message_number);
+                    }
                 }
                 catch (Exception e)
                 {
-                    write_line("HttpWebRequest error url=" + Url);
+                    write_line("HttpWebRequest error url=" + InsertBugUrl);
                     write_line(e);
-                }
-
-                // examine response
-
-                if (res != null)
-                {
-
-                    int http_status = (int)res.StatusCode;
-                    write_line(Convert.ToString(http_status));
-
-                    string http_response_header = res.Headers["BTNET"];
-                    res.Close();
-
-                    if (http_response_header != null)
-                    {
-                        write_line(http_response_header);
-
-                        // only delete message from pop3 server if we
-                        // know we stored in on the web server ok
-                        if (MessageInputFile == ""
-                            && http_status == 200
-                            && DeleteMessagesOnServer == "1"
-                            && http_response_header.IndexOf("OK") == 0)
-                        {
-                            write_line("sending POP3 command DELE");
-                            client.DeleteMessage(message_number);
-                        }
-                    }
-                    else
-                    {
-                        write_line("BTNET HTTP header not found.  Skipping the delete of the email from the server.");
-                        write_line("Incrementing total error count");
-                        total_error_count++;
-                    }
-                }
-                else
-                {
-                    write_line("No response from web server.  Skipping the delete of the email from the server.");
                     write_line("Incrementing total error count");
                     total_error_count++;
                 }
 
+                // examine response
                 if (total_error_count > TotalErrorsAllowed)
                 {
                     write_line("Stopping because total error count > TotalErrorsAllowed");
@@ -798,7 +782,7 @@ class AcceptAllCertificatePolicy : ICertificatePolicy
 
     public bool CheckValidationResult(
     ServicePoint service_point,
-    System.Security.Cryptography.X509Certificates.X509Certificate cert,
+    X509Certificate cert,
     WebRequest web_request,
     int certificate_problem)
     {
