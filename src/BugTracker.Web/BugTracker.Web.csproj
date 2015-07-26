@@ -922,6 +922,7 @@
     <Compile Include="Models\CustomColumnsMetaData.cs" />
     <Compile Include="Models\DashboardItems.cs" />
     <Compile Include="Models\EmailedLink.cs" />
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Mapping\BugMap.cs" />
     <Compile Include="Models\Mapping\BugPostMap.cs" />
     <Compile Include="Models\Mapping\BugPostAttachmentMap.cs" />

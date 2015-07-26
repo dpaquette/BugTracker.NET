@@ -1,15 +1,17 @@
 ﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using btnet.Models;
 using btnet.Security;
 
 namespace btnet.Controllers
 {
     public class LoginController : ApiController
     {
-        public IHttpActionResult Login(string user, string password)
+        [HttpPost]
+        public IHttpActionResult Post(LoginModel loginModel)
         {
-            LoginResult loginResult = Authenticate.AttemptLogin(Request.GetOwinContext(), user, password);
+            LoginResult loginResult = Authenticate.AttemptLogin(Request.GetOwinContext(), loginModel.User, loginModel.Password);
 
             if (loginResult.Success)
             {
