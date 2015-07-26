@@ -733,7 +733,6 @@
     <Content Include="hg_view_revisions.aspx" />
     <Content Include="inc.aspx" />
     <Content Include="inc_diff.inc" />
-    <Content Include="insert_bug.aspx" />
     <Content Include="install.aspx" />
     <Content Include="log4net-LICENSE.txt" />
     <Content Include="login.htm" />
@@ -1339,13 +1338,6 @@
     <Compile Include="inc.aspx.cs">
       <DependentUpon>inc.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="insert_bug.aspx.cs">
-      <DependentUpon>insert_bug.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="insert_bug.aspx.designer.cs">
-      <DependentUpon>insert_bug.aspx</DependentUpon>
     </Compile>
     <Compile Include="install.aspx.cs">
       <DependentUpon>install.aspx</DependentUpon>
