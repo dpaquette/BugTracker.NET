@@ -140,7 +140,7 @@ where bs_bug = @id)");
             sql = sql.AddParameterWithValue("id", Convert.ToString(bugid));
             sql = sql.AddParameterWithValue("dpl", btnet.Util.get_setting("DefaultPermissionLevel", "2"));
 
-            
+
             btnet.DbUtil.execute_nonquery(sql);
 
 
@@ -158,7 +158,7 @@ where bs_bug = @id)");
             var sql = new SQLString(@"select bp_id, bp_file from bug_posts where bp_type = 'file' and bp_bug = @bg");
             sql = sql.AddParameterWithValue("bg", id);
 
-            
+
             DataSet ds = btnet.DbUtil.get_dataset(sql);
             if (upload_folder != null && upload_folder != "")
             {
@@ -268,7 +268,7 @@ delete from bugs where bg_id = @bg");
             // it check that content_length is less than MaxUploadSize.
             // These are left up to the caller.
 
-            
+
             string upload_folder = Util.get_upload_folder();
             SQLString sql;
             bool store_attachments_in_database = (Util.get_setting("StoreAttachmentsInDatabase", "0") == "1");
@@ -453,7 +453,7 @@ insert into bug_posts
             // Note that this method does not perform any security check.
             // This is left up to the caller.
 
-            
+
             string upload_folder = Util.get_upload_folder();
             SQLString sql;
             bool store_attachments_in_database = (Util.get_setting("StoreAttachmentsInDatabase", "0") == "1");
@@ -468,7 +468,7 @@ insert into bug_posts
                 sql = new SQLString(@"select bp_bug, bp_file, bp_size, bp_content_type
                         from bug_posts
                         where bp_id = @bp");
-                        
+
                 sql = sql.AddParameterWithValue("bp", Convert.ToString(bp_id));
                 using (SqlDataReader reader = btnet.DbUtil.execute_reader(sql, CommandBehavior.CloseConnection))
                 {
@@ -488,7 +488,7 @@ insert into bug_posts
                 sql = new SQLString(@"select bpa_content
                             from bug_post_attachments
                             where bpa_post = @bp");
-                            
+
                 sql = sql.AddParameterWithValue("bp", Convert.ToString(bp_id));
 
                 object content_object;
@@ -544,7 +544,7 @@ update bug_user set bu_seen = 1, bu_seen_datetime = getdate() where bu_bug = @id
 
             }
 
-            sql.Append( @"
+            sql.Append(@"
 declare @svn_revisions int
 declare @git_commits int
 declare @hg_revisions int
@@ -598,7 +598,7 @@ select @related = count(1)
 from bug_relationships
 where re_bug1 = @id;");
             }
-    
+
             sql.Append(@"
 
 select bg_id [id],
@@ -692,7 +692,7 @@ where bg_id = @id");
             sql = sql.AddParameterWithValue("this_org", Convert.ToString(identity.GetOrganizationId()));
             sql = sql.AddParameterWithValue("dpl", Util.get_setting("DefaultPermissionLevel", "2"));
 
-            
+
             return btnet.DbUtil.get_datarow(sql);
 
 
@@ -703,10 +703,12 @@ where bg_id = @id");
         {
             var sql = new SQLString(Util.get_setting("UpdateBugAfterInsertBugAspxSql", ""));
 
-            
+            if (!string.IsNullOrEmpty(sql.ToString()))
+            {
                 sql = sql.AddParameterWithValue("@BUGID", Convert.ToString(bugid));
                 btnet.DbUtil.execute_nonquery(sql);
-            
+            }
+
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -760,15 +762,15 @@ where bg_id = @bg");
             sql = sql.AddParameterWithValue("@dpl", Util.get_setting("DefaultPermissionLevel", "2"));
             sql = sql.AddParameterWithValue("@bg", Convert.ToString(bugid));
             sql = sql.AddParameterWithValue("@us", Convert.ToString(identity.GetUserId()));
-            
+
             DataRow dr = btnet.DbUtil.get_datarow(sql);
-            
+
             if (dr == null)
             {
                 return PermissionLevel.None;
-                
+
             }
-            
+
             int pl = (int)dr[0];
             int bg_org = (int)dr[1];
 
@@ -846,7 +848,7 @@ where bg_id = @bg");
             sql = sql.AddParameterWithValue("@status", Convert.ToString(statusid));
             sql = sql.AddParameterWithValue("@assigned_user", Convert.ToString(assigned_to_userid));
             sql = sql.AddParameterWithValue("@udf", Convert.ToString(udfid));
-//TODO: Add custom columns
+            //TODO: Add custom columns
 
 
 
@@ -916,7 +918,7 @@ select scope_identity();");
                     // We don't do it unconditionally because it would mess up the locking.
                     // The edit_bug.aspx page gets its snapshot timestamp from the update of the bug
                     // row, not the comment row, so updating the bug again would confuse it.
-                    sql.Append( @"update bugs
+                    sql.Append(@"update bugs
                         set bg_last_updated_date = @now,
                         bg_last_updated_user = @us
                         where bg_id = @id");
@@ -943,7 +945,7 @@ select scope_identity();");
                 sql = sql.AddParameterWithValue("@internal", btnet.Util.bool_to_string(internal_only));
 
 
-                
+
                 return Convert.ToInt32(btnet.DbUtil.execute_scalar(sql));
 
             }
@@ -1160,8 +1162,8 @@ and (us_id <> @us or isnull(us_send_notifications_to_self,0) = 1)");
                     btnet.Util.get_setting("AbsoluteUrlPrefix", "http://127.0.0.1/") + "\"/>");
 
                     // create a security rec for the user receiving the email
-                    IIdentity identity2 = Security.Security.GetIdentity((string) dr["us_username"]);
-                
+                    IIdentity identity2 = Security.Security.GetIdentity((string)dr["us_username"]);
+
 
                     PrintBug.print_bug(
                         my_response,
@@ -1180,8 +1182,8 @@ insert into queued_notifications
 (qn_date_created, qn_bug, qn_user, qn_status, qn_retries, qn_to, qn_from, qn_subject, qn_body, qn_last_exception)
 values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'')");
 
-                    sql = sql.AddParameterWithValue("@bug",Convert.ToString(bugid));
-                    sql = sql.AddParameterWithValue("@user",Convert.ToString(dr["us_id"]));
+                    sql = sql.AddParameterWithValue("@bug", Convert.ToString(bugid));
+                    sql = sql.AddParameterWithValue("@user", Convert.ToString(dr["us_id"]));
                     sql = sql.AddParameterWithValue("@to", to);
                     sql = sql.AddParameterWithValue("@from", from);
                     sql = sql.AddParameterWithValue("@subject", subject);
@@ -1210,7 +1212,7 @@ values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'
         protected static void actually_send_the_emails()
         {
             btnet.Util.write_to_log("actually_send_the_emails");
-            
+
             var sql = new SQLString(@"select * from queued_notifications where qn_status = N'not sent' and qn_retries < 3");
             // create a new one, just in case there would be multithreading issues...
 
@@ -1223,8 +1225,8 @@ values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'
 
                 try
                 {
-                    string to = (string) dr["qn_to"];
-                    
+                    string to = (string)dr["qn_to"];
+
                     btnet.Util.write_to_log("sending email to " + to);
 
                     // try to send it
@@ -1263,7 +1265,7 @@ values (getdate(), @bug, @user, N''not sent', 0, @to, @from, @subject, @body, N'
                 // update the row or delete the row
                 btnet.DbUtil.execute_nonquery(sql);
             }
-        
+
         }
 
         ///////////////////////////////////////////////////////////////////////

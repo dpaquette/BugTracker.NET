@@ -876,7 +876,7 @@
     <Compile Include="btnet\BugQueryExecutor.cs" />
     <Compile Include="btnet\BugQueryFilter.cs" />
     <Compile Include="btnet\BugQueryResult.cs" />
-    <Compile Include="Controllers\BugController.cs" />
+    <Compile Include="Controllers\BugFromEmailController.cs" />
     <Compile Include="Controllers\BugQueryController.cs" />
     <Compile Include="Controls\BugList.ascx.cs">
       <DependentUpon>BugList.ascx</DependentUpon>
@@ -907,6 +907,7 @@
       <DependentUpon>LoggedOut.Master</DependentUpon>
     </Compile>
     <Compile Include="Models\Bug.cs" />
+    <Compile Include="Models\BugFromEmail.cs" />
     <Compile Include="Models\Context.cs" />
     <Compile Include="Models\BugPost.cs" />
     <Compile Include="Models\BugPostAttachment.cs" />

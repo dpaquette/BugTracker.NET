@@ -31,7 +31,7 @@ namespace btnet
             string attachment_desc = Request["attachment_desc"];
             string bugid_string = Request["bugid"];
             string short_desc = Request["short_desc"];
-
+            
             // this could also be the email subject
             if (short_desc == null)
             {
