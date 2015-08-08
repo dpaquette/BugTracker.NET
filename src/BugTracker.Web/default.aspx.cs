@@ -11,7 +11,7 @@ namespace btnet
     public partial class @default : BasePage
     {
         private SQLString sql;
-        
+
 
         ///////////////////////////////////////////////////////////////////////
         public void Page_Load(Object sender, EventArgs e)
@@ -97,25 +97,11 @@ namespace btnet
             {
                 if (previous_auth_mode == "0")
                 {
-                    if ((Request.QueryString["user"] == null) || (Request.QueryString["password"] == null))
+                    //	User name and password are not on the querystring.
+                    if (username_cookie != null)
                     {
-                        //	User name and password are not on the querystring.
-
-                        if (username_cookie != null)
-                        {
-                            //	Set the user name from the last logon.
-
-                            user.Value = username_cookie["name"];
-                        }
-                    }
-                    else
-                    {
-                        //	User name and password have been passed on the querystring.
-
-                        user.Value = Request.QueryString["user"];
-                        pw.Value = Request.QueryString["password"];
-
-                        on_logon();
+                        //	Set the user name from the last logon.
+                        user.Value = username_cookie["name"];
                     }
                 }
             }
@@ -135,33 +121,18 @@ namespace btnet
             {
                 if (username.Trim() == "")
                 {
-                    btnet.Util.redirect("loginNT.aspx", Request, Response);
+                    Util.redirect("loginNT.aspx", Request, Response);
                 }
             }
+            LoginResult loginResult = Authenticate.AttemptLogin(Request.GetOwinContext(), username, pw.Value);
 
-            bool authenticated = Authenticate.check_password(username, pw.Value);
-
-            if (authenticated)
+            if (loginResult.Success)
             {
-                sql = new SQLString("select us_id, us_username, us_org from users where us_username = @us");
-                sql = sql.AddParameterWithValue("us", username);
-                DataRow dr = btnet.DbUtil.get_datarow(sql);
-                if (dr != null)
-                {
-                    Security.Security.SignIn(Request, username);
-                    btnet.Util.redirect(Request, Response);
-                }
-                else
-                {
-                    // How could this happen?  If someday the authentication
-                    // method uses, say LDAP, then check_password could return
-                    // true, even though there's no user in the database";
-                    msg.InnerText = "User not found in database";
-                }
+                Util.redirect(Request, Response);
             }
             else
             {
-                msg.InnerText = "Invalid User or Password.";
+                msg.InnerText = loginResult.ErrorMessage;
             }
 
         }

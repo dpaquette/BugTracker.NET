@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.Security.Claims;
 using System.Web;
+using Microsoft.Owin;
 
 namespace btnet.Security
 {
 
 	public class Security {
   
-        public static void SignIn(HttpRequest request, string username)
+        public static void SignIn(IOwinContext owinContext, string username)
         {
-            var identity = GetIdentity(username);
-            var owinContext = request.GetOwinContext();
+            var identity = GetIdentity(username);            
             owinContext.Authentication.SignIn(identity);
         }
 

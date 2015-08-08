@@ -8,13 +8,49 @@ using System.Collections.Generic;
 using System.Data;
 using System.DirectoryServices.Protocols;
 using System.Web;
+using Microsoft.Owin;
 
 namespace btnet.Security
 {
     public class Authenticate
     {
+        
+        public static LoginResult AttemptLogin(IOwinContext owinContext, string username, string password)
+        {
+            LoginResult result = new LoginResult();
 
-        public static bool check_password(string username, string password)
+            bool authenticated = check_password(username, password);
+
+            if (authenticated)
+            {
+                SQLString sql = new SQLString("select us_id, us_username, us_org from users where us_username = @us");
+                sql = sql.AddParameterWithValue("us", username);
+                DataRow dr = DbUtil.get_datarow(sql);
+                if (dr != null)
+                {
+                    Security.SignIn(owinContext, username);
+                    result.Success = true;
+                    result.ErrorMessage = string.Empty;
+                }
+                else
+                {
+                    // How could this happen?  If someday the authentication
+                    // method uses, say LDAP, then check_password could return
+                    // true, even though there's no user in the database";
+                    result.Success = false;
+                    result.ErrorMessage = "User not found in database";
+                }
+            }
+            else
+            {
+                result.Success = false;
+                result.ErrorMessage = "Invalid User or Password.";
+            }
+
+            return result;
+        }
+
+        private static bool check_password(string username, string password)
         {
 
             var sql = new SQLString(@"
