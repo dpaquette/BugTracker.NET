@@ -122,7 +122,7 @@ public class BugFromEmail
 ``` 
 Notice that the FromAddress is marked as Required using a data annoation attribute. This will allow us to use model state validation in the controller action. Strangely, the FromAddress is the only item that is required for the create bug request in BugTracker. All other properties fall back to defaults.
  
-The controller Post method will accept an instance of the BugFromEmail class which will be mapped automatically by Web API from the body of the reqest. After checking if the model state is valid, it can continue with processing the request. If not, then a BadRequest (HTTP 400) result is returned. Note that we will rely on the standard HTTP response codes instead of a text based OK / ERROR result.
+The controller Post method will accept an instance of the BugFromEmail class which will be mapped automatically by Web API from the body of the reqest. After checking if the model state is valid, it can continue with processing the request. If not, then a BadRequest (HTTP 400) result is returned. Note that we will rely on the standard HTTP response codes instead of a text based OK / ERROR result. As we will se later, using standard response codes will allow us to  us standard error handling available in HTTP client libraries.
 
 ```
 [Authorize]
