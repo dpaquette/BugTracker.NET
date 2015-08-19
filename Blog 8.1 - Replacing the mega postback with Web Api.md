@@ -120,9 +120,9 @@ public class BugFromEmail
     public string ShortDescription { get; set; }        
 }
 ``` 
-Notice that the FromAddress is marked as Required using a data annoation attribute. This will allow us to use model state validation in the controller action. Strangely, the FromAddress is the only item that is required for the create bug request in BugTracker. All other properties fall back to defaults.
+Notice that the FromAddress is marked as Required using a data annotation attribute. This will allow us to use model state validation in the controller action. Strangely, the FromAddress is the only item that is required for the create bug request in BugTracker. All other properties fall back to defaults.
  
-The controller Post method will accept an instance of the BugFromEmail class which will be mapped automatically by Web API from the body of the reqest. After checking if the model state is valid, it can continue with processing the request. If not, then a BadRequest (HTTP 400) result is returned. Note that we will rely on the standard HTTP response codes instead of a text based OK / ERROR result. As we will se later, using standard response codes will allow us to  us standard error handling available in HTTP client libraries.
+The controller Post method will accept an instance of the BugFromEmail class which will be mapped automatically by Web API from the body of the request. After checking if the model state is valid, it can continue with processing the request. If not, then a BadRequest (HTTP 400) result is returned. Note that we will rely on the standard HTTP response codes instead of a text based OK / ERROR result. As we will se later, using standard response codes will allow us to  us standard error handling available in HTTP client libraries.
 
 ```
 [Authorize]
@@ -177,12 +177,12 @@ if (!authenticated)
 IIdentity identity = Security.Security.GetIdentity(username);
 ```
 
-The Authorize attribute already ensure that only authenticated clients will be able to call this method. If the client is not authenticated, Web API will return an appropriate response code. Since the client is authenticed, we can get the IIdentity instance the same way we do every where else in the application:
+The Authorize attribute already ensure that only authenticated clients will be able to call this method. If the client is not authenticated, Web API will return an appropriate response code. Since the client is authenticated, we can get the IIdentity instance the same way we do every where else in the application:
 
 ```
-IIdentity = User.Identity;
+IIdentity identity = User.Identity;
 ``` 
-Likewise, the following code for parsing request parameteres is no longer needed since this is handled automatically by the Web API model binder:
+Likewise, the following code for parsing request parameters is no longer needed since this is handled automatically by the Web API model binder:
 ```
 string projectid_string = Request["projectid"];
 int projectid = 0;
@@ -191,7 +191,7 @@ if (Util.is_int(projectid_string))
     projectid = Convert.ToInt32(projectid_string);
 }
 ```
-Finally, the responses are also simplified since we no longer need manualy write the response text:
+Finally, the responses are also simplified since we no longer need manually write the response text:
 ```
 Response.AddHeader("BTNET", "OK:" + Convert.ToString(new_ids.bugid));
 Response.Write("OK:" + Convert.ToString(new_ids.bugid));
@@ -241,7 +241,7 @@ Testing this endpoint in Fidler shows the 200 OK result on successful login as w
 
 ![Testing Web API Login](Images/TestingWebAPILogin.png)
 
-[View the commit - Refactored Login logic to support web api login]()
+[View the commit - Refactored Login logic to support web api login](https://github.com/dpaquette/BugTracker.NET/commit/97e0ee6e71bb11c8ac8df9a0dd89290bebbc3fc2)
 
 ##Updating the Client
 Next, the client will need to change a little. We changed the URL for posting bug from email and we also changed the way we authenticate. Instead of passing the username/password with the request, we will need to login as a separate request.
@@ -305,4 +305,4 @@ catch (Exception e)
 [View the commit - Update btnetservice to use HttpClient and new Web API endpoints](https://github.com/dpaquette/BugTracker.NET/commit/f77366f74e4b34892a963a9e6b6313fe6ae0f242)
 
 ##Conclusion
-We have shown how moving from a _mega post back_ to a more standard Web API can help to simplify our code. While more refactoring can be done to improve the implementation further, we have acheived our goal of replacing the _mega post back_ with an implementation that is easier to understand and much easier to test.
+We have shown how moving from a _mega post back_ to a more standard Web API can help to simplify our code. While more refactoring can be done to improve the implementation further, we have achieved our goal of replacing the _mega post back_ with an implementation that is easier to understand and much easier to test.
