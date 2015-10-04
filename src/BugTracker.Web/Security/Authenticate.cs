@@ -50,7 +50,7 @@ namespace btnet.Security
             return result;
         }
 
-        private static bool check_password(string username, string password)
+        public static bool check_password(string username, string password)
         {
 
             var sql = new SQLString(@"
