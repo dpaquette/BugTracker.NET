@@ -23,6 +23,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <TypeScriptToolsVersion>1.0</TypeScriptToolsVersion>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -776,6 +777,7 @@
     <Content Include="Scripts\Site\Controls\DirtyFlag.js" />
     <Content Include="Scripts\Site\Controls\LengthLimitedTextArea.js" />
     <Content Include="Scripts\Site\EditBug.js" />
+    <Content Include="Scripts\Site\Page.js" />
     <Content Include="Scripts\Site\Util\Cookie.js" />
     <Content Include="search.aspx" />
     <Content Include="search_text.aspx" />
@@ -1758,9 +1760,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="Scripts\Site\Page.ts" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
